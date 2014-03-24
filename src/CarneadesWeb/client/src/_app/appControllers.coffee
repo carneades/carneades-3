@@ -72,7 +72,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
       httpRequestTracker.hasPendingRequests()
 
     setNavigationState = () ->
-      $scope.$navigationStates = $breadcrumb.getNavigationStates $scope
+      $scope.$navigationStates = $breadcrumb.getNavigationStates($scope)
 
     $scope.$on '$stateChangeSuccess', ->
       setNavigationState()

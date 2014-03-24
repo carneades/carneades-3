@@ -40,6 +40,7 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       return position
 
     ##########################################################
+
     render = (states, scope) ->
       index = 0
       bIsActiveFound = false
@@ -68,20 +69,23 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
     buildNavigationStates = (state, stateParams, _navStates) ->
       navigationStates = []
       getEvent = (index, length) ->
-        if (index == -1) then return 'BC_APPEND_ITEM'
-        if (index == 0) then return 'BC_ITEM_NOT_CLICKED'
-        if (index == length) then return 'BC_LAST_ITEM_CLICKED'
-        if (index > 0) then return 'BC_ITEM_CLICKED'
+        if (index == 0 and length == 0) then return 'BC_INIT'
+        if (index == 0 and length > 0) then return 'BC_APPEND_ITEM'
+        if (index > 0 and index < length) then return 'BC_ITEM_CLICKED'
+        if (index > 0 and index == length) then return 'BC_LAST_ITEM_CLICKED'
         return 'EVENT_NOT_REGISTERED'
 
       idxEntryClicked = getIndexOfItemClicked()
       iSizeOfBreadcrumb = _navStates.length
-
+      setIndexOfItemClicked 0
       switch getEvent idxEntryClicked, iSizeOfBreadcrumb
-        when 'BC_ITEM_NOT_CLICKED'
+        when 'BC_INIT'
           angular.forEach state.path, (s) ->
             navigationStates.push buildState s.self, stateParams
-        when 'BC_LAST_ITEM_CLICKED' or 'BC_APPEND_ITEM'
+        when 'BC_LAST_ITEM_CLICKED'
+          navigationStates = _navStates
+          navigationStates.push buildState state.self, stateParams
+        when 'BC_APPEND_ITEM'
           navigationStates = _navStates
           navigationStates.push buildState state.self, stateParams
         when 'BC_ITEM_CLICKED'
@@ -121,108 +125,33 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
     ]
   )
 
-  .controller('BreadcrumbController', ($scope, $compile, $attrs, breadcrumbConfig) ->
-    @groups = []
-
-    @closeOthers = (openGroup) ->
-      closeOthers = if angular.isDefined $attrs.closeOthers then $scope.$eval $attrs.closeOthers else breadcrumbConfig.closeOthers
-      if closeOthers
-        angular.forEach @groups, (group) ->
-          if group != openGroup
-            group.isOpen = false
-            group.isHover = false
-
-    @addGroup = (groupScope) ->
-      that = @
-      @groups.push groupScope
-      groupScope.$on '$destroy', (event) ->
-        that.removeGroup groupScope
-
-      undefined
-
-    @setIndex = (groupScope) ->
-      $scope.index = groupScope.index
-
-    @setCommands = (groupScope) ->
-      $scope.commands = groupScope.commands
-
-    @getIndexOfGroup = (group) ->
-      @groups.indexOf group
-
-    @removeGroup = (group) ->
-      index = @groups.indexOf group
-      if index != -1 then @groups.splice @groups.indexOf(group), 1
-
-      undefined
-
-    undefined
-  )
-
   .directive('breadcrumb', () ->
     restrict: 'EA'
-    controller: 'BreadcrumbController'
-    transclude: true
+    scope:
+      states: '='
     replace: true
     templateUrl: 'directives/breadcrumb/breadcrumb.tpl.html'
-  )
+    controller: ($scope, $state, $breadcrumb, $compile) ->
+      updateVisibleState = () ->
+        if $scope.states.length > 0
+          $scope.commands = $scope.states[$scope.states.length - 1].commands
 
-  .directive('breadcrumbGroup', ($parse) ->
-    require: '^breadcrumb'
-    restrict: 'EA'
-    transclude: true
-    replace: true
-    templateUrl: 'directives/breadcrumb/breadcrumb-entry.tpl.html'
-    scope:
-      label: '@'
-      commands: '='
-      index: '='
-      isActive: '='
-      isLast: '='
-    controller: () ->
-      @setLabel = (element) ->
-        @label = element
-      @setCommands = (element) ->
-        @commands = element
-      @setIndex = (element) ->
-        @index = element
-    link: (scope, element, attrs, breadcrumbCtrl) ->
-      breadcrumbCtrl.addGroup scope
-      scope.isOpen = scope.isActive
-      if scope.isActive then angular.element(element).addClass 'active'
+      $scope.commands = []
 
-      index = breadcrumbCtrl.getIndexOfGroup(scope) % 7
-      scope.cssClass = if index > 0 then "bclevel" + index
-      if !scope.isLast and !scope.isActive then angular.element(element).addClass(scope.cssClass)
+      $scope.setOpen = (index) ->
+        $scope.commands = $scope.states[index].commands
 
-      scope.$watch 'isOpen', (value) ->
-        if value
-          angular.element(element).removeClass(scope.cssClass)
-          scope.isHover = !scope.isActive and scope.isOpen
-          breadcrumbCtrl.closeOthers scope
-          breadcrumbCtrl.setCommands scope
-          breadcrumbCtrl.setIndex scope
-        else
-          if !scope.isLast and !scope.isActive then angular.element(element).addClass(scope.cssClass)
-  )
+      getPositionOfStateByName = (name) ->
+        index = 0
+        angular.forEach $scope.states, (s) ->
+          if s.name = name then return index
+          index++
+        return 0
 
-  .directive('breadcrumbCommands', ($breadcrumb) ->
-    restrict: 'E'
-    replace: true
-    templateUrl: 'directives/breadcrumb/breadcrumb-commands.tpl.html'
-    scope:
-      commands: '='
-      index: '='
-    controller: ($scope, $breadcrumb, $state, $stateParams) ->
       $scope.append = (state, params) ->
-        # $breadcrumb.storeVisitedStates $breadcrumb.getStateChain($state.get state)
-        # state = $state.get state
-        $breadcrumb.setIndexOfItemClicked $scope.index + 1
-
-        # $navigationStates = $breadcrumb.getNavigationStates()
-        # if $scope.index + 1 == $navigationStates.length
-        #   $breadcrumb.push state, $stateParams
-        # else
-        #   $breadcrumb.replace $scope.index + 1, state, $stateParams
-
+        $breadcrumb.setIndexOfItemClicked getPositionOfStateByName(state.name) + 1
         $state.go $state.get(state), params
+
+      $scope.$on '$stateChangeSuccess', () ->
+        updateVisibleState()
   )
