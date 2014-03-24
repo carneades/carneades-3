@@ -4,9 +4,14 @@
       %nav.collapse.navbar-collapse{:role => "navigation"}
         .row
           .col-lg-12.breadcrumbs
-            %ul{"ng-transclude" => ""}
+            %ul
+              %li{"ng-class" => "{hover: s.isHover, active: s.isActive, last: s.isLast}", "ng-repeat" => "s in states"}
+                %a.accordion-toggle{:href => "", "ng-click" => "setOpen($index)"}
+                  {{s.label}}
 
-        .row{"style" => "border-bottom: 2px solid #fff;"}
+        .row{"style" => "border-bottom: 2px solid #fff;", "ng-show" => "commands.length > 0"}
           .col-lg-12
             .panel-body
-              %breadcrumb-commands{:commands => "commands", :index => "index"}
+              %ul.nav.nav-pills
+                %li{"ng-repeat" => "cmd in commands"}
+                  %a{"ng-click" => "append(cmd.state, cmd.params)"} {{cmd.label}}
