@@ -14,11 +14,10 @@
   </head>
 
   <body ng-controller="AppCtrl">
-    <header class="navbar-inverse navbar-fixed-top" ng-controller="HeaderCtrl">
-      <breadcrumb states="$navigationStates"></breadcrumb>
-    </header>
-    <div class="header-placeholder" style="margin-top: 7em;"></div>
-    <div id="content" role="main" ui-view></div>
+    <div>
+      <div ui-view></div>
+      <div ui-view="content"></div>
+    </div>
 
       <!--
       <div class="row" ng-include="'notifications.tpl.html'" ng-show="notifications.getCurrent().length"></div>

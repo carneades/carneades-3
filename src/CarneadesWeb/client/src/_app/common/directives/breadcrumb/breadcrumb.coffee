@@ -124,7 +124,6 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
         return render getNavigationStates($state.$current, $stateParams), $state.$current.name
     ]
   )
-
   .directive('breadcrumb', () ->
     restrict: 'EA'
     scope:
@@ -175,10 +174,18 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
     scope:
       state: '='
       bcOpen: '&'
+      index: '='
     templateUrl: 'directives/breadcrumb/breadcrumb-entry.tpl.html'
-    controller: ($scope) ->
+    controller: ($scope, $element) ->
       $scope.openCommandsView = () ->
         $scope.bcOpen()
+        $scope.isHover = true
+    link: (scope, element, attrs) ->
+      index = scope.index % 7
+      scope.cssClass = if index > 0 then "bclevel" + index
+      if scope.state.isActive then angular.element(element).addClass "active"
+      else if scope.state.isLast then angular.element(element).addClass "last"
+      else angular.element(element).addClass scope.cssClass
   )
   .directive('breadcrumbCommands', () ->
     restrict: 'E'
