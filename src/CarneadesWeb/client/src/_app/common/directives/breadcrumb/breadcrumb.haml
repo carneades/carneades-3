@@ -3,7 +3,7 @@
     .col-lg-12
       %nav.collapse.navbar-collapse{:role => "navigation"}
         %breadcrumb-entries
-          %breadcrumb-entry{"ng-repeat" => "s in states", "state" => "s", "bc-open" => "setCommandView($index)"}
+          %breadcrumb-entry{"ng-repeat" => "s in states", "state" => "s", "bc-open" => "setCommandView($index)", "index" => "$index"}
         %breadcrumb-commands{"ng-repeat" => "s in states", "ng-show" => "$index == getActiveCommandView()"}
           %ul.nav.nav-pills
             %breadcrumb-command{"ng-repeat" => "c in s.commands", "command" => "c", "bc-change" => "changeState(s.name, $index)"}
