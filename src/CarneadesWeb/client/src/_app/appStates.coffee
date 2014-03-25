@@ -11,7 +11,11 @@ define ["angular"], (angular) ->
       name: "home"
       label: "Carneades"
       url: "/"
-      template: "<h1>Hello World!</h1>"
+      views:
+        "@":
+          template: "<bc-navigation></bc-navigation>"
+        "content@":
+          template: "<h1>Home</h1>"
       commands: [
         label: "Home"
         state: "home"
@@ -38,27 +42,47 @@ define ["angular"], (angular) ->
       name: "home.about"
       label: "About"
       url: "about"
-      template: "<h1>About2</h1>"
+      views:
+        "@":
+          template: "<bc-navigation></bc-navigation>"
+        "content@":
+          template: "<h1>About</h1>"
     ,
       name: "home.privacy"
       label: "Privacy"
       url: "privacy"
-      template: "<h1>Privacy</h1>"
+      views:
+        "@":
+          template: "<bc-navigation></bc-navigation>"
+        "content@":
+          template: "<h1>Privacy</h1>"
     ,
       name: "home.help"
       label: "Help"
       url: "help"
-      template: "<h1>Help</h1>"
+      views:
+        "@":
+          template: "<bc-navigation></bc-navigation>"
+        "content@":
+          template: "<h1>Help</h1>"
     ,
       name: "home.admin"
       label: "Admin"
       url: "admin"
-      template: "<h1>Admin</h1>"
+      views:
+        "@":
+          template: "<bc-navigation></bc-navigation>"
+        "content@":
+          template: "<h1>Admin</h1>"
     ,
       name: "home.signin"
       label: "Sign in"
       url: "signin"
-      template: "<h1>Sign in</h1>"
+      views:
+        "@":
+          template: "<bc-navigation></bc-navigation>"
+        "content@":
+          template: "<h1>Sign in</h1>"
     ]
 
     angular.forEach states, (state) ->
