@@ -15,10 +15,7 @@
 
   <body ng-controller="AppCtrl">
     <header class="navbar-inverse navbar-fixed-top" ng-controller="HeaderCtrl">
-      <breadcrumb states="$navigationStates">
-
-        <breadcrumb-group label="{{v.label}}" index="$index" commands="v.commands" ng-repeat="v in $navigationStates" is-active="v.isActive" is-last="v.isLast"></breadcrumb-group>
-      </breadcrumb>
+      <breadcrumb states="$navigationStates"></breadcrumb>
     </header>
     <div class="header-placeholder" style="margin-top: 7em;"></div>
     <div id="content" role="main" ui-view></div>
