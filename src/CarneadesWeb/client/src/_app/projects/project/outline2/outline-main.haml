@@ -1,0 +1,29 @@
+.container.project
+  .row
+    .col-md-9{:role => "main"}
+      .section{:id => "overview"}
+        .page-header
+          %h1 {{project.title}}
+        %markdown{:strip => "true", "ng-model" => "project.description"}
+
+      .section{:id => "issues", "ui-view" => "issues"}
+
+      .section{:id => "outline", "ui-view" => "outline"}
+
+      .section{:id => "references", "ui-view" => "references"}
+
+    .col-md-3
+      .bs-sidebar.hidden-print.affix{:role => "complementary"}
+        %ul.nav.bs-sidenav
+          %li
+            %a{"ng-click" => "gotoSection(\'overview\')"}
+              Overview
+          %li
+            %a{"ng-click" => "gotoSection(\'issues\')"}
+              Issues
+          %li
+            %a{"ng-click" => "gotoSection(\'outline\')"}
+              Outline
+          %li
+            %a{"ng-click" => "gotoSection(\'references\')"}
+              References

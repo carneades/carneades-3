@@ -14,9 +14,9 @@ define ["angular", "angular-resource"], (angular) ->
       mid: "@mid"
 
   services.factory "MultiMetadataLoader", (Metadata, $q) ->
-    ->
+    (params) ->
       delay = $q.defer()
-      Metadata.query ((metadata) ->
+      Metadata.query params, ((metadata) ->
         delay.resolve metadata
       ), ->
         delay.reject "Unable to fetch arguments"
