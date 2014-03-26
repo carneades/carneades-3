@@ -11,7 +11,6 @@ define ["angular", "angular-resource"], (angular) ->
     $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid",
       pid: "@pid"
 
-
   services.factory "MultiProjectLoader", (Project, $q) ->
     ->
       delay = $q.defer()

@@ -19,6 +19,8 @@ define ['angular', './theoryControllers'], (angular) ->
       ]
       views: {
         "@":
+          template: "<bc-navigation></bc-navigation>"
+        "content@":
           controller: 'TheoryCtrl'
           templateUrl: 'project/theory/theory.tpl.html'
           resolve:
