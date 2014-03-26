@@ -8,6 +8,8 @@
   (:require [clojure.pprint :refer [pprint]]
             [carneades.engine.argument-graph :as ag]
             [carneades.engine.theory :as t]
+            [clojure.zip :as z]
+            [carneades.engine.theory.zip :as tz]
             [carneades.engine.theory.namespace :as n]
             [carneades.engine.statement :as st]
             [carneades.engine.translation :as tr]))
@@ -60,3 +62,37 @@
     (let [atom (or (:virtual-atom context) (st/literal-atom (:literal context)))
           short-atom (n/to-relative-atom atom namespaces)]
       (assoc context :virtual-atom short-atom))))
+
+(defn add-premise-translation
+  [translator lang premise]
+  (assoc premise :translation (:translation (translator {:literal (:statement premise)
+                                                         :lang lang}))))
+
+(defn translate-premises
+  [premises translator lang]
+  (into [] (map (partial add-premise-translation translator lang) premises)))
+
+(defn translate-scheme
+  [scheme translator lang]
+  (assoc scheme
+    :conclusion-translation (:translation (translator {:literal (:conclusion scheme)
+                                                       :lang lang}))
+    :premises (translate-premises (:premises scheme) translator lang)
+    :assumptions (translate-premises (:premises scheme) translator lang)
+    :exceptions (translate-premises (:premises scheme) translator lang)))
+
+(defn translate-schemes
+  [section translator lang]
+  (assoc section
+    :schemes
+    (into [] (map #(translate-scheme % translator lang) (:schemes section)))))
+
+(defn translate-theory
+  "Translates a theory using a translator."
+  [theory translator lang]
+  ;; TODO factories with to-absolute-theory
+  (loop [loc (tz/theory-zip theory)]
+    (if (z/end? loc)
+      (z/root loc)
+      (let [loc (z/edit loc translate-schemes translator lang)]
+        (recur (z/next loc))))))
