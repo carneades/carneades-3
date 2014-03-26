@@ -14,6 +14,7 @@
             [carneades.maps.lacij :as lacij]
             [carneades.database.db :as db]
             [carneades.database.export :refer [export-to-argument-graph]]
+            [carneades.engine.theory :as t]
             [carneades.engine.theory.zip :as tz]
             [carneades.project.admin :as project]
             [carneades.engine.translation :as tr]
@@ -264,48 +265,6 @@
                    {:name "file"
                     :content (clojure.java.io/file (.getPath (:tempfile file)))}]}))
 
-;; TODO: move to engine/theory.translation
-(defn add-premise-translation
-  [translator lang premise]
-  (assoc premise :translation (:translation (translator {:literal (:statement premise)
-                                                        :lang lang}))))
-
-(defn translate-premises
-  [premises translator lang]
-  (into [] (map (partial add-premise-translation translator lang) premises)))
-
-(defn translate-scheme
-  "Converts the scheme to an absolute scheme."
-  [scheme translator lang]
-  (assoc scheme
-    :conclusion-translation (:translation (translator {:literal (:conclusion scheme)
-                                               :lang lang}))
-    :premises (translate-premises (:premises scheme) translator lang)
-    :assumptions (translate-premises (:premises scheme) translator lang)
-    :exceptions (translate-premises (:premises scheme) translator lang)))
-
-(defn translate-schemes
-  [section translator lang]
-  (assoc section
-    :schemes
-    (into [] (map #(translate-scheme % translator lang) (:schemes section)))))
-
-(defn translate-theory
-  [theory translator lang]
-  ;; TODO factories with to-absolute-theory
-  (loop [loc (tz/theory-zip theory)]
-    (if (z/end? loc)
-      (z/root loc)
-      (let [loc (z/edit loc translate-schemes translator lang)]
-        (recur (z/next loc))))))
-
-;; TODO: move to theory.clj
-(defn find-scheme
-  [theory scheme]
-  (let [locs (take-while (complement z/end?)
-                         (iterate z/next (tz/theory-zip theory)))]
-    (first (filter #(= scheme (:id %)) (mapcat (comp :schemes z/node) locs)))))
-
 (defn get-theory
   [{:keys [pid tid scheme lang translate]}]
   (let [theory (assoc (project/load-theory pid tid) :id tid)
@@ -314,15 +273,15 @@
                           (ttr/make-language-translator (:language theory)))
         do-translation (or (= translate "t") (= translate "true"))]
     (cond (and do-translation scheme)
-          (-> (find-scheme theory (symbol scheme))
-              (translate-scheme translator lang))
+          (-> (t/find-scheme theory (symbol scheme))
+              (ttr/translate-scheme translator lang))
 
           scheme
-          (find-scheme theory (symbol scheme))
+          (t/find-scheme theory (symbol scheme))
 
           do-translation
           (-> theory
-              (translate-theory translator lang)
+              (ttr/translate-theory translator lang)
               (dissoc :language))
 
           :else
