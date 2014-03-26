@@ -12,7 +12,9 @@ define ['angular', '../../common/resources/projects'], (angular) ->
       label: "Pid"
       views:
         "@":
-          templateUrl: "project/outline/outline.tpl.html"
+          template: "<bc-navigation></bc-navigation>"
+        "content@":
+          template: "<h1>Project details</h1>"
           controller: ($scope, project) ->
             $scope.project = project
           resolve:
