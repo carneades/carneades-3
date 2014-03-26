@@ -18,6 +18,7 @@
             [ring.middleware.file :refer [wrap-file]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
+            [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [com.postspectacular.rotor :as rotor]))
 
 (defroutes app-routes
@@ -68,16 +69,16 @@
 
 (def app (-> (apply routes all-routes)
              (session/wrap-stateful-session)
+             (wrap-keyword-params)
              (wrap-params)
-             (middleware/wrap-request-map)
              (wrap-multipart-params)
              (wrap-file "../client/dist")))
 
 
 (def tomcat-app (-> (apply routes tomcat-all-routes)
                     (session/wrap-stateful-session)
+                    (wrap-keyword-params)
                     (wrap-params)
-                    (middleware/wrap-request-map)
                     (wrap-multipart-params)))
 
 ;(def app-handler (middleware/app-handler app))
