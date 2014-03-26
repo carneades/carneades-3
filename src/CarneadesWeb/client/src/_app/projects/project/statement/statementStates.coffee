@@ -10,8 +10,14 @@ define ['angular', './statementControllers', '../../../common/resources/statemen
       name: 'home.projects.project.statement'
       label: 'Statement'
       url: '/:db/statements/:sid'
+      commands: [
+        label: "Outline"
+        state: "home.projects.project.outline"
+      ]
       views: {
-        '@': {
+        "@":
+          template: "<bc-navigation></bc-navigation>"
+        'content@': {
           templateUrl: 'project/statement/view.tpl.html'
           controller: 'StatementCtrl'
           resolve: {

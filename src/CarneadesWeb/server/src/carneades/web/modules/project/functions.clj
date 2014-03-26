@@ -146,9 +146,7 @@
        (#(if-not (nil? id) (get-sub-outline % id) %))))
 
 (defn get-metadata
-  [[project db id :as params]
-   & {:keys [k lang host] :or {lang :en k nil host "localhost:3000"}}]
-
+  [[project db id :as params] & {:keys [k lang host]}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (info (str "METADATA-KEY:" k))
@@ -156,6 +154,20 @@
        (#(if (nil? k)
            %
            (filter (fn [x] (= (:key x) k)) %)))))
+
+(defn get-metadatum
+  [[project db id :as params] & {:keys [k lang host]}]
+  {:pre [(not (nil? project))
+         (not (nil? db))]}
+  (info (str "METADATA-KEY:" k))
+  (->> (get-resource host :metadata params)
+       (#(if (nil? k)
+           %
+           (filter (fn [x] (= (:key x) k)) %)))
+        (#(if (contains? % :description)
+           (set-lang-description lang :description %)
+           %))))
+
 
 (defn filter-by [m k ref]
   (if-not (nil? (k ref)) (assoc m k (k ref)) m))
@@ -236,6 +248,17 @@
         (assoc :outline outline)
         (assoc :references (map (partial key-filter [:creator :date :identifier :title])
                                 (filter filter-refs refs))))))
+
+(defn get-issues
+  [[project db :as params] & {:keys [lang host]}]
+  (let [outline (get-outline [project db] :host host :lang lang)]
+    (make-issues outline)))
+
+(defn get-references
+  [[project db :as params] & {:keys [lang host]}]
+  (let [references (get-metadata [project db] :host host :lang lang)]
+    (map (partial key-filter [:creator :date :identifier :title])
+         (filter filter-refs references))))
 
 (defn get-argument-map [project db & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
   (let [options {:db db :lang lang}

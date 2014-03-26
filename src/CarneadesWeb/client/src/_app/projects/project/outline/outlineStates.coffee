@@ -19,20 +19,22 @@ define ['angular', '../../../common/resources/projects', '../../../common/resour
           state: "home.projects.project.theory"
         ]
         views: {
-          "@": {
+          "@":
+            template: "<bc-navigation></bc-navigation>"
+          "content@": {
             templateUrl: 'project/outline/outline.tpl.html',
             controller: 'OutlineCtrl',
             resolve: {
               project: ($stateParams, ProjectLoader) ->
-                new ProjectLoader($stateParams)
+                return new ProjectLoader($stateParams)
               ,
               node: ($stateParams, NodeLoader) ->
                 $stateParams.nid = 1;
-                new NodeLoader($stateParams)
+                return new NodeLoader($stateParams)
               ,
               metadata: ($stateParams, MetadataLoader) ->
-                  $stateParams.mid = 1;
-                  new MetadataLoader($stateParams)
+                $stateParams.mid = 1;
+                return new MetadataLoader($stateParams)
             }
           }
         }

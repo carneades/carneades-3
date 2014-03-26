@@ -10,7 +10,9 @@ define ['angular', './argumentControllers', '../../../common/resources/arguments
       label: "Argument"
       url: "/:db/arguments/:aid"
       views: {
-        "@": {
+        "@":
+          template: "<bc-navigation></bc-navigation>"
+        "content@": {
           templateUrl: "project/argument/view.tpl.html"
           controller: "ArgumentCtrl"
           resolve: {
@@ -24,7 +26,9 @@ define ['angular', './argumentControllers', '../../../common/resources/arguments
         name: "home.projects.project.argument.edit"
         url: "/edit"
         views: {
-          "@": {
+          "@":
+            template: "<bc-navigation></bc-navigation>"
+          "content@": {
             templateUrl: "project/argument/edit.tpl.html"
             controller: "ArgumentEditCtrl"
           }

@@ -19,6 +19,8 @@
       ]
       views:
         "@":
+          template: "<bc-navigation></bc-navigation>"
+        "content@":
           templateUrl: "project/map/map.tpl.html"
           controller: "MapCtrl"
           resolve:
