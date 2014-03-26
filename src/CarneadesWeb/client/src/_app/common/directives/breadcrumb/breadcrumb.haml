@@ -2,16 +2,8 @@
   .row
     .col-lg-12
       %nav.collapse.navbar-collapse{:role => "navigation"}
-        .row
-          .col-lg-12.breadcrumbs
-            %ul
-              %li{"ng-class" => "{hover: s.isHover, active: s.isActive, last: s.isLast}", "ng-repeat" => "s in states"}
-                %a.accordion-toggle{:href => "", "ng-click" => "setOpen($index)"}
-                  {{s.label}}
-
-        .row{"style" => "border-bottom: 2px solid #fff;", "ng-show" => "commands.length > 0"}
-          .col-lg-12
-            .panel-body
-              %ul.nav.nav-pills
-                %li{"ng-repeat" => "cmd in commands"}
-                  %a{"ng-click" => "append(cmd.state, cmd.params)"} {{cmd.label}}
+        %breadcrumb-entries
+          %breadcrumb-entry{"ng-repeat" => "s in states", "state" => "s", "bc-open" => "setCommandView($index)", "index" => "$index"}
+        %breadcrumb-commands{"ng-repeat" => "s in states", "ng-show" => "$index == getActiveCommandView()"}
+          %ul.nav.nav-pills
+            %breadcrumb-command{"ng-repeat" => "c in s.commands", "command" => "c", "bc-change" => "changeState(s.name, $index)"}

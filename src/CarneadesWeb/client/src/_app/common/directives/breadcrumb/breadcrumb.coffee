@@ -41,12 +41,12 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
 
     ##########################################################
 
-    render = (states, scope) ->
+    render = (states, nameOfCurrentState) ->
       index = 0
       bIsActiveFound = false
       angular.forEach states, (s) ->
         index++
-        bIsActive = (scope.$state.$current.name == s.name)
+        bIsActive = (nameOfCurrentState == s.name)
         s.isActive = bIsActive
         s.isLast = (index == states.length)
         s.isDepreciated = bIsActiveFound
@@ -120,38 +120,88 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       setIndexOfItemClicked: (value) ->
         setIndexOfItemClicked value
 
-      getNavigationStates: (scope) ->
-        return render getNavigationStates(scope.$state.$current, scope.$stateParams), scope
+      getNavigationStates: ($state, $stateParams) ->
+        return render getNavigationStates($state.$current, $stateParams), $state.$current.name
     ]
   )
-
   .directive('breadcrumb', () ->
     restrict: 'EA'
     scope:
       states: '='
     replace: true
     templateUrl: 'directives/breadcrumb/breadcrumb.tpl.html'
-    controller: ($scope, $state, $breadcrumb, $compile) ->
-      updateVisibleState = () ->
-        if $scope.states.length > 0
-          $scope.commands = $scope.states[$scope.states.length - 1].commands
-
-      $scope.commands = []
-
-      $scope.setOpen = (index) ->
-        $scope.commands = $scope.states[index].commands
-
-      getPositionOfStateByName = (name) ->
+    controller: ($scope, $state, $stateParams, $breadcrumb) ->
+      getIndexOfActiveState = () ->
         index = 0
+        idx = 0
         angular.forEach $scope.states, (s) ->
-          if s.name = name then return index
-          index++
-        return 0
+          if s.isActive then index = idx
+          idx++
+        return index
 
-      $scope.append = (state, params) ->
-        $breadcrumb.setIndexOfItemClicked getPositionOfStateByName(state.name) + 1
-        $state.go $state.get(state), params
+      _index = getIndexOfActiveState()
 
-      $scope.$on '$stateChangeSuccess', () ->
-        updateVisibleState()
+      getIndexByName = (states, name) ->
+        index = 0
+        idx = 0
+        angular.forEach states, (s) ->
+          if name == s.name then index = idx
+          idx++
+        return index
+
+      $scope.changeState = (name, cIndex) ->
+        if name
+          index = getIndexByName $scope.states, name
+          $breadcrumb.setIndexOfItemClicked index + 1
+          $state.go $scope.states[index].commands[cIndex].state, $stateParams
+          _index = index + 1
+
+      $scope.setCommandView = (index) ->
+        _index = index
+
+      $scope.getActiveCommandView = () ->
+        return _index
+  )
+  .directive('breadcrumbEntries', () ->
+    restrict: 'E'
+    replace: true
+    transclude: true
+    templateUrl: 'directives/breadcrumb/breadcrumb-entries.tpl.html'
+  )
+  .directive('breadcrumbEntry', () ->
+    restrict: 'E'
+    replace: true
+    scope:
+      state: '='
+      bcOpen: '&'
+      index: '='
+    templateUrl: 'directives/breadcrumb/breadcrumb-entry.tpl.html'
+    controller: ($scope, $element) ->
+      $scope.openCommandsView = () ->
+        $scope.bcOpen()
+        $scope.isHover = true
+    link: (scope, element, attrs) ->
+      index = scope.index % 7
+      scope.cssClass = if index > 0 then "bclevel" + index
+      if scope.state.isActive then angular.element(element).addClass "active"
+      else if scope.state.isLast then angular.element(element).addClass "last"
+      else angular.element(element).addClass scope.cssClass
+  )
+  .directive('breadcrumbCommands', () ->
+    restrict: 'E'
+    replace: true
+    transclude: true
+    templateUrl: 'directives/breadcrumb/breadcrumb-commands.tpl.html'
+  )
+  .directive('breadcrumbCommand', () ->
+    restrict: 'E'
+    replace: true
+    scope:
+      command: '='
+      index: '='
+      bcChange: '&'
+    templateUrl: 'directives/breadcrumb/breadcrumb-command.tpl.html'
+    controller: ($scope, $element, $attrs, $breadcrumb) ->
+      $scope.setState = () ->
+        $scope.bcChange()
   )

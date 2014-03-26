@@ -13,6 +13,8 @@ define ['angular', '../common/resources/projects'], (angular) ->
       url: 'projects'
       views:
         "@":
+          template: "<bc-navigation></bc-navigation>"
+        "content@":
           templateUrl: 'list.tpl.html'
           controller: ($scope, $location, projects) ->
             $scope.projects = projects

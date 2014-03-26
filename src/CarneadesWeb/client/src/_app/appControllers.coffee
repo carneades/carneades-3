@@ -5,7 +5,13 @@
 
 define ['angular', 'common/services/i18nNotifications', 'common/services/httpRequestTracker'], (angular) ->
   "use strict"
-  angular.module('app.controllers', ['services.i18nNotifications', 'services.httpRequestTracker']).controller('AppCtrl', ($scope, $location, i18nNotifications) ->
+  angular.module('app.controllers', ['services.i18nNotifications', 'services.httpRequestTracker'])
+  .directive('bcNavigation', () ->
+    restrict: 'E'
+    replace: 'true'
+    template: '<div><header class="navbar-inverse navbar-fixed-top" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates"></breadcrumb></header><div class="header-placeholder" style="margin-top: 7em;"></div></div>'
+  )
+  .controller('AppCtrl', ($scope, $location, i18nNotifications) ->
     $scope.notifications = i18nNotifications
     $scope.removeNotification = (notification) ->
       i18nNotifications.remove(notification)
@@ -72,11 +78,9 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
       httpRequestTracker.hasPendingRequests()
 
     setNavigationState = () ->
-      $scope.$navigationStates = $breadcrumb.getNavigationStates($scope)
+      $scope.$navigationStates = $breadcrumb.getNavigationStates $scope.$state, $scope.$stateParams
 
     $scope.$on '$stateChangeSuccess', ->
       setNavigationState()
-
-    setNavigationState()
 
     undefined
