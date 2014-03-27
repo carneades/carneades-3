@@ -1,15 +1,11 @@
 ======================
-CarneadesWeb: Angularjs + RequireJs + Bootstrap 3
+CarneadesWeb
 ======================
 
 # Requirements
 
 - Ruby >=1.9 (2.x recommended)
-- npm
-
-```
-apt-get install ruby1.9.3 npm
-```
+- npm (http://nodejs.org/)
 
 # Installation
 
@@ -19,7 +15,8 @@ As root:
 npm install -g grunt-cli
 npm install -g coffee-script
 npm install -g bower
-gem update --system && gem install compass
+gem update --system
+gem install compass
 gem install haml
 ```
 
@@ -36,3 +33,7 @@ npm install
 bower install
 grunt build
 ```
+
+# Notes
+
+The front-end is using Angularjs, RequireJs and Bootstrap 3.
