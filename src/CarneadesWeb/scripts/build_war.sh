@@ -16,6 +16,14 @@ prepare_local_deps () {
     lein install
 }
 
+build_webclient () {
+    cd $SCRIPTPATH/../client
+    grunt build
+    npm install
+    bower install
+    cd -
+}
+
 show_usage () {
     echo "`basename $0` [--deploy PATH]"
     exit 0
@@ -25,9 +33,7 @@ show_usage () {
 
 
 prepare_local_deps
-
-cd $SCRIPTPATH/../client
-grunt build
+build_webclient
 
 cd $SCRIPTPATH/../server
 lein with-profiles war ring uberwar $WAR_NAME.war
