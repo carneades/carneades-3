@@ -26,6 +26,9 @@ show_usage () {
 
 prepare_local_deps
 
+cd $SCRIPTPATH/../client
+grunt build
+
 cd $SCRIPTPATH/../server
 lein with-profiles war ring uberwar $WAR_NAME.war
 
