@@ -129,9 +129,7 @@
 ;; Definition of service calls
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn get-projects
-  [& {:keys [id lang host]
-      :or {lang :en host "localhost:3000"}}]
-
+  [& {:keys [id lang host]}]
   (->> (if (nil? id) [] [id])
        (#(get-resource host :project %))
        (#(if-not (seq? %) (list %) %))
