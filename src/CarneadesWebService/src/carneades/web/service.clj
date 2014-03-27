@@ -236,8 +236,7 @@
   (GET "/metadata/:project/:db/:id" [project db id]
        (let [db2 (db/make-connection project db "guest" "")]
          (db/with-db db2 {:body
-                          (unzip-metadata
-                           (ag-db/read-metadata id))})))
+                          (ag-db/read-metadata id)})))
 
   (POST "/metadata/:project/:db" request
         (let [db (:db (:params request))
@@ -246,20 +245,16 @@
               dbconn (db/make-connection db username password)]
           (db/with-db dbconn {:body
                               {:id (ag-db/create-metadata
-                                    (zip-metadata
-                                     (map->metadata m)))}})))
+                                    (map->metadata m))}})))
 
   (PUT "/metadata/:project/:db/:id" request
        (let [m (json/read-json (slurp (:body request)))
-             m (zip-metadata m)
              [username password] (get-username-and-password request)
              db (db/make-connection (:db (:params request)) username password)
              id (Integer/parseInt (:id (:params request)))]
          (db/with-db db {:body (do
                                  (ag-db/update-metadata id m)
-                                 (let [data (ag-db/read-metadata id)
-                                       x (unzip-metadata data)]
-                                   x))})))
+                                 (ag-db/read-metadata id))})))
 
   (DELETE"/metadata/:project/:db/:id" request
           (let [[username password] (get-username-and-password request)
@@ -295,8 +290,7 @@
              [username password] (get-username-and-password request)
              {:keys [project db]} (:params request)
              dbconn (db/make-connection project db username password)
-             id (:id m)
-             m (assoc m :header (zip-metadata (:header m)))]
+             id (:id m)]
          (db/with-db dbconn
            {:body (do
                     (ag-db/update-statement id (dissoc m :id))
@@ -578,7 +572,7 @@
            (let [metadata (ag-db/list-metadata)
                  main-issues (map pack-statement (ag-db/main-issues))
                  outline (create-outline main-issues 5)]
-             {:body             {:metadata (map unzip-metadata metadata)
+             {:body             {:metadata metadata
                                  :main-issues main-issues
                                  :outline outline}}))))
 
