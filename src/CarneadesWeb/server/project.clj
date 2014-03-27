@@ -46,10 +46,10 @@
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
                                   [org.clojure/java.classpath "0.2.0"]]}
-             :tomcat {:ring {:handler carneades.web.handler/tomcat-war-handler
-                             :init carneades.web.handler/init
-                             :destroy carneades.web.handler/destroy
-                             :servlet-name "carneades"}}}
+             :war {:ring {:handler carneades.web.handler/tomcat-war-handler
+                          :init carneades.web.handler/init
+                          :destroy carneades.web.handler/destroy
+                          :servlet-name "carneades"}}}
 
   :repl-options {:timeout 120000}
 
