@@ -186,6 +186,9 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       if scope.state.isActive then angular.element(element).addClass "active"
       else if scope.state.isLast then angular.element(element).addClass "last"
       else angular.element(element).addClass scope.cssClass
+
+      if scope.state.commands?.length > 0 then angular.element(element).addClass "bc-underline"
+      #else angular.element(element).addClass "bcMinPanel"
   )
   .directive('breadcrumbCommands', () ->
     restrict: 'E'
