@@ -1,5 +1,5 @@
 %ul
-  %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: node.id})"}
+  %a{"ui-sref" => "home.projects.project.statement({pid: $stateParams.pid, db: $stateParams.db, sid: node.id})"}
     %markdown{"ng-model" => "node.text", strip: "true", extensions: "carneades"}
 
   %li{"ng-repeat" => "node in node.children", "ng-include" => "'project/outline/outline-argument.tpl.html'"}
