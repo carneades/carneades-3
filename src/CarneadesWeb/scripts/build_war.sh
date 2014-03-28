@@ -44,5 +44,5 @@ then
         show_usage
     fi
 
-    mv $SCRIPTPATH/../server/target/$WAR_NAME.war $2
+    cp $SCRIPTPATH/../server/target/$WAR_NAME.war $2
 fi
