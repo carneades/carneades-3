@@ -67,12 +67,12 @@
 
 (def tomcat-all-routes [tomcat-carneades-web-routes tomcat-app-routes])
 
-(def app (-> (apply routes all-routes)
-             (session/wrap-stateful-session)
-             (wrap-keyword-params)
-             (wrap-params)
-             (wrap-multipart-params)
-             (wrap-file "../client/dist")))
+;; (def app (-> (apply routes all-routes)
+;;              (session/wrap-stateful-session)
+;;              (wrap-keyword-params)
+;;              (wrap-params)
+;;              (wrap-multipart-params)
+;;              (wrap-file "../client/dist")))
 
 
 (def tomcat-app (-> (apply routes tomcat-all-routes)
@@ -83,20 +83,20 @@
 
 ;(def app-handler (middleware/app-handler app))
 
-(def war-handler (middleware/war-handler app))
+;; (def war-handler (middleware/war-handler app))
 
 (def tomcat-war-handler (middleware/war-handler tomcat-app))
 
-(defn boot []
-  (init)
-  (serve #'app {:port 3000
-                :open-browser? true
-                :stacktraces? true
-                :auto-reload? true
-                :auto-refresh? nil
-                :join? nil}))
+;; (defn boot []
+;;   (init)
+;;   (serve #'app {:port 3000
+;;                 :open-browser? true
+;;                 :stacktraces? true
+;;                 :auto-reload? true
+;;                 :auto-refresh? nil
+;;                 :join? nil}))
 
-(defn -main [& args]
-  (init)
-  (println "starting http-kit server for neubite on http://localhost:8080/")
-  (run-server #'app {:port 3000}))
+;; (defn -main [& args]
+;;   (init)
+;;   (println "starting http-kit server for neubite on http://localhost:8080/")
+;;   (run-server #'app {:port 3000}))
