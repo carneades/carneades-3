@@ -30,7 +30,8 @@ show_usage () {
 }
 
 ## Main
-
+cd $SCRIPTPATH/../server
+lein clean
 
 prepare_local_deps
 build_webclient
