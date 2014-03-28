@@ -32,11 +32,11 @@ show_usage () {
 ## Main
 
 
-prepare_local_deps
-build_webclient
+# prepare_local_deps
+# build_webclient
 
 cd $SCRIPTPATH/../server
-lein with-profiles war ring uberwar $WAR_NAME.war
+lein with-profile war ring uberwar $WAR_NAME.war
 
 if [[ "$1" == "--deploy" ]]
 then
