@@ -32,8 +32,8 @@ show_usage () {
 ## Main
 
 
-# prepare_local_deps
-# build_webclient
+prepare_local_deps
+build_webclient
 
 cd $SCRIPTPATH/../server
 lein with-profile war ring uberwar $WAR_NAME.war
