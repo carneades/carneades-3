@@ -4,8 +4,16 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-bootstrap", "angular-ui-router", "projects/projectsModule", "lican/licanModule", "appStates", "appControllers", "angular-markdown", "common/directives/breadcrumb/breadcrumb", "templates/app", "templates/common", "angular-translate", "angular-translate-loader-static-files"], (angular) ->
-  angular.module("app", ["ui.bootstrap", "ui.bootsrap.breadcrumb", "ui.router", "app.states", "app.controllers", "templates.app", "templates.common", "projects.module", "lican.module", "angular-markdown", "pascalprecht.translate"])
+define ["angular", "angular-bootstrap", "angular-ui-router",
+"projects/projectsModule", "lican/licanModule", "admin/adminModule",
+"appStates", "appControllers",
+"angular-markdown", "common/directives/breadcrumb/breadcrumb", "templates/app",
+"templates/common", "angular-translate",
+"angular-translate-loader-static-files"], (angular) ->
+  angular.module("app", ["ui.bootstrap", "ui.bootsrap.breadcrumb", "ui.router",
+  "app.states", "app.controllers", "templates.app", "templates.common",
+  "projects.module", "lican.module", "admin.module", "angular-markdown",
+   "pascalprecht.translate"])
   .run(['$rootScope', '$state', '$stateParams', ($rootScope, $state, $stateParams) ->
     $rootScope.$state = $state
     $rootScope.$stateParams = $stateParams
