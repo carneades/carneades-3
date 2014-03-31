@@ -4,7 +4,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 define ['angular', 'angular-resource', './licanControllers', './licanResources'], (angular) ->
-  "use strict"
   angular.module('lican.states', ['ngResource', 'lican.resources'])
   .config ['$stateProvider',  ($stateProvider) ->
     states = [
