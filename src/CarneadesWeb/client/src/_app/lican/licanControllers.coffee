@@ -25,7 +25,6 @@ define ['angular', 'angular-translate',
       $scope.title = $translate.instant 'lican.title', {entity: sEntity.name}
 
       $scope.startAnalysis = () ->
-        console.log('start analysis')
         $state.go('lican.questions')
     ])
 
@@ -51,7 +50,7 @@ define ['angular', 'angular-translate',
     $scope.$watch 'solution', ((solution) ->
       if solution.db?
         console.log 'solution found!'
-        $state.transitionTo 'projects.project.outline', {pid: 'markos', db: solution.db}
+        $state.transitionTo 'home.projects.project.outline', {pid: 'markos', db: solution.db}
       ), true
 
     undefined
