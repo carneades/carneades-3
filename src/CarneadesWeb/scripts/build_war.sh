@@ -37,7 +37,7 @@ prepare_local_deps
 build_webclient
 
 cd $SCRIPTPATH/../server
-lein with-profile war ring uberwar $WAR_NAME.war
+lein with-profile deploy ring uberwar $WAR_NAME.war
 
 if [[ "$1" == "--deploy" ]]
 then
