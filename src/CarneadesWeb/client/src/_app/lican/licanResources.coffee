@@ -45,7 +45,7 @@ define ['angular'], (angular) ->
       analyse: (entity) ->
         console.log 'MultiQuestionLoader', entity
 
-        ($http.get "../api/lican/analyse?entity=#{entity}")
+        ($http.get "../carneades/api/lican/analyse?entity=#{entity}")
           .success (data) =>
             @processData data
           .error (data, status) ->
@@ -69,7 +69,7 @@ define ['angular'], (angular) ->
 
         console.log 'answers', answers
 
-        ($http.post "../api/lican/answers/send",
+        ($http.post "../carneades/api/lican/answers/send",
           {answers: answers, uuid: @transaction_id})
           .success (data) =>
             console.log 'received new questions'

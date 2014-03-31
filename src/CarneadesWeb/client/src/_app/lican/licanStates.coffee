@@ -16,7 +16,7 @@ define ['angular', 'angular-resource', './licanControllers', './licanResources']
         controller: 'IntroCtrl',
         resolve:
           entity: ['$resource', ($resource) ->
-            $resource '../api/lican/entities/markos?uri=:uri']
+            $resource '../carneades/api/lican/entities/markos?uri=:uri']
         },
       {
         name: 'lican.questions'
