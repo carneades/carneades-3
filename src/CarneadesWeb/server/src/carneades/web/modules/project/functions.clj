@@ -194,6 +194,12 @@
   [metadata lang]
   (assoc metadata :description (lang (:description metadata))))
 
+(defn trim-argument
+  "Removes unused information from an argument (from the perspective
+  of a statement)."
+  [argument lang]
+  (select-keys argument [:scheme :premises :id]))
+
 (defn get-argument
   [[project db id :as params]
    & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
@@ -201,17 +207,14 @@
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (-> (get-resource host :argument [project db id])
-      (update-in [:metadata] trim-metadata lang)
+      (update-in [:header] trim-metadata lang)
       (update-in [:conclusion] trim-conclusion lang)
       (update-in [:premises] trim-premises lang)))
 
-(defn aid-to-premises-info
-  "returns information about the premises of a an argument"
+(defn get-trimed-argument
   [project db host lang aid]
-  (let [a (get-argument [project db aid] :lang lang :host host)]
-    (debug "argument-id:" aid)
-    (debug "argument:" a)
-    a))
+  (let [arg (get-argument [project db aid] :host host :lang lang)]
+   (trim-argument arg lang)))
 
 (defn get-statement
   [[project db id :as params]
@@ -220,17 +223,11 @@
          (not (nil? db))]}
   (let [stmt (get-resource host :statement params)
         stmt (assoc stmt :text (lang (:text stmt)))
-        stmt (assoc stmt :pro (map (partial get-premises-info project db host lang) (:pro stmt)))]
-    stmt)
-  ;; (->> (get-resource host :statement params)
-  ;;      ; explanation
-  ;;      (#(-> (select-keys % [:id :atom :main-issue :standard :weight :value])
-  ;;            ;; (filter-by :con %)
-  ;;            ;; (filter-by :pro %)
-  ;;            (assoc :text (lang (:text %)))
-  ;;            (assoc :header (lang (:description (:header %))))))
-  ;;      (#(update-in % [:pro] (fn [id] arg-id->premises [project db id] :lang lang :host host))))
-  )
+        stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
+                                   (:pro stmt)))
+        stmt (assoc stmt :con (map (partial get-trimed-argument project db host lang)
+                                   (:con stmt)))]
+    stmt))
 
 (defn get-nodes [project db id & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
   (let [[info outline refs]
