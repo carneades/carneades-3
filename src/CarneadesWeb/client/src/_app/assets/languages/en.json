@@ -24,6 +24,9 @@
     "projects.main_issues": "main issue",
     "projects.standard": "standard",
     "projects.weight": "weight",
-    "projects.value": "value"
+    "projects.value": "value",
+    "projects.text": "Text",
+    "projects.header": "Header"
+    
 
 }
