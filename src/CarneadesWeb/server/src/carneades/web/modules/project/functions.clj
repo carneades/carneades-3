@@ -203,7 +203,6 @@
 (defn get-argument
   [[project db id :as params]
    & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
-
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (-> (get-resource host :argument [project db id])
@@ -222,6 +221,7 @@
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (let [stmt (get-resource host :statement params)
+        stmt (update-in stmt [:header] trim-metadata lang)
         stmt (assoc stmt :text (lang (:text stmt)))
         stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
                                    (:pro stmt)))
