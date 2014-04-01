@@ -1,23 +1,27 @@
 .container.statement
   .container.node
     .row
-      %h1 Statement
-      .table-responsive
-        %table.table.table-striped
-          %tr.block{"ng-repeat" => "t in table"}
-            %td.jsonObjectKey {{t.key}}
-            %td.jsonObjectValue {{t.value}}
-    .entry.row{"ng-repeat" => "(key, val) in entries"}
-      %h2 {{key}}
-      %div{"ng-switch" => "", on: "getType(val)"}
-        %div{"ng-switch-when" => "String"}
-          %markdown{extensions: "carneades", "ng-model" => "val", strip: "true"}
-        %div{"ng-switch-when" => "Array"}
-          %div{"ng-repeat" => "v in val"}
-            %ol{"ng-repeat" => "(k, vv) in v"}
-              %li
-                %a{"ui-sref" => "home.projects.project.argument({pid: pid, db: db, aid: k})"} Argument
-                %ol
-                  %li{"ng-repeat" => "p in vv"}
-                    %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"}
-                      %markdown{extensions: "carneades", "ng-model" => "p.text", strip: "true"}
+      %h1{translate: "projects.statement"} Statement
+      %properties{keys: "[['id', 'projects.id'],
+                          ['atom', 'projects.atom'],
+                          ['main', 'projects.main_issues'],
+                          ['standard', 'projects.standard'],
+                          ['weight', 'projects.weight'],
+                          ['value', 'projects.value']]", 
+                  model: "statement"}
+    %metadata{}
+     
+    -# .entry.row{"ng-repeat" => "(key, val) in entries"}
+    -#   %h2 {{key}}
+    -#   %div{"ng-switch" => "", on: "getType(val)"}
+    -#     %div{"ng-switch-when" => "String"}
+    -#       %markdown{extensions: "carneades", "ng-model" => "val", strip: "true"}
+    -#     %div{"ng-switch-when" => "Array"}
+    -#       %div{"ng-repeat" => "v in val"}
+    -#         %ol{"ng-repeat" => "(k, vv) in v"}
+    -#           %li
+    -#             %a{"ui-sref" => "home.projects.project.argument({pid: pid, db: db, aid: k})"} Argument
+    -#             %ol
+    -#               %li{"ng-repeat" => "p in vv"}
+    -#                 %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"}
+    -#                   %markdown{extensions: "carneades", "ng-model" => "p.text", strip: "true"}
