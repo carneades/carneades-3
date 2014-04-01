@@ -171,87 +171,57 @@
            (set-lang-description lang :description %)
            %))))
 
-
-(defn filter-by
-  [m k ref]
-  (debug "filter-by " m k ref)
-  (if (nil? (k ref))
-    m
-    (assoc m k (k ref))))
-
-(defn abc [data lang]
+(defn trim-premises
+  "Removes premises information that are not used from a collection of premises."
+  [premises lang]
   (reduce
-   (fn [x y]
-     (conj x {:id (-> y :statement :id)
-              :text (-> y :statement :text lang)}))
+   (fn [acc p]
+     (conj acc {:id (-> p :statement :id)
+                :text (-> p :statement :text lang)
+                :role (:role p)}))
    []
-   (:premises data)))
+   premises))
 
-(defn get-arguments
+(defn trim-conclusion
+  "Removes unused information from the conclusion"
+  [conclusion lang]
+  (-> conclusion
+      (select-keys [:id :positive :text])
+      (assoc :conclusion {:text (-> conclusion :text lang)})))
+
+(defn trim-metadata
+  "Removes unused languages and information from metadata"
+  [metadata lang]
+  (assoc metadata :description (lang (:description metadata))))
+
+(defn get-argument
   [[project db id :as params]
    & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
 
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (->> (get-resource host :argument params)
+  (-> (get-resource host :argument [project db id])
+      (update-in [:metadata] trim-metadata lang)
+      (update-in [:conclusion] trim-conclusion lang)
+      (update-in [:premises] trim-premises lang)))
 
-       (#(-> (select-keys % [:id :scheme :strict :weight :value])
-             (assoc :premises (abc % lang))
-             (assoc :conclusion (str (get-type %)
-                                     " - "
-                                     (lang (:text (:conclusion %)))))))))
+(defn aid-to-premises-info
+  "returns information about the premises of a an argument"
+  [project db host lang aid]
+  (let [a (get-argument [project db aid] :lang lang :host host)]
+    (debug "argument-id:" aid)
+    (debug "argument:" a)
+    a))
 
-(defn get-arguments-dbg
-  [[project db id :as params]
-   & {:keys [host] :or {host "localhost:3000"}}]
-
-  {:pre [(not (nil? project))
-         (not (nil? db))]}
-  (get-resource host :argument params))
-
-(defn arg-id->premises
-  "aids - vector of argument ids each represented as string value
-   p    - project id
-   db   - database id
-
-   Transforms an argument id into a map. The map looks like:
-     {aid premises}, where
-
-   aid is the string representation of the argument id used as key,
-   premises is a vector containing the text field data of the argument retrieved
-            from (get-arguments [p db aid])"
-  [[aids p db :as params]
-   & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
-  
-  (reduce (fn [aggregate id]
-            (if-let [arg (get-arguments [p db id] :lang lang :host host)]
-              (conj aggregate
-                    {(:id arg)
-                     (:premises arg)})))
-          []
-          aids))
-
-;; (defn get-statements
-;;   [[project db id :as params]
-;;    & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
-;;   {:pre [(not (nil? project))
-;;          (not (nil? db))]}
-;;   (let [stmt (get-resource host :statement params)
-;;         stmt (-> stmt
-;;                  (select-keys [:id :atom :main-issue :standard :weight :value])
-;;                  (filter-by :con %)
-;;                  (filter-by :pro %)
-;;                  (assoc :text (lang (:text %)))
-;;                  (assoc :header (lang (:description (:header %)))))
-;;         stmt (update-in % [:pro] (fn [id] arg-id->premises [project db id] :lang lang :host host))]
-;;     stmt))
-
-(defn get-statements
+(defn get-statement
   [[project db id :as params]
    & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (get-resource host :statement params)
+  (let [stmt (get-resource host :statement params)
+        stmt (assoc stmt :text (lang (:text stmt)))
+        stmt (assoc stmt :pro (map (partial get-premises-info project db host lang) (:pro stmt)))]
+    stmt)
   ;; (->> (get-resource host :statement params)
   ;;      ; explanation
   ;;      (#(-> (select-keys % [:id :atom :main-issue :standard :weight :value])

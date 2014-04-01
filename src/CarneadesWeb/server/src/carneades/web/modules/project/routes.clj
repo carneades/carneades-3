@@ -13,9 +13,8 @@
                      get-references
                      get-outline
                      get-issues
-                     get-statements
-                     get-arguments
-                     get-arguments-dbg
+                     get-statement
+                     get-argument
                      get-nodes
                      get-argument-map
                      get-theories
@@ -87,7 +86,7 @@
   :available-charsets["utf-8"]
   :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
-               (get-arguments [pid db] :host host :lang (keyword lang))))
+               (get-argument [pid db] :host host :lang (keyword lang))))
 
 (defresource edit-argument-resource [pid db]
   :available-media-types ["application/json"]
@@ -95,7 +94,7 @@
   :available-charsets["utf-8"]
   :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
-               (get-arguments [pid db] :host host :lang (keyword lang))))
+               (get-argument [pid db] :host host :lang (keyword lang))))
 
 (defresource entry-argument-resource [pid db id]
   :available-media-types ["application/json"]
@@ -103,15 +102,7 @@
   :available-charsets["utf-8"]
   :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
-               (get-arguments [pid db id] :host host :lang (keyword lang))))
-
-(defresource entry-argument-dbg-resource [pid db id]
-  :available-media-types ["application/json"]
-  :allowed-methods [:get]
-  :available-charsets["utf-8"]
-  :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
-  :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
-               (get-arguments-dbg [pid db id] :host host :lang (keyword lang))))
+               (get-argument [pid db id] :host host :lang (keyword lang))))
 
 (defresource list-node-resource [pid db]
   :available-media-types ["application/json"]
@@ -135,7 +126,7 @@
   :available-charsets["utf-8"]
   :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
-               (get-statements [pid db] :host host :lang (keyword lang))))
+               (get-statement [pid db] :host host :lang (keyword lang))))
 
 (defresource entry-statement-resource [pid db id]
   :available-media-types ["application/json"]
@@ -143,7 +134,7 @@
   :available-charsets["utf-8"]
   :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
-               (get-statements [pid db id] :host host :lang (keyword lang))))
+               (get-statement [pid db id] :host host :lang (keyword lang))))
 
 (defresource entry-project-resource [id]
   :available-media-types ["application/json"]
@@ -223,7 +214,6 @@
                     (context "/arguments" []
                              (ANY "/" [] (list-argument-resource pid db))
                              (ANY "/:aid" [aid] (entry-argument-resource pid db aid))
-                             (ANY "/dbg/:aid" [aid] (entry-argument-dbg-resource pid db aid))
                              (ANY "/edit/:aid" [] (edit-argument-resource)))
 
                     (context "/statements" []
