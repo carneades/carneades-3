@@ -24,6 +24,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn- params->path [params]
   (reduce (fn [x y] (conj x (str "/" y))) [] params))
 
@@ -52,6 +53,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of resources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn get-resource
   "Returns a JSON resource from the old carneades REST api."
   [host resource params]
@@ -77,6 +79,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions for service calls
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn get-node-text [node index]
   (if (contains? node :premises)
     (cond
@@ -128,6 +131,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of service calls
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn get-projects
   [& {:keys [id lang host]}]
   (->> (if (nil? id) [] [id])
@@ -168,9 +172,12 @@
            %))))
 
 
-(defn filter-by [m k ref]
-  (if-not (nil? (k ref)) (assoc m k (k ref)) m))
-
+(defn filter-by
+  [m k ref]
+  (debug "filter-by " m k ref)
+  (if (nil? (k ref))
+    m
+    (assoc m k (k ref))))
 
 (defn abc [data lang]
   (reduce
@@ -180,8 +187,9 @@
    []
    (:premises data)))
 
-(defn get-arguments [[project db id :as params]
-                     & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
+(defn get-arguments
+  [[project db id :as params]
+   & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
 
   {:pre [(not (nil? project))
          (not (nil? db))]}
@@ -193,16 +201,15 @@
                                      " - "
                                      (lang (:text (:conclusion %)))))))))
 
-(defn get-arguments-dbg [[project db id :as params]
-                     & {:keys [host] :or {host "localhost:3000"}}]
+(defn get-arguments-dbg
+  [[project db id :as params]
+   & {:keys [host] :or {host "localhost:3000"}}]
 
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (get-resource host :argument params))
 
 (defn arg-id->premises
-  [[aids p db :as params]
-   & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
   "aids - vector of argument ids each represented as string value
    p    - project id
    db   - database id
@@ -213,6 +220,9 @@
    aid is the string representation of the argument id used as key,
    premises is a vector containing the text field data of the argument retrieved
             from (get-arguments [p db aid])"
+  [[aids p db :as params]
+   & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
+  
   (reduce (fn [aggregate id]
             (if-let [arg (get-arguments [p db id] :lang lang :host host)]
               (conj aggregate
@@ -221,20 +231,36 @@
           []
           aids))
 
+;; (defn get-statements
+;;   [[project db id :as params]
+;;    & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
+;;   {:pre [(not (nil? project))
+;;          (not (nil? db))]}
+;;   (let [stmt (get-resource host :statement params)
+;;         stmt (-> stmt
+;;                  (select-keys [:id :atom :main-issue :standard :weight :value])
+;;                  (filter-by :con %)
+;;                  (filter-by :pro %)
+;;                  (assoc :text (lang (:text %)))
+;;                  (assoc :header (lang (:description (:header %)))))
+;;         stmt (update-in % [:pro] (fn [id] arg-id->premises [project db id] :lang lang :host host))]
+;;     stmt))
+
 (defn get-statements
   [[project db id :as params]
    & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
-  ""
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (->> (get-resource host :statement params)
-       ; explanation
-       (#(-> (select-keys % [:id :atom :main-issue :standard :weight :value])
-             (filter-by :con %)
-             (filter-by :pro %)
-             (assoc :text (lang (:text %)))
-             (assoc :header (lang (:description (:header %))))))
-       (#(update-in % [:pro] (fn [id] arg-id->premises [project db id] :lang lang :host host)))))
+  (get-resource host :statement params)
+  ;; (->> (get-resource host :statement params)
+  ;;      ; explanation
+  ;;      (#(-> (select-keys % [:id :atom :main-issue :standard :weight :value])
+  ;;            ;; (filter-by :con %)
+  ;;            ;; (filter-by :pro %)
+  ;;            (assoc :text (lang (:text %)))
+  ;;            (assoc :header (lang (:description (:header %))))))
+  ;;      (#(update-in % [:pro] (fn [id] arg-id->premises [project db id] :lang lang :host host))))
+  )
 
 (defn get-nodes [project db id & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
   (let [[info outline refs]

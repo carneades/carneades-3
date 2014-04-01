@@ -1,0 +1,4 @@
+%table.table.table-striped
+  %tr.block{"ng-repeat" => "k in keys"}
+    %td.jsonObjectKey{translate: "{{k[1]}}"} {{k[0]}}
+    %td.jsonObjectValue {{model[k[0]]}}
