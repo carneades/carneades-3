@@ -4,8 +4,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 define ['angular', 'angular-translate',
-  '../../../common/directives/properties/properties'], (angular) ->
-  angular.module('statement.controllers', ['directives.properties'])
+    '../../../common/directives/properties/properties',
+    '../../../common/directives/metadata/metadata'], (angular) ->
+  angular.module('statement.controllers', ['directives.properties',
+    'directives.metadata'])
     .controller('StatementCtrl', ($scope, statement) ->
       $scope.statement = statement
       $scope.pid = $scope.$stateParams.pid

@@ -9,7 +9,12 @@
                           ['weight', 'projects.weight'],
                           ['value', 'projects.value']]", 
                   model: "statement"}
-    %metadata{}
+      
+      %h2{translate: "projects.text"} Text
+      {{statement.text}}
+      
+      %h2{translate: "projects.header"} Header
+      %metadata{model: "statement.header"}
      
     -# .entry.row{"ng-repeat" => "(key, val) in entries"}
     -#   %h2 {{key}}
