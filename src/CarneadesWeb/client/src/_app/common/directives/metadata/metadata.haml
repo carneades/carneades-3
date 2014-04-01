@@ -1,3 +1,6 @@
-%div
-  %h3 Metadata-directive!
-  MODEL: {{model}}
+%div{"ng-repeat" => "(k,v) in model"}
+  %div{"ng-show" => "v", "ng-controller" => "MetadataCtrl"}
+    %span.metadataKey{translate: "{{getTranslateKey(k)}}"} {{k}}
+    %br
+    %markdown{extensions: "carneades", "ng-model" => "v"}
+    
