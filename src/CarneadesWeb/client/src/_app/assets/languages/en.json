@@ -26,7 +26,7 @@
     "projects.weight": "weight",
     "projects.value": "value",
     "projects.text": "Text",
-    "projects.header": "Header"
+    "projects.header": "Header",
+    "projects.description": "Description"
     
-
 }
