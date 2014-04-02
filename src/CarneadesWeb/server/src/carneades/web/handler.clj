@@ -96,5 +96,3 @@
              (wrap-file "../client/dist")))
 
 (def war-handler (middleware/war-handler app))
-
-

@@ -5,19 +5,19 @@
 
 define ['angular', 'angular-resource', './adminControllers'], (angular) ->
   angular.module('admin.states', ['ngResource'])
-  .config ['$stateProvider',  ($stateProvider) ->
+  .config ($stateProvider) ->
     states = [
       {
         name: 'admin'
         label: 'Projects administration'
         url: '/admin'
         templateUrl: 'admin.tpl.html'
-        controller: 'AdminCtrl',
+        controller: 'AdminCtrl'
         # resolve:
         #   entity: ['$resource', ($resource) ->
         #     $resource '../carneades/api/admin/entities/markos?uri=:uri']
         # },
-          }
+      }
     ]
 
     angular.forEach states, (state) ->
@@ -25,4 +25,3 @@ define ['angular', 'angular-resource', './adminControllers'], (angular) ->
       undefined
 
     undefined
-  ]
