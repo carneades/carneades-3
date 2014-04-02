@@ -39,6 +39,9 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
     getIndexOfItemClicked = () ->
       return position
 
+    resetIndexOfItemClicked = () ->
+      position = 0
+
     ##########################################################
 
     render = (states, nameOfCurrentState) ->
@@ -66,44 +69,64 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       params: stateParams
       commands: cmdsToNavigation state.commands, stateParams
 
-    buildNavigationStates = (state, stateParams, _navStates) ->
-      navigationStates = []
-      getEvent = (index, length) ->
+    getEvent = () ->
+      getEventType = (index, length) ->
         if (index == 0 and length == 0) then return 'BC_INIT'
         if (index == 0 and length > 0) then return 'BC_APPEND_ITEM'
         if (index > 0 and index < length) then return 'BC_ITEM_CLICKED'
         if (index > 0 and index == length) then return 'BC_LAST_ITEM_CLICKED'
         return 'EVENT_NOT_REGISTERED'
 
-      idxEntryClicked = getIndexOfItemClicked()
-      iSizeOfBreadcrumb = _navStates.length
-      setIndexOfItemClicked 0
-      switch getEvent idxEntryClicked, iSizeOfBreadcrumb
+      index = getIndexOfItemClicked()
+      length =  _navigationStates.length
+
+      return {
+        name: getEventType index, length
+        index: index
+        length: length
+      }
+
+    update = (states, state) ->
+      index = -1
+      i = -1
+      angular.forEach states, (s) ->
+        i++
+        if s.name == state.name then index = i
+
+      if index == -1
+        states.push state
+      else
+        states[index] = state
+
+    processEvent = (e, state, stateParams) ->
+      states = _navigationStates
+      switch e.name
         when 'BC_INIT'
           angular.forEach state.path, (s) ->
-            navigationStates.push buildState s.self, stateParams
+            update states, buildState s.self, stateParams
         when 'BC_LAST_ITEM_CLICKED'
-          navigationStates = _navStates
-          navigationStates.push buildState state.self, stateParams
+          update states, buildState state.self, stateParams
         when 'BC_APPEND_ITEM'
-          navigationStates = _navStates
-          navigationStates.push buildState state.self, stateParams
+          update states, buildState state.self, stateParams
         when 'BC_ITEM_CLICKED'
-          temp = _navStates
-          navigationStates = temp.slice 0, idxEntryClicked
-          depreciated = temp.slice idxEntryClicked + 1, iSizeOfBreadcrumb
-          #bAppendDepreciated = currentState.self.name == $breadcrumb.getNavigationStates()[entryPositionClicked].name
-          navigationStates.push buildState state.self, stateParams
+          temp = states
+          states = temp.slice 0, e.index
+          depreciated = temp.slice e.index + 1, e.length
+          update states, buildState state.self, stateParams
           angular.forEach depreciated, (s) ->
-            navigationStates.push s
+            update states, s
+      return states
 
+    build = (state, stateParams) ->
+      navigationStates = processEvent getEvent(), state, stateParams
+      resetIndexOfItemClicked()
       return navigationStates
 
     ##########################################################
     ##########################################################
 
     getNavigationStates = (state, stateParams) ->
-      _navigationStates = buildNavigationStates state, stateParams, _navigationStates
+      _navigationStates = build state, stateParams
       return _navigationStates
 
     $get: ['localStorageService', (localStorageService) ->
