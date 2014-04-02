@@ -27,6 +27,9 @@
     "projects.value": "value",
     "projects.text": "Text",
     "projects.header": "Header",
-    "projects.description": "Description"
+    "projects.description": "Description",
+    "projects.pro_arguments": "Pro Arguments",
+    "projects.con_arguments": "Con Arguments",
+    "projects.argument": "Argument"
     
 }
