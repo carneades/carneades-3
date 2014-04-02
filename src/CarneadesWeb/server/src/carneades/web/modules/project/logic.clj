@@ -206,7 +206,7 @@
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (let [arg (get-resource host :argument [project db id])]
-      (-> arg
+    (-> arg
           (update-in [:header] trim-metadata lang)
           (update-in [:conclusion] trim-conclusion lang)
           (update-in [:premises] trim-premises lang))))
@@ -214,6 +214,7 @@
 (defn get-trimed-argument
   [project db host lang aid]
   (let [arg (get-argument [project db aid] :host host :lang lang)]
+    (debug "arg:" arg)
    (trim-argument arg lang)))
 
 (defn get-statement
@@ -222,12 +223,15 @@
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (let [stmt (get-resource host :statement params)
+        _ (debug "stmt:" stmt)
         stmt (update-in stmt [:header] trim-metadata lang)
         stmt (assoc stmt :text (lang (:text stmt)))
         stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
                                    (:pro stmt)))
         stmt (assoc stmt :con (map (partial get-trimed-argument project db host lang)
-                                   (:con stmt)))]
+                                   (:con stmt)))
+        stmt (assoc stmt :premise-of
+                    (map (partial get-trimed-argument project db host lang) (:premise-of stmt)))]
     stmt))
 
 (defn get-nodes [project db id & {:keys [lang host] :or {lang :en host "localhost:3000"}}]

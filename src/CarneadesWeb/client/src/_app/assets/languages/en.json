@@ -30,6 +30,7 @@
     "projects.description": "Description",
     "projects.pro_arguments": "Pro Arguments",
     "projects.con_arguments": "Con Arguments",
-    "projects.argument": "Argument"
+    "projects.argument": "Argument",
+    "projects.premise_of": "Premise of"
     
 }
