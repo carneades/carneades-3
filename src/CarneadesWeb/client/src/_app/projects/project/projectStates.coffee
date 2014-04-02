@@ -9,17 +9,30 @@ define ['angular', '../../common/resources/projects'], (angular) ->
     states = [
       name: "home.projects.project"
       url: "/:pid"
-      label: "Pid"
+      label: "Project"
       views:
         "@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
-          template: "<h1>Project details</h1>"
+          templateUrl: 'project/project.tpl.html'
           controller: ($scope, project) ->
             $scope.project = project
+            $scope.$stateParams.mid = 1
+            $scope.$stateParams.db = 'main'
+            $scope.$stateParams.nid = 1
           resolve:
             project: ($stateParams, ProjectLoader) ->
               new ProjectLoader($stateParams)
+      commands: [
+        label: "Arguments"
+        state: "home.projects.project.outline"
+      ,
+        label: "Guided Tour"
+        state: "home.projects"
+      ,
+        label: "Policies"
+        state: "home.projects"
+      ]
     ]
 
     angular.forEach states, (state) ->
