@@ -34,7 +34,7 @@ define [
             templateUrl: 'project/outline/outline-main.tpl.html'
             controller: ($scope, $location, $anchorScroll, project) ->
               $scope.project = project
-              $scope.project.title = project.title[0]
+              $scope.project.title = project.title
               $scope.gotoSection = (section) ->
                 $location.hash section
                 $anchorScroll()
@@ -43,7 +43,7 @@ define [
                 , 200
             resolve:
               project: ($stateParams, MetadataLoader) ->
-                $stateParams.mid = 1;
+                $stateParams.mid = 1
                 return new MetadataLoader($stateParams)
 
           "issues@home.projects.project.outline":
