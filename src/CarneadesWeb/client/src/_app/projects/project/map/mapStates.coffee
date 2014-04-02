@@ -25,9 +25,14 @@
           controller: "MapCtrl"
           resolve:
             map: ($http, $stateParams, $location) ->
+              p = $location.protocol()
+              h = $location.host()
+              po = $location.port()
+              pid = $stateParams.pid
+              db = $stateParams.db
               $http(
                 method: 'GET'
-                url: $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/#{$stateParams.pid}/#{$stateParams.db}/map"
+                url: "#{p}://#{h}:#{po}/carneades/api/projects/#{pid}/#{db}/map"
               ).then (data) -> data.data
     ]
 
