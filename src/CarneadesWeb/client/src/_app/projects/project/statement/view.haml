@@ -26,9 +26,18 @@
               %li
                 %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
                   
-      %div{"ng-hide" => "statement.con.length == 0" }
+      %div{"ng-hide" => "statement.con.length == 0"}
         %h2{translate: "projects.con_arguments"} Con Arguments
         %ul{"ng-repeat" => "arg in statement.con"}
+          %li
+            %a{"ui-sref" => "home.projects.project.argument({pid: pid, db: db, aid: arg.id})"} {{argumentName(arg, $index)}}
+            %ul{"ng-repeat" => "p in arg.premises"}
+              %li
+                %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
+                  
+      %div{"ng-hide" => "statement['premise-of'].length == 0"}
+        %h2{translate: "projects.premise_of"} Premise of
+        %ul{"ng-repeat" => "arg in statement['premise-of']"}
           %li
             %a{"ui-sref" => "home.projects.project.argument({pid: pid, db: db, aid: arg.id})"} {{argumentName(arg, $index)}}
             %ul{"ng-repeat" => "p in arg.premises"}
