@@ -77,23 +77,16 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
         if (index > 0 and index == length) then return 'BC_LAST_ITEM_CLICKED'
         return 'EVENT_NOT_REGISTERED'
 
-      index = getIndexOfItemClicked()
-      length =  _navigationStates.length
-
       return {
         name: getEventType index, length
-        index: index
-        length: length
+        index: getIndexOfItemClicked()
+        length: _navigationStates.length
       }
 
     update = (states, state) ->
-      index = -1
-      i = -1
-      angular.forEach states, (s) ->
-        i++
-        if s.name == state.name then index = i
-
-      if index == -1
+      index = 0
+      index = ++index while states[index] and states[index].name != state.name
+      if index + 1 > states.length
         states.push state
       else
         states[index] = state
