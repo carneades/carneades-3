@@ -8,8 +8,7 @@ define ['angular', 'angular-translate',
     '../../../common/directives/metadata/metadata'], (angular) ->
   angular.module('statement.controllers', ['directives.properties',
     'directives.metadata', 'pascalprecht.translate'])
-    .controller('StatementCtrl', ['$scope', '$translate', 'statement',
-    ($scope, $translate, statement) ->
+    .controller('StatementCtrl', ($scope, $translate, statement) ->
       $scope.statement = statement
       $scope.pid = $scope.$stateParams.pid
       $scope.db = $scope.$stateParams.db
@@ -23,4 +22,4 @@ define ['angular', 'angular-translate',
           ($translate.instant "projects.argument") + " ##{idx+1}"
 
       undefined
-    ])
+    )
