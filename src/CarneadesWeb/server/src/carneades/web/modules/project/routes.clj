@@ -6,7 +6,7 @@
 (ns carneades.web.modules.project.routes
   ^{:doc "Definition of project routes."}
   (:require [carneades.web.modules.session.logic :refer [session-put-language]]
-            [carneades.web.modules.project.functions
+            [carneades.web.modules.project.logic
              :refer [get-projects
                      get-metadata
                      get-metadatum
