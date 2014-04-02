@@ -3,7 +3,7 @@
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-(ns carneades.web.modules.project.functions
+(ns carneades.web.modules.project.logic
   ^{:doc "Basic functions for serving project requests"}
   (:require [clj-http.client :as client]
             [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]
@@ -205,10 +205,11 @@
    & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (-> (get-resource host :argument [project db id])
-      (update-in [:header] trim-metadata lang)
-      (update-in [:conclusion] trim-conclusion lang)
-      (update-in [:premises] trim-premises lang)))
+  (let [arg (get-resource host :argument [project db id])]
+      (-> arg
+          (update-in [:header] trim-metadata lang)
+          (update-in [:conclusion] trim-conclusion lang)
+          (update-in [:premises] trim-premises lang))))
 
 (defn get-trimed-argument
   [project db host lang aid]
