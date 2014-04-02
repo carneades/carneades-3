@@ -38,16 +38,16 @@ define ["angular"], (angular) ->
           # rect (statement) or circle (argument)
           if nid[0] == 's'
             $scope.$stateParams.sid = nid.substr(2)
-            $scope.$state.transitionTo("projects.project.statement", $scope.$stateParams)
+            $scope.$state.transitionTo("home.projects.project.statement", $scope.$stateParams)
           else
             $scope.$stateParams.aid = nid.substr(2)
-            $scope.$state.transitionTo("projects.project.argument", $scope.$stateParams)
+            $scope.$state.transitionTo("home.projects.project.argument", $scope.$stateParams)
 
         else
           nid = angular.element(element).parent().parent().attr('id')
           if nid
             $scope.$stateParams.sid = nid.substr(2)
-            $scope.$state.transitionTo("projects.project.statement", $scope.$stateParams)
+            $scope.$state.transitionTo("home.projects.project.statement", $scope.$stateParams)
 
       $scope.svg = map
     )
