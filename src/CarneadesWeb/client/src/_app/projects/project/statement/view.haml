@@ -12,21 +12,25 @@
       
       %h2{translate: "projects.text"} Text
       {{statement.text}}
-      
-      %h2{translate: "projects.header"} Header
-      %metadata{model: "statement.header"}
      
-    -# .entry.row{"ng-repeat" => "(key, val) in entries"}
-    -#   %h2 {{key}}
-    -#   %div{"ng-switch" => "", on: "getType(val)"}
-    -#     %div{"ng-switch-when" => "String"}
-    -#       %markdown{extensions: "carneades", "ng-model" => "val", strip: "true"}
-    -#     %div{"ng-switch-when" => "Array"}
-    -#       %div{"ng-repeat" => "v in val"}
-    -#         %ol{"ng-repeat" => "(k, vv) in v"}
-    -#           %li
-    -#             %a{"ui-sref" => "home.projects.project.argument({pid: pid, db: db, aid: k})"} Argument
-    -#             %ol
-    -#               %li{"ng-repeat" => "p in vv"}
-    -#                 %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"}
-    -#                   %markdown{extensions: "carneades", "ng-model" => "p.text", strip: "true"}
+      %div{"ng-hide" => "headerIsEmpty"}
+        %h2{translate: "projects.header"} Header
+        %metadata{model: "statement.header"}
+        
+      %div{"ng-hide" => "statement.pro.length == 0" }
+        %h2{translate: "projects.pro_arguments"} Pro Arguments
+        %ul{"ng-repeat" => "arg in statement.pro"}
+          %li
+            %a{"ui-sref" => "home.projects.project.argument({pid: pid, db: db, aid: arg.id})"} {{argumentName(arg, $index)}}
+            %ul{"ng-repeat" => "p in arg.premises"}
+              %li
+                %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
+                  
+      %div{"ng-hide" => "statement.con.length == 0" }
+        %h2{translate: "projects.con_arguments"} Con Arguments
+        %ul{"ng-repeat" => "arg in statement.con"}
+          %li
+            %a{"ui-sref" => "home.projects.project.argument({pid: pid, db: db, aid: arg.id})"} {{argumentName(arg, $index)}}
+            %ul{"ng-repeat" => "p in arg.premises"}
+              %li
+                %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
