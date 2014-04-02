@@ -1,6 +1,5 @@
 %div{"ng-repeat" => "(k,v) in model"}
   %div{"ng-show" => "v", "ng-controller" => "MetadataCtrl"}
-    %span.metadataKey{translate: "{{getTranslateKey(k)}}"} {{k}}
-    %br
+    .metadataKey{translate: "{{getTranslateKey(k)}}"} {{k}}
     %markdown{extensions: "carneades", "ng-model" => "v"}
     
