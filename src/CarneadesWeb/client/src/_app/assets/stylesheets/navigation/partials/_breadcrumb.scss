@@ -11,6 +11,10 @@ $default-border-radius: 4px;
 }
 
 .breadcrumbs {
+    border: {
+        bottom: 1px solid #428bca;
+    }
+    
     @include clearfix;
   
     > ul {
@@ -37,6 +41,7 @@ $default-border-radius: 4px;
                 line-height: $height;
                 padding: 0 1em 0 1.5em;
                 background: $navbar-inverse-bg;
+                text-decoration: none;
 
                 @include make-breadcrumb-link-after(); 
             }
@@ -69,23 +74,6 @@ $default-border-radius: 4px;
     } 
 }
 
-.panel-body {
-    border: {
-        top: 1px solid #428bca;
-    }
-}
-
-
 #content {
   background: #ffffff;
-}
-
-.bc-default-a {
-    a {
-        text-decoration: none;
-    }
-}
-
-.bc-min-panel {
-    pading: 1px;
 }
