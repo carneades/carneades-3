@@ -27,10 +27,36 @@
     "projects.value": "value",
     "projects.text": "Text",
     "projects.header": "Header",
+
     "projects.description": "Description",
+    "projects.contributor": "Contribuator",
+    "projects.creation": "Creator",
+    "projects.date": "Date",
+    "projects.format": "Format",
+    "projects.identifier": "Identifier",
+    "projects.language": "Language",
+    "projects.publisher": "Publisher",
+    "projects.relation": "Relation",
+    "projects.rights": "Rights",
+    "projects.source": "Source",
+    "projects.subject": "Subject",
+    "projects.title": "Title",
+    "projects.type": "Type",
+    
     "projects.pro_arguments": "Pro Arguments",
     "projects.con_arguments": "Con Arguments",
     "projects.argument": "Argument",
-    "projects.premise_of": "Premise of"
+    "projects.premise_of": "Premise of",
+    "projects.scheme": "scheme",
+    "projects.strict": "strict",
+    "projects.weight": "weight",
+    "projects.conclusion": "Conclusion",
+    "projects.premises": "Premises",
+    "projects.premises_text": "If the following are true:",
+    "projects.strict_pro_conclusion:": "It is definitely true that:",
+    "projects.nonstrict_pro_conclusion": "Presumably it is true:",
+    "projects.strict_con_conclusion": "It is definitely false that",
+    "projects.nonstrict_con_conclusion": "Presumably it is false that:",
+    "projects.negative_premise": "It is false that:"
     
 }
