@@ -20,6 +20,7 @@ define ['angular', '../../common/resources/projects'], (angular) ->
             $scope.$stateParams.mid = 1
             $scope.$stateParams.db = 'main'
             $scope.$stateParams.nid = 1
+            $scope.$state.$current.self.tooltip = project.title
           resolve:
             project: ($stateParams, ProjectLoader) ->
               new ProjectLoader($stateParams)
