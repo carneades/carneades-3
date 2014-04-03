@@ -11,122 +11,62 @@ $default-border-radius: 4px;
 }
 
 .breadcrumbs {
-  @include clearfix;
+    @include clearfix;
   
-  ul {
-    @include inline-list;
+    > ul {
+        @include inline-list;
 
-    li:first-child {
-      a, span {
-        font-weight: 800;
-      }
-    }
+        > li:first-child {
+            > a {
+                font-weight: 800;
+            }
+        }
       
-    li:last-child {
-      a, span {     
-        &:after { content: normal; }
-      }
-    }
-  }
+        > li:last-child {
+            > a {     
+                &:after { content: normal; }
+            }
+        }
 
-  a, span {
-    color: $navbar-inverse-brand-hover-color;
-    display: block;
-    float: left;
-    position: relative;
-    line-height: $height;
-    padding: 0 1em 0 1.5em;
-    background: $navbar-inverse-bg;
+        > li {
+            > a {
+                color: $navbar-inverse-brand-hover-color;
+                display: block;
+                float: left;
+                position: relative;
+                line-height: $height;
+                padding: 0 1em 0 1.5em;
+                background: $navbar-inverse-bg;
 
-    &:after {
-      content: '';
-      display: block;
-      z-index: 1;
+                @include make-breadcrumb-link-after(); 
+            }
+            &.active {
+                > a {
+                    color: #428bca;
+                    @include text-shadow(0 -1px 0 rgba(0,0,0,0.5));
+                    background: $breadcrumb-inverse-border;
 
-      @include box-sizing(border-box);
-      height: $height;
-      width: $height;
+                    &:after {
+                        border-color: $breadcrumb-inverse-border;
+                        background: $breadcrumb-inverse-border;
+                    }
+                }
+            }
+            &.hover {
+                > a {
+                    color: $navbar-inverse-brand-hover-color;
+                    background: #428bca;
 
-      border: {
-        right: 2px solid $breadcrumb-inverse-bg;
-        top: 2px solid $breadcrumb-inverse-bg;
-      }
+                    &:after {
+                        border-color: #428bca;
+                        background: #428bca;
+                    }
+                }
+            }
 
-      position: absolute;
-      right: 0;
-      top: 0;
-
-      background: $navbar-inverse-bg;
-      @include transform(translateX($height/2) rotate(45deg) scale(1/sqrt(3)) skew(15deg, 15deg));
-    }
-
-    &:hover {
-      color: #428bca;
-      @include text-shadow(0 -1px 0 rgba(0,0,0,0.5));
-      background: $breadcrumb-inverse-border;
-      border {
-          bottom: 1px solid #428bca;
-      }
-
-      &:after {
-        border-color: $breadcrumb-inverse-border;
-        background: $breadcrumb-inverse-border;
-      }
-    }
-    
-    &:active {
-      color: $navbar-inverse-brand-hover-color;
-      background: #428bca;
-
-      &:after {
-        border-color: #428bca;
-        background: #428bca;
-      }
-    }
-
-    &.current, &.current:hover, &.current:active {
-      background: inherit;
-      color: $current-text;
-      @include text-shadow(0 1px 0 rgba(255,255,255,0.7));
-      @include box-shadow(none);
-      @include border-right-radius;
-
-      &:after { content: normal; }
-    }
-  }
-}
-
-.active {
-  a, span {
-    color: #428bca;
-    @include text-shadow(0 -1px 0 rgba(0,0,0,0.5));
-    background: $breadcrumb-inverse-border;
-    
-    border {
-      bottom: 1px solid #428bca;
-    }
-
-    &:after {
-      border-color: $breadcrumb-inverse-border;
-      background: $breadcrumb-inverse-border;
-    }
-  }
-}
-
-.hover {
-  a, span {
-    color: $navbar-inverse-brand-hover-color;
-    background: #428bca;
-    
-    border {
-      bottom: 1px solid #428bca;
-    }
-
-    &:after {
-      border-color: #428bca;
-      background: #428bca;
-    }
-  }
+            @include make-breadcrumb-levels();
+        }
+    } 
 }
 
 .panel-body {
@@ -135,95 +75,6 @@ $default-border-radius: 4px;
     }
 }
 
-.bclevel2 {
-    a, span {
-        background: $breadcrumb-inverse-bg-level1;
-    
-        &:after {
-            border: {
-                right: 2px solid $breadcrumb-inverse-bg-level1;
-                top: 2px solid $breadcrumb-inverse-bg-level1;
-            }
-
-            background: $breadcrumb-inverse-bg-level1;
-        }
-    }
-}
-
-.bclevel3 {
-    a, span {
-        background: $breadcrumb-inverse-bg-level2;
-    
-        &:after {
-            border: {
-                right: 2px solid $breadcrumb-inverse-bg-level2;
-                top: 2px solid $breadcrumb-inverse-bg-level2;
-            }
-
-            background: $breadcrumb-inverse-bg-level2;
-        }
-    }
-}
-
-.bclevel4 {
-    a, span {
-        background: $breadcrumb-inverse-bg-level3;
-    
-        &:after {
-            border: {
-                right: 2px solid $breadcrumb-inverse-bg-level3;
-                top: 2px solid $breadcrumb-inverse-bg-level3;
-            }
-
-            background: $breadcrumb-inverse-bg-level3;
-        }
-    }
-}
-
-.bclevel5 {
-    a, span {
-        background: $breadcrumb-inverse-bg-level4;
-    
-        &:after {
-            border: {
-                right: 2px solid $breadcrumb-inverse-bg-level4;
-                top: 2px solid $breadcrumb-inverse-bg-level4;
-            }
-
-            background: $breadcrumb-inverse-bg-level4;
-        }
-    }
-}
-
-.bclevel6 {
-    a, span {
-        background: $breadcrumb-inverse-bg-level5;
-    
-        &:after {
-            border: {
-                right: 2px solid $breadcrumb-inverse-bg-level5;
-                top: 2px solid $breadcrumb-inverse-bg-level5;
-            }
-
-            background: $breadcrumb-inverse-bg-level5;
-        }
-    }
-}
-
-.bclevel1 {
-    a, span {
-        background: $breadcrumb-inverse-bg-level6;
-    
-        &:after {
-            border: {
-                right: 2px solid $breadcrumb-inverse-bg-level6;
-                top: 2px solid $breadcrumb-inverse-bg-level6;
-            }
-
-            background: $breadcrumb-inverse-bg-level6;
-        }
-    }
-}
 
 #content {
   background: #ffffff;
@@ -232,12 +83,6 @@ $default-border-radius: 4px;
 .bc-default-a {
     a {
         text-decoration: none;
-    }
-}
-
-.bc-underline {
-    a {
-        text-decoration: underline;
     }
 }
 
