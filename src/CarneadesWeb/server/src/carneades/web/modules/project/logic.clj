@@ -19,7 +19,8 @@
             [carneades.project.admin :as project]
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [carneades.engine.utils :refer [dissoc-in]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
@@ -178,7 +179,8 @@
    (fn [acc p]
      (conj acc {:id (-> p :statement :id)
                 :text (-> p :statement :text lang)
-                :role (:role p)}))
+                :role (:role p)
+                :positive (:positive p)}))
    []
    premises))
 
@@ -187,7 +189,8 @@
   [conclusion lang]
   (-> conclusion
       (select-keys [:id :positive :text])
-      (assoc :conclusion {:text (-> conclusion :text lang)})))
+      (assoc :text (-> conclusion :text lang))
+      ))
 
 (defn trim-metadata
   "Removes unused languages and information from metadata"
@@ -198,7 +201,8 @@
   "Removes unused information from an argument (from the perspective
   of a statement)."
   [argument lang]
-  (select-keys argument [:scheme :premises :id]))
+  (-> argument
+      (select-keys [:scheme :premises :id :conclusion])))
 
 (defn get-argument
   [[project db id :as params]
@@ -207,14 +211,13 @@
          (not (nil? db))]}
   (let [arg (get-resource host :argument [project db id])]
     (-> arg
-          (update-in [:header] trim-metadata lang)
-          (update-in [:conclusion] trim-conclusion lang)
-          (update-in [:premises] trim-premises lang))))
+        (update-in [:header] trim-metadata lang)
+        (update-in [:conclusion] trim-conclusion lang)
+        (update-in [:premises] trim-premises lang))))
 
 (defn get-trimed-argument
   [project db host lang aid]
   (let [arg (get-argument [project db aid] :host host :lang lang)]
-    (debug "arg:" arg)
    (trim-argument arg lang)))
 
 (defn get-statement
@@ -223,7 +226,6 @@
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (let [stmt (get-resource host :statement params)
-        _ (debug "stmt:" stmt)
         stmt (update-in stmt [:header] trim-metadata lang)
         stmt (assoc stmt :text (lang (:text stmt)))
         stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
