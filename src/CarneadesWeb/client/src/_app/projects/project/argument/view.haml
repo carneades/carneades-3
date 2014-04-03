@@ -18,6 +18,8 @@
       %div.premises_text{translate: "projects.premises_text"}
       %ul{"ng-repeat" => "p in argument.premises"}
         %li
+          %span
+            {{p.role}}.
           %span{"ng-show" => "!p.positive"} 
             %span{translate: "projects.negative_premise"}
           %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
@@ -25,21 +27,3 @@
     %h2{translate: "projects.conclusion"} Conclusion            
     %div.conclusion_text {{conclusion_text}}
     %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: argument.conclusion.id})"} {{argument.conclusion.text}}
-    
-    -# # Premises
-
-    -# If the following are true
-
-    -# - Circumstances. It is false that: 
-    -# -
-    -# -
-
-    -# then
-
-    -# # Conclusion
-
-    -# Presumably it is true / false that:
-    -# It is definitely true / false that:
-
-    -# The moon is made of green cheese
-
