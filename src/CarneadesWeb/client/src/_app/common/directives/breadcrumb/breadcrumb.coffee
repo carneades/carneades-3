@@ -3,35 +3,16 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootstrap"], (angular) ->
+define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
   "use strict"
 
   # Prefix state
-  angular.module("ui.bootsrap.breadcrumb", ['ui.bootstrap.collapse', "ui.router.state", "LocalStorageModule"])
-
-  .constant('breadcrumbConfig',
-      closeOthers: true
-  )
-
-  .config(['localStorageServiceProvider', (localStorageServiceProvider) ->
-    localStorageServiceProvider.setPrefix('breadcrumb')
-  ])
+  angular.module("ui.bootsrap.breadcrumb", ['ui.bootstrap.collapse', "ui.router.state"])
 
   .provider("$breadcrumb", () ->
     options = {}
-    storageService = {}
     _navigationStates = []
     position = 0
-
-
-    setStorageService = (service) ->
-      storageService = service
-
-    getVisitedStates = ->
-      visited = storageService.get 'visited'
-      return visited ?= []
-
-    storeVisitedStates = (states) -> storageService.set 'visited', states
 
     setIndexOfItemClicked = (value) ->
       position = value
@@ -46,41 +27,42 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
 
     render = (states, nameOfCurrentState) ->
       index = 0
-      bIsActiveFound = false
-      angular.forEach states, (s) ->
-        index++
-        bIsActive = (nameOfCurrentState == s.name)
-        s.isActive = bIsActive
-        s.isLast = (index == states.length)
-        s.isDepreciated = bIsActiveFound
+      fnIsActive = (s) ->
+        s.isActive = (nameOfCurrentState is s.name)
+        return s
 
-        if bIsActive then bIsActiveFound = true
+      fnIsLast = (s, index) ->
+        s.isLast = (index == states.length)
+        return s
+
+      return (fnIsActive(fnIsLast(s,++index)) for s in states)
 
     ##########################################################
     cmdsToNavigation = (commands = [], stateParams) ->
-      results = []
-      for c in commands
-        results.push {label: c.label, state: c.state, params: stateParams}
-      return results
+      return (label: c.label, state: c.state, params: c.params for c in commands)
 
     buildState = (state, stateParams) ->
       label: state.label
       name: state.name
       params: stateParams
       commands: cmdsToNavigation state.commands, stateParams
+      tooltip: state.tooltip
 
     getEvent = () ->
       getEventType = (index, length) ->
-        if (index == 0 and length == 0) then return 'BC_INIT'
-        if (index == 0 and length > 0) then return 'BC_APPEND_ITEM'
+        if (index is 0 and length is 0) then return 'BC_INIT'
+        if (index is 0 and length > 0) then return 'BC_APPEND_ITEM'
         if (index > 0 and index < length) then return 'BC_ITEM_CLICKED'
-        if (index > 0 and index == length) then return 'BC_LAST_ITEM_CLICKED'
+        if (index > 0 and index is length) then return 'BC_LAST_ITEM_CLICKED'
         return 'EVENT_NOT_REGISTERED'
 
+      index = getIndexOfItemClicked()
+      length = _navigationStates.length
+
       return {
+        index: index
         name: getEventType index, length
-        index: getIndexOfItemClicked()
-        length: _navigationStates.length
+        length: length
       }
 
     update = (states, state) ->
@@ -95,8 +77,7 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       states = _navigationStates
       switch e.name
         when 'BC_INIT'
-          angular.forEach state.path, (s) ->
-            update states, buildState s.self, stateParams
+          states = (buildState(s.self, stateParams) for s in state.path)
         when 'BC_LAST_ITEM_CLICKED'
           update states, buildState state.self, stateParams
         when 'BC_APPEND_ITEM'
@@ -104,9 +85,9 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
         when 'BC_ITEM_CLICKED'
           temp = states
           states = temp.slice 0, e.index
-          depreciated = temp.slice e.index + 1, e.length
+          deprecated = temp.slice e.index + 1, e.length
           update states, buildState state.self, stateParams
-          angular.forEach depreciated, (s) ->
+          angular.forEach deprecated, (s) ->
             update states, s
       return states
 
@@ -122,14 +103,7 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       _navigationStates = build state, stateParams
       return _navigationStates
 
-    $get: ['localStorageService', (localStorageService) ->
-      getVisitedStates: ->
-        setStorageService localStorageService
-        return getVisitedStates()
-
-      storeVisitedStates: (states) ->
-        storeVisitedStates states
-
+    $get: () ->
       getIndexOfItemClicked: () ->
         return getIndexOfItemClicked()
 
@@ -138,7 +112,6 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
 
       getNavigationStates: ($state, $stateParams) ->
         return render getNavigationStates($state.$current, $stateParams), $state.$current.name
-    ]
   )
   .directive('breadcrumb', () ->
     restrict: 'EA'
@@ -198,12 +171,14 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
         $scope.isHover = true
     link: (scope, element, attrs) ->
       index = scope.index % 7
-      scope.cssClass = if index > 0 then "bclevel" + index
-      if scope.state.isActive then angular.element(element).addClass "active"
-      else if scope.state.isLast then angular.element(element).addClass "last"
-      else angular.element(element).addClass scope.cssClass
+      scope.cssClass = if index > 0 then "bc-level-" + index
+      if scope.state.isActive
+        element.addClass "active"
+      else if scope.state.isLast
+        element.addClass "last"
+      else
+        element.addClass scope.cssClass
 
-      if scope.state.commands?.length > 0 then angular.element(element).addClass "bc-underline"
       #else angular.element(element).addClass "bcMinPanel"
   )
   .directive('breadcrumbCommands', () ->
