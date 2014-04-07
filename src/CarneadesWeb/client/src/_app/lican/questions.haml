@@ -1,0 +1,6 @@
+%div
+  %h2{{translate: "lican.questions.title"}}
+  %form{"ng-submit" => "sendAnswer()", "name" => "questionsForm"}
+    %div{"ng-repeat" => "group in questionGroups"}
+      %question-group{group: "group"}
+    %button.btn.btn-default{type: "submit", translate: "lican.questions.send"}

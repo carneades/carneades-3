@@ -11,7 +11,15 @@ The source code can be downloaded using Github from the [Carneades GitHub projec
 
 ## License
 
-The source code of the Carneades system is licensed using the [European Public License](http://joinup.ec.europa.eu/software/page/eupl) (EUPL), Version 1.1. An English version of the license is distributed with the software, in the `/licenses` directory. The EUPL license is certified by the [Open Source Initiative](http://opensource.org/) (OSI). Like the [Gnu General Public License](http://www.gnu.org/licenses/gpl.html) (GPL), the EUPL is a recipriocal license. Derivative works of Carneades must also be licensed using either the EUPL *or a compatible license*. Several OSI-certified Open Source licenses are compatible with the EUPL. See the EUPL license for details.
+The source code of the Carneades system is licensed using the [Mozilla Public License (MPL) version 2.0](http://www.mozilla.org/MPL/). An English version of the license is distributed with the software, in the `/licenses` directory. The MPL license is certified by the [Open Source Initiative](http://opensource.org/) (OSI).
+
+> The MPL is a simple copyleft license. The MPL's "file-level"
+> copyleft is designed to encourage contributors to share
+> modifications they make to your code, while still allowing them to
+> combine your code with code under other licenses (open or
+> proprietary) with minimal restrictions.
+
+See [http://www.mozilla.org/MPL/2.0/FAQ.html](FAQ) for more information.
 
 ## Prerequisites
 
