@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Carneades Web Application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="css/bootstrap.min.css" media="screen"/>
+    <link rel="stylesheet" href="css/navigation.min.css" media="screen"/>
+    <link rel="stylesheet" href="css/projects.min.css" media="screen"/>
+  </head>
+
+  <body ng-controller="AppCtrl">
+    <div>
+      <div ui-view></div>
+      <div class="header-placeholder" style="margin-top: 2em;"></div>
+      <div ui-view="subnav"></div>
+      <div ui-view="content"></div>
+    </div>
+
+      <!--
+      <div class="row" ng-include="'notifications.tpl.html'" ng-show="notifications.getCurrent().length"></div>
+      -->
+
+      <!--
+      <div id="loadingWidget" loading>
+        <div id="overlay" class="overlayBG"></div>
+      </div>
+      -->
+    <script src="require.js" data-main="main.js"></script>
+  </body>
+
+</html>

@@ -1,0 +1,7 @@
+.container.project
+  .row
+    .col-md-9{:role => "main"}
+      .section{:id => "overview"}
+        .page-header
+          %h1 {{project.title}}
+        %markdown{:strip => "true", "ng-model" => "project.description"}

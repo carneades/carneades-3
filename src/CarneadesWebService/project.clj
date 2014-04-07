@@ -1,7 +1,9 @@
-;;; Copyright (c) 2012 Fraunhofer Gesellschaft
-;;; Licensed under the EUPL V.1.1
+;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;; This Source Code Form is subject to the terms of the Mozilla Public
+;; License, v. 2.0. If a copy of the MPL was not distributed with this
+;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-(defproject carneades-web-service/carneades-web-service "1.0.0-SNAPSHOT"
+(defproject carneades/carneades-rest "1.0.0"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/data.json "0.1.1"]
                  [carneades/carneades-engine "2.0.2"]

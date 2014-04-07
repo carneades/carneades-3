@@ -1,10 +1,11 @@
-;;; Copyright (c) 2011 Fraunhofer Gesellschaft
-;;; Licensed under the EUPL V.1.1
+;; Copyright (c) 2011 Fraunhofer Gesellschaft
+;; This Source Code Form is subject to the terms of the Mozilla Public
+;; License, v. 2.0. If a copy of the MPL was not distributed with this
+;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns ^{:doc "Theories defined using argumentation schemes."}
   carneades.engine.theory
   (:use clojure.pprint
-        [clojure.set :as set]
         carneades.engine.uuid
         carneades.engine.statement
         carneades.engine.unify
@@ -12,7 +13,9 @@
         carneades.engine.argument-generator
         carneades.engine.dublin-core
         [carneades.engine.utils :only (mapinterleave)])
-  (:require [carneades.engine.theory.namespace :as namespace]))
+  (:require [carneades.engine.theory.namespace :as namespace]
+            [carneades.engine.theory.zip :as tz]
+            [clojure.zip :as z]))
 
 (defrecord Form
     [positive     ; string for the positive sentences
@@ -503,6 +506,13 @@
                          :exceptions (:exceptions scheme),
                          :scheme `(~(:id scheme)
                                    ~@(apply-substitutions subs2 (scheme-variables scheme)))))]))))
+
+(defn find-scheme
+  "Finds a scheme by id."
+  [theory scheme]
+  (let [locs (take-while (complement z/end?)
+                         (iterate z/next (tz/theory-zip theory)))]
+    (first (filter #(= scheme (:id %)) (mapcat (comp :schemes z/node) locs)))))
 
 ;; Generators for arguments from schemes and theories:
 
