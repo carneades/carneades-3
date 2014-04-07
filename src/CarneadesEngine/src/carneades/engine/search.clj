@@ -9,7 +9,7 @@
 
 (defstruct node :depth :label :parent :state)
 
-(defstruct resource :amount)
+;; (defstruct resource :amount)
 
 (defn make-root 
   "Returns the root node of a search space containing the state s."
