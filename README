@@ -1,13 +1,11 @@
 These are the source files of the Carneades argumentation system.
 
-Copyright © 2010-2012 Fraunhofer Gesellschaft 
-Licensed under the EUPL V.1.1
+Copyright © 2010-2014 Fraunhofer Gesellschaft 
 
-The EUPL is compatible with the GPL (v2), OSL (v2.1 and v3.0), CPL (v1.0), 
-EPL (v1.0) and Cecill (v2.0) licenses.  See the full text of the EUPL, 
-in the licenses directory, for details. For further information about the EUPL, 
-and versions of the EUPL in all 22 of official languages of the European Union, 
-see <http://www.osor.eu/eupl>.
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-For further information about Carneades see <http://carneades.github.com>.
+For further information about Carneades see http://carneades.github.io
 
+For futher information about the MPL see http://www.mozilla.org/MPL/2.0/FAQ.html

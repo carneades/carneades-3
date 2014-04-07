@@ -1,5 +1,7 @@
-;;; Copyright (c) 2013 Fraunhofer Gesellschaft
-;;; Licensed under the EUPL V.1.1
+;; Copyright (c) 2013 Fraunhofer Gesellschaft
+;; This Source Code Form is subject to the terms of the Mozilla Public
+;; License, v. 2.0. If a copy of the MPL was not distributed with this
+;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns ^{:doc "Generation of arguments from a triplestore."}
   carneades.engine.triplestore
@@ -311,9 +313,9 @@ argument if is the case."
       (responses-from-ask kbconn goal subs)
       (responses-from-query kbconn goal subs namespaces))
     (catch Exception e
-      (prn "Invalid query " goal)
-      (prn "Error:")
-      (print (.getMessage e))
+      (debug "Invalid query " goal)
+      (debug "Error:")
+      (debug (.getMessage e))
       ())))
 
 (defn generate-arguments-from-triplestore
@@ -324,7 +326,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
      (let [kbconn (make-conn endpoint-url repo-name namespaces)]
        (reify generator/ArgumentGenerator
          (generate [this goal subs]
-           (when (stmt/literal-pos? goal)
+           (when (and (stmt/literal-pos? goal) (>= (count goal) 2))
              (let [res (responses-from-goal kbconn goal subs namespaces)]
                ;; (prn "responses from triplestore")
                ;; (pprint res)

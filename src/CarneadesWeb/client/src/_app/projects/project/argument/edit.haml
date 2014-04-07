@@ -1,0 +1,15 @@
+.panel-group{id: "{{id}}"}
+  .panel{"ng-repeat" => "val in child"}
+    .panel-heading
+      %h5.panel-title
+        %a.accordion-toggle{"data-parent" => "\#{{id}}", "data-toggle" => "collapse", href: ""}
+          %span.arrow>
+          {{val.key}}
+          %markdown{"ng-model" => "", strip: "true"}
+    .panel-collapse.collapse{id: ""}
+      .panel-body
+        %div{"ng-switch" => "", on: "getType(val)"}
+          %jsonnode{child: "val", key: "val.$key", "ng-switch-when" => "Object", type: "'object'"}
+          %jsonnode{child: "val", "ng-switch-when" => "Array", type: "'array'"}
+        %div{"ng-switch-default" => ""}
+          TEST

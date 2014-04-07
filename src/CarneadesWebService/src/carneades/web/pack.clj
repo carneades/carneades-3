@@ -1,3 +1,8 @@
+;; Copyright (c) 2013 Fraunhofer Gesellschaft
+;; This Source Code Form is subject to the terms of the Mozilla Public
+;; License, v. 2.0. If a copy of the MPL was not distributed with this
+;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 (ns carneades.web.pack
   (:use carneades.engine.statement
         carneades.engine.utils
@@ -8,46 +13,6 @@
   (:require [clojure.string :as str]
             [carneades.database.argument-graph :as ag]))
 
-(defn zip-metadata-element
-  "Zips a metadata element vector as a string"
-  [element]
-  (if (or (vector? element) (seq? element))
-   (if (empty? element)
-     nil
-     (str/join ";" element))
-   element))
-
-(defn unzip-metadata-element
-  "Unzips a metadata element string as a vector"
-  [s]
-  (if (string? s)
-    (if (empty? s)
-      nil
-      (str/split s #";"))
-    s))
-
-(defn zip-metadata
-  "Zips a map of metadata elements vector and converts it
-   to a map of metadata elements strings"
-  [md]
-  (reduce (fn [md [k v]]
-            (if (= k :description)
-              md
-              (assoc md k (zip-metadata-element v))))
-          md
-          md))
-
-(defn unzip-metadata
-  "Unzips a map of metadata elements string and converts it
-   to a map of metadata elements vectors"
-  [md]
-  (reduce (fn [md [k v]]
-            (if (= k :description)
-              md
-              (assoc md k (unzip-metadata-element v))))
-          md
-          md))
-
 (defn pack-statement
   [stmt]
   {:post [(not (vector? (:atom %)))
@@ -56,7 +21,7 @@
         (statement? stmt) (assoc stmt
                             :atom (when (:atom stmt)
                                     (serialize-atom (literal-atom stmt)))
-                            :header (unzip-metadata (:header stmt)))
+                            :header (:header stmt))
         :else nil))
 
 (defn unpack-statement
@@ -70,7 +35,7 @@
                    (assoc (map->statement (dissoc s :atom))
                      :standard (keyword (:standard s))
                      :atom atomval
-                     :header (map->metadata (zip-metadata (:header s)))))
+                     :header (map->metadata (:header s))))
         :else nil))
 
 (defn pack-argument
@@ -83,7 +48,7 @@
             :premises (map (fn [p] (assoc p :statement
                                           (pack-statement (:statement p))))
                            (:premises arg))
-            :header (unzip-metadata (:header arg))})))
+            :header (:header arg)})))
 
 (defn unpack-argument [arg]
   (assoc arg
@@ -95,7 +60,7 @@
          :exceptions (map (fn [p]
                           (map->premise (assoc p :statement (unpack-statement (:statement p)))))
                           (:exceptions arg))
-         :header (map->metadata (zip-metadata (:header arg)))))
+         :header (map->metadata (:header arg))))
 
 (defn unpack-arg-attrs
   [attrs]

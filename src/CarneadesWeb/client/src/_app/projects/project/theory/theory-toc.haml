@@ -1,0 +1,9 @@
+%a{href: "#/projects/{{stateParams.pid}}/theories/{{stateParams.tid}}?scrollTo={{section.id}}"}
+  {{section.header.title}}
+%ul
+  %li{"ng-repeat" => "scheme in section.schemes"}
+    %a{href: "#/projects/{{stateParams.pid}}/theories/{{stateParams.tid}}?scrollTo={{scheme.id}}"}
+      {{scheme.header.title}}
+%ul
+  %li{"ng-repeat" => "section in section.sections",
+     "ng-include" => "'project/theory/theory-toc.tpl.html'"}

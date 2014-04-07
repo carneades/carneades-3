@@ -1,6 +1,13 @@
 
-Except for "schemas.xml", the XML files in this directory are examples
-argument graphs represented using the LKIF XML schema, which is the
+# LKIF/Argumentation Schemes
+
+This directory contains examples of argumentation schemes represented in LKIF
+and OWL.  Currently some of Doug Walton's argumentations schemes are included.
+
+# LKIF/Argument Graphs
+
+Except for "schemas.xml", the XML files in this directory
+are examples argument graphs represented using the LKIF XML schema, which is the
 native format of the older desktop version of Carneades, called the
 Carneades Editor. (The "schemas.xml" files is for use with
 [nXML](https://www.gnu.org/software/emacs/manual/html_mono/nxml-mode.html),
