@@ -38,14 +38,10 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
       return (fnIsActive(fnIsLast(s,++index)) for s in states)
 
     ##########################################################
-    cmdsToNavigation = (commands = [], stateParams) ->
-      return (label: c.label, state: c.state, params: c.params for c in commands)
-
     buildState = (state, stateParams) ->
       label: state.label
       name: state.name
       params: stateParams
-      commands: cmdsToNavigation state.commands, stateParams
       tooltip: state.tooltip
 
     getEvent = () ->
@@ -138,12 +134,12 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
           idx++
         return index
 
-      $scope.changeState = (name, cIndex) ->
-        if name
-          index = getIndexByName $scope.states, name
-          $breadcrumb.setIndexOfItemClicked index + 1
-          $state.go $scope.states[index].commands[cIndex].state, $stateParams
-          _index = index + 1
+      # $scope.changeState = (name, cIndex) ->
+      #   if name
+      #     index = getIndexByName $scope.states, name
+      #     $breadcrumb.setIndexOfItemClicked index + 1
+      #     $state.go $scope.states[index].commands[cIndex].state, $stateParams
+      #     _index = index + 1
 
       $scope.setCommandView = (index) ->
         _index = index
@@ -165,10 +161,9 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
       bcOpen: '&'
       index: '='
     templateUrl: 'directives/breadcrumb/breadcrumb-entry.tpl.html'
-    controller: ($scope, $element) ->
-      $scope.openCommandsView = () ->
-        $scope.bcOpen()
-        $scope.isHover = true
+    controller: ($scope, $element, $attrs, $state, $stateParams) ->
+      $scope.openView = (name) ->
+        $state.go name, $stateParams
     link: (scope, element, attrs) ->
       index = scope.index % 7
       scope.cssClass = if index > 0 then "bc-level-" + index
@@ -180,22 +175,4 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
         element.addClass scope.cssClass
 
       #else angular.element(element).addClass "bcMinPanel"
-  )
-  .directive('breadcrumbCommands', () ->
-    restrict: 'E'
-    replace: true
-    transclude: true
-    templateUrl: 'directives/breadcrumb/breadcrumb-commands.tpl.html'
-  )
-  .directive('breadcrumbCommand', () ->
-    restrict: 'E'
-    replace: true
-    scope:
-      command: '='
-      index: '='
-      bcChange: '&'
-    templateUrl: 'directives/breadcrumb/breadcrumb-command.tpl.html'
-    controller: ($scope, $element, $attrs, $breadcrumb) ->
-      $scope.setState = () ->
-        $scope.bcChange()
   )

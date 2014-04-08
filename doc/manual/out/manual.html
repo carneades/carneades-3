@@ -158,7 +158,6 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul></li>
 </ul></li>
 <li><a href="#credits"><span class="toc-section-number">12</span> Credits</a></li>
-<li><a href="#references"><span class="toc-section-number">13</span> References</a></li>
 </ul>
 </div>
 <h1 id="getting-started"><a href="#TOC"><span class="header-section-number">1</span> Getting Started</a></h1>
@@ -1280,7 +1279,11 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ol>
 <p>You can move this directory to some other location on your file system, at any time.</p>
 <p>This creates a standard installation, with the default configuration.</p>
+<<<<<<< HEAD
+<h2 id="using-the-web-application-locally"><a href="#using-the-web-application-locally"><span class="header-section-number">9.5</span> Using the Web Application Locally</a></h2>
+=======
 <h2 id="using-the-web-application-locally"><a href="#TOC"><span class="header-section-number">9.5</span> Using the Web Application Locally</a></h2>
+>>>>>>> f99cba806f32d633e0d9f0f3ff705cf265f86b39
 <p>To start the Carneades web application server double click on the <code>carneades-webapp.jar</code> file in your file system browser, for example the &quot;Finder&quot; on Mac OS X or the &quot;Windows Explorer&quot; on Windows PCs.</p>
 <p>To start the server to from a command line, for local use, type</p>
 <pre><code>$ java -jar carneades-webapp.jar</code></pre>
@@ -1326,7 +1329,11 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>Point your browser to http://localhost:8080/carneades/#/introduction</li>
 </ul>
 <p>(<em>Note: Change &quot;policymodellingtool&quot; to &quot;carneades&quot; in these URLs.</em>)</p>
+<<<<<<< HEAD
+<h2 id="system-configuration"><a href="#system-configuration"><span class="header-section-number">9.8</span> System Configuration</a></h2>
+=======
 <h2 id="system-configuration"><a href="#TOC"><span class="header-section-number">9.8</span> System Configuration</a></h2>
+>>>>>>> f99cba806f32d633e0d9f0f3ff705cf265f86b39
 <p>You can change the configuration of the system globally, for all users with accounts on your server. Alternatively, each user can have their own configuration.</p>
 <p>To modify the global configuration, edit the <code>config/carneades.clj</code> file in the installation directory. To create a personal configuration for your own user account, copy the <code>config/carneades.clj</code> file to a file named <code>.carneades.clj</code> in your home (user) directory and then edit this copy.</p>
 <p>If a required property is not defined in the user's <code>.carneades.clj</code> file, then the value of the property defined in the <code>config/carneades.clj</code> file in the installation directory will be used.</p>
@@ -1361,12 +1368,21 @@ documents/</code></pre>
 <p>The <code>databases/</code> directory stores all the database files of the project, including a database for each argument graph of the project. (A project may have than one argument graph. For example, when using the policy analysis tool, an argument graph is created for each case.)</p>
 <p>The <code>theories/</code> directory contains the Clojure source files of the theories of the project. Theories are rule-based models. They can be used for many purposes, including modeling argumentation schemes, policies, legislation and regulations.</p>
 <p>Finally, the <code>documents/</code> directory can be used to store copies of source documents, documentary evidence, or any other project files. These files can be referenced and linked to in the descriptions of statements and nodes of argument graphs using relative URLs. For example, the URL &quot;file://src/foo.pdf&quot; would be resolved to the file <code>documents/src/foo.pdf</code> of the project.</p>
+<<<<<<< HEAD
+<h2 id="listing-projects"><a href="#listing-projects"><span class="header-section-number">9.11</span> Listing Projects</a></h2>
+<h2 id="creating-a-new-project"><a href="#creating-a-new-project"><span class="header-section-number">9.12</span> Creating a New Project</a></h2>
+<h2 id="renaming-projects-and-editing-project-metadata"><a href="#renaming-projects-and-editing-project-metadata"><span class="header-section-number">9.13</span> Renaming Projects and Editing Project Metadata</a></h2>
+<h2 id="archiving-projects"><a href="#archiving-projects"><span class="header-section-number">9.14</span> Archiving Projects</a></h2>
+<h2 id="deleting-projects"><a href="#deleting-projects"><span class="header-section-number">9.15</span> Deleting Projects</a></h2>
+<h1 id="applications-scenarios"><a href="#applications-scenarios"><span class="header-section-number">10</span> Applications Scenarios</a></h1>
+=======
 <h2 id="listing-projects"><a href="#TOC"><span class="header-section-number">9.11</span> Listing Projects</a></h2>
 <h2 id="creating-a-new-project"><a href="#TOC"><span class="header-section-number">9.12</span> Creating a New Project</a></h2>
 <h2 id="renaming-projects-and-editing-project-metadata"><a href="#TOC"><span class="header-section-number">9.13</span> Renaming Projects and Editing Project Metadata</a></h2>
 <h2 id="archiving-projects"><a href="#TOC"><span class="header-section-number">9.14</span> Archiving Projects</a></h2>
 <h2 id="deleting-projects"><a href="#TOC"><span class="header-section-number">9.15</span> Deleting Projects</a></h2>
 <h1 id="applications-scenarios"><a href="#TOC"><span class="header-section-number">10</span> Applications Scenarios</a></h1>
+>>>>>>> f99cba806f32d633e0d9f0f3ff705cf265f86b39
 <p>This chapter presents a number of application scenarios illustrating <em>some</em> ways the Carneades argumentation system can be used in practice to:</p>
 <ul>
 <li>improve the quality, efficiency, inclusiveness and transparency of democratic public policy deliberations,</li>
@@ -1688,18 +1704,32 @@ premises:
 <li>The MARKet for Open Source – An Intelligent Virtual Open Source Marketplace (MARKOS, FP7-ICT-317743), 2012-2015.</li>
 </ul></li>
 </ul>
+<<<<<<< HEAD
+<div class="references">
+<h1><a href="#references"><span class="header-section-number">12</span> References</a></h1>
+<p>Atkinson, Katie, and Trevor J. M. Bench-Capon. 2007. “Practical Reasoning as Presumptive Argumentation Using Action Based Alternating Transition Systems.” <em>Artificial Intelligence</em> 171 (10-15): 855–874.</p>
+<p>Dung, Phan Minh. 1995. “On The Acceptability Of Arguments And Its Fundamental Role In Nonmonotonic Reasoning , Logic Programming And N-Persons Games.” <em>Artificial Intelligence</em> 77: 321–357.</p>
+<p>Gordon, Thomas F, Henry Prakken, and Douglas Walton. 2007. “The Carneades Model of Argument and Burden of Proof.” <em>Artificial Intelligence</em> 171 (10-11): 875–896.</p>
+<p>Prakken, Henry. 2010. “An Abstract Framework for Argumentation with Structured Arguments.” <em>Argument &amp; Computation</em> 1: 93–124.</p>
+=======
 <h1 id="references"><a href="#TOC"><span class="header-section-number">13</span> References</a></h1>
 <p>Atkinson, Katie, and Trevor J. M. Bench-Capon. 2007. “Practical reasoning as presumptive argumentation using action based alternating transition systems.” <em>Artificial Intelligence</em> 171: 855–874.</p>
 <p>Dung, Phan Minh. 1995. “On The Acceptability Of Arguments And Its Fundamental Role In Nonmonotonic Reasoning , Logic Programming And N-Persons Games.” <em>Artificial Intelligence</em> 77: 321–357.</p>
 <p>Gordon, Thomas F., Henry Prakken, and Douglas Walton. 2007. “The Carneades Model of Argument and Burden of Proof.” <em>Artificial Intelligence</em> 171: 875–896.</p>
 <p>Prakken, Henry. 2010. “An abstract framework for argumentation with structured arguments.” <em>Argument &amp; Computation</em> 1: 93–124.</p>
+>>>>>>> f99cba806f32d633e0d9f0f3ff705cf265f86b39
 <p>Segaran, Toby. 2007. <em>Programming Collective Intelligence</em>. O’Reilly.</p>
 <p>Walton, Douglas, Chris Reed, and Fabrizio Macagno. 2008. <em>Argumentation Schemes</em>. Cambridge University Press.</p>
-<p>Wyner, Adam, Katie Atkinson, and Trevor Bench-Capon. 2012. “A Functional Perspective on Argumentation Schemes.” In <em>Proceedings of the 9th International Workshop on Argumentation in Multi-Agent Systems (ArgMAS 2012)</em>, ed. Peter McBurney, Simon Parsons, and Iyad Rahwan, 203–222.</p>
+<p>Wyner, Adam, Katie Atkinson, and Trevor Bench-Capon. 2012. “A Functional Perspective on Argumentation Schemes.” In <em>Proceedings of the 9th International Workshop on Argumentation in Multi-agent Systems (ArgMAS 2012)</em>, edited by Peter McBurney, Simon Parsons, and Iyad Rahwan, 203–222.</p>
+</div>
 <div class="footnotes">
 <hr />
 <ol>
+<<<<<<< HEAD
+<li id="fn1"><p><a href="http://en.wikipedia.org/wiki/BibTeX">http://en.wikipedia.org/wiki/BibTeX</a><a href="#fnref1">↩</a></p></li>
+=======
 <li id="fn1"><p><a href="http://en.wikipedia.org/wiki/BibTeX"><code class="url">http://en.wikipedia.org/wiki/BibTeX</code></a><a href="#fnref1">↩</a></p></li>
+>>>>>>> f99cba806f32d633e0d9f0f3ff705cf265f86b39
 <li id="fn2"><p>By counterarguments here we mean <em>rebuttals</em> (arguments with the opposite conclusion) and <em>undercutters</em> (arguments which deny the applicability of this argument). Arguments which attack a premise of this argument (&quot;undermining&quot; arguments), are not listed. To navigate to undermining arguments, click on the premise of the argument of interest. The undermining arguments will be listed on its statement page.<a href="#fnref2">↩</a></p></li>
 <li id="fn3"><p>A state-of-the-art computational model of argument is used to compute the acceptability of statements. This model maps argument graphs to a so-called &quot;Dung abstract argumentation framework&quot; <span class="citation">(Dung 1995)</span>, using a method based on the ASPIC+ model of structured argument <span class="citation">(Prakken 2010)</span>, but adapted to preserve the features of the Carneades model of argument graphs <span class="citation">(Gordon, Prakken, and Walton 2007)</span>. This ASPIC+ version of Carneades can handle cyclic argument graphs, removing the main limitation of the original version of Carneades. Several semantics are available for Dung Abtract Argumentation Frameworks. Carneades uses grounded semantics, which is the semantics most cautious (skeptical) semantics about accepting claims.<a href="#fnref3">↩</a></p></li>
 <li id="fn4"><p>depth-first<a href="#fnref4">↩</a></p></li>
