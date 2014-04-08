@@ -341,12 +341,12 @@ Das Aktionsbündnis „Urheberrecht für Bildung und Wissenschaft“ in Deutsch
 
 >Es ist für die immer schon grenzüberschreitend international arbeitende Wissenschaft hinderlich, wenn Ausnahmen, z.B. für die Nutzung urheberrechtsgeschützten Materials in international verteilten Arbeitsgruppen, in verschiedenen Ländern unterschiedlich geregelt sind. Eine für alle Mitgliedsländer verbindliche Ausgestaltung zentraler Ausnahmekategorien ist daher erwünscht. [@Aktionsbündnis, p. 5]" }
                   :source "Aktionsbündnis;Aston2008")
-         :scheme "Practical Reasoning"
+         :scheme '(practical-reasoning)
          :conclusion permitted-exceptions-should-be-harmonized 
-         :premises [(make-premise :role "Goal" :statement easier-to-work-in-several-states),
-                    (make-premise :role "Action" :statement harmonizing-exceptions-would-help-academics)
-                    (make-premise :role "Values Promoted" :statement values-promoted-by-facilitating-research),
-                    (make-premise :role "Circumstances" :statement work-made-more-difficult)]))
+         :premises [(make-premise :role "goal" :statement easier-to-work-in-several-states),
+                    (make-premise :role "action" :statement harmonizing-exceptions-would-help-academics)
+                    (make-premise :role "values" :statement values-promoted-by-facilitating-research),
+                    (make-premise :role "circumstances" :statement work-made-more-difficult)]))
 
 (def a3 (make-argument
          :header (make-metadata :description {:en "There are better ways to help researchers and students to work in more than one Member
