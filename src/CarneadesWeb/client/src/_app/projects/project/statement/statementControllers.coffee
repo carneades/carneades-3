@@ -8,10 +8,12 @@ define ['angular', 'angular-translate',
     '../../../common/directives/metadata/metadata'], (angular) ->
   angular.module('statement.controllers', ['directives.properties',
     'directives.metadata', 'pascalprecht.translate'])
-    .controller('StatementCtrl', ($scope, $translate, statement) ->
+    .controller('StatementCtrl', ($scope, $translate, statement, project) ->
       $scope.statement = statement
       $scope.pid = $scope.$stateParams.pid
       $scope.db = $scope.$stateParams.db
+
+      $scope.project = project
 
       $scope.headerIsEmpty = (v for k,v of statement.header when v?).length == 0
       
