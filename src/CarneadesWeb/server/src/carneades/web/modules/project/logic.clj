@@ -292,7 +292,7 @@
   (let [theory (assoc (project/load-theory pid tid) :id tid)
         ;; TODO: creates a simpler function that just returns the :translation key?
         translator (comp (tr/make-default-translator)
-                          (ttr/make-language-translator (:language theory)))
+                         (ttr/make-language-translator (:language theory)))
         do-translation (or (= translate "t") (= translate "true"))]
     (cond (and do-translation scheme)
           (-> (t/find-scheme theory (symbol scheme))
