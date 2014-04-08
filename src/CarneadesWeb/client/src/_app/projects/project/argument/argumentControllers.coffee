@@ -5,14 +5,14 @@
 
 define ['angular', 'angular-translate'], (angular) ->
   angular.module('argument.controllers', ['pascalprecht.translate'])
-    .controller('ArgumentCtrl', ($scope, argument, $translate) ->
+    .controller('ArgumentCtrl', ($scope, argument, project, $translate) ->
       $scope.argument = argument
       $scope.pid = $scope.$stateParams.pid
       $scope.db = $scope.$stateParams.db
 
-      $scope.argument.premises[1].positive = false
-
       $scope.headerIsEmpty = (v for k,v of argument.header when v?).length == 0
+
+      $scope.project = project
       
       $scope.conclusion_text =
         if argument.strict and argument.pro

@@ -4,7 +4,8 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 define ['angular', 'angular-translate',
-   './argumentControllers', '../../../common/resources/arguments'], (angular) ->
+   './argumentControllers', '../../../common/resources/arguments',
+   '../../../common/resources/projects'], (angular) ->
   angular.module('argument.states', ['argument.controllers', 'resources.arguments']).config ($stateProvider) ->
     states = [{
       name: "home.projects.project.argument"
@@ -19,6 +20,8 @@ define ['angular', 'angular-translate',
           resolve: {
             argument: (ArgumentLoader, $stateParams) ->
               new ArgumentLoader($stateParams)
+            project: (ProjectLoader, $stateParams) ->
+              new ProjectLoader($stateParams)
           }
         }
       }
