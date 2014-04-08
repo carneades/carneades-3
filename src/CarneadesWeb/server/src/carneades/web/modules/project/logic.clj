@@ -20,7 +20,7 @@
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
             [clojure.java.io :as io]
-            [carneades.engine.utils :refer [dissoc-in]]))
+            [carneades.engine.utils :refer [dissoc-in unserialize-atom]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
@@ -213,7 +213,8 @@
     (-> arg
         (update-in [:header] trim-metadata lang)
         (update-in [:conclusion] trim-conclusion lang)
-        (update-in [:premises] trim-premises lang))))
+        (update-in [:premises] trim-premises lang)
+        (assoc :scheme (str (first (unserialize-atom (:scheme arg))))))))
 
 (defn get-trimed-argument
   [project db host lang aid]
