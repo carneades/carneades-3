@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 define ['angular', './theoryControllers'], (angular) ->
-  angular.module('theory.states', ['theory.controllers']).config(($stateProvider) ->
+  angular.module('theory.states', ['theory.controllers']).config ($stateProvider) ->
     states = [{
       name: "home.projects.project.theory"
       label: "Theory"
@@ -32,4 +32,3 @@ define ['angular', './theoryControllers'], (angular) ->
       }}]
 
     angular.forEach states, (state) -> $stateProvider.state state
-  )

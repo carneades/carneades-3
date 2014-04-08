@@ -23,6 +23,8 @@ define ['angular', './statementControllers', '../../../common/resources/statemen
           resolve: {
             statement: (StatementLoader, $stateParams) ->
               new StatementLoader($stateParams)
+            project: (ProjectLoader, $stateParams) ->
+              new ProjectLoader($stateParams)
           }
         }
       }
