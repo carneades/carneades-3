@@ -29,6 +29,8 @@
                           (get-in language [pred :text :en]))]
           (apply format fstring (format-literal-args arg language lang)))
 
+        (st/variable? arg) (subs (str arg) 1)
+
         :else (str arg)))
 
 (defn format-literal-args
