@@ -9,7 +9,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive('bcNavigation', () ->
     restrict: 'E'
     replace: 'true'
-    template: '<div><header class="navbar-inverse navbar-fixed-top" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates"></breadcrumb></header><div class="header-placeholder" style="margin-top: 7em;"></div></div>'
+    template: '<div><header class="navbar-inverse navbar-fixed-top" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates"></breadcrumb></header></div>'
   )
   .controller('AppCtrl', ($scope, $location, i18nNotifications) ->
     $scope.notifications = i18nNotifications

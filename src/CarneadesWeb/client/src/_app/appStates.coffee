@@ -4,9 +4,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular"], (angular) ->
+define ["angular", "angular-bootstrap"], (angular) ->
   "use strict"
-  angular.module("app.states", []).config ['$stateProvider', ($stateProvider) ->
+  angular.module("app.states", ["ui.bootstrap.buttons"]).config ['$stateProvider', ($stateProvider) ->
     states = [
       name: "home"
       label: "Carneades"
@@ -16,6 +16,8 @@ define ["angular"], (angular) ->
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Home</h1>"
+        "subnav@":
+          template: '<page-navigation><page-navigation-item cmd=\"c\" ng-repeat=\"c in $state.$current.commands\"></page-navigation-item></page-navigation>'
       commands: [
         label: "Home"
         state: "home"

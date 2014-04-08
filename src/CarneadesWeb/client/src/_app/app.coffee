@@ -7,19 +7,20 @@
 define ["angular", "angular-bootstrap", "angular-ui-router",
 "projects/projectsModule", "lican/licanModule", "admin/adminModule",
 "appStates", "appControllers",
-"angular-markdown", "common/directives/breadcrumb/breadcrumb", "templates/app",
+"angular-markdown", "common/directives/breadcrumb/breadcrumb",
+"common/directives/page-navigation/page-navigation", "templates/app",
 "templates/common", "angular-translate",
 "angular-translate-loader-static-files"], (angular) ->
-  angular.module("app", ["ui.bootstrap", "ui.bootsrap.breadcrumb", "ui.router",
+  angular.module("app", ["ui.bootstrap", "ui.bootsrap.breadcrumb",
+  "directives.pagenav", "ui.router",
   "app.states", "app.controllers", "templates.app", "templates.common",
   "projects.module", "lican.module", "admin.module", "angular-markdown",
    "pascalprecht.translate"])
-  .run(['$rootScope', '$state', '$stateParams', ($rootScope, $state, $stateParams) ->
+  .run(($rootScope, $state, $stateParams) ->
     $rootScope.$state = $state
     $rootScope.$stateParams = $stateParams
-  ])
-  .config(["$urlRouterProvider", "$stateProvider", "$httpProvider", "$provide", "$translateProvider"
-  ($urlRouterProvider, $stateProvider, $httpProvider, $provide, $translateProvider) ->
+  )
+  .config(($urlRouterProvider, $stateProvider, $httpProvider, $provide, $translateProvider) ->
 
     $translateProvider.useStaticFilesLoader(
       prefix: '/carneades/languages/',
@@ -62,8 +63,8 @@ define ["angular", "angular-bootstrap", "angular-ui-router",
 
     $httpProvider.interceptors.push 'requestInterceptor'
     undefined
-  ])
-  .factory('requestNotificationChannel', ['$rootScope', ($rootScope) ->
+  )
+  .factory('requestNotificationChannel', ($rootScope) ->
     # private notification messages
     _START_REQUEST_ = '_START_REQUEST_'
     _END_REQUEST_ = '_END_REQUEST_'
@@ -96,9 +97,9 @@ define ["angular", "angular-bootstrap", "angular-ui-router",
     requestEnded: requestEnded
     onRequestStarted: onRequestStarted
     onRequestEnded: onRequestEnded
-  ])
+  )
 
-  .directive('loading', ['requestNotificationChannel', (requestNotificationChannel) ->
+  .directive('loading', (requestNotificationChannel) ->
     restrict: "A"
     link: (scope, element, $modal) ->
       # hide the element initally
@@ -117,5 +118,6 @@ define ["angular", "angular-bootstrap", "angular-ui-router",
       requestNotificationChannel.onRequestEnded scope, endRequestHandler
 
       undefined
-  ]).constant('_START_REQUEST_', '_START_REQUEST_')
-    .constant('_END_REQUEST_', '_END_REQUEST_')
+  )
+  .constant('_START_REQUEST_', '_START_REQUEST_')
+  .constant('_END_REQUEST_', '_END_REQUEST_')
