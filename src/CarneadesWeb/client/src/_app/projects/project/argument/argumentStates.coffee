@@ -11,32 +11,35 @@ define ['angular', 'angular-translate',
       name: "home.projects.project.argument"
       label: "Argument"
       url: "/:db/arguments/:aid"
-      views: {
+      commands: [
+        label: "Map"
+        state: "home.projects.project.map"
+      ,
+        label: "Outline"
+        state: "home.projects.project.outline"
+      ]
+      views:
         "@":
           template: "<bc-navigation></bc-navigation>"
-        "content@": {
+        "content@":
           templateUrl: "project/argument/view.tpl.html"
           controller: "ArgumentCtrl"
-          resolve: {
+          resolve:
             argument: (ArgumentLoader, $stateParams) ->
               new ArgumentLoader($stateParams)
             project: (ProjectLoader, $stateParams) ->
               new ProjectLoader($stateParams)
-          }
-        }
       }
-      },
+    ,
       {
-        name: "home.projects.project.argument.edit"
-        url: "/edit"
-        views: {
-          "@":
-            template: "<bc-navigation></bc-navigation>"
-          "content@": {
-            templateUrl: "project/argument/edit.tpl.html"
-            controller: "ArgumentEditCtrl"
-          }
-        }
+      name: "home.projects.project.argument.edit"
+      url: "/edit"
+      views:
+        "@":
+          template: "<bc-navigation></bc-navigation>"
+        "content@":
+          templateUrl: "project/argument/edit.tpl.html"
+          controller: "ArgumentEditCtrl"
       }
     ]
 
