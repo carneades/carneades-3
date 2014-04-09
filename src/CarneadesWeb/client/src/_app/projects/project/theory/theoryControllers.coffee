@@ -5,7 +5,7 @@
 
 define ['angular'], (angular) ->
   angular.module('theory.controllers', [])
-  .controller('TheoryCtrl', ($scope, $location, $anchorScroll, theory) ->
+  .controller('TheoryCtrl', ($scope, $stateParams, $location, $anchorScroll, theory) ->
     $scope.showMetadatum = (k, v) ->
       v? and (k not in ['id', 'description', 'title'])
 
@@ -20,13 +20,11 @@ define ['angular'], (angular) ->
 
       , 200
 
-
-
-    $scope.stateParams = $scope.$stateParams
+    $scope.stateParams = $stateParams
     $scope.lang = theory.lang
     $scope.section = theory
 
     if $stateParams.scrollTo?
-      $scope.gotoSection $scope.$stateParams.scrollTo
+      $scope.gotoSection $stateParams.scrollTo
 
   )
