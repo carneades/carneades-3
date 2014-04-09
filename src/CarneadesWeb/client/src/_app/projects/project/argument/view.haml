@@ -18,7 +18,7 @@
       %div.premises_text{translate: "projects.premises_text"}
       %ul{"ng-repeat" => "p in argument.premises"}
         %li
-          %span
+          %span{"ng-hide" => "p.role == ''"}
             {{p.role}}.
           %span{"ng-show" => "!p.positive"} 
             %span{translate: "projects.negative_premise"}
