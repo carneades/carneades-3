@@ -19,7 +19,7 @@ define ['angular', 'angular-translate',
       
       $scope.argumentName = (arg, idx) ->
         if arg.scheme? and arg.scheme != ''
-          arg.scheme
+          arg.scheme.header.title
         else
           ($translate.instant "projects.argument") + " ##{idx+1}"
 

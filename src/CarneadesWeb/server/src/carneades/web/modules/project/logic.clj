@@ -196,22 +196,66 @@
   (-> argument
       (select-keys [:scheme :premises :id :conclusion])))
 
+(defn get-theory
+  [{:keys [pid tid scheme lang translate]}]
+  (let [theory (assoc (project/load-theory pid tid) :id tid)
+        ;; TODO: creates a simpler function that just returns the :translation key?
+        translator (comp (tr/make-default-translator)
+                         (ttr/make-language-translator (:language theory)))
+        do-translation (or (= translate "t") (= translate "true"))]
+    (cond (and do-translation scheme)
+          (when-let [s (t/find-scheme theory (symbol scheme))]
+            (ttr/translate-schemes translator lang))
+
+          scheme
+          (t/find-scheme theory (symbol scheme))
+
+          do-translation
+          (-> theory
+              (ttr/translate-theory translator lang)
+              (dissoc :language))
+
+          :else
+          (dissoc theory :language))))
+
+(defn get-theories
+  [params]
+  (let [params (merge {;; :host "localhost:3000"
+                       :lang :en} params)
+        params (update-in params [:lang] keyword)]
+    (if (:tid params)
+      (get-theory params)
+      (map #(get-theory (assoc params :tid %))
+           (:theories (get-resource (:host params) :project [(:pid params) "theories"]))))))
+
+(defn trim-scheme
+  [scheme]
+  (select-keys scheme [:id :header]))
+
+(defn get-scheme-from-arg
+  [project arg host lang]
+  (let [pcontent (get-resource host :project [project])
+        schemestr (str (first (unserialize-atom (:scheme arg))))
+        schemes-project (theory/get-schemes-project project (:schemes pcontent))
+        schemes-name (theory/get-schemes-name (:schemes pcontent))
+        scheme (get-theory {:pid schemes-project :tid schemes-name :scheme schemestr :lang lang})]
+    (if (nil? scheme)
+      ;; no scheme found? fake one
+      {:header {:title schemestr} :id schemestr}
+      scheme)))
+
 (defn get-argument
   [[project db id :as params]
    & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (let [arg (get-resource host :argument [project db id])
-        pcontent (get-resource host :project [project])
-        schemes-project (theory/get-schemes-project project (:schemes pcontent))
-        schemes-name (theory/get-schemes-name (:schemes pcontent))]
-    (debug "schemes-project: " schemes-project)
-    (debug "schemes-name: " schemes-name)
+        scheme (get-scheme-from-arg project arg host lang)]
     (-> arg
         (update-in [:header] trim-metadata lang)
         (update-in [:conclusion] trim-conclusion lang)
         (update-in [:premises] trim-premises lang)
-        (assoc :scheme (str (first (unserialize-atom (:scheme arg))))))))
+        (assoc :scheme (trim-scheme scheme)))))
 
 (defn get-trimed-argument
   [project db host lang aid]
@@ -283,35 +327,3 @@
                   [{:name "Content/type" :content "application/zip"}
                    {:name "file"
                     :content (clojure.java.io/file (.getPath (:tempfile file)))}]}))
-
-(defn get-theory
-  [{:keys [pid tid scheme lang translate]}]
-  (let [theory (assoc (project/load-theory pid tid) :id tid)
-        ;; TODO: creates a simpler function that just returns the :translation key?
-        translator (comp (tr/make-default-translator)
-                         (ttr/make-language-translator (:language theory)))
-        do-translation (or (= translate "t") (= translate "true"))]
-    (cond (and do-translation scheme)
-          (-> (t/find-scheme theory (symbol scheme))
-              (ttr/translate-scheme translator lang))
-
-          scheme
-          (t/find-scheme theory (symbol scheme))
-
-          do-translation
-          (-> theory
-              (ttr/translate-theory translator lang)
-              (dissoc :language))
-
-          :else
-          (dissoc theory :language))))
-
-(defn get-theories
-  [params]
-  (let [params (merge {;; :host "localhost:3000"
-                       :lang :en} params)
-        params (update-in params [:lang] keyword)]
-   (if (:tid params)
-     (get-theory params)
-     (map #(get-theory (assoc params :tid %))
-          (:theories (get-resource (:host params) :project [(:pid params) "theories"]))))))
