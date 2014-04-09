@@ -3,14 +3,40 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-## Displays an ordered list of properties in table
+# Displays an ordered list of properties in a table
+# If the properties is a scheme, it is linked to its page
 define ['angular', 'angular-translate'], (angular) ->
   angular.module("directives.properties", ['pascalprecht.translate'])
   .directive("properties", ->
     restrict: "E"
-    replace: true
     templateUrl: "directives/properties/properties.tpl.html"
     scope:
-      keys: "=keys",
-      model: "=model"
+      keys: "=",
+      model: "="
+    controller: ($scope) ->
+      $scope.project = $scope.$parent.project
+      $scope.pid = $scope.$parent.pid
+      $scope.db = $scope.$parent.db
+
+      # schemes can be written with an absolute path like project/scheme
+      # or with a relative path like scheme.
+      $scope.getSchemesProject = (project) ->
+        schemes = project.schemes
+        res = schemes.split '/'
+        if res.length == 1
+          project.id
+        else
+          res[0]
+
+      $scope.getSchemesName = (project) ->
+        schemes = project.schemes
+        res = schemes.split '/'
+        if res.length == 1
+          res[0]
+        else
+          res[1]
+
+      $scope.schemesProject = $scope.getSchemesProject($scope.project)
+      $scope.schemesName = $scope.getSchemesName($scope.project)
+
   )
