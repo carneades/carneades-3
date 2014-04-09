@@ -410,13 +410,13 @@
 
 (defn theory? [x] (instance? Theory x))
 
-(defn load-theory
+(defn load-theory*
   "Dynamically loads the theory at url and returns it."
   [filepath]
   (deref (load-file filepath)))
 
 ;; ensure we don't load twice the same namespace
-(memoize load-theory)
+(def load-theory (memoize load-theory*))
 
 (defn- scheme-index-key
   "term -> symbol
@@ -513,6 +513,18 @@
   (let [locs (take-while (complement z/end?)
                          (iterate z/next (tz/theory-zip theory)))]
     (first (filter #(= scheme (:id %)) (mapcat (comp :schemes z/node) locs)))))
+
+(defn get-schemes-project
+  "Returns the project from the :schemes field of a project properties."
+  [pid schemes]
+  (let [res (re-find #"(?:(.+)/)?(.+)" schemes)
+        maybe-project (nth res 1)]
+    (or maybe-project pid)))
+
+(defn get-schemes-name
+  "Returns the name of the :schemes field of a project properties."
+  [schemes]
+  (last (re-find #"(?:(.+)/)?(.+)" schemes)))
 
 ;; Generators for arguments from schemes and theories:
 
