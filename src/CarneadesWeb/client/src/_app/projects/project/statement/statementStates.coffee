@@ -11,6 +11,10 @@ define ['angular', './statementControllers', '../../../common/resources/statemen
       label: 'Statement'
       url: '/:db/statements/:sid'
       commands: [
+        label: "Map"
+        state: "home.projects.project.map"
+      ,
+
         label: "Outline"
         state: "home.projects.project.outline"
       ]
