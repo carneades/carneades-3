@@ -5,11 +5,12 @@
 
 (ns carneades.web.modules.project.logic
   ^{:doc "Basic functions for serving project requests"}
-  (:require [clj-http.client :as client]
-            [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]
-            [compojure.route :as route]
+  (:require [clojure.string :refer [join]]
             [clojure.set :as set]
             [clojure.zip :as z]
+            [clj-http.client :as client]
+            [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]
+            [compojure.route :as route]
             [cheshire.core :refer :all]
             [carneades.maps.lacij :as lacij]
             [carneades.database.db :as db]
@@ -20,22 +21,12 @@
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
             [clojure.java.io :as io]
-            [carneades.engine.utils :refer [dissoc-in unserialize-atom]]))
+            [carneades.engine.utils :refer [dissoc-in unserialize-atom]]
+            [carneades.engine.theory :as theory]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn- params->path [params]
-  (reduce (fn [x y] (conj x (str "/" y))) [] params))
-
-(defn- params->resource
-  [base & [params]]
-  (->> (into base params)
-        params->path
-        (apply str "http:/")
-        (#(:body (client/get %)))
-        (#(parse-string % true))))
 
 (defn- key-filter [keys x] (select-keys x keys))
 
@@ -55,27 +46,28 @@
 ;; Definition of resources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn build-url
+  [host resource params]
+  (let [path (cons (str host "/carneades/carneadesws/" (name resource)) params)
+        url (str "http://" (join "/" path))]
+    url))
+
 (defn get-resource
   "Returns a JSON resource from the old carneades REST api."
   [host resource params]
   {:pre [(not (nil? resource))]}
-  (params->resource [(str host "/carneades/carneadesws/" (name resource))] params))
-
-(defn construct-url
-  [host resource params]
-  (let [base ["http://" host "/carneadesws/" (name resource)]]
-    (if (empty? params)
-      (apply str base)
-      (apply str (into base ["/"] params)))))
+  (let [url (build-url host resource params)
+        content (:body (client/get url))]
+    (parse-string content true)))
 
 (defn get-raw-resource
   [host resource params]
-  (io/input-stream (:body (client/get (construct-url host resource params)
+  (io/input-stream (:body (client/get (build-url host resource params)
                                       {:as :byte-array}))))
 
 (defn post-resource
   [host resource params post-params]
-  (client/post (construct-url host resource params) post-params))
+  (client/post (build-url host resource params) post-params))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions for service calls
@@ -209,7 +201,12 @@
    & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (let [arg (get-resource host :argument [project db id])]
+  (let [arg (get-resource host :argument [project db id])
+        pcontent (get-resource host :project [project])
+        schemes-project (theory/get-schemes-project project (:schemes pcontent))
+        schemes-name (theory/get-schemes-name (:schemes pcontent))]
+    (debug "schemes-project: " schemes-project)
+    (debug "schemes-name: " schemes-name)
     (-> arg
         (update-in [:header] trim-metadata lang)
         (update-in [:conclusion] trim-conclusion lang)
