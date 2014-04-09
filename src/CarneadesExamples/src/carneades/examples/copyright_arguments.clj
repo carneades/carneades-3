@@ -351,7 +351,8 @@ Das Aktionsbündnis „Urheberrecht für Bildung und Wissenschaft“ in Deutsch
 (def a3 (make-argument
          :header (make-metadata :description {:en "There are better ways to help researchers and students to work in more than one Member
 State than harmonizing copyright exceptions."})
-         :conclusion (make-statement :atom `(~'undercut ~a2-id))
+         :conclusion (make-statement :atom `(~'valid ~a2-id))
+         :pro false
          :scheme '(better-alternatives)
          :premises [(make-premise :statement better-ways)]))
 
