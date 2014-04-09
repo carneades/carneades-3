@@ -317,7 +317,7 @@ copyright legislation."}))
 
 (def a1 (make-argument
          :header (make-metadata :description {:en "In response to Question 4, yes, the permitted copyright exceptions should be harmonized."})
-         :scheme "Position"
+         :scheme '(position)
          :conclusion Q4
          :premises [(pm permitted-exceptions-should-be-harmonized)]))
 
@@ -341,29 +341,29 @@ Das Aktionsbündnis „Urheberrecht für Bildung und Wissenschaft“ in Deutsch
 
 >Es ist für die immer schon grenzüberschreitend international arbeitende Wissenschaft hinderlich, wenn Ausnahmen, z.B. für die Nutzung urheberrechtsgeschützten Materials in international verteilten Arbeitsgruppen, in verschiedenen Ländern unterschiedlich geregelt sind. Eine für alle Mitgliedsländer verbindliche Ausgestaltung zentraler Ausnahmekategorien ist daher erwünscht. [@Aktionsbündnis, p. 5]" }
                   :source "Aktionsbündnis;Aston2008")
-         :scheme "Practical Reasoning"
+         :scheme '(practical-reasoning)
          :conclusion permitted-exceptions-should-be-harmonized 
-         :premises [(make-premise :role "Goal" :statement easier-to-work-in-several-states),
-                    (make-premise :role "Action" :statement harmonizing-exceptions-would-help-academics)
-                    (make-premise :role "Values Promoted" :statement values-promoted-by-facilitating-research),
-                    (make-premise :role "Circumstances" :statement work-made-more-difficult)]))
+         :premises [(make-premise :role "goal" :statement easier-to-work-in-several-states),
+                    (make-premise :role "action" :statement harmonizing-exceptions-would-help-academics)
+                    (make-premise :role "values" :statement values-promoted-by-facilitating-research),
+                    (make-premise :role "circumstances" :statement work-made-more-difficult)]))
 
 (def a3 (make-argument
          :header (make-metadata :description {:en "There are better ways to help researchers and students to work in more than one Member
 State than harmonizing copyright exceptions."})
          :conclusion (make-statement :atom `(~'undercut ~a2-id))
-         :scheme "CQ1. Better Alternatives"
+         :scheme '(better-alternatives)
          :premises [(make-premise :statement better-ways)]))
 
 (def a4 (make-argument
          :header (make-metadata :description {:en "In response to Question 12, the policy proposed by the Action Alliance of Germany should be adopted to handle the the cross-border aspects of orphaned works.."})
-         :scheme "Position"
+         :scheme '(position)
          :conclusion Q12
          :premises [(pm Q12-action-alliance-proposal)]))
 
 (def a5 (make-argument
          :header (make-metadata :description {:en "In response to Question 9, Yes. The exceptions should be clarified to allow works held in libraries to be scanned for the purpose of making their content searchable on the Internet."})
-         :scheme "Position"
+         :scheme '(position)
          :conclusion Q9
          :premises [(pm Q9-LIBER-Proposal)]))
 
@@ -373,14 +373,14 @@ State than harmonizing copyright exceptions."})
 > Not all the material digitised by publishers is scanned with OCR (Optical Character Recognition) with the purpose of making the resulting content searchable. If the rights holders will not do this, libraries should be able to offer this service. It would have a transformative effect on research, learning and teaching by opening up a mass of content to users which can be searched using search engines. The interests of copyright holders will not be harmed, because the resulting output will act as marketing material for their materials. [@LIBER, p. 3]"}
                                 :source "LIBER")
          :conclusion Q9-LIBER-Proposal
-         :scheme "Practical Reasoning"                                     
+         :scheme '(position)
          :premises [(make-premise :role "Circumstances" :statement (make-statement :text {:en "Not all the material digitised by publishers is scanned with OCR (Optical Character Recognition) with the purpose of making the resulting content searchable."}))
                     (make-premise :role "Action" :statement (make-statement :text {:en "Clarifying the law to allow works held in libraries for the purpose of making the resulting content searchable on the Internet would have a transformative effect on research, learning and teaching."}))
                     (make-premise :role "Goal" :statement (make-statement :text {:en "Realizing a transformative effect on research, learning and teaching is an important social goal."}))]))
 
 (def a7 (make-argument
          :header (make-metadata :description {:en "In response to Question 24, No. Further restrictions on the end users of copyrighted materials should not be enacted."})
-         :scheme "Position"
+         :scheme '(position)
          :conclusion Q24
          :premises [(pm Q24-LIBER-Proposal)]))
 
@@ -390,14 +390,14 @@ State than harmonizing copyright exceptions."})
 > The essence of copyright legislation is the maintenance of a balance between the rights of the rights holders and the legitimate needs of users.The introduction of more restrictions will blur this distinction and make it more difficult for users of copyright material in their legitimate pursuits in teaching, learning and research in the European Community. [@LIBER, p. 5]"}
                                 :source "LIBER")
          :conclusion Q24-LIBER-Proposal
-         :scheme "Practical Reasoning"
-         :premises [(make-premise :role "Circumstances" :statement (make-statement :text {:en "The essence of copyright legislation is the maintenance of a balance between the rights of the rights holders and the legitimate needs of users."}))
-                    (make-premise :role "Action" :statement (make-statement :text {:en "The introduction of more restrictions on the end users would create an imbalance between the interests of copyright owners and end users and make it more difficult for users of copyright material in their legitimate pursuits in teaching, learning and research in the European Community."}))
-                    (make-premise :role "Goal" :statement (make-statement :text {:en "Creating an imbalance between the interests of copyright owners and end users and making it more difficult for users of copyright material in their legitimate pursuits in teaching, learning and research in the European Community should be avoided."}))]))
+         :scheme '(practical-reasoning)
+         :premises [(make-premise :role "circumstances" :statement (make-statement :text {:en "The essence of copyright legislation is the maintenance of a balance between the rights of the rights holders and the legitimate needs of users."}))
+                    (make-premise :role "action" :statement (make-statement :text {:en "The introduction of more restrictions on the end users would create an imbalance between the interests of copyright owners and end users and make it more difficult for users of copyright material in their legitimate pursuits in teaching, learning and research in the European Community."}))
+                    (make-premise :role "goal" :statement (make-statement :text {:en "Creating an imbalance between the interests of copyright owners and end users and making it more difficult for users of copyright material in their legitimate pursuits in teaching, learning and research in the European Community should be avoided."}))]))
 
 (def a9 (make-argument
          :header (make-metadata :description {:en "Question 9 is irrelevant."})
-         :scheme "Position"
+         :scheme '(position)
          :conclusion Q9
          :premises [(pm Q9-is-irrelevant)]))
 
@@ -410,7 +410,7 @@ State than harmonizing copyright exceptions."})
 
 (def a11 (make-argument
           :header (make-metadata :description {:en "In response to Question 12, the policy proposed by the High Level Exprt Group of Germany should be adopted to handle the the cross-border aspects of orphaned works."})
-          :scheme "Position"
+          :scheme '(position)
           :conclusion Q12
           :premises [(pm Q12-UKPA-proposal)]))
 
@@ -425,12 +425,12 @@ State than harmonizing copyright exceptions."})
 
 > In sum, we are of the strong belief that government involvement in licensing, whether it be through guidelines or model agreements or through legislative mandates, would hinder innovation and dissemination.  Accordingly, we do not believe that such government involvement is not appropriate. [@SIIA, pp. 3-4]"}
                                  :source "SIIA")
-          :scheme "Negative Practical Reasoning"
+          :scheme '(negative-practical-reasoning)
           :conclusion  (neg permitted-exceptions-should-be-harmonized)
-          :premises [(make-premise :role "Goal" :statement preserving-freedom-of-contract),
-                      (make-premise :role "Action" :statement harmonization-would-impair-freedom-of-contract),
-                      (make-premise :role "Values Demoted" :statement impairing-freedom-of-contract-would-demote-innovation-and-dissemination),
-                      (make-premise :role "Circumstances" :statement lack-of-harmonization-facilitates-freedom-of-contract)]))
+          :premises [(make-premise :role "goal" :statement preserving-freedom-of-contract),
+                      (make-premise :role "action" :statement harmonization-would-impair-freedom-of-contract),
+                      (make-premise :role "values-demoted" :statement impairing-freedom-of-contract-would-demote-innovation-and-dissemination),
+                      (make-premise :role "circumstances" :statement lack-of-harmonization-facilitates-freedom-of-contract)]))
 
 (def a14 (make-argument
           :header (make-metadata :description {:en "There is no need to clarify copyright law regarding whether the scanning of works held in 
@@ -448,7 +448,7 @@ onus on the copyright owner to opt-out of the initiative.  We do not believe tha
 any further clarification in the law in this area.  To the best of our knowledge no court has ever 
 held that such large-scale scanning activities are not prohibited under copyright law. [@SIIA, p. 7]"}
                                  :source "SIIA")
-          :scheme "Argument from Ignorance"
+          :scheme '(ignorance)
           :conclusion  (neg Q9-LIBER-Proposal)
           :premises [(pm we-would-know-if-the-scanning-rules-were-unclear)
                      (pm we-do-not-know-the-scanning-rules-to-be-unclear)]))
@@ -456,7 +456,7 @@ held that such large-scale scanning activities are not prohibited under copyrigh
 (def a15  (make-argument
            :header (make-metadata :description {:en "In response to Question 12, a Community statutory instrument dealing with 
 the problem of orphan works should be a stand-alone instrument."})
-           :scheme "Position"
+           :scheme '(position)
            :conclusion Q12
            :premises [(pm Q12-SIIA-Proposal)]))
 
@@ -467,7 +467,7 @@ the problem of orphan works should be a stand-alone instrument."})
 Directive to be amended to include a provision relating to orphan works. [@SIIA, p. 9]"}
                                  :source "SIIA")
           :conclusion Q12-SIIA-Proposal
-          :scheme "Practical Reasoning"
+          :scheme '(practical-reasoning)
           :premises [(make-premise :role "Circumstances" :statement directive-relates-to-right-and-exceptions)
                      (make-premise :role "Action" :statement stand-alone-instrument-would-regulate-separate-topics-with-separate-instruments)
                      (make-premise :role "Goal" :statement separate-topics-should-be-regulated-by-separate-instruments)
@@ -490,7 +490,7 @@ educating the public on what they can and cannot do with copyrighted works.  The
 In short, the rules of the road do not need to be changed, the people who drive on the road
 need to better understand the rules. [@SIIA, pp. 15-16.]"}
                                 :source "SIIA")
-         :scheme "Position"
+         :scheme '(position)
          :conclusion Q24
          :premises [(pm Q24-SIIA-Proposal)]))
 

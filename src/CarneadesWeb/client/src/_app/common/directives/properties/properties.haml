@@ -1,4 +1,10 @@
-%table.table.table-striped
-  %tr.block{"ng-repeat" => "k in keys"}
-    %td.jsonObjectKey{translate: "{{k[1]}}"} {{k[0]}}
-    %td.jsonObjectValue {{model[k[0]]}}
+%div
+  %table.table.table-striped
+    %tr.block{"ng-repeat" => "k in keys"}
+      %td.jsonObjectKey{translate: "{{k[1]}}"} {{k[0]}}
+      %td.jsonObjectValue
+        %span{"ng-switch" => "", on: "k[0]"}
+          %span{"ng-switch-when" => "scheme"}
+            %a{"ui-sref" => "home.projects.project.theory({pid: schemesProject, tid: schemesName, scrollTo: model[k[0]].id})"}{{model[k[0]].header.title}}
+          %span{"ng-switch-default" => ""}
+            {{model[k[0]]}}  

@@ -4,14 +4,43 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
-  "use strict"
-
   # Prefix state
   angular.module("ui.bootsrap.breadcrumb", ['ui.bootstrap.collapse', "ui.router.state"])
-
   .provider("$breadcrumb", () ->
+    class DS
+      constructor: (@length) ->
+        @data = new Array @length
+      size: -> throw new Error('I am an abstract class!')
+      push: (s) -> throw new Error('I am an abstract class!')
+      pop: -> throw new Error('I am an abstract class!')
+      peek: -> throw new Error('I am an abstract class!')
+
+    class LimitedStack extends DS
+      constructor: (length) ->
+        super(length)
+        @ptr = -1
+      size: -> return @length
+      push: (s) ->
+        @ptr = @ptr + 1
+        @ptr = @ptr % @length
+        @data[@ptr] = s
+      pop: () ->
+        s = @data[@ptr]
+        @ptr = if @ptr is 0 or @ptr is -1 then @ptr = @length else @ptr - 1
+        return s
+      peek: () -> return @data[@ptr]
+      asArray: ->
+        arr = []
+        i = 0
+        p = @ptr
+        while i isnt @length
+          if @data[p] then arr.push(@data[p])
+          p = if p is 0 or p is -1 then p = @length else p - 1
+          i = i + 1
+        return arr.reverse()
+
     options = {}
-    _navigationStates = []
+    _navigationStates = new LimitedStack(6)
     position = 0
 
     setIndexOfItemClicked = (value) ->
@@ -41,63 +70,15 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
     buildState = (state, stateParams) ->
       label: state.label
       name: state.name
-      params: stateParams
+      params: angular.copy stateParams
       tooltip: state.tooltip
-
-    getEvent = () ->
-      getEventType = (index, length) ->
-        if (index is 0 and length is 0) then return 'BC_INIT'
-        if (index is 0 and length > 0) then return 'BC_APPEND_ITEM'
-        if (index > 0 and index < length) then return 'BC_ITEM_CLICKED'
-        if (index > 0 and index is length) then return 'BC_LAST_ITEM_CLICKED'
-        return 'EVENT_NOT_REGISTERED'
-
-      index = getIndexOfItemClicked()
-      length = _navigationStates.length
-
-      return {
-        index: index
-        name: getEventType index, length
-        length: length
-      }
-
-    update = (states, state) ->
-      index = 0
-      index = ++index while states[index] and states[index].name != state.name
-      if index + 1 > states.length
-        states.push state
-      else
-        states[index] = state
-
-    processEvent = (e, state, stateParams) ->
-      states = _navigationStates
-      switch e.name
-        when 'BC_INIT'
-          states = (buildState(s.self, stateParams) for s in state.path)
-        when 'BC_LAST_ITEM_CLICKED'
-          update states, buildState state.self, stateParams
-        when 'BC_APPEND_ITEM'
-          update states, buildState state.self, stateParams
-        when 'BC_ITEM_CLICKED'
-          temp = states
-          states = temp.slice 0, e.index
-          deprecated = temp.slice e.index + 1, e.length
-          update states, buildState state.self, stateParams
-          angular.forEach deprecated, (s) ->
-            update states, s
-      return states
-
-    build = (state, stateParams) ->
-      navigationStates = processEvent getEvent(), state, stateParams
-      resetIndexOfItemClicked()
-      return navigationStates
 
     ##########################################################
     ##########################################################
 
     getNavigationStates = (state, stateParams) ->
-      _navigationStates = build state, stateParams
-      return _navigationStates
+      _navigationStates.push buildState state, stateParams
+      return _navigationStates.asArray()
 
     $get: () ->
       getIndexOfItemClicked: () ->
@@ -134,13 +115,6 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
           idx++
         return index
 
-      # $scope.changeState = (name, cIndex) ->
-      #   if name
-      #     index = getIndexByName $scope.states, name
-      #     $breadcrumb.setIndexOfItemClicked index + 1
-      #     $state.go $scope.states[index].commands[cIndex].state, $stateParams
-      #     _index = index + 1
-
       $scope.setCommandView = (index) ->
         _index = index
 
@@ -161,9 +135,9 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
       bcOpen: '&'
       index: '='
     templateUrl: 'directives/breadcrumb/breadcrumb-entry.tpl.html'
-    controller: ($scope, $element, $attrs, $state, $stateParams) ->
-      $scope.openView = (name) ->
-        $state.go name, $stateParams
+    controller: ($scope, $element, $attrs, $state, $breadcrumb) ->
+      $scope.openView = (name, params) ->
+        $state.go name, params
     link: (scope, element, attrs) ->
       index = scope.index % 7
       scope.cssClass = if index > 0 then "bc-level-" + index
