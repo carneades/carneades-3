@@ -1,5 +1,5 @@
-%div{"ng-repeat" => "(k,v) in model"}
-  %div{"ng-show" => "v", "ng-controller" => "MetadataCtrl"}
+%dl{"ng-repeat" => "(k,v) in model"}
+  %dt{"ng-show" => "v"}
     .metadataKey{translate: "{{getTranslateKey(k)}}"} {{k}}
+  %dd{"ng-show" => "v"}
     %markdown{extensions: "carneades", "ng-model" => "v"}
-    
