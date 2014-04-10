@@ -12,7 +12,7 @@ define ['angular', 'angular-translate'], (angular) ->
     templateUrl: "directives/metadata/metadata.tpl.html"
     scope:
       model: "=model"
-  ).controller('MetadataCtrl', ["$scope", ($scope) ->
-     $scope.getTranslateKey = (k) ->
-      "projects.#{k}"
-  ])
+    controller: ($scope) ->
+      $scope.getTranslateKey = (k) ->
+        "projects.#{k}"
+  )
