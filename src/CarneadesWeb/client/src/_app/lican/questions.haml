@@ -1,6 +1,8 @@
-%div
+%div{"ng-hide" => "questionGroups.length == 0"}
   %h2{{translate: "lican.questions.title"}}
   %form{"ng-submit" => "sendAnswer()", "name" => "questionsForm"}
     %div{"ng-repeat" => "group in questionGroups"}
       %question-group{group: "group"}
     %button.btn.btn-default{type: "submit", translate: "lican.questions.send"}
+%div{"ng-show" => "questionGroups.length == 0"}
+  %span{{translate: "lican.questions.processing"}}
