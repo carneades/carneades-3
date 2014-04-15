@@ -417,7 +417,7 @@ State than harmonizing copyright exceptions."})
 
 (def a12 (make-argument
           :header (make-metadata :description {:en "In response to Question 12, the cross-border aspects of the orphaned works should be handled through an amendment to Directive 2011/29/EC."})
-          :scheme "Position"
+          :scheme '(position)
           :conclusion Q12
           :premises [(pm Q12-Google-proposal)]))
 
