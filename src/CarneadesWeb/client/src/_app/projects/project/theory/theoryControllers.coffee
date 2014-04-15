@@ -3,28 +3,18 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-define ['angular'], (angular) ->
+define ['angular'
+  '../../../common/services/scroll'], (angular) ->
   angular.module('theory.controllers', [])
-  .controller('TheoryCtrl', ($scope, $stateParams, $location, $anchorScroll, theory) ->
+  .controller('TheoryCtrl', ($scope, $stateParams, $location, $anchorScroll, scroll, theory) ->
     $scope.showMetadatum = (k, v) ->
       v? and (k not in ['id', 'description', 'title'])
-
-    $scope.gotoSection = (section) ->
-      setTimeout ->
-        window.scrollTo(window.pageXOffset, window.pageYOffset - 90)
-
-        old = $location.hash()
-        $location.hash section
-        $anchorScroll()
-        $location.hash old
-
-      , 200
 
     $scope.stateParams = $stateParams
     $scope.lang = theory.lang
     $scope.section = theory
 
     if $stateParams.scrollTo?
-      $scope.gotoSection $stateParams.scrollTo
+      scroll.scrollTo $stateParams.scrollTo
 
   )
