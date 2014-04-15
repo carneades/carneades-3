@@ -28,8 +28,6 @@
 ;; Utility functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn- key-filter [keys x] (select-keys x keys))
-
 (defn- set-lang-description [lang key x] (assoc x key (-> x key lang)))
 
 (defn- filter-refs [x] (not (= (:key x) nil)))
@@ -145,7 +143,6 @@
   [[project db id :as params] & {:keys [k lang host]}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (info (str "METADATA-KEY:" k))
   (->> (get-resource host :metadata params)
        (#(if (nil? k)
            %
@@ -155,7 +152,6 @@
   [[project db id :as params] & {:keys [k lang host]}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (info (str "METADATA-KEY:" k))
   (->> (get-resource host :metadata params)
        (#(if (nil? k)
            %
@@ -278,7 +274,8 @@
                     (map (partial get-trimed-argument project db host lang) (:premise-of stmt)))]
     stmt))
 
-(defn get-nodes [project db id & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
+(defn get-nodes
+  [project db id & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
   (let [[info outline refs]
         [(get-metadata [project db id] :host host :lang lang)
          (get-outline [project db] :host host :lang lang)
@@ -287,7 +284,7 @@
         (assoc :description (-> info :description lang))
         (assoc :issues (make-issues outline))
         (assoc :outline outline)
-        (assoc :references (map (partial key-filter [:creator :date :identifier :title])
+        (assoc :references (map #(select-keys % [:creator :date :identifier :title])
                                 (filter filter-refs refs))))))
 
 (defn get-issues
@@ -298,7 +295,7 @@
 (defn get-references
   [[project db :as params] & {:keys [lang host]}]
   (let [references (get-metadata [project db] :host host :lang lang)]
-    (map (partial key-filter [:creator :date :identifier :title])
+    (map #(select-keys % [:creator :date :identifier :title :key])
          (filter filter-refs references))))
 
 (defn get-argument-map [project db & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
