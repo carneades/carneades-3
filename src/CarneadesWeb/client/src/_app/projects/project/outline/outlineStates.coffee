@@ -19,7 +19,7 @@ define [
       {
         name: 'home.projects.project.outline'
         label: 'Outline'
-        url: '/:db/outline'
+        url: '/:db/outline?scrollTo'
         commands: [
           label: "Map"
           state: "home.projects.project.map"
@@ -32,15 +32,22 @@ define [
             template: "<bc-navigation></bc-navigation>"
           "content@":
             templateUrl: 'project/outline/outline-main.tpl.html'
-            controller: ($scope, $location, $anchorScroll, project) ->
+            controller: ($scope, $stateParams, $location, $anchorScroll, project) ->
               $scope.project = project
               $scope.project.title = project.title
               $scope.gotoSection = (section) ->
-                $location.hash section
-                $anchorScroll()
                 setTimeout ->
                   window.scrollTo(window.pageXOffset, window.pageYOffset - 90)
+
+                  old = $location.hash()
+                  $location.hash section
+                  $anchorScroll()
+                  $location.hash old
                 , 200
+
+              if $stateParams.scrollTo?
+                $scope.gotoSection $stateParams.scrollTo
+                
             resolve:
               project: ($stateParams, MetadataLoader) ->
                 $stateParams.mid = 1
