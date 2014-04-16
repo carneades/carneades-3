@@ -8,18 +8,19 @@ define [
   '../../../common/resources/metadata',
   '../../../common/resources/references',
   '../../../common/resources/outline',
-  '../../../common/resources/issues'], (angular) ->
+  '../../../common/resources/issues'
+  '../../../common/services/scroll'], (angular) ->
 
   angular.module('outline.states', [
     'resources.metadata',
     'resources.metadata.references', 'resources.outline',
-    'resources.outline.issues']
+    'resources.outline.issues', 'services.scroll']
   ).config(($stateProvider) ->
     states = [
       {
         name: 'home.projects.project.outline'
         label: 'Outline'
-        url: '/:db/outline'
+        url: '/:db/outline?scrollTo'
         commands: [
           label: "Map"
           state: "home.projects.project.map"
@@ -32,19 +33,19 @@ define [
             template: "<bc-navigation></bc-navigation>"
           "content@":
             templateUrl: 'project/outline/outline-main.tpl.html'
-            controller: ($scope, $location, $anchorScroll, project) ->
+            controller: ($scope, $stateParams, scroll, project) ->
               $scope.project = project
               $scope.project.title = project.title
-              $scope.gotoSection = (section) ->
-                $location.hash section
-                $anchorScroll()
-                setTimeout ->
-                  window.scrollTo(window.pageXOffset, window.pageYOffset - 90)
-                , 200
+              $scope.scrollTo = scroll.scrollTo
+              
+              if $stateParams.scrollTo?
+                scroll.scrollTo $stateParams.scrollTo
+                
             resolve:
               project: ($stateParams, MetadataLoader) ->
                 $stateParams.mid = 1
-                return new MetadataLoader($stateParams)
+                new MetadataLoader($stateParams)
+              scroll: 'scroll'
 
           "issues@home.projects.project.outline":
             templateUrl: 'project/outline/issues.tpl.html'
