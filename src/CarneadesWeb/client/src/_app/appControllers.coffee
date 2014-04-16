@@ -9,10 +9,10 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive('bcNavigation', () ->
     restrict: 'E'
     replace: 'true'
-    template: '<div><header class="navbar-inverse" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates"></breadcrumb></header></div>')
+    template: '<div><header class="navbar-inverse" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates"></breadcrumb></header></div>'
+  )
 
   .controller('AppCtrl', ($scope, $location, i18nNotifications) ->
-
     $scope.notifications = i18nNotifications
     $scope.removeNotification = (notification) ->
       i18nNotifications.remove(notification)
@@ -28,33 +28,9 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
           [
             #  ? title ? syntax
             type: "lang"
-            regex: "\\[@([a-zA-Z0-9]+)[^\\]]*\\]"
+            regex: "\\[@([^\\,]+)[^\\]]*\\]"
             replace: (match, citation_key) ->
-              metadata = {}
-
-              request = new XMLHttpRequest
-              request.open 'GET', $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/copyright/main/metadata?k=#{citation_key}", false
-
-              request.onload = ->
-                if request.status >= 200 and request.status < 400
-                  metadata = JSON.parse request.responseText
-                else
-                  # We reached our target server, but it returned an error
-                  console.log 'Server reached, but it returned an error'
-
-                request.onerror = ->
-                  # There was a connection error of some sort
-                  console.log 'Error'
-
-              request.send()
-
-              metadatum = undefined
-              if metadata and metadata.length is 1
-                metadatum = metadata[0].source
-                return "<a href=\"" + metadatum + "\" >" + match + "</a>" if metadatum
-                metadatum = metadata[0].identifier
-                return "<a href=\"" + metadatum + "\" >" + match + "</a>"  if metadatum and (metadatum.indexOf("http://") is 0 or metadatum.indexOf("https://") is 0 or metadatum.indexOf("ftp://") is 0 or metadatum.indexOf("file://") is 0)
-              match
+              "<a href='" + "/carneades/#/projects/#{$stateParams.pid}/#{$stateParams.db}/outline?scrollTo=#{citation_key}" + "'>#{match}</a>";
           ,
             type: "output"
             filter: (source) ->
