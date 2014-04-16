@@ -18,7 +18,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Home</h1>"
-        "page-nav@":
+        "subnav@":
           template: '<page-navigation><page-navigation-item cmd=\"c\" ng-repeat=\"c in $state.$current.commands\"></page-navigation-item></page-navigation>'
       commands: [
         label: "Home"

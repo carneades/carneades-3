@@ -29,7 +29,7 @@ define [
           state: "home.projects.project.theory"
         ]
         views:
-          "@":
+          "nav@":
             template: "<bc-navigation></bc-navigation>"
           "content@":
             templateUrl: 'project/outline/outline-main.tpl.html'
@@ -37,10 +37,10 @@ define [
               $scope.project = project
               $scope.project.title = project.title
               $scope.scrollTo = scroll.scrollTo
-              
+
               if $stateParams.scrollTo?
                 scroll.scrollTo $stateParams.scrollTo
-                
+
             resolve:
               project: ($stateParams, MetadataLoader) ->
                 $stateParams.mid = 1

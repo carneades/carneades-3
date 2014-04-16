@@ -8,6 +8,7 @@
   "dependencies": {
     "angular": "~1.2.5",
     "angular-bootstrap": "~0.10.0",
+    "angular-ui-utils": "~0.1.1",
     "angular-route": "~1.2.5",
     "angular-resource": "~1.2.5",
     "angular-local-storage": "",
@@ -18,6 +19,6 @@
     "angular-ui-router": "0.2.8-bowratic-tedium",
     "angular-translate": "~2.0.1",
     "angular-translate-loader-static-files": "~2.0.0"
-      
+
   }
 }
