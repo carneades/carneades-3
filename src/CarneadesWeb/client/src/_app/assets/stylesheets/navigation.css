@@ -1,8 +1,10 @@
 /*
 Syntax error: File to import not found or unreadable: compass.
-              Load path: /Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets
-        on line 2 of /Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets/navigation/partials/_base.scss
-        from line 2 of /Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets/navigation.scss
+              Load paths:
+                /Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets (DEPRECATED)
+                /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets
+        on line 2 of /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation/partials/_base.scss
+        from line 2 of /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation.scss
 
 1: // Modules and Variables
 2: @import "navigation/partials/base";
@@ -12,8 +14,8 @@ Syntax error: File to import not found or unreadable: compass.
 6: @import "navigation/partials/breadcrumb";
 
 Backtrace:
-/Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets/navigation/partials/_base.scss:2
-/Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets/navigation.scss:2
+/Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation/partials/_base.scss:2
+/Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation.scss:2
 /Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/import_node.rb:67:in `import'
 /Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/import_node.rb:28:in `imported_file'
 /Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/import_node.rb:37:in `css_import?'
@@ -59,4 +61,4 @@ Backtrace:
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Syntax error: File to import not found or unreadable: compass.\A               Load path: /Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets\A         on line 2 of /Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets/navigation/partials/_base.scss\A         from line 2 of /Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets/navigation.scss\A \A 1: // Modules and Variables\A 2: @import \"navigation/partials/base\";\A 3: \A 4: @import \"navigation/partials/mixins\";\A 5: @import \"navigation/partials/navigation\";\A 6: @import \"navigation/partials/breadcrumb\";"; }
+  content: "Syntax error: File to import not found or unreadable: compass.\A               Load paths:\A                 /Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets (DEPRECATED)\A                 /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets\A         on line 2 of /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation/partials/_base.scss\A         from line 2 of /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation.scss\A \A 1: // Modules and Variables\A 2: @import \"navigation/partials/base\";\A 3: \A 4: @import \"navigation/partials/mixins\";\A 5: @import \"navigation/partials/navigation\";\A 6: @import \"navigation/partials/breadcrumb\";"; }
