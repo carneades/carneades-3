@@ -13,7 +13,9 @@
   Translators can be combined together with clojure.core/comp."}
   carneades.engine.translation
   (:require [carneades.engine.statement :as st]
-            [carneades.engine.argument-graph :as ag]))
+            [carneades.engine.argument-graph :as ag]
+            [carneades.engine.utils :refer [serialize-atom unserialize-atom]]
+            [taoensso.timbre :as timbre :refer [debug info]]))
 
 (defn translate-ag
   "Translates the argument graph with a translator."
@@ -38,20 +40,38 @@
           (if-let [txt (get-in literal [:text lang])]
             txt
             (pr-str (st/literal-atom literal)))
-
+          
           (st/statement? literal) (pr-str (st/literal-atom literal))
 
           :else (pr-str virtual-atom))))
 
 (defn make-default-translator
   "Returns a default translator for literals. It uses the :text field
-  of statement or the atom represented a string."
+  of statement or the atom represented as a string."
   []
   (fn [context]
     (if (:translation context)
       context
       (let [translation (translate-literal context)]
         (assoc context :translation translation)))))
+
+(defn- remove-literal-variables
+   [l]
+   (if (seq? l)
+     (apply list (map remove-literal-variables l))
+     (if (st/variable? l)
+       (unserialize-atom (subs (serialize-atom l) 1))
+       l)))
+
+(defn variable-converter-translator
+  "Changes variables symbols to normal symbols (non-recursively)."
+  []
+  (fn [context]
+    (if (st/statement? (:literal context))
+      context
+      (let [atom (or (:virtual-atom context) (:literal context))]
+        (debug "context:" context)
+        (assoc context :virtual-atom (remove-literal-variables atom))))))
 
 (defn make-prefix-translator
   "Examples of a translator modifying "

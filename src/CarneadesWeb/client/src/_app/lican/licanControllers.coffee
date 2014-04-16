@@ -16,7 +16,7 @@ define ['angular', 'angular-translate',
   angular.module('lican.controllers', ['services.notifications', 'directives.questions',
     'pascalprecht.translate'])
 
-  # Example of call http://localhost:3000/carneades/#/lican?entity=http:%2F%2Fmarkosproject.eu%2Fkb%2FSoftwareRelease%2F366
+  # Example of call http://localhost:8080/carneades/#/lican?entity=http:%2F%2Fmarkosproject.eu%2Fkb%2FSoftwareRelease%2F366
   .controller('IntroCtrl', ['$scope', '$state', '$stateParams', 'entity', '$translate',
   ($scope, $state, $stateParams, entity, $translate) ->
 
