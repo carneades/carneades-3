@@ -12,10 +12,11 @@
     "login.error.serverError": "There was a problem with authenticating: {{exception}}.",
 
     "lican.title": "Analysis of {{entity}}",
-    "lican.intro.text": "Click start to begin an in-depth analysis of the licensing issues. You will be ask questions if futher input is needed. You will then be shown an outline of the initial analysis. You can click on the map button to see a diagrammatic view of the analysis. :-)",
+    "lican.intro.text": "Click start to begin an in-depth analysis of the licensing issues. You will be ask questions if futher input is needed. You will then be shown an outline of the initial analysis. You can click on the map button to see a diagrammatic view of the analysis.",
     "lican.intro.start": "Start!",
     "lican.questions.title": "Questions",
     "lican.questions.send": "Send",
+    "lican.questions.processing": "Analysing the legal issues...",
 
     "projects.headline": "Projects",
     "projects.statement": "Statement",

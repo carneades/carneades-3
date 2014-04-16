@@ -351,7 +351,8 @@ Das Aktionsbündnis „Urheberrecht für Bildung und Wissenschaft“ in Deutsch
 (def a3 (make-argument
          :header (make-metadata :description {:en "There are better ways to help researchers and students to work in more than one Member
 State than harmonizing copyright exceptions."})
-         :conclusion (make-statement :atom `(~'undercut ~a2-id))
+         :conclusion (make-statement :atom `(~'valid ~a2-id))
+         :pro false
          :scheme '(better-alternatives)
          :premises [(make-premise :statement better-ways)]))
 
@@ -416,7 +417,7 @@ State than harmonizing copyright exceptions."})
 
 (def a12 (make-argument
           :header (make-metadata :description {:en "In response to Question 12, the cross-border aspects of the orphaned works should be handled through an amendment to Directive 2011/29/EC."})
-          :scheme "Position"
+          :scheme '(position)
           :conclusion Q12
           :premises [(pm Q12-Google-proposal)]))
 
