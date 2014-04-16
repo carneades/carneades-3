@@ -12,11 +12,13 @@ define ["angular", "angular-bootstrap"], (angular) ->
       label: "Carneades"
       url: "/"
       views:
+        "banner@":
+          template: "<project-banner></project-banner>"
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Home</h1>"
-        "menu@":
+        "page-nav@":
           template: '<page-navigation><page-navigation-item cmd=\"c\" ng-repeat=\"c in $state.$current.commands\"></page-navigation-item></page-navigation>'
       commands: [
         label: "Home"
