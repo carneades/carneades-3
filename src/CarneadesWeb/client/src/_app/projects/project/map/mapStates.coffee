@@ -18,7 +18,7 @@
         state: "home.projects.project.theory"
       ]
       views:
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           templateUrl: "project/map/map.tpl.html"

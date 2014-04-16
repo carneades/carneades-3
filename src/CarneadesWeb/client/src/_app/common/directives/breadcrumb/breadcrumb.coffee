@@ -139,7 +139,8 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
       $scope.openView = (name, params) ->
         $state.go name, params
     link: (scope, element, attrs) ->
-      index = scope.index % 7
+      i = scope.index + 1
+      index = i % 7
       scope.cssClass = if index > 0 then "bc-level-" + index
       if scope.state.isActive
         element.addClass "active"

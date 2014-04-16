@@ -19,7 +19,7 @@ define ['angular', 'angular-translate',
         state: "home.projects.project.outline"
       ]
       views:
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           templateUrl: "project/argument/view.tpl.html"
