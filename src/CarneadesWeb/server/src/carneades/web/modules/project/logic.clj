@@ -327,3 +327,7 @@
                   [{:name "Content/type" :content "application/zip"}
                    {:name "file"
                     :content (clojure.java.io/file (.getPath (:tempfile file)))}]}))
+
+(defn get-theme
+  [[project did :as params] & {:keys [host]}]
+  (get-raw-resource host :theme [project did]))

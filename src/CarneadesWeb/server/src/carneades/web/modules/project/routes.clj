@@ -18,6 +18,7 @@
                      get-nodes
                      get-argument-map
                      get-theories
+                     get-theme
                      get-project-archive
                      post-project-archive]]
             [sandbar.stateful-session :refer :all]
@@ -181,6 +182,12 @@
                (generate-string (assoc (get-theories params)
                                   :lang lang))))
 
+(defresource entry-theme-resource [pid did]
+  :available-media-types ["text/css"]
+  :available-charsets ["utf8"]
+  :allowed-methods [:get]
+  :handle-ok (fn [{{{host "host"} :headers} :request}] (get-theme [pid did] :host host)))
+
 (defresource entry-map-resource [pid db]
   :available-media-types ["image/svg+xml"]
   :available-charsets ["utf-8"]
@@ -196,6 +203,9 @@
   (context "/:pid" [pid]
            (ANY "/" [] (entry-project-resource pid))
            (ANY "/download" [] (entry-download-project-resource pid))
+
+           (context "/theme" []
+                    (ANY "/:did" [did] (entry-theme-resource pid did)))
 
            (context "/theories" []
                     (ANY "/" [] (list-theories-resource pid))

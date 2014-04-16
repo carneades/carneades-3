@@ -14,11 +14,13 @@
   </head>
 
   <body ng-controller="AppCtrl">
-    <div>
-      <div ui-view></div>
-      <div class="header-placeholder" style="margin-top: 2em;"></div>
-      <div ui-view="subnav"></div>
-      <div ui-view="content"></div>
+    <css-inject default-theme="default"></css-inject>
+    <div class="container">
+      <div ui-view="banner" ng-cloak></div>
+      <div ui-view="nav" ng-cloak></div>
+      <div ui-view="menu" ng-cloak></div>
+      <div ui-view="content" ng-cloak></div>
+      <div ui-view="footer" ng-cloak></div>
     </div>
 
       <!--
