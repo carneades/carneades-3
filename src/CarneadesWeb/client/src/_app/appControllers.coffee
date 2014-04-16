@@ -64,10 +64,10 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
     template: '<div class=\"my-fluid-container\" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates"></breadcrumb></div>'
     )
 
-  .directive 'cssInject', ($compile) ->
+  .directive 'cssInject', ($compile, $stateParams) ->
     restrict: 'E'
     replace: true
-    template: '<link rel="stylesheet" href="api/projects/{{theme}}/theme/styles.css" media="screen"/>'
+    template: '<link rel="stylesheet" href="api/projects/{{theme}}/theme/css/styles.css" media="screen"/>'
     scope:
       defaultTheme: '@'
     controller: ($scope, $element, $attrs, $stateParams) ->
@@ -75,8 +75,6 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
       setTheme = () ->
         if $stateParams.pid and $scope.theme isnt $stateParams.pid
           $scope.theme = $stateParams.pid
-        else if $scope.theme isnt $scope.defaultTheme
-          $scope.theme = $scope.defaultTheme
 
       $scope.$on '$stateChangeSuccess', ->
         setTheme()
@@ -94,7 +92,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
         string.push $location.port()
         string.push "/carneades/api/projects/"
         string.push $stateParams.pid
-        string.push "/theme/"
+        string.push "/theme/html/"
         string.push filename
 
         dfd = $q.defer()

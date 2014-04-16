@@ -18,7 +18,7 @@ define ['angular', './theoryControllers'], (angular) ->
         state: "home.projects.project.theory"
       ]
       views: {
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           controller: 'TheoryCtrl'
@@ -29,7 +29,7 @@ define ['angular', './theoryControllers'], (angular) ->
                 method: 'GET'
                 url: $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/#{$stateParams.pid}/theories/#{$stateParams.tid}?translate=t"
               ).then (data) -> data.data
-             scroll: 'scroll' 
+             scroll: 'scroll'
       }}]
 
     angular.forEach states, (state) -> $stateProvider.state state

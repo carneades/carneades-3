@@ -20,7 +20,10 @@
       <div ui-view="banner" ng-cloak></div>
       <div ui-view="nav" class="navbar navbar-inverse" ng-cloak></div>
     </header>
-    <div ui-view="content" ng-cloak></div>
+    <div>
+      <div ui-view="subnav" ng-cloak></div>
+      <div ui-view="content" ng-cloak></div>
+    </div>
     <div ui-view="footer" ng-cloak></div>
     <div ui-view="footer" ng-cloak></div>
 

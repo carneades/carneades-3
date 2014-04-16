@@ -182,8 +182,20 @@
                (generate-string (assoc (get-theories params)
                                   :lang lang))))
 
-(defresource entry-theme-resource [pid did]
+(defresource entry-theme-css-resource [pid did]
   :available-media-types ["text/css"]
+  :available-charsets ["utf8"]
+  :allowed-methods [:get]
+  :handle-ok (fn [{{{host "host"} :headers} :request}] (get-theme [pid did] :host host)))
+
+(defresource entry-theme-html-resource [pid did]
+  :available-media-types ["text/html"]
+  :available-charsets ["utf8"]
+  :allowed-methods [:get]
+  :handle-ok (fn [{{{host "host"} :headers} :request}] (get-theme [pid did] :host host)))
+
+(defresource entry-theme-png-resource [pid did]
+  :available-media-types ["image/png"]
   :available-charsets ["utf8"]
   :allowed-methods [:get]
   :handle-ok (fn [{{{host "host"} :headers} :request}] (get-theme [pid did] :host host)))
@@ -205,7 +217,9 @@
            (ANY "/download" [] (entry-download-project-resource pid))
 
            (context "/theme" []
-                    (ANY "/:did" [did] (entry-theme-resource pid did)))
+                    (ANY "/css/:did" [did] (entry-theme-css-resource pid did))
+                    (ANY "/html/:did" [did] (entry-theme-html-resource pid did))
+                    (ANY "/png/:did" [did] (entry-theme-png-resource pid did)))
 
            (context "/theories" []
                     (ANY "/" [] (list-theories-resource pid))
