@@ -12,7 +12,7 @@ define ['angular', '../common/resources/projects'], (angular) ->
       label: 'Projects'
       url: 'projects'
       views:
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           templateUrl: 'list.tpl.html'

@@ -19,7 +19,7 @@ define ['angular', './statementControllers', '../../../common/resources/statemen
         state: "home.projects.project.outline"
       ]
       views: {
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         'content@': {
           templateUrl: 'project/statement/view.tpl.html'
