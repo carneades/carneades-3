@@ -11,6 +11,8 @@ define ['angular', '../../common/resources/projects'], (angular) ->
       url: "/:pid"
       label: "Project"
       views:
+        "banner@":
+          template: "<markos-banner></markos-banner>"
         "@":
           template: "<bc-navigation></bc-navigation>"
         "content@":

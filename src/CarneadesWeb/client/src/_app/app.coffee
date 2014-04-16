@@ -8,18 +8,21 @@ define ["angular", "angular-bootstrap", "angular-ui-router",
 "projects/projectsModule", "lican/licanModule", "admin/adminModule",
 "appStates", "appControllers",
 "angular-markdown", "common/directives/breadcrumb/breadcrumb",
+"common/providers/css-injector",
 "common/directives/page-navigation/page-navigation", "templates/app",
 "templates/common", "angular-translate",
 "angular-translate-loader-static-files"], (angular) ->
   angular.module("app", ["ui.bootstrap", "ui.bootsrap.breadcrumb",
-  "directives.pagenav", "ui.router",
+  "directives.pagenav", "ui.router", "css.injector",
   "app.states", "app.controllers", "templates.app", "templates.common",
   "projects.module", "lican.module", "admin.module", "angular-markdown",
-   "pascalprecht.translate"])
+  "pascalprecht.translate"])
+
   .run(($rootScope, $state, $stateParams) ->
     $rootScope.$state = $state
     $rootScope.$stateParams = $stateParams
   )
+
   .config(($urlRouterProvider, $stateProvider, $httpProvider, $provide, $translateProvider) ->
 
     $translateProvider.useStaticFilesLoader(

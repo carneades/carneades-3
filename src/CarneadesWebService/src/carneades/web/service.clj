@@ -137,6 +137,16 @@
             (reset! state (init-projects-data))
             {:status 200}))
 
+  (GET "/theme/:project/:doc" [project doc]
+       (let [path (str project/projects-directory file-separator project file-separator
+                       "theme" file-separator doc)]
+         (if (not (exists? path))
+           {:status 404
+            :body "File not found"}
+           {:body
+            (io/input-stream path)})))
+
+
   ;; documents for projects
   ;; TODO: maybe scope on /project/documents OR add a query parameter to /project
   (GET "/documents/:project/:doc" [project doc]
@@ -708,7 +718,7 @@
   ;;                      responses)}))))
 
   (POST "/apply-substitutions" request
-	;; apply the given substitutions to the given statement
+        ;; apply the given substitutions to the given statement
         ;; and returns the result
         (let [content (json/read-json (slurp (:body request)))
               subs (unpack-subs (:substitutions content))

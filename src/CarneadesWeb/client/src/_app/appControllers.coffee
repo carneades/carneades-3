@@ -9,9 +9,10 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive('bcNavigation', () ->
     restrict: 'E'
     replace: 'true'
-    template: '<div><header class="navbar-inverse navbar-fixed-top" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates"></breadcrumb></header></div>'
-  )
+    template: '<div><header class="navbar-inverse" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates"></breadcrumb></header></div>')
+
   .controller('AppCtrl', ($scope, $location, i18nNotifications) ->
+
     $scope.notifications = i18nNotifications
     $scope.removeNotification = (notification) ->
       i18nNotifications.remove(notification)
@@ -73,6 +74,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
       )()
     undefined
   )
+
   .controller 'HeaderCtrl', ($breadcrumb, $scope, $location, notifications, httpRequestTracker) ->
     $scope.hasPendingRequests = ->
       httpRequestTracker.hasPendingRequests()
@@ -84,3 +86,25 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
       setNavigationState()
 
     undefined
+
+  .directive 'cssInject', ($compile) ->
+    restrict: 'E'
+    replace: true
+    template: '<link rel="stylesheet" href="api/projects/{{theme}}/theme/styles.css" media="screen"/>'
+    scope:
+      defaultTheme: '@'
+    controller: ($scope, $element, $attrs, $stateParams) ->
+      unless $scope.theme then $scope.theme = $scope.defaultTheme
+      setTheme = () ->
+        if $stateParams.pid and $scope.theme isnt $stateParams.pid
+          $scope.theme = $stateParams.pid
+        else if $scope.theme isnt $scope.defaultTheme
+          $scope.theme = $scope.defaultTheme
+
+      $scope.$on '$stateChangeSuccess', ->
+        setTheme()
+
+  .directive 'markosBanner', () ->
+    restrict: 'E'
+    replace: 'true'
+    templateUrl: 'markos-banner.tpl.html'
