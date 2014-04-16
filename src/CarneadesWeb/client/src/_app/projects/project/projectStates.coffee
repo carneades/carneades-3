@@ -12,7 +12,7 @@ define ['angular', '../../common/resources/projects'], (angular) ->
       label: "Project"
       views:
         "banner@":
-          template: "<markos-banner></markos-banner>"
+          template: "<project-banner></project-banner>"
         "@":
           template: "<bc-navigation></bc-navigation>"
         "content@":

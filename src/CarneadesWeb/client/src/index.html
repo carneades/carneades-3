@@ -9,19 +9,20 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <link rel="stylesheet" href="css/bootstrap.min.css" media="screen"/>
+    <link rel="stylesheet" href="css/layout.min.css" media="screen"/>
     <link rel="stylesheet" href="css/navigation.min.css" media="screen"/>
     <link rel="stylesheet" href="css/projects.min.css" media="screen"/>
   </head>
 
   <body ng-controller="AppCtrl">
     <css-inject default-theme="default"></css-inject>
-    <div class="container">
+    <header class="">
       <div ui-view="banner" ng-cloak></div>
-      <div ui-view="nav" ng-cloak></div>
-      <div ui-view="menu" ng-cloak></div>
-      <div ui-view="content" ng-cloak></div>
-      <div ui-view="footer" ng-cloak></div>
-    </div>
+      <div ui-view="nav" class="navbar navbar-inverse" ng-cloak></div>
+    </header>
+    <div ui-view="content" ng-cloak></div>
+    <div ui-view="footer" ng-cloak></div>
+    <div ui-view="footer" ng-cloak></div>
 
       <!--
       <div class="row" ng-include="'notifications.tpl.html'" ng-show="notifications.getCurrent().length"></div>
