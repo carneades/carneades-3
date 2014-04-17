@@ -3,29 +3,21 @@ Syntax error: File to import not found or unreadable: compass.
               Load paths:
                 /Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets (DEPRECATED)
                 /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets
-        on line 2 of /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation/partials/_base.scss
-        from line 2 of /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation.scss
+        on line 1 of /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/default.scss
 
-1: // Modules and Variables
-2: @import "navigation/partials/base";
-3: 
-4: @import "navigation/partials/mixins";
-5: @import "navigation/partials/navigation";
-6: @import "navigation/partials/breadcrumb";
+1: @import "compass";
+2: 
+3: //@import "projects/vendor/bootstrap/variables";
+4: @import "projects/default/variables";
+5: 
+6: @import "projects/vendor/bootstrap/mixins";
 
 Backtrace:
-/Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation/partials/_base.scss:2
-/Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation.scss:2
+/Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/default.scss:1
 /Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/import_node.rb:67:in `import'
 /Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/import_node.rb:28:in `imported_file'
 /Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/import_node.rb:37:in `css_import?'
 /Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/visitors/perform.rb:218:in `visit_import'
-/Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/visitors/base.rb:37:in `send'
-/Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/visitors/base.rb:37:in `visit'
-/Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/visitors/perform.rb:100:in `visit'
-/Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/visitors/perform.rb:230:in `visit_import'
-/Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/visitors/perform.rb:230:in `map'
-/Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/visitors/perform.rb:230:in `visit_import'
 /Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/visitors/base.rb:37:in `send'
 /Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/visitors/base.rb:37:in `visit'
 /Library/Ruby/Gems/1.8/gems/sass-3.3.0.alpha.224/bin/../lib/sass/tree/visitors/perform.rb:100:in `visit'
@@ -61,4 +53,4 @@ Backtrace:
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Syntax error: File to import not found or unreadable: compass.\A               Load paths:\A                 /Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets (DEPRECATED)\A                 /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets\A         on line 2 of /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation/partials/_base.scss\A         from line 2 of /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/navigation.scss\A \A 1: // Modules and Variables\A 2: @import \"navigation/partials/base\";\A 3: \A 4: @import \"navigation/partials/mixins\";\A 5: @import \"navigation/partials/navigation\";\A 6: @import \"navigation/partials/breadcrumb\";"; }
+  content: "Syntax error: File to import not found or unreadable: compass.\A               Load paths:\A                 /Users/sebastiankaiser/workspace/fraunhofer/carneades/src/CarneadesWeb/client/src/_app/assets/stylesheets (DEPRECATED)\A                 /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets\A         on line 1 of /Users/sebastiankaiser/carneades-web/client/src/_app/assets/stylesheets/default.scss\A \A 1: @import \"compass\";\A 2: \A 3: //@import \"projects/vendor/bootstrap/variables\";\A 4: @import \"projects/default/variables\";\A 5: \A 6: @import \"projects/vendor/bootstrap/mixins\";"; }

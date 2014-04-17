@@ -1,0 +1,32 @@
+#subnav {
+  -webkit-transition:1s linear all;
+  -moz-transition:1s linear all;
+  -o-transition:1s linear all;
+  transition:1s linear all; /* future proof */
+  background:$body-bg;
+  z-index: 100;
+
+  a {
+      color: $link-color;
+  }
+  &.ui-scrollfix {
+    top: 0;
+    position:fixed;
+    width: 100%;
+    background:$breadcrumbs-bg;
+
+    a {
+        color: #fff;
+    }
+  }
+}
+
+.navbar-project {
+    background-color: $markos-green;
+}
+
+.navbar {
+    border-radius: 0;
+    min-height: 0;
+    margin-bottom: 0;
+}

@@ -16,12 +16,14 @@ define ['angular', 'angular-translate',
       $scope.project = project
 
       $scope.headerIsEmpty = (v for k,v of statement.header when v?).length == 0
-      
+
       $scope.argumentName = (arg, idx) ->
         if arg.scheme? and arg.scheme != ''
           arg.scheme.header.title
         else
           ($translate.instant "projects.argument") + " ##{idx+1}"
+
+      $scope.$state.$current.self.tooltip = statement.text.substring(0, 100) + '...'
 
       undefined
     )
