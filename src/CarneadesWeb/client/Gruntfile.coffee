@@ -117,6 +117,12 @@ module.exports = (grunt) ->
     dist:
       base: "dist/public/carneades"
 
+    projects:
+      base: "../../../projects"
+      copyright: "<%= projects.base %>/copyright/theme"
+      default: "<%= projects.base %>/default/theme"
+      markos: "<%= projects.base %>/markos/theme"
+
     banner: "/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today(\"yyyy-mm-dd\") %>\n" + "<%= pkg.homepage ? \" * \" + pkg.homepage + \"\\n\" : \"\" %>" + " * Copyright (c) <%= grunt.template.today(\"yyyy-mm-dd\") %> <%= pkg.author %>;\n" + " * Licensed <%= _.pluck(pkg.licenses, \"type\").join(\", \") %>\n */\n"
     src:
       js: ["src/**/*.js"]
@@ -200,12 +206,32 @@ module.exports = (grunt) ->
           cssDir: "<%= comp.base %>/css"
 
     cssmin:
-      minify:
+      layout:
         expand: true
         cwd: '<%= comp.base %>/css'
-        src: ['*.css', '!*.min.css']
+        src: "layout.css"
         dest: '<%= dist.base %>/css'
         ext: '.min.css'
+
+      default:
+        expand: true
+        cwd: '<%= comp.base %>/css'
+        src: "default.css"
+        dest: '<%= projects.default %>'
+        ext: '.min.css'
+      copyright:
+        expand: true
+        cwd: '<%= comp.base %>/css'
+        src: "copyright.css"
+        dest: '<%= projects.copyright %>'
+        ext: '.min.css'
+      markos:
+        expand: true
+        cwd: '<%= comp.base %>/css'
+        src: "markos.css"
+        dest: '<%= projects.markos %>'
+        ext: '.min.css'
+
     concat:
       bootstrap:
         src: [
@@ -223,7 +249,6 @@ module.exports = (grunt) ->
           "<%= prep.bootstrap %>/popover.js"
         ]
         dest: "<%= comp.base %>/bootstrap-sass.js"
-
       index:
         src: ["src/index.html"]
         dest: "<%= dist.base %>/index.html"

@@ -54,10 +54,10 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
 
     ##########################################################
 
-    render = (states, nameOfCurrentState) ->
+    render = (states, $state) ->
       index = 0
       fnIsActive = (s) ->
-        s.isActive = (nameOfCurrentState is s.name)
+        s.isActive = ($state.$current.name is s.name)
         return s
 
       fnIsLast = (s, index) ->
@@ -67,17 +67,17 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
       return (fnIsActive(fnIsLast(s,++index)) for s in states)
 
     ##########################################################
-    buildState = (state, stateParams) ->
-      label: state.label
-      name: state.name
-      params: angular.copy stateParams
-      tooltip: state.tooltip
+    buildState = ($state, $stateParams) ->
+      label: $state.get($state.$current.name).label
+      name: $state.$current.name
+      params: angular.copy $stateParams
+      tooltip: $state.$current.tooltip
 
     ##########################################################
     ##########################################################
 
-    getNavigationStates = (state, stateParams) ->
-      _navigationStates.push buildState state, stateParams
+    getNavigationStates = ($state, $stateParams) ->
+      _navigationStates.push buildState $state, $stateParams
       return _navigationStates.asArray()
 
     $get: () ->
@@ -88,7 +88,7 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
         setIndexOfItemClicked value
 
       getNavigationStates: ($state, $stateParams) ->
-        return render getNavigationStates($state.$current, $stateParams), $state.$current.name
+        return render getNavigationStates($state, $stateParams), $state
   )
   .directive('breadcrumb', () ->
     restrict: 'EA'

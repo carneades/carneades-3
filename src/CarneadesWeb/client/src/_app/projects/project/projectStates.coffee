@@ -13,7 +13,7 @@ define ['angular', '../../common/resources/projects'], (angular) ->
       views:
         "banner@":
           template: "<project-banner></project-banner>"
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           templateUrl: 'project/project.tpl.html'
