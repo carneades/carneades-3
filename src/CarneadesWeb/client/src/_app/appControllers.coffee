@@ -67,7 +67,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive 'cssInject', ($compile, $stateParams) ->
     restrict: 'E'
     replace: true
-    template: '<link rel="stylesheet" href="api/projects/{{theme}}/theme/css/styles.css" media="screen"/>'
+    template: '<link rel="stylesheet" href="api/projects/{{theme}}/theme/css/{{theme}}.min.css" media="screen"/>'
     scope:
       defaultTheme: '@'
     controller: ($scope, $element, $attrs, $stateParams) ->

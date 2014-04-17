@@ -13,7 +13,11 @@ define ['angular', 'angular-translate'], (angular) ->
       $scope.headerIsEmpty = (v for k,v of argument.header when v?).length == 0
 
       $scope.project = project
-      
+      if argument.scheme
+        $scope.$state.$current.self.tooltip = argument.scheme.header.title
+      else
+        $scope.$state.$current.self.tooltip = argument.id
+
       $scope.conclusion_text =
         if argument.strict and argument.pro
           $translate.instant 'projects.strict_pro_conclusion'
