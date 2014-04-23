@@ -8,10 +8,6 @@
       %br
     id: {{scheme.id}}
     %br
-    strict: {{scheme.strict}}
-    %br
-    direction: {{scheme.pro}}
-    %br
     conclusion: {{scheme['conclusion-translation']}}
     %br
     premises:
@@ -23,5 +19,5 @@
       %table.table.table-striped
         %tr.block{"ng-repeat" => "(k,v) in scheme.header",
                   "ng-show" => "showMetadatum(k, v)"}
-          %td.jsonObjectKey {{k}}
-          %td.jsonObjectValue {{v}}
+          %td.metadataKey {{k}}
+          %td.metadataValue {{v}}

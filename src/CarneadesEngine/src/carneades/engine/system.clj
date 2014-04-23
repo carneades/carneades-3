@@ -4,12 +4,14 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns carneades.engine.system
-  (:require [clj-logging-config.log4j :refer :all]))
+  ;; (:require [clj-logging-config.log4j :refer :all])
+  )
 
 (defn set-loggers
   []
-  (set-logger! :pattern "[%c]%n%m%n" :level :debug)
-  (set-loggers! "org.xml.sax.XMLReader" {:level :info}))
+  ;; (set-logger! :pattern "[%c]%n%m%n" :level :debug)
+  ;; (set-loggers! "org.xml.sax.XMLReader" {:level :info})
+  )
 
 (defn start
   [])

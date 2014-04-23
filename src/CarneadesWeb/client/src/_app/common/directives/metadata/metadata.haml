@@ -1,5 +1,6 @@
-%dl{"ng-repeat" => "(k,v) in model"}
-  %dt{"ng-show" => "v"}
-    .metadataKey{translate: "{{getTranslateKey(k)}}"} {{k}}
-  %dd{"ng-show" => "v"}
-    %markdown{extensions: "carneades", "ng-model" => "v"}
+%table
+  %tr{"ng-repeat" => "(k,v) in model"}
+    %td.metadataKey{"ng-show" => "v"}
+      .span{translate: "{{getTranslateKey(k)}}"} {{k}}
+    %td.metadataValue{"ng-show" => "v"}
+      %markdown{extensions: "carneades", "ng-model" => "v"}

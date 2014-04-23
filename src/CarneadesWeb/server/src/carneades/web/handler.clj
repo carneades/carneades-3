@@ -5,7 +5,8 @@
 
 (ns carneades.web.handler
   ^{:doc "Handler for servlet container. Initiates routes."}
-  (:require [taoensso.timbre :as timbre :refer (trace debug info warn error fatal spy)]
+  (:require [clojure.string :as str]
+            [taoensso.timbre :as timbre :refer (trace debug info warn error fatal spy)]
             [compojure.core :refer :all]
             [org.httpkit.server :refer [run-server]]
             [ring.server.standalone :refer [serve]]
@@ -29,32 +30,37 @@
   (route/resources "/" {:root "public/carneades"})
   (route/not-found "Not Found"))
 
+(def logger-config
+  {:appenders {:rotor {:min-level :info
+                      :enabled? true
+                      :async? false
+                      :max-message-per-msecs nil
+                      :fn rotor/append}
+              :standard-out {:min-level :info
+                             :enabled? true
+                             :async? false
+                             :max-message-per-msecs nil}}
+   :ns-whitelist [;; "carneades.*"
+                  ]
+   :shared-appender-config {:rotor
+                            {:path "carneades.log" :max-size 10000 "backlog" 10}}
+   :timestamp-pattern "MMM-dd HH:mm"
+   :fmt-output-fn
+   (fn [{:keys [level throwable message timestamp hostname ns]}
+        ;; Any extra appender-specific opts:
+        & [{:keys [nofonts?] :as appender-fmt-output-opts}]]
+     (format "%s %s [%s] - %s"
+             timestamp (-> level name str/upper-case) ns (or message "")))})
+
+(timbre/merge-config! logger-config)
+
 (defn init
-  "init will be called once when
-   app is deployed as a servlet on
-   an app server such as Tomcat
-   put any initialization code here"
+  "Called when app is deployed as a servlet on an app server such as
+   Tomcat. Put any initialization code here."
   []
-  (timbre/merge-config!
-   {:appenders {:rotor {:min-level :info
-                        :enabled? true
-                        :async? false          ; should be always false for rotor
-                        :max-message-per-msecs nil
-                        :fn rotor/append}}})
-
-  (timbre/merge-config!
-   {:appenders {:standard-out {:min-level :debug
-                               :enabled? true
-                               :async? false
-                               :max-message-per-msecs nil}}})
-
-  (timbre/set-config!
-    [:shared-appender-config :rotor]
-    {:path "carneades.web.log" :max-size 10000 "backlog" 10})
-
-  (info "logging successfully initiated.")
+  (timbre/merge-config! logger-config)
   (service/start)
-  (println "carneades started successfully..."))
+  (info "Carneades started successfully."))
 
 (defn destroy
   "destroy will be called when your application
