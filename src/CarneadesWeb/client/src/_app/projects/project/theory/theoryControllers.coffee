@@ -7,9 +7,6 @@ define ['angular'
   '../../../common/services/scroll'], (angular) ->
   angular.module('theory.controllers', [])
   .controller('TheoryCtrl', ($scope, $stateParams, $location, $anchorScroll, scroll, theory) ->
-    $scope.showMetadatum = (k, v) ->
-      v? and (k not in ['id', 'description', 'title'])
-
     $scope.stateParams = $stateParams
     $scope.lang = theory.lang
     $scope.section = theory
