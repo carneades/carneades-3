@@ -12,10 +12,10 @@ define ['angular', 'angular-translate'], (angular) ->
     templateUrl: "directives/metadata/metadata.tpl.html"
     scope:
       model: "=model",
-      hide: "=hide"
+      skipped: "=skipped"
     controller: ($scope) ->
       $scope.getTranslateKey = (k) ->
         "projects.#{k}"
-      $scope.isHidden = (k,v) ->
-        not v? or ($scope.hide.indexOf k) != -1
+      $scope.isHidden = (k, v) ->
+        not v? or ($scope.skipped.indexOf k) != -1
   )
