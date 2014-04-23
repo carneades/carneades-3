@@ -16,6 +16,9 @@ define [
     'resources.metadata.references', 'resources.outline',
     'resources.outline.issues', 'services.scroll']
   ).config(($stateProvider) ->
+    emptyReferences = (references) ->
+      (v for k,v of references when v? and k != '$promise' and k != '$resolved').length is 0
+    
     states = [
       {
         name: 'home.projects.project.outline'
@@ -33,11 +36,12 @@ define [
             template: "<bc-navigation></bc-navigation>"
           "content@":
             templateUrl: 'project/outline/outline-main.tpl.html'
-            controller: ($scope, $stateParams, scroll, project) ->
+            controller: ($scope, $stateParams, scroll, project, references) ->
               $scope.project = project
               $scope.project.title = project.title
               $scope.scrollTo = scroll.scrollTo
-
+              $scope.hasReferences = not emptyReferences references
+              
               if $stateParams.scrollTo?
                 scroll.scrollTo $stateParams.scrollTo
 
@@ -46,6 +50,9 @@ define [
                 $stateParams.mid = 1
                 new MetadataLoader($stateParams)
               scroll: 'scroll'
+              references: ($stateParams, MultiReferenceLoader) ->
+                $stateParams.mid = undefined
+                return new MultiReferenceLoader($stateParams)
 
           "issues@home.projects.project.outline":
             templateUrl: 'project/outline/issues.tpl.html'
@@ -59,6 +66,7 @@ define [
             templateUrl: 'project/outline/references.tpl.html'
             controller: ($scope, references) ->
               $scope.references = references
+              $scope.hasReferences = not emptyReferences references
             resolve:
               references: ($stateParams, MultiReferenceLoader) ->
                 $stateParams.mid = undefined

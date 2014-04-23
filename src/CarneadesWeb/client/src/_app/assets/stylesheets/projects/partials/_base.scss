@@ -90,136 +90,6 @@ ul.striped li.selected {
     color: white;
 }
 
-
-/* JSON VIEW */
-
-/* striped background */
-.jsonView {
-    background-color: #f3f6fa;
-    background-image: -webkit-linear-gradient(rgba(255, 255, 255, 1) 50%, transparent 50%, transparent);
-    background-size: 60px 60px;
-    padding: 30px 0 0 5px;
-}
-
-/* inputs */
-.jsonView select {
-    margin: 0;
-    padding: 0;
-    width: 100px;
-}
-.jsonView input[type="text"] {
-    margin: -1px 5px 0 -5px;
-    border: 0;
-    box-shadow: none;
-    background: none;
-}
-.jsonView input.keyinput {
-    font-weight: bold;
-}
-.jsonView input[type="text"].addItemKeyInput, .jsonView input[type="text"].addItemValueInput {
-    border: 1px solid #ccc;
-    background: white;
-    margin-left: 0;
-}
-.jsonView .addItemKeyInput {
-    font-weight: bold;
-}
-
-/* chevrons */
-.jsonView .glyphicon-chevron-right, .jsonView .glyphicon-chevron-down {
-    float: left;
-    cursor: pointer;
-    position: relative;
-    top: 5px;
-    right: 20px;
-    margin-right: -15px;
-}
-.jsonView > .glyphicon-chevron-down {
-    display: none;
-}
-/* add and delete */
-.jsonView .addObjectItemBtn {
-    background-color: transparent;
-    border-color: transparent;
-    line-height: 10px;
-}
-.jsonView .deleteKeyBtn, .jsonView .moveArrayItemBtn {
-    float: right;
-    margin-right: 10px;
-    position: relative;
-    top: 7px;
-    z-index: 99999999999999;
-    cursor: pointer;
-}
-
-/* basic layout */
-.jsonObjectKey {
-    font-weight: bold;
-    cursor: select;
-}
-.jsonContents {
-    margin-left: 25px;
-}
-.jsonView .block {
-    display: block;
-    line-height: 30px;
-    min-height: 30px;
-}
-.jsonView .brace, .jsonItemDesc {
-    font-family: Georgia, serif;
-    color: grey;
-}
-.jsonItemDesc {
-    font-style: italic;
-    cursor: default;
-}
-.jsonView .objectDesc {
-    cursor: default;
-}
-/* first brace */
-.jsonView > .jsonItemDesc {
-    display: block;
-    float: left;
-    position: relative;
-    bottom: 25px;
-    height: 0;
-    width: 0;
-}
-
-/* array numbering */
-.jsonView ol.arrayOl {
-    margin: 0 0 0 25px;
-}
-.jsonView ol.arrayOl > li > span > span > .glyphicon-chevron-down,
-.jsonView ol.arrayOl > li > span > span > .glyphicon-chevron-right {
-    left: -40px;
-}
-.jsonView li {
-    color: grey;
-    font-style: italic;
-    font-family: Georgia, serif;
-    margin: 0;
-    line-height: 30px;
-    list-style-type: decimal;
-}
-.jsonView li li {
-    list-style-type: lower-roman;
-}
-.jsonView li li li {
-    list-style-type: upper-roman;
-}
-.jsonView li li li li {
-    list-style-type: lower-latin;
-}
-.jsonView li li li li li {
-    list-style-type: upper-latin;
-}
-.jsonView li li li li li li {
-    list-style-type: lower-greek;
-}
-.jsonView li li li li li li li {
-    list-style-type: decimal;
-}
 .sortable-placeholder {
     height: 20px;
     display: block;
@@ -274,11 +144,6 @@ ul.striped li.selected {
    opacity: 0.75;
 }
 
-.metadataKey {
-    font-style: italic;
-    margin-bottom: 2px;
-}
-
 .premises_text {
    font-style: italic;
    margin-bottom: 4px;
@@ -293,3 +158,16 @@ ul.striped li.selected {
     background-color: lightblue;
 }
 
+.metadataKey {
+    font-weight: bold;
+    cursor: select;
+    vertical-align: baseline;
+}
+
+.metadataValue {
+    padding-left: 10px;
+}
+
+.statementText {
+    margin-bottom: 20px;
+}

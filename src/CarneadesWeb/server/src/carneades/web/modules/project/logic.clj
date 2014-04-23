@@ -136,6 +136,7 @@
 (defn get-outline
   [[project db id :as params]
    & {:keys [lang host] :or {lang :en k nil host "localhost:3000"}}]
+  (info "calling outline")
   (->> (make-outline project db :host host :lang lang)
        (#(if-not (nil? id) (get-sub-outline % id) %))))
 
@@ -244,6 +245,7 @@
 (defn get-argument
   [[project db id :as params]
    & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
+  (debug "get-argument")
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (let [arg (get-resource host :argument [project db id])

@@ -2,19 +2,10 @@
   .container.node
     .row
       %h1{translate: "projects.statement"} Statement
-      %properties{keys: "[['id', 'projects.id'],
-                          ['atom', 'projects.atom'],
-                          ['main', 'projects.main_issues'],
-                          ['standard', 'projects.standard'],
-                          ['weight', 'projects.weight'],
-                          ['value', 'projects.value']]", 
-                  model: "statement"}   
+      .statementText 
+        {{statement.text}}
       
-      %h2{translate: "projects.text"} Text
-      {{statement.text}}
-     
       %div{"ng-hide" => "headerIsEmpty"}
-        %h2{translate: "projects.header"} Header
         %metadata{model: "statement.header"}
         
       %div{"ng-hide" => "statement.pro.length == 0" }
@@ -43,3 +34,13 @@
             %ul{"ng-repeat" => "p in arg.premises"}
               %li
                 %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
+                  
+      %h2{translate: "projects.properties"} Properties            
+      %properties{keys: "[['id', 'projects.id'],
+            ['atom', 'projects.atom'],
+            ['main', 'projects.main_issues'],
+            ['standard', 'projects.standard'],
+            ['weight', 'projects.weight'],
+            ['value', 'projects.value']]", 
+        model: "statement"}   
+
