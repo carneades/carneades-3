@@ -24,6 +24,6 @@
           %li
             %a{"ng-click" => "scrollTo(\'outline\')"}
               Outline
-          %li
+          %li{"ng-show" => "hasReferences"}
             %a{"ng-click" => "scrollTo(\'references\')"}
               References

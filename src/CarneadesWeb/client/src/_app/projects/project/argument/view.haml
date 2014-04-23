@@ -1,16 +1,8 @@
 .container.node
   .row
     %h1{translate: "projects.argument"} Argument
-    
-    %properties{keys: "[['id', 'projects.id'],
-                        ['scheme', 'projects.scheme'],
-                        ['strict', 'projects.strict'],
-                        ['weight', 'projects.weight'],
-                        ['value', 'projects.value']]", 
-                model: "argument"}
 
     %div{"ng-hide" => "headerIsEmpty"}
-      %h2{translate: "projects.header"} Header
       %metadata{model: "argument.header"}
 
     %div{"ng-hide" => "argument.premises.length == 0" }
@@ -27,3 +19,11 @@
     %h2{translate: "projects.conclusion"} Conclusion            
     %div.conclusion_text {{conclusion_text}}
     %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: argument.conclusion.id})"} {{argument.conclusion.text}}
+
+    %h2{translate: "projects.properties"} Properties
+    %properties{keys: "[['id', 'projects.id'],
+                        ['scheme', 'projects.scheme'],
+                        ['strict', 'projects.strict'],
+                        ['weight', 'projects.weight'],
+                        ['value', 'projects.value']]", 
+                model: "argument"}
