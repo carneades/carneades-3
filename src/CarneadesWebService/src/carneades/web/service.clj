@@ -34,8 +34,7 @@
             [carneades.maps.lacij :as lacij]
             [carneades.web.vote :as vote]
             [carneades.web.info :as info]
-            [carneades.engine.system :as engine]
-            [clojure.tools.logging :refer [info debug spy]]))
+            [carneades.engine.system :as engine]))
 
 ;; To Do:
 ;; - search operations, including full text search
@@ -60,7 +59,6 @@
 
 (defn start
   []
-  (info "Starting the Carneades Web Service.")
   (engine/start)
   (reset! state (init-projects-data)))
 
