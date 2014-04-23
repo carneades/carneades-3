@@ -11,8 +11,11 @@ define ['angular', 'angular-translate'], (angular) ->
     replace: true
     templateUrl: "directives/metadata/metadata.tpl.html"
     scope:
-      model: "=model"
+      model: "=model",
+      hide: "=hide"
     controller: ($scope) ->
       $scope.getTranslateKey = (k) ->
         "projects.#{k}"
+      $scope.isHidden = (k,v) ->
+        not v? or ($scope.hide.indexOf k) != -1
   )
