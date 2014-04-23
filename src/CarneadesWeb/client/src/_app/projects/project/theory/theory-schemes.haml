@@ -2,10 +2,6 @@
 %div{"ng-repeat" => "scheme in section.schemes"}
   %div{id: "{{scheme.id}}"}
     %h3 {{scheme.header.title}}
-    %span{{"ng-show" => "scheme.header.description[lang]"}}
-      %markdown{{"ng-model" => "scheme.header.description[lang]",
-                 extensions: "carneades"}}
-      %br
     id: {{scheme.id}}
     %br
     conclusion: {{scheme['conclusion-translation']}}
