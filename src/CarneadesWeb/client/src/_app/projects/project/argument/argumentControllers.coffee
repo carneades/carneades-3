@@ -22,9 +22,9 @@ define ['angular', 'angular-translate'], (angular) ->
         if argument.strict and argument.pro
           $translate.instant 'projects.strict_pro_conclusion'
         else if argument.strict and not argument.pro
-          $translate.instant 'projects.strict_pro_conclusion'
-        else if !argument.strict and argument.pro
+          $translate.instant 'projects.strict_con_conclusion'
+        else if not argument.strict and argument.pro
           $translate.instant 'projects.nonstrict_pro_conclusion'
-        else if !argument.strict and !argument.pro
+        else if not argument.strict and not argument.pro
           $translate.instant 'projects.nonstrict_con_conclusion'
     )
