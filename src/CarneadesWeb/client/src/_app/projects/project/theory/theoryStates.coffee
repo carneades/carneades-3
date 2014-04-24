@@ -3,13 +3,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-define ['angular', './theoryControllers'], (angular) ->
+define ['angular', './theoryControllers', '../../../common/resources/projects'], (angular) ->
   angular.module('theory.states', ['theory.controllers']).config ($stateProvider) ->
     states = [{
       name: "home.projects.project.theory"
       label: "Theory"
       url: "/theories/:tid?scrollTo"
-      controller: 'TheoryCtrl'
       commands: [
         label: "Outline"
         state: "home.projects.project.outline"
@@ -17,7 +16,7 @@ define ['angular', './theoryControllers'], (angular) ->
         label: "Theory"
         state: "home.projects.project.theory"
       ]
-      views: {
+      views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
@@ -29,7 +28,12 @@ define ['angular', './theoryControllers'], (angular) ->
                 method: 'GET'
                 url: $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/#{$stateParams.pid}/theories/#{$stateParams.tid}?translate=t"
               ).then (data) -> data.data
-             scroll: 'scroll'
-      }}]
+
+            scroll: 'scroll'
+
+            project: (ProjectLoader, $stateParams) ->
+              new ProjectLoader($stateParams)
+
+      }]
 
     angular.forEach states, (state) -> $stateProvider.state state

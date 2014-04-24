@@ -55,7 +55,7 @@
     "projects.premises": "Premises",
     "projects.premises_text": "If the following are true:",
     "projects.strict_pro_conclusion:": "It is definitely true that:",
-    "projects.nonstrict_pro_conclusion": "Presumably it is true:",
+    "projects.nonstrict_pro_conclusion": "Presumably it is true that:",
     "projects.strict_con_conclusion": "It is definitely false that",
     "projects.nonstrict_con_conclusion": "Presumably it is false that:",
     "projects.negative_premise": "It is false that:",
