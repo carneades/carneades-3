@@ -12,6 +12,8 @@ define ["angular", "angular-bootstrap"], (angular) ->
       label: "Carneades"
       url: "/"
       views:
+        "css@":
+          template: '<css-inject default-theme="default"></css-inject>'
         "banner@":
           template: "<project-banner></project-banner>"
         "footer@":

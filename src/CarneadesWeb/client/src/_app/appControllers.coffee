@@ -83,7 +83,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
     restrict: 'E'
     replace: 'true'
     scope:
-      display: '='
+      display: '@'
     controller: ($scope, $element, $attrs, $stateParams, $location, $q, $http, $timeout) ->
       getFile = (filename) ->
         string = []
@@ -106,7 +106,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
 
         return dfd.promise
 
-      if ($stateParams.pid)
+      if ($stateParams.pid or $scope.display)
         getFile('banner.tpl').then (result) ->
           if result
             $element.append $compile(result)($scope)
@@ -115,7 +115,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
     restrict: 'E'
     replace: 'true'
     scope:
-      display: '='
+      display: '@'
     controller: ($scope, $element, $attrs, $stateParams, $location, $q, $http, $timeout) ->
       getFile = (filename) ->
         string = []
@@ -138,7 +138,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
 
         return dfd.promise
 
-      if ($stateParams.pid)
+      if ($stateParams.pid or $scope.display)
         getFile('footer.tpl').then (result) ->
           if result
             $element.append $compile(result)($scope)

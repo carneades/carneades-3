@@ -38,7 +38,6 @@ define [
               $scope.project.title = project.title
               $scope.scrollTo = scroll.scrollTo
               $scope.hasReferences = not emptyReferences references
-
               if $stateParams.scrollTo?
                 scroll.scrollTo $stateParams.scrollTo
 
