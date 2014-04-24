@@ -59,7 +59,8 @@
     "projects.strict_con_conclusion": "It is definitely false that",
     "projects.nonstrict_con_conclusion": "Presumably it is false that:",
     "projects.negative_premise": "It is false that:",
-    "projects.properties": "Properties"
+    "projects.properties": "Properties",
+    "projects.theory": "Theory"
     
     
 }

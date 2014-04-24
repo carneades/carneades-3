@@ -10,11 +10,8 @@ define ['angular', './theoryControllers', '../../../common/resources/projects'],
       label: "Theory"
       url: "/theories/:tid?scrollTo"
       commands: [
-        label: "Outline"
-        state: "home.projects.project.outline"
-      ,
-        label: "Theory"
-        state: "home.projects.project.theory"
+        # label: "Outline"
+        # state: "home.projects.project.outline"
       ]
       views:
         "nav@":
