@@ -1,0 +1,44 @@
+#subnav {
+  background:$body-bg;
+  z-index: 100;
+
+  a {
+      color: $link-color;
+  }
+  &.ui-scrollfix {
+    top: 0;
+    position:fixed;
+    width: 100%;
+    background:$breadcrumbs-bg;
+
+    a {
+        color: #fff;
+    }
+  }
+}
+
+.navbar-project {
+    background-color: $breadcrumbs-bg;
+}
+
+.navbar {
+    border-radius: 0;
+    min-height: 0;
+    margin-bottom: 0;
+}
+
+@media (min-width: 768px) {
+    .navbar-centered .navbar-nav {
+        float: none;
+        text-align: center;
+    }
+    .navbar-centered .navbar-nav > li {
+        float: none;
+    }
+    .navbar-centered .nav > li {
+        display: inline;
+    }
+    .navbar-centered .nav > li > a {
+        display: inline-block;
+    }
+}
