@@ -1,24 +1,29 @@
-%div{"ng-repeat" => "scheme in section.schemes"}
-  %div{"ng-controller" => "SchemeCtrl", id: "{{scheme.id}}"}
-    %h3 {{scheme.header.title}}
+.container
+  .row
+    .col-md-9
+      %div{"ng-repeat" => "scheme in section.schemes"}
+        .section{"ng-controller" => "SchemeCtrl", id: "{{scheme.id}}"}
+          .page-header
+            %h3 {{scheme.header.title}}
 
-    %metadata{model: "scheme.header", skipped: "['title']"}
+          %metadata{model: "scheme.header", skipped: "['title']"}
 
-    %h4{translate: "projects.premises"} Premises
-    .span{translate: "projects.premises_text"}
+          %h4{translate: "projects.premises"} Premises
+          .span{translate: "projects.premises_text"}
 
-    %ul
-      %li{"ng-repeat" => "premise in scheme.premises"}
-        {{premise['translation']}}
+          %ul
+            %li{"ng-repeat" => "premise in scheme.premises"}
+              {{premise['translation']}}
 
-    %h4{translate: "projects.conclusion"} Conclusion
-    %span{class: "conclusion_text"}
-      {{conclusion_text}}
-    %span  
-      {{scheme['conclusion-translation']}}
+          %h4{translate: "projects.conclusion"} Conclusion
+          %span{class: "conclusion_text"}
+            {{conclusion_text}}
+          %br
+          %span  
+            {{scheme['conclusion-translation']}}
 
-    %h4{translate: "projects.properties"} Properties
-    %properties{keys: "[['id', 'projects.id'],
-                        ['weight', 'projects.weight']]", 
-                    model: "scheme"}
+          %h4{translate: "projects.properties"} Properties
+          %properties{keys: "[['id', 'projects.id'],
+                              ['weight', 'projects.weight']]", 
+                          model: "scheme"}
 
