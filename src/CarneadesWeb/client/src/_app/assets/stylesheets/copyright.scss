@@ -52,7 +52,8 @@
 @import "projects/vendor/bootstrap/responsive-utilities";
 
 
-@import "projects/copyright/mixins";
-@import "projects/copyright/breadcrumbs";
-@import "projects/copyright/navigation";
+@import "projects/modules/mixins";
+@import "projects/partials/breadcrumbs";
+@import "projects/partials/navigation";
+@import "projects/copyright/outline";
 //@import "projects/partials/theory";
