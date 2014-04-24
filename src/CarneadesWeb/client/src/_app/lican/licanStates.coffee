@@ -12,10 +12,12 @@ define ['angular', 'angular-resource', './licanControllers', './licanResources']
         label: 'License Analyser Introduction'
         url: '/lican?entity'
         views:
+          "css@":
+            template: '<css-inject default-theme="markos"></css-inject>'
           "banner@":
-            template: '<project-banner></project-banner>'
+            template: '<project-banner display=\"markos\"></project-banner>'
           "footer@":
-            template: '<project-footer></project-footer>'
+            template: '<project-footer display=\"markos\"></project-footer>'
           "nav@":
             template: "<bc-navigation></bc-navigation>"
           "content@":
@@ -30,10 +32,12 @@ define ['angular', 'angular-resource', './licanControllers', './licanResources']
         label: 'License Analyser Questions'
         url: '/questions'
         views:
+          "css@":
+            template: '<css-inject default-theme="markos"></css-inject>'
           "banner@":
-            template: '<project-banner></project-banner>'
+            template: '<project-banner display=\"markos\"></project-banner>'
           "footer@":
-            template: '<project-footer></project-footer>'
+            template: '<project-footer display=\"markos\"></project-footer>'
           "nav@":
             template: "<bc-navigation></bc-navigation>"
           "content@":
@@ -42,16 +46,18 @@ define ['angular', 'angular-resource', './licanControllers', './licanResources']
             resolve:
               questions: (MultiQuestionLoader) ->
                 return MultiQuestionLoader
-      }
+      },
       {
         name: 'lican_demo'
         label: 'License Analyser Questions (Demo)'
         url: '/lican/demo'
         views:
+          "css@":
+            template: '<css-inject default-theme="markos"></css-inject>'
           "banner@":
-            template: '<project-banner></project-banner>'
+            template: '<project-banner display=\"markos\"></project-banner>'
           "footer@":
-            template: '<project-footer></project-footer>'
+            template: '<project-footer display=\"markos\"></project-footer>'
           "nav@":
             template: "<bc-navigation></bc-navigation>"
           "content@":
