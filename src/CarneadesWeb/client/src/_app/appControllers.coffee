@@ -82,6 +82,8 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive 'projectBanner', ($compile) ->
     restrict: 'E'
     replace: 'true'
+    scope:
+      display: '='
     controller: ($scope, $element, $attrs, $stateParams, $location, $q, $http, $timeout) ->
       getFile = (filename) ->
         string = []
@@ -91,7 +93,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
         string.push ":"
         string.push $location.port()
         string.push "/carneades/api/projects/"
-        string.push $stateParams.pid
+        string.push if $scope.display then $scope.display else $stateParams.pid
         string.push "/theme/html/"
         string.push filename
 
@@ -106,5 +108,37 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
 
       if ($stateParams.pid)
         getFile('banner.tpl').then (result) ->
+          if result
+            $element.append $compile(result)($scope)
+
+  .directive 'projectFooter', ($compile) ->
+    restrict: 'E'
+    replace: 'true'
+    scope:
+      display: '='
+    controller: ($scope, $element, $attrs, $stateParams, $location, $q, $http, $timeout) ->
+      getFile = (filename) ->
+        string = []
+        string.push $location.protocol()
+        string.push "://"
+        string.push $location.host()
+        string.push ":"
+        string.push $location.port()
+        string.push "/carneades/api/projects/"
+        string.push if $scope.display then $scope.display else $stateParams.pid
+        string.push "/theme/html/"
+        string.push filename
+
+        dfd = $q.defer()
+        $timeout(() ->
+          $http.get(string.join("")).success((result) ->
+            dfd.resolve result
+          )
+        , 2000)
+
+        return dfd.promise
+
+      if ($stateParams.pid)
+        getFile('footer.tpl').then (result) ->
           if result
             $element.append $compile(result)($scope)
