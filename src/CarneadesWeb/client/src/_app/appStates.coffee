@@ -14,6 +14,8 @@ define ["angular", "angular-bootstrap"], (angular) ->
       views:
         "banner@":
           template: "<project-banner></project-banner>"
+        "footer@":
+          template: "<project-footer></project-footer>"
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
@@ -47,7 +49,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
       label: "About"
       url: "about"
       views:
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>About</h1>"
@@ -56,7 +58,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
       label: "Privacy"
       url: "privacy"
       views:
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Privacy</h1>"
@@ -65,7 +67,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
       label: "Help"
       url: "help"
       views:
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Help</h1>"
@@ -74,7 +76,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
       label: "Admin"
       url: "admin"
       views:
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Admin</h1>"
@@ -83,7 +85,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
       label: "Sign in"
       url: "signin"
       views:
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Sign in</h1>"
