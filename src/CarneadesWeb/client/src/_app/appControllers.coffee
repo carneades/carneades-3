@@ -82,6 +82,8 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive 'projectBanner', ($compile) ->
     restrict: 'E'
     replace: 'true'
+    scope:
+      display: '='
     controller: ($scope, $element, $attrs, $stateParams, $location, $q, $http, $timeout) ->
       getFile = (filename) ->
         string = []
@@ -91,7 +93,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
         string.push ":"
         string.push $location.port()
         string.push "/carneades/api/projects/"
-        string.push $stateParams.pid
+        string.push if $scope.display then $scope.display else $stateParams.pid
         string.push "/theme/html/"
         string.push filename
 
@@ -112,6 +114,8 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive 'projectFooter', ($compile) ->
     restrict: 'E'
     replace: 'true'
+    scope:
+      display: '='
     controller: ($scope, $element, $attrs, $stateParams, $location, $q, $http, $timeout) ->
       getFile = (filename) ->
         string = []
@@ -121,7 +125,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
         string.push ":"
         string.push $location.port()
         string.push "/carneades/api/projects/"
-        string.push $stateParams.pid
+        string.push if $scope.display then $scope.display else $stateParams.pid
         string.push "/theme/html/"
         string.push filename
 
