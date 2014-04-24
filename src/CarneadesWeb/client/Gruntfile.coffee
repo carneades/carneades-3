@@ -213,6 +213,13 @@ module.exports = (grunt) ->
         dest: '<%= dist.base %>/css'
         ext: '.min.css'
 
+      animate:
+        expand: true
+        cwd: '<%= comp.base %>/css'
+        src: "animate.css"
+        dest: '<%= dist.base %>/css'
+        ext: '.min.css'
+
       default:
         expand: true
         cwd: '<%= comp.base %>/css'
