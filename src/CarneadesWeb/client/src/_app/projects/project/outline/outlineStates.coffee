@@ -18,7 +18,7 @@ define [
   ).config(($stateProvider) ->
     emptyReferences = (references) ->
       (v for k,v of references when v? and k != '$promise' and k != '$resolved').length is 0
-    
+
     states = [
       {
         name: 'home.projects.project.outline'
@@ -27,9 +27,6 @@ define [
         commands: [
           label: "Map"
           state: "home.projects.project.map"
-        ,
-          label: "Theory"
-          state: "home.projects.project.theory"
         ]
         views:
           "nav@":
@@ -41,7 +38,7 @@ define [
               $scope.project.title = project.title
               $scope.scrollTo = scroll.scrollTo
               $scope.hasReferences = not emptyReferences references
-              
+
               if $stateParams.scrollTo?
                 scroll.scrollTo $stateParams.scrollTo
 
