@@ -1,9 +1,10 @@
 .container.statement
   .container.node
     .row
-      %h1{translate: "projects.statement"} Statement
+      %evaluation-indicator{value: "statement.value", size: "'32x32'"}
+        %h1{translate: "projects.statement"} Statement
       .statement-text 
-        {{statement.text}}
+      {{statement.text}}
       
       %div{"ng-hide" => "headerIsEmpty"}
         %metadata{model: "statement.header"}

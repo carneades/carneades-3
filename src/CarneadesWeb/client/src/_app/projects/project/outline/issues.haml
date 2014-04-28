@@ -2,5 +2,6 @@
   %h1 Main Issues
 %ul.list-group
   %li.list-group-item{"ng-repeat" => "issue in issues"}
-    %a.statement{"ui-sref" => "home.projects.project.statement({pid: $stateParams.pid, db: $stateParams.db, sid: issue.id})", rel: "address:{{ issue.url }}", id: "statement{{ issue.id }}"}
-      %markdown{:strip => "true", "ng-model" => "issue.text"}
+    %evaluation-indicator{value: "issue.value", size: "'32x32'"}
+      %a.statement{"ui-sref" => "home.projects.project.statement({pid: $stateParams.pid, db: $stateParams.db, sid: issue.id})", rel: "address:{{ issue.url }}", id: "statement{{ issue.id }}"}
+        {{issue.text}}
