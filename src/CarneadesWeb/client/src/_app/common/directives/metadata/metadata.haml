@@ -1,6 +1,6 @@
 %table
   %tr{"ng-repeat" => "(k,v) in model"}
-    %td.metadataKey{"ng-hide" => "isHidden(k, v)"}
+    %td.object-key{"ng-hide" => "isHidden(k, v)"}
       .span{translate: "{{getTranslateKey(k)}}"} {{k}}
-    %td.metadataValue{"ng-hide" => "isHidden(k, v)"}
+    %td.object-value{"ng-hide" => "isHidden(k, v)"}
       %markdown{extensions: "carneades", "ng-model" => "v"}

@@ -14,14 +14,14 @@ define ['angular'], (angular) ->
     link: (scope, element, attrs) ->
       getEvaluationClass = (value) ->
         if not value?
-          "evalution-undefined-#{scope.size}"
+          "evaluation-undefined-#{scope.size}"
         else if value >= 0.75
           "evaluation-in-#{scope.size}"
         else if value <= 0.25
           "evaluation-out-#{scope.size}"
         else if value > 0.25 and value < 0.75
           "evaluation-undecided-#{scope.size}"
-           
+
       element.children().addClass (getEvaluationClass scope.value)
 
   )
