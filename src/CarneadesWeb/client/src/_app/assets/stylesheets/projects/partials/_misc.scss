@@ -1,10 +1,10 @@
-.premises_text {
+.premises-text {
    font-style: italic;
    margin-bottom: 4px;
 }
 
 
-.conclusion_text {
+.conclusion-text {
    font-style: italic;
    margin-bottom: 4px;
 }
@@ -14,17 +14,41 @@
     background-color: lightblue;
 }
 
-.metadataKey {
+.object-key {
     font-weight: bold;
     cursor: select;
     vertical-align: baseline;
 }
 
-.metadataValue {
+.object-value {
     padding-left: 10px;
 }
 
 
-.statementText {
+.statement-text {
     margin-bottom: 20px;
+}
+
+.evaluation-undefined-32x32::after {
+    content: url("images/circle_grey_32x32.png");
+    vertical-align: -18%;
+    padding: 0 5px 0 0;
+}
+
+.evaluation-in-32x32::after {
+    content: url("images/circle_green_32x32.png");
+    vertical-align: -18%;
+    padding: 0 5px 0 0;
+}
+
+.evaluation-out-32x32::after {
+    content: url("images/circle_red_32x32.png");
+    vertical-align: -18%;
+    padding: 0 5px 0 0;
+}
+
+.evaluation-undecided-32x32::after {
+    content: url("images/circle_orange_32x32.png");
+    vertical-align: -18%;
+    padding: 0 5px 0 0;
 }
