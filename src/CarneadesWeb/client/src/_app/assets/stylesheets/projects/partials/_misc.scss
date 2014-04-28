@@ -29,26 +29,50 @@
     margin-bottom: 20px;
 }
 
-.evaluation-undefined-32x32::after {
+.evaluation-undefined-32x32-after::after {
     content: url("../../../../../images/circle_grey_32x32.png");
     vertical-align: -13%;
     padding-left: 10px;
 }
 
-.evaluation-in-32x32::after {
+.evaluation-in-32x32-after::after {
     content: url("../../../../../images/circle_green_32x32.png");
     vertical-align: -13%;
     padding-left: 10px;
 }
 
-.evaluation-out-32x32::after {
+.evaluation-out-32x32-after::after {
     content: url("../../../../../images/circle_red_32x32.png");
     vertical-align: -13%;
     padding-left: 10px;
 }
 
-.evaluation-undecided-32x32::after {
+.evaluation-undecided-32x32-after::after {
     content: url("../../../../../images/circle_orange_32x32.png");
     vertical-align: -13%;
     padding-left: 10px;
+}
+
+.evaluation-undefined-32x32-before::before {
+    content: url("../../../../../images/circle_grey_32x32.png");
+    vertical-align: -50%;
+    padding-right: 10px;
+}
+
+.evaluation-in-32x32-before::before {
+    content: url("../../../../../images/circle_green_32x32.png");
+    vertical-align: -50%;
+    padding-right: 10px;
+}
+
+.evaluation-out-32x32-before::before {
+    content: url("../../../../../images/circle_red_32x32.png");
+    vertical-align: -50%;
+    padding-right: 10px;
+}
+
+.evaluation-undecided-32x32-before::before {
+    content: url("../../../../../images/circle_orange_32x32.png");
+    vertical-align: -50%;
+    padding-right: 10px;
 }
