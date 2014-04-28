@@ -9,7 +9,7 @@
 
     %div{"ng-hide" => "argument.premises.length == 0" }
       %h2{translate: "projects.premises"} Premises
-      %div.premises_text{translate: "projects.premises_text"}
+      %div.premises-text{translate: "projects.premises_text"}
       %ul{"ng-repeat" => "p in argument.premises"}
         %li
           %span{"ng-hide" => "p.role == ''"}
