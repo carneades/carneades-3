@@ -30,8 +30,9 @@
     "projects.header": "Header",
 
     "projects.description": "Description",
-    "projects.contributor": "Contribuator",
-    "projects.creation": "Creator",
+    "projects.coverage": "Coverage",
+    "projects.contributor": "Contributor",
+    "projects.creator": "Creator",
     "projects.date": "Date",
     "projects.format": "Format",
     "projects.identifier": "Identifier",
@@ -43,6 +44,7 @@
     "projects.subject": "Subject",
     "projects.title": "Title",
     "projects.type": "Type",
+    "projects.key": "Key",
     
     "projects.pro_arguments": "Pro Arguments",
     "projects.con_arguments": "Con Arguments",
