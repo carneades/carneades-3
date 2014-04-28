@@ -9,18 +9,19 @@ define ['angular'], (angular) ->
   .directive("evaluationIndicator", ->
     restrict: "E"
     scope:
-      value: "=",
-      size: "="
+      value: '=',
+      size: '@',
+      position: '@',
     link: (scope, element, attrs) ->
       getEvaluationClass = (value) ->
         if not value?
-          "evaluation-undefined-#{scope.size}"
+          "evaluation-undefined-#{scope.size}-#{scope.position}"
         else if value >= 0.75
-          "evaluation-in-#{scope.size}"
+          "evaluation-in-#{scope.size}-#{scope.position}"
         else if value <= 0.25
-          "evaluation-out-#{scope.size}"
+          "evaluation-out-#{scope.size}-#{scope.position}"
         else if value > 0.25 and value < 0.75
-          "evaluation-undecided-#{scope.size}"
+          "evaluation-undecided-#{scope.size}-#{scope.position}"
 
       element.children().addClass (getEvaluationClass scope.value)
 
