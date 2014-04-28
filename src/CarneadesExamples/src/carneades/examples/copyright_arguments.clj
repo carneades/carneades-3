@@ -12,7 +12,9 @@
         carneades.database.import
         carneades.database.export 
         carneades.xml.caf.export
-        carneades.maps.lacij)
+        carneades.maps.lacij
+        carneades.engine.argument-evaluation
+        carneades.engine.aspic)
   (:require [carneades.database.db :as db]
             [carneades.database.argument-graph :as ag-db]))
 
@@ -501,14 +503,15 @@ need to better understand the rules. [@SIIA, pp. 15-16.]"}
 (defn -main []
   (let [dbname "main"
         project "copyright"
-        db (db/make-connection project dbname "root" "pw1")]
+        db (db/make-connection project dbname "root" "pw1")
+        copyright1' (evaluate aspic-grounded copyright1)]
     (ag-db/create-argument-database
      project
      dbname 
      "root" 
      "pw1" 
      (make-metadata))
-    (import-from-argument-graph db copyright1 true)))
+    (import-from-argument-graph db copyright1' true)))
 
 ;; (-main)
 
