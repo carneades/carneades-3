@@ -16,6 +16,7 @@ define ['angular', 'angular-translate'], (angular) ->
     controller: ($scope) ->
       $scope.getTranslateKey = (k) ->
         "projects.#{k}"
+        
       $scope.isHidden = (k, v) ->
-        not v? or ($scope.skipped.indexOf k) != -1
+          not $scope.skipped? or not v? or ($scope.skipped.indexOf k != -1)
   )
