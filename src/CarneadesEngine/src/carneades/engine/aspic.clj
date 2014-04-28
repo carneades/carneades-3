@@ -13,8 +13,7 @@
         carneades.engine.dung
         carneades.engine.argument-graph
         carneades.engine.argument-evaluation
-        carneades.engine.search)
-  (:require [clojure.tools.logging :refer [info spy debug error]]))
+        carneades.engine.search))
 
 
 (defrecord State
