@@ -1,6 +1,8 @@
 .container.node
   .row
-    %h1{translate: "projects.argument"} Argument
+    %evaluation-indicator{value: "argument.value", size: "'32x32'"}
+      %h1{translate: "projects.argument"}
+        Argument
 
     %div{"ng-hide" => "headerIsEmpty"}
       %metadata{model: "argument.header"}
