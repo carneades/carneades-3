@@ -34,16 +34,14 @@
 (defn translate-literal
   [context]
   (let [literal (:literal context)
-        virtual-atom (or (:virtual-atom context) literal)
+        virtual-atom (or (:virtual-atom context) (:atom context))
         lang (get-lang context)]
-    (cond (and (st/statement? literal) (get-in literal [:text lang]))
-          (if-let [txt (get-in literal [:text lang])]
-            txt
-            (pr-str (st/literal-atom literal)))
+    (if (st/statement? literal)
+      (if-let [txt (get-in literal [:text lang])]
+        txt
+        (pr-str virtual-atom))
           
-          (st/statement? literal) (pr-str (st/literal-atom literal))
-
-          :else (pr-str virtual-atom))))
+      (pr-str virtual-atom))))
 
 (defn make-default-translator
   "Returns a default translator for literals. It uses the :text field
@@ -67,11 +65,8 @@
   "Changes variables symbols to normal symbols (non-recursively)."
   []
   (fn [context]
-    (if (st/statement? (:literal context))
-      context
-      (let [atom (or (:virtual-atom context) (:literal context))]
-        (debug "context:" context)
-        (assoc context :virtual-atom (remove-literal-variables atom))))))
+    (let [atom (or (:virtual-atom context) (st/literal-atom (:literal context)))]
+      (assoc context :virtual-atom (remove-literal-variables atom)))))
 
 (defn make-prefix-translator
   "Examples of a translator modifying "

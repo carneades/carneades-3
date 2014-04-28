@@ -203,7 +203,7 @@
         do-translation (or (= translate "t") (= translate "true"))]
     (cond (and do-translation scheme)
           (when-let [s (t/find-scheme theory (symbol scheme))]
-            (ttr/translate-schemes translator lang))
+            (ttr/translate-scheme s translator lang))
 
           scheme
           (t/find-scheme theory (symbol scheme))
