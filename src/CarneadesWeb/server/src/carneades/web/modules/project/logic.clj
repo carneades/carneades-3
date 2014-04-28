@@ -93,6 +93,7 @@
     ""))
 
 (defn make-node [nodes lang index]
+  ;; TODO: to rewrite properly
   (with-local-vars [idx index, c 1]
     (reduce (fn [x y]
               (var-set idx (+ @idx @c))
@@ -101,16 +102,15 @@
                           (assoc :text (str (get-type (get y 0))
                                             " "
                                             (get-node-text (get y 0) @idx)))
-                          (assoc :children (make-node (get y 1) lang 0)))))
+                          (assoc :children (make-node (get y 1) lang 0))
+                          (assoc :value (:value (get y 0)))
+                          )))
             []
             nodes)))
 
-(defn make-issues [outline]
-  (reduce (fn [x y] (conj x (-> {}
-                               (assoc :id (:id y))
-                               (assoc :text (:text y)))))
-          []
-          outline))
+(defn make-issues
+  [outline]
+  (map #(select-keys % [:id :text :value]) outline))
 
 (defn make-outline
   [project db & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
