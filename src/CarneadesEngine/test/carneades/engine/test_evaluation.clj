@@ -16,8 +16,7 @@
         carneades.engine.shell
         carneades.maps.lacij)
   (:require [clojure.pprint :refer [pprint]]
-            [midje.sweet :refer :all :exclude [facts]]
-            [clojure.tools.logging :refer [spy]]))
+            [midje.sweet :refer :all :exclude [facts]]))
 
 ;; Example argument graphs to test whether arguments are being evaluated properly.
 ;; Henry Prakken suggested the following sources:
