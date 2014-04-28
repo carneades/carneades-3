@@ -7,13 +7,14 @@ define ['angular'], (angular) ->
   angular.module('services.scroll', []).service 'scroll', ($location, $anchorScroll) ->
     scrollTo: (id) ->
       setTimeout ->
-        window.scrollTo(window.pageXOffset, window.pageYOffset - 90)
-
-        el = angular.element (document.getElementById id)
+        #window.scrollTo(window.pageXOffset, window.pageYOffset - 90)
+        if id
+          el = angular.element (document.getElementById id)
+        else
+          el = angular.element (document.getElementById 'top')
         el.addClass 'scrolled'
         old = $location.hash()
         $location.hash id
         $anchorScroll()
         $location.hash old
       , 200
-    
