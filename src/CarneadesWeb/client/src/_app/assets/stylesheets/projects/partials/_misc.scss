@@ -30,25 +30,25 @@
 }
 
 .evaluation-undefined-32x32::after {
-    content: url("images/circle_grey_32x32.png");
-    vertical-align: -18%;
-    padding: 0 5px 0 0;
+    content: url("../../../../../images/circle_grey_32x32.png");
+    vertical-align: -13%;
+    padding-left: 10px;
 }
 
 .evaluation-in-32x32::after {
-    content: url("images/circle_green_32x32.png");
-    vertical-align: -18%;
-    padding: 0 5px 0 0;
+    content: url("../../../../../images/circle_green_32x32.png");
+    vertical-align: -13%;
+    padding-left: 10px;
 }
 
 .evaluation-out-32x32::after {
-    content: url("images/circle_red_32x32.png");
-    vertical-align: -18%;
-    padding: 0 5px 0 0;
+    content: url("../../../../../images/circle_red_32x32.png");
+    vertical-align: -13%;
+    padding-left: 10px;
 }
 
 .evaluation-undecided-32x32::after {
-    content: url("images/circle_orange_32x32.png");
-    vertical-align: -18%;
-    padding: 0 5px 0 0;
+    content: url("../../../../../images/circle_orange_32x32.png");
+    vertical-align: -13%;
+    padding-left: 10px;
 }
