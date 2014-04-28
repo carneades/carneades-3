@@ -5,8 +5,10 @@
 
 define ['angular', 'angular-translate',
    './argumentControllers', '../../../common/resources/arguments',
-   '../../../common/resources/projects'], (angular) ->
-  angular.module('argument.states', ['argument.controllers', 'resources.arguments']).config ($stateProvider) ->
+   '../../../common/resources/projects',
+   '../../../common/directives/evaluation-indicator/evaluation-indicator'],
+(angular) ->
+  angular.module('argument.states', ['argument.controllers', 'resources.arguments', 'directives.evaluationIndicator']).config ($stateProvider) ->
     states = [{
       name: "home.projects.project.argument"
       label: "Argument"
