@@ -18,5 +18,5 @@ define ['angular', 'angular-translate'], (angular) ->
         "projects.#{k}"
         
       $scope.isHidden = (k, v) ->
-          not $scope.skipped? or not v? or ($scope.skipped.indexOf k != -1)
+        (not v?) or ($scope.skipped? and $scope.skipped.indexOf k != -1)
   )
