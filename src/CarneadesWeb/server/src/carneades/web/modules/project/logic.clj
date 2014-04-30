@@ -194,8 +194,8 @@
       (select-keys [:scheme :premises :id :conclusion])))
 
 (defn get-theory
-  [{:keys [pid tid scheme lang translate]}]
-  (let [theory (assoc (project/load-theory pid tid) :id tid)
+  [{:keys [tpid tid scheme lang translate]}]
+  (let [theory (assoc (project/load-theory tpid tid) :id tid)
         ;; TODO: creates a simpler function that just returns the :translation key?
         translator (comp (tr/make-default-translator)
                          (tr/variable-converter-translator)
