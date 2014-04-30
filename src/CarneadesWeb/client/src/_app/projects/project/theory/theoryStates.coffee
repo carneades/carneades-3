@@ -8,7 +8,7 @@ define ['angular', './theoryControllers', '../../../common/resources/projects'],
     states = [{
       name: "home.projects.project.theory"
       label: "Theory"
-      url: "/theories/:tid?scrollTo"
+      url: "/theories/:tpid/:tid?scrollTo"
       commands: [
         # label: "Outline"
         # state: "home.projects.project.outline"
@@ -23,7 +23,7 @@ define ['angular', './theoryControllers', '../../../common/resources/projects'],
             theory: ($http, $stateParams, $location) ->
               $http(
                 method: 'GET'
-                url: $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/#{$stateParams.pid}/theories/#{$stateParams.tid}?translate=t"
+                url: $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/#{$stateParams.pid}/theories/#{$stateParams.tpid}/#{$stateParams.tid}?translate=t"
               ).then (data) -> data.data
 
             scroll: 'scroll'
