@@ -56,8 +56,19 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
 
     render = (states, $state) ->
       index = 0
+      isActiveSet = false
+      isActiveIndex = -1
+
       fnIsActive = (s) ->
         s.isActive = ($state.$current.name is s.name)
+
+        if s.isActive
+          if isActiveSet
+            states[isActiveIndex].isActive = false
+            states[isActiveIndex].isLast = false
+          isActiveIndex = index - 1
+          isActiveSet = true
+
         return s
 
       fnIsLast = (s, index) ->
