@@ -27,21 +27,40 @@ define [
         commands: [
           label: "Map"
           state: "home.projects.project.map"
+        ,
+          label: "Theory"
+          state: "home.projects.project.theory"
         ]
         views:
           "nav@":
             template: "<bc-navigation></bc-navigation>"
           "content@":
             templateUrl: 'project/outline/outline-main.tpl.html'
-            controller: ($scope, $stateParams, scroll, project, references) ->
+            controller: ($scope, $stateParams, scroll, project, tproject, references) ->
               $scope.project = project
               $scope.project.title = project.title
               $scope.scrollTo = scroll.scrollTo
+
+              getSchemesProject = (project) ->
+                schemes = project.schemes
+                res = schemes.split '/'
+                if res.length == 1 then project.id else res[0]
+
+              getSchemesName = (project) ->
+                schemes = project.schemes
+                res = schemes.split '/'
+                if res.length == 1 then res[0] else res[1]
+
+              $scope.$stateParams.tpid = getSchemesProject(tproject)
+              $scope.$stateParams.tid = getSchemesName(tproject)
+
               $scope.hasReferences = not emptyReferences references
               if $stateParams.scrollTo?
                 scroll.scrollTo $stateParams.scrollTo
 
             resolve:
+              tproject: (ProjectLoader, $stateParams) ->
+                new ProjectLoader($stateParams)
               project: ($stateParams, MetadataLoader) ->
                 $stateParams.mid = 1
                 new MetadataLoader($stateParams)
