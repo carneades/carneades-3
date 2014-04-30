@@ -1,6 +1,6 @@
 @mixin make-breadcrumb-levels() {
     @for $i from 1 through 7 {
-        $bc-bg-color: lighten($breadcrumbs-bg, 5% * $i);
+        $bc-bg-color: lighten($breadcrumbs-bg, 10% * $i);
         &.bc-level-#{$i} {
             > a {
                 background: $bc-bg-color;

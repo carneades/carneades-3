@@ -37,7 +37,7 @@ define ['angular', 'angular-translate',
       name: "home.projects.project.argument.edit"
       url: "/edit"
       views:
-        "@":
+        "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           templateUrl: "project/argument/edit.tpl.html"
