@@ -13,10 +13,10 @@
                  [ring-middleware-format "0.3.1"]
                  [ring/ring-json "0.2.0"]
                  [clabango "0.5"]
-                 
+
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [com.taoensso/timbre "3.1.6"]
-                 
+
                  [com.postspectacular/rotor "0.1.0"]
                  [com.taoensso/tower "1.5.1"]
                  [markdown-clj "0.9.28"]
