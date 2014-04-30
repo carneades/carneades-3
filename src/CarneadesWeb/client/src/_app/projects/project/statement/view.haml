@@ -3,12 +3,12 @@
     .row
       %evaluation-indicator{value: "statement.value", size: "32x32", position: "after"}
         %h1{translate: "projects.statement"} Statement
-      .statement-text 
+      .statement-text
       {{statement.text}}
-      
+
       %div{"ng-hide" => "headerIsEmpty"}
         %metadata{model: "statement.header"}
-        
+
       %div{"ng-hide" => "statement.pro.length == 0" }
         %h2{translate: "projects.pro_arguments"} Pro Arguments
         %ul{"ng-repeat" => "arg in statement.pro"}
@@ -17,7 +17,7 @@
             %ul{"ng-repeat" => "p in arg.premises"}
               %li
                 %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
-                  
+
       %div{"ng-hide" => "statement.con.length == 0"}
         %h2{translate: "projects.con_arguments"} Con Arguments
         %ul{"ng-repeat" => "arg in statement.con"}
@@ -26,7 +26,7 @@
             %ul{"ng-repeat" => "p in arg.premises"}
               %li
                 %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
-                  
+
       %div{"ng-hide" => "statement['premise-of'].length == 0"}
         %h2{translate: "projects.premise_of"} Premise of
         %ul{"ng-repeat" => "arg in statement['premise-of']"}
@@ -35,13 +35,12 @@
             %ul{"ng-repeat" => "p in arg.premises"}
               %li
                 %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
-                  
-      %h2{translate: "projects.properties"} Properties            
+
+      %h2{translate: "projects.properties"} Properties
       %properties{keys: "[['id', 'projects.id'],
             ['atom', 'projects.atom'],
             ['main', 'projects.main_issues'],
             ['standard', 'projects.standard'],
             ['weight', 'projects.weight'],
-            ['value', 'projects.value']]", 
-        model: "statement"}   
-
+            ['value', 'projects.value']]",
+        model: "statement"}
