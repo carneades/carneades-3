@@ -15,6 +15,15 @@ define ["angular"], (angular) ->
           scope.$apply(-> invoker(scope, { $event: event } ) )
           )
       )
+    .directive('bnMapMouseover', ($document, $parse) ->
+      restrict: 'A'
+      link: (scope, element, attrs) ->
+        scopeExpression = attrs.bnMapMouseover
+        invoker = $parse scopeExpression
+        $document.on("mouseover", ( event ) ->
+          scope.$apply(-> invoker(scope, { $event: event } ) )
+          )
+      )
     .directive('map', ($compile) ->
       restrict: 'E'
       replace: true
@@ -28,7 +37,6 @@ define ["angular"], (angular) ->
 
         if attrs['ngModel']
           scope.$watch(attrs['ngModel'], render)
-
         )
     .controller('MapCtrl', ($scope, map) ->
       $scope.handleClick = (event) ->
@@ -39,15 +47,27 @@ define ["angular"], (angular) ->
           if nid[0] == 's'
             $scope.$stateParams.sid = nid.substr(2)
             $scope.$state.transitionTo("home.projects.project.statement", $scope.$stateParams)
-          else
+          else if nid[0] != 'e'
             $scope.$stateParams.aid = nid.substr(2)
             $scope.$state.transitionTo("home.projects.project.argument", $scope.$stateParams)
 
         else
-          nid = angular.element(element).parent().parent().attr('id')
-          if nid
-            $scope.$stateParams.sid = nid.substr(2)
+          nid = angular.element(element).parent().parent()
+          if nid.attr('id')
+            $scope.$stateParams.sid = nid.attr('id').substr(2)
             $scope.$state.transitionTo("home.projects.project.statement", $scope.$stateParams)
+
+        return undefined
+
+      $scope.handleMouseover = (event) ->
+        element = event.target
+        e = angular.element(element).parent()
+        nid = angular.element(element).parent().attr('id')
+        if nid
+          if nid[0] == 's' or nid[0] != 'e'
+            e.addClass "map-mouseover"
+
+        return undefined
 
       $scope.svg = map
     )
