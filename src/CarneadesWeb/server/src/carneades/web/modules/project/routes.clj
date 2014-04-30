@@ -223,7 +223,7 @@
 
            (context "/theories" []
                     (ANY "/" [] (list-theories-resource pid))
-                    (ANY "/:tid" {params :params} (entry-theories-resource params)))
+                    (ANY "/:tpid/:tid" {params :params} (entry-theories-resource params)))
 
            (context "/:db" [db]
                     (context "/metadata" []
