@@ -2,5 +2,5 @@
   %h1 References
 %ul.references
   %li{"ng-repeat" => "r in references", id: "{{r.key}}"}
-    {{ r.creator }}. {{ r.date }}.
+    [{{r.key}}] {{ r.creator }}. {{ r.date }}.
     %a{:href => "{{ r.identifier }}"} {{ r.title }}
