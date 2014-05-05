@@ -171,7 +171,8 @@
   :allowed-methods [:get]
   :available-charsets ["utf-8"]
   :available-media-types ["application/json"]
-  :handle-ok (fn [_] (generate-string (get-theories :pid pid))))
+  :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
+               (generate-string (get-theories {:tpid pid :host host :lang lang}))))
 
 (defresource entry-theories-resource [params]
   :available-media-types ["application/json"]
@@ -249,4 +250,4 @@
                              (ANY "/:nid" [nid] (entry-node-resource pid db nid)))
 
                     (context "/map" []
-                             (ANY "/" [] (entry-map-resource pid db))))))
+                      (ANY "/" [] (entry-map-resource pid db))))))
