@@ -232,6 +232,11 @@ The IRI is returned with its last slash doubled."
         (transform-sexp ,,,)
         (envelop-sexp ,,,))))
 
+(defn make-scheme
+  "Returns an s-exp representing a scheme."
+  [kbconn]
+  (list (symbol (str "triplestore:" (:host kbconn)))))
+
 (defn responses-from-ask
   "Generates responses for a grounded goal. Asks the triplestore if
 the goal exists and builds a list containing one response with an
@@ -245,7 +250,7 @@ argument if is the case."
       (do
         ;; (prn "positive answer")
         (let [arg (argument/make-argument :conclusion goal
-                                          :scheme (str "triplestore:" (:host kbconn))
+                                          :scheme (make-scheme kbconn)
                                           :strict true)]
           [(generator/make-response subs [] arg)]))
       (do
@@ -259,7 +264,7 @@ argument if is the case."
         new-subs (merge subs returned-subs)
         arg (argument/make-argument
              :conclusion (unify/apply-substitutions new-subs goal)
-             :scheme (str "triplestore:" (:host kbconn))
+             :scheme (make-scheme kbconn)
              :strict true)]
    (generator/make-response new-subs [] arg)))
 
