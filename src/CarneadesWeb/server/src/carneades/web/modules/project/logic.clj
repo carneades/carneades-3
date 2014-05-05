@@ -113,7 +113,7 @@
   (map #(select-keys % [:id :text :value]) outline))
 
 (defn make-outline
-  [project db & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
+  [project db & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
   (make-node (get (:outline (get-resource host :outline [project db])) 1) lang 0))
 
 (defn get-sub-outline [outline id] outline)
@@ -135,7 +135,7 @@
 
 (defn get-outline
   [[project db id :as params]
-   & {:keys [lang host] :or {lang :en k nil host "localhost:3000"}}]
+   & {:keys [lang host] :or {lang :en k nil host "localhost:8080"}}]
   (info "calling outline")
   (->> (make-outline project db :host host :lang lang)
        (#(if-not (nil? id) (get-sub-outline % id) %))))
@@ -189,12 +189,13 @@
 (defn trim-argument
   "Removes unused information from an argument (from the perspective
   of a statement)."
-  [argument lang]
-  (-> argument
-      (select-keys [:scheme :premises :id :conclusion])))
+  [argument]
+  (select-keys argument [:scheme :premises :id :conclusion]))
 
 (defn get-theory
   [{:keys [tpid tid scheme lang translate]}]
+  (prn "tpid=" tpid)
+  (prn "tid=" tid)
   (let [theory (assoc (project/load-theory tpid tid) :id tid)
         ;; TODO: creates a simpler function that just returns the :translation key?
         translator (comp (tr/make-default-translator)
@@ -218,13 +219,13 @@
 
 (defn get-theories
   [params]
-  (let [params (merge {;; :host "localhost:3000"
+  (let [params (merge {:host "localhost:8080"
                        :lang :en} params)
         params (update-in params [:lang] keyword)]
     (if (:tid params)
       (get-theory params)
       (map #(get-theory (assoc params :tid %))
-           (:theories (get-resource (:host params) :project [(:pid params) "theories"]))))))
+           (:theories (get-resource (:host params) :project [(:tpid params) "theories"]))))))
 
 (defn trim-scheme
   [scheme]
@@ -236,7 +237,7 @@
         schemestr (str (first (unserialize-atom (:scheme arg))))
         schemes-project (theory/get-schemes-project project (:schemes pcontent))
         schemes-name (theory/get-schemes-name (:schemes pcontent))
-        scheme (get-theory {:pid schemes-project :tid schemes-name :scheme schemestr :lang lang})]
+        scheme (get-theory {:tpid schemes-project :tid schemes-name :scheme schemestr :lang lang})]
     (if (nil? scheme)
       ;; no scheme found? fake one
       {:header {:title schemestr} :id schemestr}
@@ -244,7 +245,7 @@
 
 (defn get-argument
   [[project db id :as params]
-   & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
+   & {:keys [host lang] :or {host "localhost:8080" lang :en}}]
   (debug "get-argument")
   {:pre [(not (nil? project))
          (not (nil? db))]}
@@ -254,31 +255,32 @@
         (update-in [:header] trim-metadata lang)
         (update-in [:conclusion] trim-conclusion lang)
         (update-in [:premises] trim-premises lang)
-        (assoc :scheme (trim-scheme scheme)))))
+        (assoc :scheme (trim-scheme scheme))
+        )))
 
 (defn get-trimed-argument
   [project db host lang aid]
   (let [arg (get-argument [project db aid] :host host :lang lang)]
-   (trim-argument arg lang)))
+    (trim-argument arg)))
 
 (defn get-statement
   [[project db id :as params]
-   & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
+   & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (let [stmt (get-resource host :statement params)
         stmt (update-in stmt [:header] trim-metadata lang)
         stmt (assoc stmt :text (lang (:text stmt)))
-        stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
-                                   (:pro stmt)))
-        stmt (assoc stmt :con (map (partial get-trimed-argument project db host lang)
-                                   (:con stmt)))
+        ;; stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
+        ;;                            (:pro stmt)))
+        ;; stmt (assoc stmt :con (map (partial get-trimed-argument project db host lang)
+        ;;                            (:con stmt)))
         stmt (assoc stmt :premise-of
                     (map (partial get-trimed-argument project db host lang) (:premise-of stmt)))]
     stmt))
 
 (defn get-nodes
-  [project db id & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
+  [project db id & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
   (let [[info outline refs]
         [(get-metadata [project db id] :host host :lang lang)
          (get-outline [project db] :host host :lang lang)
@@ -301,7 +303,7 @@
     (map #(select-keys % [:creator :date :identifier :title :key])
          (filter filter-refs references))))
 
-(defn get-argument-map [project db & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
+(defn get-argument-map [project db & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
   (let [options {:db db :lang lang}
         dbcon (db/make-connection project db "guest" "")]
     (db/with-db dbcon
@@ -321,7 +323,7 @@
 
 (defn post-project-archive
   [& {:keys [file host]}]
-  ;; curl -F "file=@default2.zip;filename=nameinpost" http://localhost:3000/api/projects/upload
+  ;; curl -F "file=@default2.zip;filename=nameinpost" http://localhost:8080/api/projects/upload
   (post-resource host :import []
                  {:multipart
                   [{:name "Content/type" :content "application/zip"}
