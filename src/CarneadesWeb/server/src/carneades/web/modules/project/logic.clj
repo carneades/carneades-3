@@ -271,10 +271,10 @@
   (let [stmt (get-resource host :statement params)
         stmt (update-in stmt [:header] trim-metadata lang)
         stmt (assoc stmt :text (lang (:text stmt)))
-        ;; stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
-        ;;                            (:pro stmt)))
-        ;; stmt (assoc stmt :con (map (partial get-trimed-argument project db host lang)
-        ;;                            (:con stmt)))
+        stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
+                                   (:pro stmt)))
+        stmt (assoc stmt :con (map (partial get-trimed-argument project db host lang)
+                                   (:con stmt)))
         stmt (assoc stmt :premise-of
                     (map (partial get-trimed-argument project db host lang) (:premise-of stmt)))]
     stmt))
