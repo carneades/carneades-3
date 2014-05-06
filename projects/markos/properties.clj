@@ -1,7 +1,7 @@
 {:title "MARKOS",
  :creation-date "June 2013",
  :policies "oss_licensing_theory",
- :schemes "default/walton_schemes",
+ :schemes "oss_licensing_theory",
  :tools [{:name "Arguments"
           :description "View outlines and maps of the arguments put forward in the comments on the green paper."
           :link "home.projects.project.outline({pid: project.id, db: 'main', nid: 1})"}
