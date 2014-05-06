@@ -30,7 +30,7 @@
     :description {:en "A theory of open source licensing for the MARKOS
 project."})
 
-   :imports [copyright-theory]
+   ;; :imports [copyright-theory]
 
    :namespaces
    { ""   "http://www.markosproject.eu/ontologies/oss-licenses#",
@@ -91,15 +91,12 @@ project."})
          (:language copyright-theory))
 
    :sections
-   [(t/make-section
-     :id 'ontology-axioms
-     :header (dc/make-metadata :title "Open Source Software Ontology axioms"
-                               :description {:en ""})
-     :schemes {};; (:axioms oss-licensing-ontology)
-     )
-    ;; Should we import the axioms from the ontology, or will the
-    ;; OWL reasoning be done entirely by the repository and queried
-    ;; using SPARQL?
+   [;; (t/make-section
+    ;;  :id 'ontology-axioms
+    ;;  :header (dc/make-metadata :title "Open Source Software Ontology axioms"
+    ;;                            :description {:en ""})
+    ;;  :schemes {};; (:axioms oss-licensing-ontology)
+    ;;  )
 
     (t/make-section
      :id 'license-compatibility-rules
@@ -111,6 +108,7 @@ project."})
        :id 'default-licensing-rule
        :weight 0.25
        :header (dc/make-metadata
+                :title "Default licensing"
                 :description {:en "Presumably, a work may be licensed
                    using any license template."})
        :conclusion '(copyright:mayBeLicensedUsing ?W ?T)
@@ -119,6 +117,7 @@ project."})
       (t/make-scheme
        :id 'reciprocity-rule
        :header (dc/make-metadata
+                :title "Reciprocity"
                 :description {:en "A work W1 may not use a license
                 template T1 if the work is derived from a work W2
                 licensed using a reciprocal license template T2,
@@ -136,6 +135,7 @@ project."})
       (t/make-scheme
        :id 'compatible-reflexive-rule
        :header (dc/make-metadata
+                :title "Compatible reflexive"
                 :description {:en "A license template is compatible with itself."})
        :conclusion '(copyright:isCompatibleWith ?T1 ?T1)
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))])
@@ -143,6 +143,7 @@ project."})
       (t/make-scheme
        :id 'mock-license-template-rule
        :header (dc/make-metadata
+                :title "License template"
                 :description {:en ""})
        :conclusion '(copyright:licenseTemplate-mock ?W2 ?TPL)
        :premises [(a/pm '(lic:coveringLicense ?W2 ?L))
@@ -151,7 +152,9 @@ project."})
 
       (t/make-scheme
        :id 'derivedFrom-1
-       :header (dc/make-metadata :description {:en "W1 is derived from W2"})
+       :header (dc/make-metadata
+                :title "Derived from"
+                :description {:en "W1 is derived from W2"})
        :conclusion '(copyright:derivedFrom ?W1 ?W2)
        :premises [(a/pm '(soft:previousVersion ?W1 ?W2))])
 
@@ -194,14 +197,18 @@ project."})
 
        (t/make-scheme
         :id 'fsf-theory-of-linking
-        :header (dc/make-metadata :description {:en "The Free Software
+        :header (dc/make-metadata
+                 :title "FSF theory of linking"
+                 :description {:en "The Free Software
        Foundation claims that linking creates derivative works."})
         :conclusion '(copyright:derivedFrom ?W1 ?W2)
         :premises [(a/pm '(soft:linkedLibrary-mock ?W1 ?W2))])
 
        (t/make-scheme
         :id 'mock-linked-library
-        :header (dc/make-metadata :description {:en ""})
+        :header (dc/make-metadata
+                 :title "Linked library"
+                 :description {:en ""})
         :conclusion '(soft:linkedLibrary-mock ?REL ?LIB)
         :premises [(a/pm '(soft:SoftwareRelease ?REL))
                    (a/pm '(top:containedEntity ?REL ?LIB))
@@ -216,21 +223,24 @@ project."})
        ;;  :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
 
 
-       (t/make-scheme
-        :id 'compatible-software-work
-        :header (dc/make-metadata :description {:en ""})
-        :conclusion '(permissibleUse (use4 ?U ?W1 ?W2C ?W2))
-        :premises [(a/pm '(?W2C ?W2))
-                   (a/pm '(foo (use3 ?U ?W1 ?W2)))
-                   ])
+       ;; (t/make-scheme
+       ;;  :id 'compatible-software-work
+       ;;  :header (dc/make-metadata :title "Compatible software work"
+       ;;                            :description {:en ""})
+       ;;  :conclusion '(permissibleUse (use4 ?U ?W1 ?W2C ?W2))
+       ;;  :premises [(a/pm '(?W2C ?W2))
+       ;;             (a/pm '(foo (use3 ?U ?W1 ?W2)))
+       ;;             ])
 
-       (t/make-scheme
-        :id 'foo-id
-        :header (dc/make-metadata :description {:en ""})
-        :conclusion '(foo (use3 ?U ?W1 ?W2))
-        :assumptions [(a/pm '(?U ?W1 ?W2))] ;; U is a subclass of usedSoftwareEntity
-        :premises [(a/pm '(copyright:licenseTemplate-mock ?W1 ?T1))
-                   (a/pm '(copyright:mayBeLicensedUsing ?W1 ?T1))
-                   ])
+       ;; (t/make-scheme
+       ;;  :id 'foo-id
+       ;;  :header (dc/make-metadata
+       ;;           :title "Foo"
+       ;;           :description {:en ""})
+       ;;  :conclusion '(foo (use3 ?U ?W1 ?W2))
+       ;;  :assumptions [(a/pm '(?U ?W1 ?W2))] ;; U is a subclass of usedSoftwareEntity
+       ;;  :premises [(a/pm '(copyright:licenseTemplate-mock ?W1 ?T1))
+       ;;             (a/pm '(copyright:mayBeLicensedUsing ?W1 ?T1))
+       ;;             ])
 
       ])]))
