@@ -1,11 +1,11 @@
 %div{"ng-repeat" => "scheme in section.schemes"}
   .section{"ng-controller" => "SchemeCtrl", id: "{{scheme.id}}"}
     .page-header
-      %h3 {{scheme.header.title}}
+      %h4 {{scheme.header.title}}
 
     %metadata{model: "scheme.header", skipped: "['title']"}
 
-    %h4{translate: "projects.premises"} Premises
+    %h5{translate: "projects.premises"} Premises
     .span{translate: "projects.premises_text", class: "premises-text"}
 
     %ul
