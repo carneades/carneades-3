@@ -62,7 +62,12 @@
     "projects.nonstrict_con_conclusion": "Presumably it is false that:",
     "projects.negative_premise": "It is false that:",
     "projects.properties": "Properties",
-    "projects.theory": "Theory"
+    "projects.theory": "Theory",
+
+    "projects.pe": "Preponderance of Evidence",
+    "projects.dv": "Dialectical Validity",
+    "projects.cce": "Clear and Convincing Evidence",
+    "projects.brd": "Beyond Reasonable Doubt"
     
     
 }

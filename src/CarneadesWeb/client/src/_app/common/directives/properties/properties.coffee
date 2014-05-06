@@ -13,7 +13,7 @@ define ['angular', 'angular-translate'], (angular) ->
     scope:
       keys: "=",
       model: "="
-    controller: ($scope) ->
+    controller: ($scope, $translate) ->
       $scope.project = $scope.$parent.project
       $scope.pid = $scope.$parent.pid
       $scope.db = $scope.$parent.db
@@ -44,7 +44,12 @@ define ['angular', 'angular-translate'], (angular) ->
           'formalizedScheme'
         else if k == 'scheme' and not v.formalized
           'unformalizedScheme'
+        else if k == 'standard'
+          'standard'
         else
           'default'
+
+      $scope.standardName = (s) ->
+        $translate.instant "projects.#{s}"
 
   )
