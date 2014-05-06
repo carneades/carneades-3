@@ -23,3 +23,12 @@ through the sections of the theory."
             (comp seq :sections)
             make-node
             theory))
+
+(defn map-theory
+  "Maps a function over the sections of a theory."
+  [theory f]
+  (loop [loc (theory-zip theory)]
+    (if (z/end? loc)
+      (z/root loc)
+      (let [loc (z/edit loc f)]
+        (recur (z/next loc))))))
