@@ -84,7 +84,7 @@
     :exceptions (translate-premises (:premises scheme) translator lang)))
 
 (defn translate-schemes
-  [section translator lang]
+  [translator lang section]
   (assoc section
     :schemes
     (into [] (map #(translate-scheme % translator lang) (:schemes section)))))
@@ -92,9 +92,4 @@
 (defn translate-theory
   "Translates a theory using a translator."
   [theory translator lang]
-  ;; TODO factories with to-absolute-theory
-  (loop [loc (tz/theory-zip theory)]
-    (if (z/end? loc)
-      (z/root loc)
-      (let [loc (z/edit loc translate-schemes translator lang)]
-        (recur (z/next loc))))))
+  (tz/map-theory theory (partial translate-schemes translator lang)))
