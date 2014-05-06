@@ -22,7 +22,8 @@
             [carneades.engine.theory.translation :as ttr]
             [clojure.java.io :as io]
             [carneades.engine.utils :refer [dissoc-in unserialize-atom]]
-            [carneades.engine.theory :as theory]))
+            [carneades.engine.theory :as theory]
+            [carneades.engine.theory.zip :as tz]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
@@ -186,10 +187,25 @@
   [argument]
   (select-keys argument [:scheme :premises :id :conclusion]))
 
+(defn set-scheme-description-text
+  [lang s]
+  (update-in s [:header] (partial set-description-text lang)))
+
+(defn set-schemes-description-text
+  [lang section]
+  (assoc section
+    :header (set-description-text lang (:header section))
+    :schemes (into [] (map (partial set-scheme-description-text lang)
+                           (:schemes section)))))
+
+(defn set-theory-description-text
+  [theory lang]
+  (let [t (update-in theory [:header] (partial set-description-text lang))
+        t (tz/map-theory t (partial set-schemes-description-text lang))]
+    t))
+
 (defn get-theory
   [{:keys [tpid tid scheme lang translate]}]
-  (prn "tpid=" tpid)
-  (prn "tid=" tid)
   (let [theory (assoc (project/load-theory tpid tid) :id tid)
         ;; TODO: creates a simpler function that just returns the :translation key?
         translator (comp (tr/make-default-translator)
@@ -198,18 +214,25 @@
         do-translation (or (= translate "t") (= translate "true"))]
     (cond (and do-translation scheme)
           (when-let [s (t/find-scheme theory (symbol scheme))]
-            (ttr/translate-scheme s translator lang))
+            (let [s (ttr/translate-scheme translator lang)
+                  s (set-scheme-description-text lang s)]
+              s))
 
           scheme
-          (t/find-scheme theory (symbol scheme))
+          (let [s (t/find-scheme theory (symbol scheme))
+                s (set-scheme-description-text lang s)]
+            s)
 
           do-translation
-          (-> theory
-              (ttr/translate-theory translator lang)
-              (dissoc :language))
+          (let [t (ttr/translate-theory theory translator lang)
+                t (set-theory-description-text t lang)
+                t (dissoc t :language)]
+            t)
 
           :else
-          (dissoc theory :language))))
+          (-> theory
+              (set-theory-description-text lang)
+              (dissoc :language)))))
 
 (defn get-theories
   [params]
@@ -231,7 +254,8 @@
         schemestr (str (first (unserialize-atom (:scheme arg))))
         schemes-project (theory/get-schemes-project project (:schemes pcontent))
         schemes-name (theory/get-schemes-name (:schemes pcontent))
-        scheme (get-theory {:tpid schemes-project :tid schemes-name :scheme schemestr :lang lang})]
+        scheme (get-theory {:tpid schemes-project :tid schemes-name :scheme schemestr :lang lang})
+        ]
     (if (nil? scheme)
       ;; no scheme found? fake one
       {:header {:title schemestr} :id schemestr}
