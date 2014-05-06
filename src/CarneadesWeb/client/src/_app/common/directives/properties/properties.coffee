@@ -38,5 +38,13 @@ define ['angular', 'angular-translate'], (angular) ->
 
       $scope.schemesProject = $scope.getSchemesProject($scope.project)
       $scope.schemesName = $scope.getSchemesName($scope.project)
+      
+      $scope.typeOfDisplay = (k, v) ->
+        if k == 'scheme' and v.formalized
+          'formalizedScheme'
+        else if k == 'scheme' and not v.formalized
+          'unformalizedScheme'
+        else
+          'default'
 
   )

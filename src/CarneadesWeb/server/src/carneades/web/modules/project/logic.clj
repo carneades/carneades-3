@@ -215,12 +215,15 @@
     (cond (and do-translation scheme)
           (when-let [s (t/find-scheme theory (symbol scheme))]
             (let [s (ttr/translate-scheme translator lang)
-                  s (set-scheme-description-text lang s)]
+                  s (set-scheme-description-text lang s)
+                  s (assoc s :formalized true)]
               s))
 
           scheme
           (when-let [s (t/find-scheme theory (symbol scheme))]
-            (set-scheme-description-text lang s))
+            (let [s (set-scheme-description-text lang s)
+                  s (assoc s :formalized true)]
+              s))
 
           do-translation
           (let [t (ttr/translate-theory theory translator lang)
@@ -245,7 +248,7 @@
 
 (defn trim-scheme
   [scheme]
-  (select-keys scheme [:id :header]))
+  (select-keys scheme [:id :header :formalized]))
 
 (defn get-scheme-from-arg
   [project arg host lang]
@@ -253,11 +256,12 @@
         schemestr (str (first (unserialize-atom (:scheme arg))))
         schemes-project (theory/get-schemes-project project (:schemes pcontent))
         schemes-name (theory/get-schemes-name (:schemes pcontent))
-        scheme (get-theory {:tpid schemes-project :tid schemes-name :scheme schemestr :lang lang})
-        ]
+        scheme (get-theory {:tpid schemes-project :tid schemes-name :scheme schemestr :lang lang})]
     (if (nil? scheme)
       ;; no scheme found in the theory? fake one
-      {:header {:title schemestr} :id schemestr}
+      {:header {:title schemestr}
+       :id schemestr
+       :formalized false}
       scheme)))
 
 (defn get-argument
