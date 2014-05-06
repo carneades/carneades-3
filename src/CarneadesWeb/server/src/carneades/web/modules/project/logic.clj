@@ -34,12 +34,6 @@
 
 (defn- rename-keys [x] (set/rename-keys x {:creation-date :date}))
 
-(defn- normalize [lang data]
-  (reduce (fn [x y] (conj x (->>
-                            (#(set-lang-description lang :description %))
-                            (#(rename-keys %)))))
-          data))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of resources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
