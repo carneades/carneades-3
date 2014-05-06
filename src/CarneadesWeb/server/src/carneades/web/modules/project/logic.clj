@@ -28,7 +28,7 @@
 ;; Utility functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn- set-lang-description [lang key x] (assoc x key (-> x key lang)))
+(defn- set-description-text [lang m] (assoc m :description (-> m :description lang)))
 
 (defn- filter-refs [x] (not (= (:key x) nil)))
 
@@ -122,7 +122,7 @@
   (->> (if (nil? id) [] [id])
        (#(get-resource host :project %))
        (#(if-not (seq? %) (list %) %))
-       (#(map (comp (partial set-lang-description lang :description)
+       (#(map (comp (partial set-description-text lang)
                     (partial rename-keys))
               %))
        (#(if (= (count %) 1) (first %) %))))
@@ -152,7 +152,7 @@
            %
            (filter (fn [x] (= (:key x) k)) %)))
         (#(if (contains? % :description)
-           (set-lang-description lang :description %)
+           (set-description-text lang %)
            %))))
 
 (defn trim-premises
