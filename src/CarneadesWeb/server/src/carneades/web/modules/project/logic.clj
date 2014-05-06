@@ -219,9 +219,8 @@
               s))
 
           scheme
-          (let [s (t/find-scheme theory (symbol scheme))
-                s (set-scheme-description-text lang s)]
-            s)
+          (when-let [s (t/find-scheme theory (symbol scheme))]
+            (set-scheme-description-text lang s))
 
           do-translation
           (let [t (ttr/translate-theory theory translator lang)
@@ -257,7 +256,7 @@
         scheme (get-theory {:tpid schemes-project :tid schemes-name :scheme schemestr :lang lang})
         ]
     (if (nil? scheme)
-      ;; no scheme found? fake one
+      ;; no scheme found in the theory? fake one
       {:header {:title schemestr} :id schemestr}
       scheme)))
 
@@ -273,8 +272,7 @@
         (update-in [:header] trim-metadata lang)
         (update-in [:conclusion] trim-conclusion lang)
         (update-in [:premises] trim-premises lang)
-        (assoc :scheme (trim-scheme scheme))
-        )))
+        (assoc :scheme (trim-scheme scheme)))))
 
 (defn get-trimed-argument
   [project db host lang aid]
