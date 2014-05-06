@@ -1,6 +1,6 @@
 %div{class: "theory-section"}
   %h2{{id: "{{section.id}}"}} {{section.header.title}}
-  %markdown{{"ng-model" => "section.header.description[lang]",
+  %markdown{{"ng-model" => "section.header.description",
                extensions: "carneades"}}
   %div{"ng-show" => "section.schemes.length > 0",
        "ng-include" => "'project/theory/theory-schemes.tpl.html'"}
