@@ -72,7 +72,7 @@
     "projects.statement.value.false": "Presumably false",
     "projects.statement.value.true": "Presumably true",
     "projects.statement.value.uncertain": "Uncertain",
-    
+            
     "projects.argument.value.unacceptable": "Unacceptable",
     "projects.argument.value.acceptable": "Acceptable",
     "projects.argument.value.unclear": "Unclear"
