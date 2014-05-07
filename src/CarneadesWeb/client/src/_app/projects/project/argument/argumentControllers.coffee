@@ -8,6 +8,13 @@ define ['angular', 'angular-translate'],
   angular.module('argument.controllers', ['pascalprecht.translate'])
     .controller('ArgumentCtrl', ($scope, argument, project, $translate) ->
       $scope.argument = argument
+      $scope.argument.valueText = if $scope.argument.value <= 0.25
+        $translate.instant 'projects.argument.value.unacceptable'
+      else if $scope.argument.value >= 0.75
+        $translate.instant 'projects.argument.value.acceptable'
+      else
+        $translate.instant 'projects.argument.value.unclear'
+      
       $scope.pid = $scope.$stateParams.pid
       $scope.db = $scope.$stateParams.db
 
