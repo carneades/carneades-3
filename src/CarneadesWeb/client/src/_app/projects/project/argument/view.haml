@@ -9,18 +9,19 @@
 
     %div{"ng-hide" => "argument.premises.length == 0" }
       %h2{translate: "projects.premises"} Premises
-      %div.premises-text{translate: "projects.premises_text"}
+      .premises-indication{translate: "projects.premises_text"}
       %ul{"ng-repeat" => "p in argument.premises"}
         %li
           %span{"ng-hide" => "p.role == ''"}
             {{p.role}}.
-          %span{"ng-show" => "!p.positive"} 
+          %span{"ng-show" => "!p.positive"}
             %span{translate: "projects.negative_premise"}
           %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
 
     %h2{translate: "projects.conclusion"} Conclusion            
-    %div.conclusion-text {{conclusion_text}}
-    %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: argument.conclusion.id})"} {{argument.conclusion.text}}
+    %div
+      .conclusion-indication {{conclusion_text}}
+      %a.conclusion-text{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: argument.conclusion.id})"} {{argument.conclusion.text}}
 
     %h2{translate: "projects.properties"} Properties
     %properties{keys: "[['id', 'projects.id'],
