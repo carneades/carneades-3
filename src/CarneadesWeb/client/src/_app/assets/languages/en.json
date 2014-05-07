@@ -67,7 +67,11 @@
     "projects.pe": "Preponderance of Evidence",
     "projects.dv": "Dialectical Validity",
     "projects.cce": "Clear and Convincing Evidence",
-    "projects.brd": "Beyond Reasonable Doubt"
+    "projects.brd": "Beyond Reasonable Doubt",
+
+    "projects.statement.value.false": "Presumably false",
+    "projects.statement.value.true": "Presumably true",
+    "projects.statement.value.uncertain": "Uncertain"
     
     
 }
