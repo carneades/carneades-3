@@ -10,6 +10,14 @@ define ['angular', 'angular-translate',
     'directives.metadata', 'pascalprecht.translate'])
     .controller('StatementCtrl', ($scope, $translate, statement, project) ->
       $scope.statement = statement
+      $scope.statement.valueText = if $scope.statement.value <= 0.25
+        $translate.instant 'projects.statement.value.false'
+      else if $scope.statement.value >= 0.75
+        $translate.instant 'projects.statement.value.true'
+      else
+        $translate.instant 'projects.statement.value.uncertain'
+        
+      
       $scope.pid = $scope.$stateParams.pid
       $scope.db = $scope.$stateParams.db
 
