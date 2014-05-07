@@ -9,7 +9,7 @@
       %div{"ng-hide" => "headerIsEmpty"}
         %metadata{model: "statement.header"}
 
-      %div{"ng-hide" => "statement.pro.length == 0" }
+      %div.pro-arguments{"ng-hide" => "statement.pro.length == 0" }
         %h2{translate: "projects.pro_arguments"} Pro Arguments
         %ul{"ng-repeat" => "arg in statement.pro"}
           %li
@@ -18,7 +18,7 @@
               %li
                 %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
 
-      %div{"ng-hide" => "statement.con.length == 0"}
+      %div.con-arguments{"ng-hide" => "statement.con.length == 0"}
         %h2{translate: "projects.con_arguments"} Con Arguments
         %ul{"ng-repeat" => "arg in statement.con"}
           %li
@@ -27,7 +27,7 @@
               %li
                 %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
 
-      %div{"ng-hide" => "statement['premise-of'].length == 0"}
+      %div.premises-of{"ng-hide" => "statement['premise-of'].length == 0"}
         %h2{translate: "projects.premise_of"} Premise of
         %ul{"ng-repeat" => "arg in statement['premise-of']"}
           %li
