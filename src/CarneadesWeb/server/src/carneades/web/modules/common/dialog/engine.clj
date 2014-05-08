@@ -8,7 +8,7 @@
             [carneades.engine.translation :as tr]
             [carneades.web.modules.common.dialog.utils :refer :all]
             [carneades.web.modules.common.dialog.questions :refer :all]
-            [clojure.tools.logging :refer [info debug error]]
+            [taoensso.timbre :as timbre :refer [debug info warn error]]
             [carneades.engine.aspic :refer :all]
             [carneades.engine.argument-evaluation :refer :all]
             [carneades.engine.argument-graph :refer :all]
