@@ -10,7 +10,7 @@
             [carneades.project.admin :as project]
             [carneades.owl.owl :as o]
             [carneades.engine.argument :as a]
-            [clojure.tools.logging :refer [info debug error spy]])
+            [taoensso.timbre :as timbre :refer [debug info warn error]])
   (:import [org.semanticweb.owlapi.model OWLLogicalAxiom AxiomType ClassExpressionType]))
 
 (declare class-expression->sexpr)

@@ -5,8 +5,7 @@
 
 (ns ^{:doc "Analysis of licenses."}
   carneades.web.modules.lican.analysis
-  (:use [clojure.tools.logging :only [info debug spy error]]
-        [carneades.engine.dialog :only [add-answers]]
+  (:use [carneades.engine.dialog :only [add-answers]]
         [carneades.database.export :only [export-to-argument-graph]])
   (:require [clojure.pprint :refer [pprint]]
             [carneades.engine.shell :as shell]
@@ -38,7 +37,8 @@
             [carneades.web.modules.lican.triplestore :as tp]
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
-            [carneades.web.modules.lican.entity :as entity]))
+            [carneades.web.modules.lican.entity :as entity]
+            [taoensso.timbre :as timbre :refer [debug info warn error]]))
 
 (defn initial-state
   []

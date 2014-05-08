@@ -5,7 +5,6 @@
 
 (ns carneades.web.modules.polican.dispatcher
   (:use [clojure.data.json :only [json-str read-json]]
-        [clojure.tools.logging :only [info debug error]]
         [carneades.engine.policy :only [get-main-issue]]
         [carneades.engine.utils :only [safe-read-string exists?]]
         [carneades.web.modules.polican.logic.askengine 
@@ -25,7 +24,8 @@
             [clojure.string :as str]
             [carneades.web.modules.polican.reconstruction :as recons]
             [carneades.engine.translation :as tr]
-            [carneades.engine.theory.translation :as ttr]))
+            [carneades.engine.theory.translation :as ttr]
+            [taoensso.timbre :as timbre :refer [debug info warn error]]))
 
 (defmulti ajax-handler (fn [json _ _] (ffirst json)))
 
