@@ -14,7 +14,7 @@
         lacij.view.graphview
         lacij.opt.annealing
         carneades.engine.statement
-        [carneades.maps lacij-params format-statement subset-ag])
+        [carneades.maps lacij-params format-statement])
   (:require [analemma.xml :as xml]
             [analemma.svg :as svg]
             [clojure.string :as s]
