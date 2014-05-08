@@ -9,7 +9,7 @@
             [clojure.pprint :refer :all]
             [carneades.engine.utils :refer [safe-read-string]]
             [carneades.engine.theory :as t]
-            [clojure.tools.logging :refer [info debug spy]]
+            [taoensso.timbre :as timbre :refer [debug info]]
             [carneades.owl.owl :as o])
   (:import [org.semanticweb.owlapi.model IRI AxiomType EntityType]))
 

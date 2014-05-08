@@ -11,8 +11,8 @@
         carneades.engine.argument)
   (:require [clojure.string :as s]))
 
-; A literal is a propositional letter, represented by a symbol,
-; or the negation of a propositional letter.
+;; A literal is a propositional letter, represented by a symbol,
+;; or the negation of a propositional letter.
 
 (defn- make-literal
   [positive letter]

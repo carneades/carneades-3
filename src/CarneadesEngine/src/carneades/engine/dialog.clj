@@ -24,9 +24,9 @@
   carneades.engine.dialog
   (:use clojure.pprint
         carneades.engine.statement
-        [carneades.engine.unify :only (unify genvar apply-substitutions)]
-        [clojure.tools.logging :only (info debug error)])
-  (:require [carneades.engine.theory :as scheme]))
+        [carneades.engine.unify :only (unify genvar apply-substitutions)])
+  (:require [carneades.engine.theory :as scheme]
+            [taoensso.timbre :as timbre :refer [debug info]]))
 
 (defrecord Dialog [questions answers])
 
