@@ -32,14 +32,14 @@
 
 (def logger-config
   {:appenders {:rotor {:min-level :info
-                      :enabled? true
-                      :async? false
-                      :max-message-per-msecs nil
-                      :fn rotor/append}
-              :standard-out {:min-level :info
-                             :enabled? true
-                             :async? false
-                             :max-message-per-msecs nil}}
+                       :enabled? true
+                       :async? false
+                       :max-message-per-msecs nil
+                       :fn rotor/append}
+               :standard-out {:min-level :info
+                              :enabled? true
+                              :async? false
+                              :max-message-per-msecs nil}}
    :ns-whitelist [;; "carneades.*"
                   ]
    :shared-appender-config {:rotor
