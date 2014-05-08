@@ -9,7 +9,7 @@
         [carneades.engine.utils :only [unserialize-atom]])
   (:require [clojure.walk :as w]
             [clojure.string :as s]
-            [clojure.tools.logging :refer [info debug error spy]]
+            [taoensso.timbre :as timbre :refer [debug info]]
             edu.ucdenver.ccp.kr.sesame.kb
             [edu.ucdenver.ccp.kr.kb :as kb]
             [edu.ucdenver.ccp.kr.rdf :as rdf]

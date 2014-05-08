@@ -14,7 +14,7 @@
         carneades.engine.argument
         carneades.engine.argument-generator
         carneades.engine.argument-builtins)
-  (:require [clojure.tools.logging :refer [info debug spy]]))
+  (:require [taoensso.timbre :as timbre :refer [debug info]]))
 
 (defrecord ArgumentTemplate
   [guard       ; term with all unbound variables of the argument

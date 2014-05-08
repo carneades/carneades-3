@@ -4,11 +4,11 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns carneades.engine.policy
-  (:use (carneades.engine statement theory argument-graph aspic argument-evaluation utils)
-        [clojure.tools.logging :only (info debug error)])
+  (:use (carneades.engine statement theory argument-graph aspic argument-evaluation utils))
   (:require [carneades.config.config :as config]
             [carneades.engine.translation :as tr]
-            [carneades.engine.theory.translation :as ttr]))
+            [carneades.engine.theory.translation :as ttr]
+            [taoensso.timbre :as timbre :refer [debug info]]))
 
 (defn get-policies
   [questionid theory]
