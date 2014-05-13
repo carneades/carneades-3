@@ -9,14 +9,6 @@
             [clojure.set :as set]
             [taoensso.timbre :as timbre :refer [debug info]]))
 
-(defn- get-rootid
-  [ag nid]
-  (if-let [s ((:statement-nodes ag) nid)]
-    (:id s)
-    (if-let  [a ((:argument-nodes ag) nid)]
-      ((:statement-nodes ag) (:conclusion a))
-      (throw (ex-info (str "Invalid id " nid) {:nid nid})))))
-
 (declare explore-stmt)
 
 (defn explore-arg
@@ -60,13 +52,22 @@
                         (keys (:argument-nodes ag)))]
     (update-in ag [:language] select-keys nodeids)))
 
+(defn get-nodesids
+  "Return the nodes ids of the subag."
+  [ag nid depth]
+  (if-let [snode ((:statement-nodes ag) nid)]
+    (explore-stmt ag depth (:id snode))
+    (if-let [anode ((:argument-nodes ag) nid)]
+      (conj (explore-arg ag (dec depth) (:id anode))
+            (:conclusion anode))
+      (throw (ex-info (str "Invalid id" nid) {:nid nid})))))
+
 (defn subag
   "Return a subgraph from the ag for a particular node id."
   [ag nid depth]
-  (let [rootid (get-rootid ag nid)
-        nodes (explore-stmt ag depth rootid)
-        ag (update-in ag [:statement-nodes] select-keys nodes)
-        ag (update-in ag [:argument-nodes] select-keys nodes)
+  (let [nodesids (get-nodesids ag nid depth)
+        ag (update-in ag [:statement-nodes] select-keys nodesids)
+        ag (update-in ag [:argument-nodes] select-keys nodesids)
         ag (cut-arguments ag)
         ag (trim-language ag)]
     ag))
