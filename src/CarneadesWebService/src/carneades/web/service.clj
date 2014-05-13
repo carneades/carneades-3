@@ -34,7 +34,8 @@
             [carneades.maps.lacij :as lacij]
             [carneades.web.vote :as vote]
             [carneades.web.info :as info]
-            [carneades.engine.system :as engine]))
+            [carneades.engine.system :as engine]
+            [carneades.engine.subag :refer [subag]]))
 
 ;; To Do:
 ;; - search operations, including full text search
@@ -652,17 +653,15 @@
        (let [db (:db params)
              project (:project params)
              lang (keyword (:lang params))
-             options (dissoc params :db :lang)
+             depth (when (:depth params) (Integer/parseInt (:depth params)))
+             focus (when (:focus params) (unserialize-atom (:focus params)))
              dbconn (db/make-connection project db "guest" "")]
          (db/with-db dbconn
-           (let [convert-option (fn [val]
-                                  (try
-                                    (Integer/parseInt val)
-                                    (catch Exception _
-                                      (keyword val))))
-                 ag (export-to-argument-graph dbconn)
-                 optionsseq (mapcat (fn [[k v]] [k (convert-option v)]) options)
-                 svg (apply lacij/export-str ag lang optionsseq)]
+           (let [ag (export-to-argument-graph dbconn)
+                 svg (lacij/export-str (if focus
+                                         (subag ag focus depth)
+                                         ag)
+                                       lang)]
              {:status 200
               :headers {"Content-Type" "image/svg+xml;charset=UTF-8"}
               :body svg}))))
