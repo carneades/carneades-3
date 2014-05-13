@@ -52,7 +52,7 @@ project."})
                        :forms {:en (t/make-form :positive "%s is linked to %s"
                                                 :negative "%s is not linked to %s"
                                                 :question "Is %s linked to %s?")})
-          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#licenseTemplate-mock
+          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/licenses#licenseTemplate
                        :forms {:en (t/make-form :positive "%s is licensed using %s"
                                                 :negative "%s is not licensed using %s"
                                                 :question "Is %s licensed using %s?")})
@@ -126,10 +126,10 @@ project."})
        :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
                   (a/pm '(copyright:derivedFrom ?W1 ?W2))
-                  (a/pm '(copyright:licenseTemplate-mock ?W2 ?T2))
+                  (a/pm '(lic:licenseTemplate ?W2 ?T2))
                   (a/pm '(ReciprocalLicenseTemplate ?T2))
                   ]
-       :exceptions [(a/pm '(copyright:isCompatibleWith ?T1 ?T2))]
+       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
        )
 
       (t/make-scheme
@@ -137,18 +137,18 @@ project."})
        :header (dc/make-metadata
                 :title "Compatible reflexive"
                 :description {:en "A license template is compatible with itself."})
-       :conclusion '(copyright:isCompatibleWith ?T1 ?T1)
+       :conclusion '(copyright:compatibleWith ?T1 ?T1)
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))])
 
-      (t/make-scheme
-       :id 'mock-license-template-rule
-       :header (dc/make-metadata
-                :title "License template"
-                :description {:en ""})
-       :conclusion '(copyright:licenseTemplate-mock ?W2 ?TPL)
-       :premises [(a/pm '(lic:coveringLicense ?W2 ?L))
-                  (a/pm '(lic:template ?L ?TPL))
-                  ])
+      ;; (t/make-scheme
+      ;;  :id 'mock-license-template-rule
+      ;;  :header (dc/make-metadata
+      ;;           :title "License template"
+      ;;           :description {:en ""})
+      ;;  :conclusion '(lic:licenseTemplate-mock ?W2 ?TPL)
+      ;;  :premises [(a/pm '(lic:coveringLicense ?W2 ?L))
+      ;;             (a/pm '(lic:template ?L ?TPL))
+      ;;             ])
 
       (t/make-scheme
        :id 'derivedFrom-1
