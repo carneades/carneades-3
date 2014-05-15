@@ -41,7 +41,10 @@ module.exports = (grunt) ->
     return (file for file in fs.readdirSync dir when isDir dir, file)
 
   cfgHtmlmin = (
-    collapseBooleanAttributes = true,
+    # collapseBooleanAttributes prevents a bug
+    # in grunt-html2js version 0.6.0
+    # see https://github.com/karlgoldstein/grunt-html2js/issues/42
+    collapseBooleanAttributes = false,
     collapseWhitespace = true,
     removeAttributeQuotes = true,
     removeComments = true,
@@ -393,8 +396,8 @@ module.exports = (grunt) ->
     html2js = createHtml2JsConfig 'src/app'
     grunt.config 'html2js', html2js
     grunt.task.run 'html2js'
-    grunt.config 'clean', tplhtml: ["<%= comp.base %>/**/*.tpl.html"]
-    grunt.task.run 'clean:tplhtml'
+    #grunt.config 'clean', tplhtml: ["<%= comp.base %>/**/*.tpl.html"]
+    #grunt.task.run 'clean:tplhtml'
 
 
   # clean task
