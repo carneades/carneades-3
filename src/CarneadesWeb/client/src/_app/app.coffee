@@ -25,7 +25,7 @@ define ["angular", "angular-bootstrap", "angular-ui-router",
     $rootScope.$stateParams = $stateParams
   )
 
-  .config(($urlRouterProvider, $stateProvider, $httpProvider, $provide, $translateProvider) ->
+  .config(($urlRouterProvider, $stateProvider, $httpProvider, $provide, $translateProvider, $uiViewScrollProvider) ->
 
     $translateProvider.useStaticFilesLoader(
       prefix: '/carneades/languages/',
@@ -36,6 +36,9 @@ define ["angular", "angular-bootstrap", "angular-ui-router",
     # $translateProvider.useLocalStorage()
 
     $urlRouterProvider.otherwise "/"
+
+    # disable autoscrolling on ui-views
+    $uiViewScrollProvider.useAnchorScroll()
 
     $provide.factory "requestInterceptor", ($q, $injector) ->
       requestEnded = ->
