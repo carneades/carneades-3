@@ -10,7 +10,7 @@
   (:require [clojure.walk :as w]
             [clojure.string :as s]
             [taoensso.timbre :as timbre :refer [debug info spy]]
-            edu.ucdenver.ccp.kr.sesame.kb
+            [edu.ucdenver.ccp.kr.sesame.kb :refer :all]
             [edu.ucdenver.ccp.kr.kb :as kb]
             [edu.ucdenver.ccp.kr.rdf :as rdf]
             [edu.ucdenver.ccp.kr.sparql :as sparql]
