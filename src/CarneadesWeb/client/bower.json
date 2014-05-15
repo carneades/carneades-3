@@ -17,7 +17,7 @@
     "angular-markdown": "0.0.1",
     "requirejs": "~2.1.9",
     "requirejs-domready": "~2.0.1",
-    "angular-ui-router": "0.2.8-bowratic-tedium",
+    "angular-ui-router": "0.2.10",
     "angular-translate": "~2.0.1",
     "angular-translate-loader-static-files": "~2.0.0"
 
