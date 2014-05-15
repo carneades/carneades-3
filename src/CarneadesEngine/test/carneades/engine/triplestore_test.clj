@@ -66,18 +66,18 @@
                                 '(rdf/type dbpedia/Carneades ?x))]
          ;; (pprint graph)
          ;; (lacij/export graph "/tmp/carneades.svg")
-         (expect (>= (count (ag/arguments graph)) 10) => true))))
+         (expect (>= (count (ag/arguments graph)) 10) => true)))
 
-(fact "Convertion from string to xsd:string are performed by the triplestore generator."
-      (let [url "http://markos.man.poznan.pl/openrdf-sesame"
-            repo "markos_test_26-07-2013"
-            goal '(http://www.markosproject.eu/ontologies/software#name ?x "org.apache.log4j")
-            subs '{?a "a" ?b "b"}
-            triplestore-generator (generate-arguments-from-triplestore url repo {})
-            responses (generator/generate triplestore-generator goal subs)
-            ]
-        (expect (not (empty? responses)) => true)
-        (expect (>= (count responses) 5) => true)
-        (expect (:substitutions (first responses)) =not=> subs)))
+ (fact "Convertion from string to xsd:string are performed by the triplestore generator."
+       (let [url "http://markos.man.poznan.pl/openrdf-sesame"
+             repo "markos_test_26-07-2013"
+             goal '(http://www.markosproject.eu/ontologies/software#name ?x "org.apache.log4j")
+             subs '{?a "a" ?b "b"}
+             triplestore-generator (generate-arguments-from-triplestore url repo {})
+             responses (generator/generate triplestore-generator goal subs)
+             ]
+         (expect (not (empty? responses)) => true)
+         (expect (>= (count responses) 5) => true)
+         (expect (:substitutions (first responses)) =not=> subs))))
 
 
