@@ -45,13 +45,13 @@ module.exports = (grunt) ->
     # in grunt-html2js version 0.6.0
     # see https://github.com/karlgoldstein/grunt-html2js/issues/42
     collapseBooleanAttributes = false,
-    collapseWhitespace = true,
-    removeAttributeQuotes = true,
-    removeComments = true,
-    removeEmptyAttributes = true,
-    removeRedundantAttributes = true,
-    removeScriptTypeAttributes = true,
-    removeStyleLinkTypeAttributes = true) ->
+    collapseWhitespace = false,
+    removeAttributeQuotes = false,
+    removeComments = false,
+    removeEmptyAttributes = false,
+    removeRedundantAttributes = false,
+    removeScriptTypeAttributes = false,
+    removeStyleLinkTypeAttributes = false) ->
 
     collapseBooleanAttributes: collapseBooleanAttributes
     collapseWhitespace: collapseWhitespace
