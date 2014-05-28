@@ -19,7 +19,8 @@
 
             [carneades.web.modules.lican.entity :as entity]
             [carneades.web.modules.lican.analysis :as analysis]
-            [carneades.web.modules.lican.dbg-analysis :as debug-analysis]))
+            [carneades.web.modules.lican.dbg-analysis :as debug-analysis]
+            [taoensso.timbre :as timbre :refer [debug info warn error]]))
 
 
 (defresource entry-entity-resource [pid uri]
@@ -73,12 +74,12 @@
 
 (defresource entry-legal-profiles-resource [id]
   :available-media-types ["application/json"]
-  :allowed-methods [:get]
+  :allowed-methods [:get :put :post]
   :available-charsets ["utf-8"]
-  :post! (fn [ctx] )
+  :put! (fn [ctx] (debug "put!"))
+  :post! (fn [ctx] (debug "post!"))
   :handle-ok (fn [_]
                {:id 1 :title "German Legal Profile"}))
-
 
 (defroutes carneades-lican-api-routes
   (GET "/analyse" [entity] (entry-analyse-resource entity))
