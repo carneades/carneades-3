@@ -9,7 +9,7 @@
         carneades.engine.statement
         carneades.engine.dublin-core
         carneades.database.db)
-  (:require [clojure.java.jdbc :as jdbc]
+  (:require [clojure.java.jdbc.deprecated :as jdbc]
             [carneades.database.argument-graph :as ag]))
 
 (defn import-from-argument-graph
