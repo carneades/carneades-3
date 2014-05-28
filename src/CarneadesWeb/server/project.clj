@@ -15,6 +15,8 @@
                  [clabango "0.5"]
                  [ring-mock "0.1.5"]
 
+                 [lobos "1.0.0-beta1"]
+                 
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [com.taoensso/timbre "3.1.6"]
 
