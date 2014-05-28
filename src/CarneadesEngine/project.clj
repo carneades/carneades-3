@@ -11,7 +11,7 @@
                  [org.clojars.pallix/clojure.prxml "1.3.0"]
                  [org.clojure/math.combinatorics "0.0.2"]
                  [com.h2database/h2 "1.3.160"]
-                 [org.clojure/java.jdbc "0.3.3"]
+                 [org.clojure/java.jdbc "0.3.0-beta1"]
                  [org.clojure/tools.trace "0.7.1"]
                  [edu.ucdenver.ccp/kr-sesame-core "1.4.5"]
                  [lacij "0.9.0"]
