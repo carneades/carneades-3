@@ -7,7 +7,7 @@
 (ns ^{:doc "Utilities for interacting with databases."}
   carneades.database.db
   (:require [carneades.config.config :as config]
-            [clojure.java.jdbc :as jdbc]
+            [clojure.java.jdbc.deprecated :as jdbc]
             [carneades.engine.uuid :as uuid]
             [carneades.project.admin :as project])
   (:import java.io.File))

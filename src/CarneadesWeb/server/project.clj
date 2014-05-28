@@ -16,6 +16,9 @@
                  [ring-mock "0.1.5"]
 
                  [lobos "1.0.0-beta1"]
+                 [korma "0.3.0-RC5"]
+                 [com.h2database/h2 "1.3.170"]
+                 [org.clojure/java.jdbc "0.3.3"]
                  
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [com.taoensso/timbre "3.1.6"]
@@ -25,7 +28,7 @@
                  [markdown-clj "0.9.28"]
                  [org.clojure/data.json "0.2.2"]
 
-                 [carneades/carneades-engine "2.0.2"]
+                 [carneades/carneades-engine "2.0.3"]
                  [carneades/carneades-rest "1.0.0"]
 
                  [clj-http "0.7.2"]

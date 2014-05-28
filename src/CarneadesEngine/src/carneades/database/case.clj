@@ -13,7 +13,7 @@ right result should be in each case. "}
         carneades.engine.dublin-core)
   (:require [carneades.database.db :as db]
             [carneades.database.argument-graph :as ag-db]
-            [clojure.java.jdbc :as jdbc]))
+            [clojure.java.jdbc.deprecated :as jdbc]))
 
 
 (defn create-debate-database
