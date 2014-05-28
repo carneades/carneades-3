@@ -19,7 +19,7 @@
         carneades.engine.statement
         carneades.engine.argument
         carneades.engine.utils)
-  (:require [clojure.java.jdbc :as jdbc]
+  (:require [clojure.java.jdbc.deprecated :as jdbc]
             [clojure.string :as s]
             [clojure.walk :as w]
             [carneades.engine.uuid :as uuid]))
@@ -795,7 +795,7 @@
                  (vals (:votes poll)))]}
   (let [{:keys [id votes]} poll]
     (doseq [[statement opinion] votes]
-      (clojure.java.jdbc/insert-record
+      (jdbc/insert-record
        :stmtpoll
        {:userid id
         :statement (name statement)
@@ -876,7 +876,7 @@
                  (vals (:votes arg)))]}
   (let [{:keys [id votes]} arg]
    (doseq [[argument opinion] votes]
-     (clojure.java.jdbc/insert-record
+     (jdbc/insert-record
       :argpoll
       {:userid id
        :argument (name argument)
