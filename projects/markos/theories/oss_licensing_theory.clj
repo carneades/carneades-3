@@ -84,7 +84,7 @@ project."})
                           :forms {:en (t/make-form :positive "%s is a license template"
                                                    :negative "%s is not a license template"
                                                    :question "")})
-          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#isCompatibleWith
+          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#compatibleWith
                           :forms {:en (t/make-form :positive "%s is compatible with %s"
                                                    :negative "%s is not compatible with %s"
                                                    :question "")}))
@@ -150,13 +150,13 @@ project."})
       ;;             (a/pm '(lic:template ?L ?TPL))
       ;;             ])
 
-      (t/make-scheme
-       :id 'derivedFrom-1
-       :header (dc/make-metadata
-                :title "Derived from"
-                :description {:en "W1 is derived from W2"})
-       :conclusion '(copyright:derivedFrom ?W1 ?W2)
-       :premises [(a/pm '(soft:previousVersion ?W1 ?W2))])
+      ;; (t/make-scheme
+      ;;  :id 'derivedFrom-1
+      ;;  :header (dc/make-metadata
+      ;;           :title "Derived from"
+      ;;           :description {:en "W1 is derived from W2"})
+      ;;  :conclusion '(copyright:derivedFrom ?W1 ?W2)
+      ;;  :premises [(a/pm '(soft:previousVersion ?W1 ?W2))])
 
       ;; (t/make-scheme
       ;;  :id 'modify-1
