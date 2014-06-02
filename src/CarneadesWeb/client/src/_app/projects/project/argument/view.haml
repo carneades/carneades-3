@@ -8,7 +8,7 @@
       %metadata{model: "argument.header"}
 
     %div{"ng-hide" => "argument.premises.length == 0" }
-      %h2{translate: "projects.premises"} Premises
+      -# %h2{translate: "projects.premises"} Premises
       .premises-indication{translate: "projects.premises_text"}
       %ul{"ng-repeat" => "p in argument.premises"}
         %li
@@ -18,15 +18,16 @@
             %span{translate: "projects.negative_premise"}
           %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
 
-    %h2{translate: "projects.conclusion"} Conclusion            
+    -# %h2{translate: "projects.conclusion"} Conclusion
     %div
       .conclusion-indication {{conclusion_text}}
       %a.conclusion-text{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: argument.conclusion.id})"} {{argument.conclusion.text}}
 
-    %h2{translate: "projects.properties"} Properties
-    %properties{keys: "[['id', 'projects.id'],
+    -# %h2{translate: "projects.properties"} Properties 
+    %br
+    %properties{keys: "[['valueText', 'projects.value'],
                         ['scheme', 'projects.scheme'],
                         ['strict', 'projects.strict'],
                         ['weight', 'projects.weight'],
-                        ['valueText', 'projects.value']]", 
+                        ['id', 'projects.id']]", 
                 model: "argument"}
