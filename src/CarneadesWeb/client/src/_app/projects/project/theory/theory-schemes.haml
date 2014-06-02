@@ -5,18 +5,18 @@
 
     %metadata{model: "scheme.header", skipped: "['title']"}
 
-    %h5{translate: "projects.premises"} Premises
-    .span{translate: "projects.premises_text", class: "premises-text"}
+    -# %h5{translate: "projects.premises"} Premises
+    .span{translate: "projects.premises_text", class: "premises-indication"}
 
     %ul
       %li{"ng-repeat" => "premise in scheme.premises"}
         {{premise['translation']}}
 
-    %h4{translate: "projects.conclusion"} Conclusion
-    %span{class: "conclusion-text"}
+    -# %h4{translate: "projects.conclusion"} Conclusion
+    %span{class: "conclusion-indication"}
       {{conclusion_text}}
     %br
-    %span  
+    %span{class: "conclusion-text"}
       {{scheme['conclusion-translation']}}
 
     %h4{translate: "projects.properties"} Properties
