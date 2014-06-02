@@ -140,12 +140,10 @@
     (prn "AG NUMBER = " agnumber)))
 
 (defn on-ag-built
-  [nb-licenses entity ag]
+  [entity ag]
   (assoc ag :header (dc/make-metadata
-                     :title (str "Result of the analysis of " (:name entity))
-                     :description {:en (if (> nb-licenses 1)
-                                         (format "The analysed sofware entity is using %s licenses templates. See below the analysis of the legal issues." nb-licenses)
-                                         "See below the analysis of the legal issue.")})))
+                     :title (str "Analysis results of the software release " (:name entity))
+                     :description {:en (format "[Go back to %s page](http://demo.markosproject.eu/#t4&p12=%s)" (:name entity) (:uri entity))})))
 
 (defn start-engine
   [entity]
@@ -158,7 +156,6 @@
                                   triplestore
                                   repo-name
                                   markos-namespaces)
-        _ (prn "licenses retrieved")
         licenses-statements (map #(unserialize-atom
                                    (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
                                            entity
@@ -167,7 +164,6 @@
         theories (:policies properties)
         query (first licenses-statements)
         loaded-theories (project/load-theory project theories)
-        _ (prn "theory loaded")
         translator (comp (tr/make-default-translator)
                          (ttr/make-language-translator (:language loaded-theories))
                          (ttr/make-uri-shortening-translator markos-namespaces)
@@ -183,7 +179,6 @@
                                     triplestore-generator
                                     (theory/generate-arguments-from-theory loaded-theories)
                                     argument-from-user-generator))
-        _ (prn "engine constructed")
         future-ag (future (shell/argue+ engine licenses-statements))
         entity (entity/get-software-entity project (unserialize-atom entity))
         analysis {:ag nil
@@ -199,7 +194,7 @@
                   :last-id 0
                   :namespaces markos-namespaces
                   :translator translator
-                  :post-build (partial on-ag-built (count licenses-statements) entity)
+                  :post-build (partial on-ag-built entity)
                   }
         analysis (engine/get-ag-or-next-question analysis)]
     (swap! state index-analysis analysis)
