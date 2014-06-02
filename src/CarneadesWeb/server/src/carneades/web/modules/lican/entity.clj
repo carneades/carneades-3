@@ -14,4 +14,5 @@
         triplestore (:triplestore properties)
         repo-name (:repo-name properties)
         markos-namespaces (:namespaces properties)]
-    {:name (triplestore/get-entity-name triplestore repo-name markos-namespaces uri)}))
+    {:name (triplestore/get-entity-name triplestore repo-name markos-namespaces uri)
+     :uri uri}))
