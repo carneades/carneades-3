@@ -20,7 +20,8 @@
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.util.codec :as codec]
             [ring.util.response :as response]
-            [com.postspectacular.rotor :as rotor]))
+            [com.postspectacular.rotor :as rotor]
+            [ring.middleware.json :refer [wrap-json-params]]))
 
 (defroutes app-routes
   (route/resources "/")
@@ -86,6 +87,7 @@
                     (session/wrap-stateful-session)
                     (wrap-keyword-params)
                     (wrap-params)
+                    (wrap-json-params)
                     (wrap-multipart-params)))
 
 (def tomcat-war-handler (middleware/war-handler tomcat-app))
@@ -94,6 +96,7 @@
              (session/wrap-stateful-session)
              (wrap-keyword-params)
              (wrap-params)
+             (wrap-json-params)
              (wrap-multipart-params)
              (wrap-file "../client/dist")))
 
