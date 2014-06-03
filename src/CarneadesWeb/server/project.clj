@@ -11,7 +11,7 @@
                  [compojure "1.1.5"]
                  [ring-server "0.2.8"]
                  [ring-middleware-format "0.3.1"]
-                 [ring/ring-json "0.2.0"]
+                 [ring/ring-json "0.3.1"]
                  [clabango "0.5"]
                  [ring-mock "0.1.5"]
                  
