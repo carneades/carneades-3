@@ -4,7 +4,7 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns ^{:doc "Database management of the legal profiles."}
-  carneades.web.modules.lican.legal-profiles-db
+  carneades.database.legal-profile
   (:require [carneades.database.db :as db]
             [lobos.core :refer [create]]
             [lobos.schema :refer [table varchar integer]]
