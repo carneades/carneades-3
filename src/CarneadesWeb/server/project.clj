@@ -14,11 +14,6 @@
                  [ring/ring-json "0.2.0"]
                  [clabango "0.5"]
                  [ring-mock "0.1.5"]
-
-                 [lobos "1.0.0-beta1"]
-                 [korma "0.3.0-RC5"]
-                 [com.h2database/h2 "1.3.170"]
-                 [org.clojure/java.jdbc "0.3.0-beta1"]
                  
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [com.taoensso/timbre "3.1.6"]
