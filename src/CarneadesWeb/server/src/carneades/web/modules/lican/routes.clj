@@ -8,9 +8,8 @@
   (:require [sandbar.stateful-session :refer :all]
             [ring.middleware.session.cookie :refer :all]
             [ring.middleware.json :refer [wrap-json-response]]
-            [compojure.core :refer [defroutes context ANY GET]]
+            [compojure.core :refer [defroutes context ANY GET POST PUT]]
             [liberator.core :refer [defresource]]
-            [cheshire.core :refer :all]
             [clojure.set :as set]
             [clabango.parser :as parser]
             [noir.request :refer :all]
@@ -64,20 +63,22 @@
   :available-charsets ["utf-8"]
   :post! (fn [ctx] {::body (debug-analysis/ask e r q l)}))
 
-(defresource list-legal-profiles-resources []
+(defresource list-legal-profiles-resources [profile]
   :available-media-types ["application/json"]
-  :allowed-methods [:get]
+  :allowed-methods [:get :post]
   :available-charsets["utf-8"]
+  :post! (fn [_]
+           (debug "post! " profile)
+           {:id 42})
   :handle-ok (fn [_]
                [{:id 1 :title "German Legal Profile"}
                 {:id 2 :title "English Legal Profile"}]))
 
-(defresource entry-legal-profiles-resource [id]
+(defresource entry-legal-profiles-resource [id update]
   :available-media-types ["application/json"]
-  :allowed-methods [:get :put :post]
+  :allowed-methods [:get :put]
   :available-charsets ["utf-8"]
-  :put! (fn [ctx] (debug "put!"))
-  :post! (fn [ctx] (debug "post!"))
+  :put! (fn [ctx] (debug "put! " update))
   :handle-ok (fn [_]
                {:id 1 :title "German Legal Profile"}))
 
@@ -85,8 +86,8 @@
   (GET "/analyse" [entity] (entry-analyse-resource entity))
 
   (context "/legalprofiles" []
-    (ANY "/" [] (list-legal-profiles-resources))
-    (ANY "/:id" [id] (entry-legal-profiles-resource id)))
+    (ANY "/" req (list-legal-profiles-resources (:json-params req)))
+    (ANY "/:id" req (entry-legal-profiles-resource (-> req :id) (:json-params req))))
 
   (context "/entities" []
            (ANY "/:pid" [pid uri] (entry-entity-resource pid uri)))
@@ -98,5 +99,4 @@
   (context "/debug" [q l e r]
            ;; q := query; l := limit; e := endpoint; r:= repo-name
            (ANY "/analyse" [] (entry-dbg-analyse-resource e r q l))
-           (ANY "/query" [] (entry-dbg-query-resource e r q l))
-           (ANY "/ask" [] (entry-dbg-ask-resource e r q l))))
+           (ANY "/query" [] (entry-dbg-query-resource e r q l)) (ANY "/ask" [] (entry-dbg-ask-resource e r q l)))) 
