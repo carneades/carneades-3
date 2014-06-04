@@ -4,13 +4,13 @@
       %evaluation-indicator{value: "statement.value", size: "32x32", position: "after"}
         %h1{translate: "projects.statement"} Statement
       .statement-text
-      {{statement.text}}
-
+        {{statement.text}}
+      
       %div{"ng-hide" => "headerIsEmpty"}
         %metadata{model: "statement.header"}
 
       %div.pro-arguments{"ng-hide" => "statement.pro.length == 0" }
-        %h2{translate: "projects.pro_arguments"} Pro Arguments
+        .span{class: "argument-indication", translate: "projects.statement.pro_arguments"}
         %ul{"ng-repeat" => "arg in statement.pro"}
           %li
             %a{"ui-sref" => "home.projects.project.argument({pid: pid, db: db, aid: arg.id})"} {{argumentName(arg, $index)}}
@@ -21,7 +21,7 @@
                 %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
 
       %div.con-arguments{"ng-hide" => "statement.con.length == 0"}
-        %h2{translate: "projects.con_arguments"} Con Arguments
+        .span{class: "argument-indication", translate: "projects.statement.con_arguments"}
         %ul{"ng-repeat" => "arg in statement.con"}
           %li
             %a{"ui-sref" => "home.projects.project.argument({pid: pid, db: db, aid: arg.id})"} {{argumentName(arg, $index)}}
@@ -32,21 +32,20 @@
                 %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
 
       %div.premises-of{"ng-hide" => "statement['premise-of'].length == 0"}
-        %h2{translate: "projects.premise_of"} Premise of
+        .span{class: "premise-of-indication", translate: "projects.statement.premise_of"}
         %ul{"ng-repeat" => "arg in statement['premise-of']"}
           %li
             %a{"ui-sref" => "home.projects.project.argument({pid: pid, db: db, aid: arg.id})"} {{argumentName(arg, $index)}}
-            %ul{"ng-repeat" => "p in arg.premises"}
-              %li
-                %span{"ng-show" => "!p.positive"} 
-                  %span{translate: "projects.negative_premise"}
-                %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
+            -# %ul{"ng-repeat" => "p in arg.premises"}
+            -#   %li
+            -#     %span{"ng-show" => "!p.positive"} 
+            -#       %span{translate: "projects.negative_premise"}
+            -#     %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"} {{p.text}}
 
-      %h2{translate: "projects.properties"} Properties
-      %properties{keys: "[['id', 'projects.id'],
-            ['atom', 'projects.atom'],
-            ['main', 'projects.main_issues'],
+      %properties{keys: "[['valueText', 'projects.value'],
             ['standard', 'projects.standard'],
             ['weight', 'projects.weight'],
-            ['valueText', 'projects.value']]",
+            ['main', 'projects.main_issues'],
+            ['atom', 'projects.atom'],
+            ['id', 'projects.id']]",
         model: "statement"}
