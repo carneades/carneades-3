@@ -142,7 +142,7 @@
 (defn on-ag-built
   [entity ag]
   (assoc ag :header (dc/make-metadata
-                     :title (str "Analysis results of the software release " (:name entity))
+                     :title (str "Analysis of the software release " (:name entity))
                      :description {:en (format "[Go back to %s page](http://demo.markosproject.eu/#t4&p12=%s)" (:name entity) (:uri entity))})))
 
 (defn start-engine
