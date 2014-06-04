@@ -72,6 +72,9 @@
     "projects.statement.value.false": "Presumably false",
     "projects.statement.value.true": "Presumably true",
     "projects.statement.value.uncertain": "Uncertain",
+    "projects.statement.pro_arguments": "Arguments for this statement:",
+    "projects.statement.con_arguments": "Arguments against this statement:",
+    "projects.statement.premise_of": "Arguments having this statement as a premise:",
             
     "projects.argument.value.unacceptable": "Unacceptable",
     "projects.argument.value.acceptable": "Acceptable",
