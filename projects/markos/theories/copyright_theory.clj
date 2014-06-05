@@ -47,12 +47,12 @@
    ;; (:language copyright-ontology)
    (t/make-language
     (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
-                 :forms {:en (t/make-form :positive "%s may be licensed using %s"
-                                          :negative "%s may not be licensed using %s"
+                 :forms {:en (t/make-form :positive "%s may be licensed using %s."
+                                          :negative "%s may not be licensed using %s."
                                           :question "May %s be licensed using %s?")})
     (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#derivedFrom
-                 :forms {:en (t/make-form :positive "%s is derived from %s"
-                                          :negative "%s is not derived from %s"
+                 :forms {:en (t/make-form :positive "%s is derived from %s."
+                                          :negative "%s is not derived from %s."
                                           :question "Is %s derived from %s?")}))
 
    :sections
