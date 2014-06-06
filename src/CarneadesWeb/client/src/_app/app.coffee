@@ -10,12 +10,13 @@ define ["angular", "angular-bootstrap", "angular-ui-router",
 "appStates", "appControllers",
 "angular-markdown", "common/directives/breadcrumb/breadcrumb",
 "common/providers/css-injector",
+"common/providers/stateUtil",
 "common/directives/page-navigation/page-navigation", "templates/app",
 "templates/common", "angular-translate", "angular-animate",
 "angular-translate-loader-static-files"], (angular) ->
   angular.module("app", ["ui.bootstrap", 'ui.utils'
   "ui.bootsrap.breadcrumb", "ngAnimate",
-  "directives.pagenav", "ui.router", "css.injector",
+  "directives.pagenav", "ui.router", "css.injector", "state.util",
   "app.states", "app.controllers", "templates.app", "templates.common",
   "projects.module", "lican.module", "admin.module", "angular-markdown",
   "pascalprecht.translate"])

@@ -1,10 +1,47 @@
 #subnav {
   background:$body-bg;
   z-index: 100;
-
+  font-size: 90%;
   a {
       color: $link-color;
   }
+
+  .nav {
+      > li {
+          > a {
+              padding: 5px 10px;
+              border-bottom: 2px solid $body-bg;
+              cursor: pointer;
+              &:hover,
+              &:focus {
+                  border-bottom-color: $breadcrumbs-bg;
+                  background-color: $body-bg;
+              }
+          }
+
+          &.divider {
+              > a {
+                  padding: 5px 0;
+                  &:hover,
+                  &:focus {
+                      border: 0;
+                  }
+                  &:after {
+                      content: '|';
+                  }
+              }
+          }
+      }
+  }
+
+  .nav-pills {
+      > li {
+          > a {
+              border-radius: 0;
+          }
+      } 
+  }
+  
   &.ui-scrollfix {
     top: 0;
     position:fixed;

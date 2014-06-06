@@ -5,7 +5,8 @@
 
 define ['angular', '../../common/resources/projects'], (angular) ->
   angular.module('project.states', ['resources.projects'])
-  .config ($stateProvider) ->
+  .config ($stateProvider, $stateUtilProvider) ->
+    helper = $stateUtilProvider.$get()
     states = [
       name: "home.projects.project"
       url: "/:pid"
@@ -24,20 +25,13 @@ define ['angular', '../../common/resources/projects'], (angular) ->
           resolve:
             project: ($stateParams, ProjectLoader) ->
               new ProjectLoader($stateParams)
-      commands: [
-        label: "Arguments"
-        state: "home.projects.project.outline"
-      ,
-        label: "Guided Tour"
-        state: "home.projects"
-      ,
-        label: "Policies"
-        state: "home.projects"
-      ]
+        "subnav@":
+          templateUrl: 'subnav.tpl.html'
+          resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.outline')).build()
+          controller: 'SubnavController'
     ]
 
     angular.forEach states, (state) ->
       $stateProvider.state state
       undefined
-
     undefined

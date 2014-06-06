@@ -6,7 +6,9 @@
 #global define
 define ["angular", "angular-bootstrap"], (angular) ->
   "use strict"
-  angular.module("app.states", ["ui.bootstrap.buttons"]).config ['$stateProvider', ($stateProvider) ->
+  angular.module("app.states", ["ui.bootstrap.buttons"])
+  .config(($stateProvider, $stateUtilProvider) ->
+    helper = $stateUtilProvider.$get()
     states = [
       name: "home"
       label: "Carneades"
@@ -23,29 +25,9 @@ define ["angular", "angular-bootstrap"], (angular) ->
         "content@":
           template: "<h1>Home</h1>"
         "subnav@":
-          template: '<page-navigation><page-navigation-item cmd=\"c\" ng-repeat=\"c in $state.$current.commands\"></page-navigation-item></page-navigation>'
-      commands: [
-        label: "Home"
-        state: "home"
-      ,
-        label: "Projects"
-        state: "home.projects"
-      ,
-        label: "About"
-        state: "home.about"
-      ,
-        label: "Privacy"
-        state: "home.privacy"
-      ,
-        label: "Help"
-        state: "home.help"
-      ,
-        label: "Admin"
-        state: "home.admin"
-      ,
-        label: "Sign in"
-        state: "home.signin"
-      ]
+          templateUrl: 'subnav.tpl.html'
+          resolve: helper.builder().add('commands', helper.cmdBuilder('home','home.projects','home.about','home.privacy','home.help','home.admin','home.signin')).build()
+          controller: 'SubnavController'
     ,
       name: "home.about"
       label: "About"
@@ -55,6 +37,10 @@ define ["angular", "angular-bootstrap"], (angular) ->
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>About</h1>"
+        "subnav@":
+          templateUrl: 'subnav.tpl.html'
+          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
+          controller: 'SubnavController'
     ,
       name: "home.privacy"
       label: "Privacy"
@@ -64,6 +50,10 @@ define ["angular", "angular-bootstrap"], (angular) ->
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Privacy</h1>"
+        "subnav@":
+          templateUrl: 'subnav.tpl.html'
+          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
+          controller: 'SubnavController'
     ,
       name: "home.help"
       label: "Help"
@@ -73,6 +63,10 @@ define ["angular", "angular-bootstrap"], (angular) ->
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Help</h1>"
+        "subnav@":
+          templateUrl: 'subnav.tpl.html'
+          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
+          controller: 'SubnavController'
     ,
       name: "home.admin"
       label: "Admin"
@@ -82,6 +76,10 @@ define ["angular", "angular-bootstrap"], (angular) ->
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Admin</h1>"
+        "subnav@":
+          templateUrl: 'subnav.tpl.html'
+          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
+          controller: 'SubnavController'
     ,
       name: "home.signin"
       label: "Sign in"
@@ -91,6 +89,10 @@ define ["angular", "angular-bootstrap"], (angular) ->
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Sign in</h1>"
+        "subnav@":
+          templateUrl: 'subnav.tpl.html'
+          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
+          controller: 'SubnavController'
     ]
 
     angular.forEach states, (state) ->
@@ -98,4 +100,6 @@ define ["angular", "angular-bootstrap"], (angular) ->
       undefined
 
     undefined
-    ]
+  )
+  .controller('SubnavController', ($scope, commands) ->
+    $scope.commands = commands)
