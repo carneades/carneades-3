@@ -5,21 +5,19 @@
 
   define ['angular'], (angular) ->
   angular.module('map.states', ["map.controllers"])
-  .config(($stateProvider) ->
+  .config(($stateProvider, $stateUtilProvider) ->
+    helper = $stateUtilProvider.$get()
     states = [
       name: "home.projects.project.map"
       label: "Map"
       url: "/:db/map"
-      commands: [
-        label: "Outline"
-        state: "home.projects.project.outline"
-      ,
-        label: "Theory"
-        state: "home.projects.project.theory"
-      ]
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
+        "subnav@":
+          templateUrl: 'subnav.tpl.html'
+          resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.outline','home.projects.project.theory')).build()
+          controller: 'SubnavController'
         "content@":
           templateUrl: "project/map/map.tpl.html"
           controller: "MapCtrl"
