@@ -15,25 +15,22 @@ define [
     'resources.metadata',
     'resources.metadata.references', 'resources.outline',
     'resources.outline.issues', 'services.scroll']
-  ).config(($stateProvider) ->
+  ).config(($stateProvider, $stateUtilProvider) ->
     emptyReferences = (references) ->
       (v for k,v of references when v? and k != '$promise' and k != '$resolved').length is 0
-
+    helper = $stateUtilProvider.$get()
     states = [
       {
         name: 'home.projects.project.outline'
         label: 'Outline'
         url: '/:db/outline?scrollTo'
-        commands: [
-          label: "Map"
-          state: "home.projects.project.map"
-        ,
-          label: "Theory"
-          state: "home.projects.project.theory"
-        ]
         views:
           "nav@":
             template: "<bc-navigation></bc-navigation>"
+          "subnav@":
+            templateUrl: 'subnav.tpl.html'
+            resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.map', 'home.projects.project.theory')).build()
+            controller: 'SubnavController'
           "content@":
             templateUrl: 'project/outline/outline-main.tpl.html'
             controller: ($scope, $stateParams, scroll, project, tproject, references) ->

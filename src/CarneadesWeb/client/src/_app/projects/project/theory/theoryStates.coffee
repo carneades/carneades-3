@@ -4,18 +4,19 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 define ['angular', './theoryControllers', '../../../common/resources/projects'], (angular) ->
-  angular.module('theory.states', ['theory.controllers']).config ($stateProvider) ->
+  angular.module('theory.states', ['theory.controllers']).config ($stateProvider, $stateUtilProvider) ->
+    helper = $stateUtilProvider.$get()
     states = [{
       name: "home.projects.project.theory"
       label: "Theory"
       url: "/theories/:tpid/:tid?scrollTo"
-      commands: [
-        # label: "Outline"
-        # state: "home.projects.project.outline"
-      ]
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
+        "subnav@":
+          templateUrl: 'subnav.tpl.html'
+          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
+          controller: 'SubnavController'
         "content@":
           controller: 'TheoryCtrl'
           templateUrl: 'project/theory/theory.tpl.html'

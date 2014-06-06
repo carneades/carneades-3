@@ -26,7 +26,12 @@ define ['angular', '../common/resources/projects'], (angular) ->
               $scope.$state.go "home.projects.project", {pid: pid}
           resolve:
             projects: (MultiProjectLoader) ->
-              new MultiProjectLoader()
+              return new MultiProjectLoader()
+        "subnav@":
+          templateUrl: 'subnav.tpl.html'
+          resolve:
+            commands: ($state) -> return []
+          controller: 'SubnavController'
     ]
 
     angular.forEach states, (state) ->

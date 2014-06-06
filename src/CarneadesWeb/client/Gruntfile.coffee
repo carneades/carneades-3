@@ -188,7 +188,7 @@ module.exports = (grunt) ->
       scripts:
         expand: true
         cwd: "<%= comp.base %>"
-        src: ['./**/*.js'],
+        src: ['./**/*.js']
         dest: "<%= comp.base %>"
         ignores: ["components/*"]
 
