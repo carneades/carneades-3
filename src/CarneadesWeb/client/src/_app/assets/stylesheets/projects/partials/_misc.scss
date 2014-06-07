@@ -1,13 +1,12 @@
-.conclusion-indication {
-    font-style: italic;
-    margin-bottom: 4px;
-}
-
 .conclusion-text {
     margin-left: 2%
 }
 
-.premises-indication {
+.properties {
+    margin-top: 10px;
+}
+
+.conclusion-indication, .premises-indication, .argument-indication, .premise-of-indication {
    font-style: italic;
    margin-bottom: 4px;
 }
