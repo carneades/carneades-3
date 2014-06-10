@@ -36,7 +36,7 @@
                      (varchar :ruleid 255)
                      ;; TRUE, FALSE or UNKNOWN that is in, out, undecided
                      (schema/boolean :value)
-                     (integer :profile [:refer :profiles :id :on-delete :set-null]))))))
+                     (integer :profile [:refer :profiles :id :on-delete :set-null] :not-null))))))
 
 (defn set-default-connection
   "Set the default connection for the database."
@@ -47,8 +47,8 @@
 (defn create-profile
   "Create a profile in the database."
   [profile]
-  (insert profiles
-          (values profile)))
+  (first (vals (insert profiles
+                 (values profile)))))
 
 (defn read-profiles
   "Read all profiles in the database."
@@ -58,12 +58,9 @@
 (defn read-profile
   "Read a profile in the database."
   [id]
-  (select profiles
-          (where {:id id})))
-
-(defn read-profile+
-  "Read a profile and its associated rules in the database."
-  [id])
+  (first
+   (select profiles
+           (where {:id id}))))
 
 (defn update-profile
   "Update a profile in the database."
@@ -78,15 +75,33 @@
   (delete rules (where {:profile [= id]}))
   (delete profiles (where {:id [= id]})))
 
+(defn pack-rule
+  [rule]
+  (-> rule
+      (assoc :value
+        (cond (>= (:value rule) 0.99) true
+              (<= (:value rule) 0.01) false
+              :else nil)
+        :ruleid (serialize-atom (:ruleid rule)))
+      (dissoc :id)))
+
 (defn create-rule
   "Create a rule in the database."
-  [profileid ruleid value]
-  (insert rules
-          (values {:profile profileid
-                   :ruleid (serialize-atom ruleid)
-                   :value (cond (>= value 0.99) true
-                                (<= value 0.01) false
-                                :else nil)})))
+  [profileid rule]
+  (first (vals
+          (insert rules
+                  (values (merge (pack-rule rule)
+                                 {:profile profileid}))))))
+
+(defn unpack-rule
+  [raw]
+  (-> raw
+      (update-in [:ruleid] unserialize-atom)
+      (assoc :value (condp = (:value raw)
+                      true 1.0
+                      false 0.0
+                      0.5))
+      (dissoc :profile )))
 
 (defn read-rule
   "Read a rule in the database."
@@ -94,12 +109,7 @@
   (when-let [rule (first
                    (select rules
                            (where {:id [= id]})))]
-    (-> rule
-        (update-in [:ruleid] unserialize-atom)
-        (assoc :value (condp = (:value rule)
-                        true 1.0
-                        false 0.0
-                        0.5)))))
+    (unpack-rule rule)))
 
 (defn update-rule
   "Update a rule in the database."
@@ -116,3 +126,25 @@
   "Delete a rule in the database."
   [id]
   (delete rules (where {:id [= id]})))
+
+(defn pack-profile+
+  [profile+]
+  (dissoc profile+ :rules))
+
+(defn create-profile+
+  "Create a profile with its associated rules in the database."
+  [profile+]
+  (let [profile' (pack-profile+ profile+)
+        p (first (vals (insert profiles
+                               (values profile'))))]
+    (doseq [rule (:rules profile+)]
+      (create-rule p rule))
+    p))
+
+(defn read-profile+
+  "Read a profile and its associated rules in the database."
+  [id]
+  (assoc (read-profile id)
+    :rules (map unpack-rule
+                (select rules
+                    (where {:profile [= id]})))))
