@@ -21,7 +21,7 @@
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
             [clojure.java.io :as io]
-            [carneades.engine.utils :refer [dissoc-in unserialize-atom]]
+            [carneades.engine.utils :refer [dissoc-in serialize-atom unserialize-atom]]
             [carneades.engine.theory :as theory]
             [carneades.engine.theory.zip :as tz]))
 
@@ -173,7 +173,7 @@
   [conclusion lang]
   (-> conclusion
       (select-keys [:id :positive :text])
-      (assoc :text (-> conclusion :text lang))
+      (assoc :text (or (-> conclusion :text lang) (serialize-atom (:atom conclusion))))
       ))
 
 (defn trim-metadata
@@ -290,7 +290,7 @@
          (not (nil? db))]}
   (let [stmt (get-resource host :statement params)
         stmt (update-in stmt [:header] trim-metadata lang)
-        stmt (assoc stmt :text (lang (:text stmt)))
+        stmt (assoc stmt :text (or (lang (:text stmt)) (serialize-atom (:atom stmt))))
         stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
                                    (:pro stmt)))
         stmt (assoc stmt :con (map (partial get-trimed-argument project db host lang)
