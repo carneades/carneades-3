@@ -101,7 +101,7 @@
                       true 1.0
                       false 0.0
                       0.5))
-      (dissoc :profile )))
+      (dissoc :profile)))
 
 (defn read-rule
   "Read a rule in the database."
