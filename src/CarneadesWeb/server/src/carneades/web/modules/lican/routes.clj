@@ -88,6 +88,9 @@
   (context "/legalprofiles" []
     (ANY "/" req (list-legal-profiles-resources (:json-params req)))
     (ANY "/:id" req (entry-legal-profiles-resource (-> req :id) (:json-params req))))
+  ;; /configurablerules
+  ;; /:id/rules
+  ;; /:id/rules/:rid
 
   (context "/entities" []
            (ANY "/:pid" [pid uri] (entry-entity-resource pid uri)))
