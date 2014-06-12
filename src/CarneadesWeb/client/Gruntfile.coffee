@@ -34,6 +34,9 @@ fs = require 'fs'
 module.exports = (grunt) ->
   "use strict"
 
+  require('load-grunt-tasks')(grunt)
+  require('time-grunt')(grunt)
+
   readSubdirNames = (dir) ->
     isDir = (dir, f) ->
       stat = fs.statSync(dir + "/" + f)
@@ -44,23 +47,27 @@ module.exports = (grunt) ->
     # collapseBooleanAttributes prevents a bug
     # in grunt-html2js version 0.6.0
     # see https://github.com/karlgoldstein/grunt-html2js/issues/42
-    collapseBooleanAttributes = false,
-    collapseWhitespace = false,
+    collapseBooleanAttributes = true,
+    collapseWhitespace = true,
     removeAttributeQuotes = false,
-    removeComments = false,
+    removeComments = true,
+    removeCommentsFromCDATA = true,
     removeEmptyAttributes = false,
     removeRedundantAttributes = false,
     removeScriptTypeAttributes = false,
-    removeStyleLinkTypeAttributes = false) ->
+    removeStyleLinkTypeAttributes = false,
+    removeOptionalTags = true) ->
 
     collapseBooleanAttributes: collapseBooleanAttributes
     collapseWhitespace: collapseWhitespace
     removeAttributeQuotes: removeAttributeQuotes
     removeComments: removeComments
+    removeCommentsFromCDATA: removeCommentsFromCDATA
     removeEmptyAttributes: removeEmptyAttributes
     removeRedundantAttributes: removeRedundantAttributes
     removeScriptTypeAttributes: removeScriptTypeAttributes
     removeStyleLinkTypeAttributes: removeStyleLinkTypeAttributes
+    removeOptionalTags: removeOptionalTags
 
   cfgHtml2Js = (mapcfg) ->
     recursiveSearch = (isRecursive = true) ->
@@ -83,15 +90,15 @@ module.exports = (grunt) ->
     dirs.forEach (d) ->
       config[d] = cfgHtml2Js(
         name: d
-        base: "<%= comp.base %>/" + d
-        dest: "<%= comp.templates.base %>"
+        base: "<%= gen.base %>/" + d
+        dest: "<%= gen.templates.base %>"
         htmlmin: cfgHtmlmin()
       )
 
     config.app = cfgHtml2Js(
       name: "app"
-      base: "<%= comp.base %>"
-      dest: "<%= comp.templates.base %>"
+      base: "<%= gen.base %>"
+      dest: "<%= gen.templates.base %>"
       htmlmin: cfgHtmlmin()
       recursive: false)
 
@@ -105,17 +112,15 @@ module.exports = (grunt) ->
   grunt.initConfig
     pkg: grunt.file.readJSON("package.json")
 
-    prep:
+    src:
       base: "src/_app"
-      assets: "<%= prep.base %>/assets"
-      scss: "<%= prep.assets %>/stylesheets"
-      bootstrap: "<%= prep.assets %>/javascripts/bootstrap"
+      assets: "<%= src.base %>/assets"
+      scss: "<%= src.assets %>/stylesheets"
 
-    comp:
-      base: "src/app"
-      bower: "<%= comp.base %>/components"
+    gen:
+      base: ".generated"
       templates:
-        base: "<%= comp.base %>/templates"
+        base: "<%= gen.base %>/templates"
 
     dist:
       base: "dist/public/carneades"
@@ -127,24 +132,77 @@ module.exports = (grunt) ->
       markos: "<%= projects.base %>/markos/theme"
 
     banner: "/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today(\"yyyy-mm-dd\") %>\n" + "<%= pkg.homepage ? \" * \" + pkg.homepage + \"\\n\" : \"\" %>" + " * Copyright (c) <%= grunt.template.today(\"yyyy-mm-dd\") %> <%= pkg.author %>;\n" + " * Licensed <%= _.pluck(pkg.licenses, \"type\").join(\", \") %>\n */\n"
-    src:
-      js: ["src/**/*.js"]
-      jsTpl: ["<%= distdir %>/templates/**/*.js"]
-      scenarios: ["test/**/*.scenario.js"]
-      html: ["src/index.html"]
 
     clean:
-      comp:
-        src: ["<%= comp.base %>/*", "!<%= comp.base %>/components/**"]
+      gen: ["<%= gen.base %>"]
       dist: ["<%= dist.base %>"]
 
+    bowercopy:
+      options:
+        srcPrefix: 'bower_components'
+      requirejs:
+        options:
+          destPrefix: '<%= dist.base %>'
+        files:
+          'require.js': 'requirejs/require.js'
+      lib:
+        options:
+          destPrefix: '<%= gen.base %>/libs'
+        files:
+          'angular.js': 'angular/angular.js'
+          'angular-animate.js': 'angular-animate/angular-animate.js'
+          'angular-ui-router.js': 'angular-ui-router/release/angular-ui-router.js'
+          'angular-ui-utils.js': 'angular-ui-utils/ui-utils.js'
+          'angular-resource.js': 'angular-resource/angular-resource.js'
+          'angular-markdown.js': 'angular-markdown/angular.markdown.js'
+          'angular-translate.js': 'angular-translate/angular-translate.js'
+          'angular-translate-loader-static-files.js': 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
+          'angular-bootstrap.js': 'angular-bootstrap/ui-bootstrap-tpls.js'
+          'requirejs-domready.js': 'requirejs-domready/domReady.js'
+          'showdown': 'showdown/src'
+
     copy:
+      index:
+        files: [
+          src: ["index.html"]
+          dest: "<%= gen.base %>"
+          cwd: 'src'
+          expand: true
+        ]
+      layout:
+        files: [
+          expand: true
+          cwd: '<%= gen.base %>/css'
+          src: ['layout.css']
+          dest: '<%= dist.base %>/css'
+        ]
+      default:
+        files: [
+          expand: true
+          cwd: '<%= gen.base %>/css'
+          src: ['default.css']
+          dest: '<%= projects.default %>'
+        ]
+      copyright:
+        files: [
+          src: ['copyright.css']
+          expand: true
+          cwd: "<%= gen.base %>/css"
+          dest: '<%= projects.copyright %>'
+        ]
+      markos:
+        files: [
+          src: ['markos.css']
+          expand: true
+          cwd: "<%= gen.base %>/css"
+          dest: '<%= projects.markos %>'
+        ]
       fonts:
         files: [
           dest: "<%= dist.base %>/fonts"
           src: "**"
           expand: true
-          cwd: "<%= prep.assets %>/fonts"
+          cwd: "<%= src.assets %>/fonts"
         ]
 
       images:
@@ -152,7 +210,7 @@ module.exports = (grunt) ->
           dest: "<%= dist.base %>/images"
           src: "**"
           expand: true
-          cwd: "<%= prep.assets %>/images"
+          cwd: "<%= src.assets %>/images"
         ]
 
       languages:
@@ -160,190 +218,79 @@ module.exports = (grunt) ->
           dest: "<%= dist.base %>/languages"
           src: "**"
           expand: true
-          cwd: "<%= prep.assets %>/languages"
-        ]
-
-      requirejs:
-        files: [
-          dest: "<%= dist.base %>"
-          src: "require.js"
-          cwd: "<%= comp.bower %>/requirejs"
-          expand: true
+          cwd: "<%= src.assets %>/languages"
         ]
 
     coffee:
       scripts:
         files: [
           expand: true
-          cwd: "<%= prep.base %>"
+          cwd: "<%= src.base %>"
           src: ["./**/*.coffee"]
-          dest: "<%= comp.base %>"
-          ext: ".js"
+          dest: "<%= gen.base %>"
+          ext: ".gen.js"
           ignores: ["assets/*"]
         ]
+
+    htmlmin:
+      index:
         options:
-          sourceMap: false
+          collapseWhitespace: true
+          collapseBooleanAttributes: true
+          removeCommentsFromCDATA: true
+          removeOptionalTags: true
+        files: [
+          cwd: '<%= gen.base %>'
+          src: ['index.html']
+          expand: true
+          dest: "<%= dist.base %>"
+          ext: '.html'
+        ]
 
     ngmin:
       scripts:
         expand: true
-        cwd: "<%= comp.base %>"
-        src: ['./**/*.js']
-        dest: "<%= comp.base %>"
-        ignores: ["components/*"]
+        cwd: "<%= gen.base %>"
+        src: ['./**/*.gen.js']
+        dest: "<%= gen.base %>"
+        ext: '.js'
 
     haml:
       scripts:
         files: [
           expand: true
-          cwd: "<%= prep.base %>"
+          cwd: "<%= src.base %>"
           src: ["./**/*.haml"]
-          dest: "<%= comp.base %>"
+          dest: "<%= gen.base %>"
           ext: ".tpl.html"
         ]
 
     compass:
       carneades:
         options:
-          sassDir: "<%= prep.scss %>"
-          cssDir: "<%= comp.base %>/css"
-
-    cssmin:
-      layout:
-        expand: true
-        cwd: '<%= comp.base %>/css'
-        src: "layout.css"
-        dest: '<%= dist.base %>/css'
-        ext: '.min.css'
-
-      animate:
-        expand: true
-        cwd: '<%= comp.base %>/css'
-        src: "animate.css"
-        dest: '<%= dist.base %>/css'
-        ext: '.min.css'
-
-      default:
-        expand: true
-        cwd: '<%= comp.base %>/css'
-        src: "default.css"
-        dest: '<%= projects.default %>'
-        ext: '.min.css'
-      copyright:
-        expand: true
-        cwd: '<%= comp.base %>/css'
-        src: "copyright.css"
-        dest: '<%= projects.copyright %>'
-        ext: '.min.css'
-      markos:
-        expand: true
-        cwd: '<%= comp.base %>/css'
-        src: "markos.css"
-        dest: '<%= projects.markos %>'
-        ext: '.min.css'
-
-    concat:
-      bootstrap:
-        src: [
-          "<%= prep.bootstrap %>/affix.js",
-          "<%= prep.bootstrap %>/alert.js",
-          "<%= prep.bootstrap %>/button.js",
-          "<%= prep.bootstrap %>/carousel.js",
-          "<%= prep.bootstrap %>/collapse.js",
-          "<%= prep.bootstrap %>/dropdown.js",
-          "<%= prep.bootstrap %>/tab.js",
-          "<%= prep.bootstrap %>/transition.js",
-          "<%= prep.bootstrap %>/scrollspy.js",
-          "<%= prep.bootstrap %>/modal.js",
-          "<%= prep.bootstrap %>/tooltip.js",
-          "<%= prep.bootstrap %>/popover.js"
-        ]
-        dest: "<%= comp.base %>/bootstrap-sass.js"
-      index:
-        src: ["src/index.html"]
-        dest: "<%= dist.base %>/index.html"
-        options:
-          process: true
+          sassDir: "<%= src.scss %>"
+          cssDir: "<%= gen.base %>/css"
+          importPath: 'bower_components'
+          outputStyle: 'compressed'
 
     watch:
       haml:
-        files: ["<%= prep.base %>/**/*.haml"]
+        files: ["<%= src.base %>/**/*.haml"]
         tasks: ["haml", "chtml2js", "timestamp"]
       coffee:
-        files: ["<%= prep.base %>/**/*.coffee"]
+        files: ["<%= src.base %>/**/*.coffee"]
         tasks: ["coffee", "timestamp"]
       css:
         files: ["<%= comp.base %>/*.css"]
         tasks: ["compass", "cssmin"]
 
-    bower:
-      target:
-        rjsConfig: "src/app/main.js"
-        indent: "    "
-
-    karma:
-      unit:
-        options:
-          browsers: [
-            'PhantomJS'
-          ]
-          captureTimeout: 5000
-          colors: true
-          files: [
-            # {pattern: 'src/app/components/angular-mocks/angular-mocks.js', included: true}
-            # {pattern: 'src/app/components/angular/angular.js', included: false}
-
-            # 'src/app/components/angular-ui-router/**/*.js'
-            {pattern: 'src/app/*.js', included: false}
-            {pattern: 'src/app/{common,projects,lican}/**/*.js', included: false}
-            {pattern: 'src/app/components/**/*.js', included: false},
-            # {pattern: 'src/app/**/*.js', included: false}
-            {pattern: 'test/*.coffee', included: false}
-            {pattern: 'test/**/*.coffee', included: false}
-            # 'src/app/**/*.html'
-            'test/test-main.js'
-          ]
-          exclude: [
-            'dist/carneades/main.js'
-            'src/app/components/**/test/**'
-            'src/app/components/angular-ui-router/config/jsdoc.js'
-            'src/app/components/angular-ui-router/release/doc/scripts/prettify/lang-css.js'
-            # 'src/app/components/**'
-          ]
-          frameworks: [
-            'jasmine', 'requirejs'
-          ]
-          plugins: [
-            'karma-jasmine'
-            'karma-phantomjs-launcher',
-            'karma-coffee-preprocessor',
-            'karma-requirejs'
-            'karma-ng-html2js-preprocessor'
-          ]
-          junitReporter:
-            outputFile: 'test-results.xml'
-          keepalive: false
-          logLevel: 'INFO'
-          port: 9876
-          preprocessors:
-            '**/*.coffee': ['coffee']
-            # '**/*.html': ['ng-html2js']
-          reporters: [
-            'dots'
-            # 'junit'
-            'progress'
-          ]
-          runnerPort: 9100
-          singleRun: false
-          autoWatch: true
-
-    requirejs:
+     requirejs:
       compile:
         options:
           findNestedDependencies: true
-          mainConfigFile: "<%= comp.base %>/main.js"
+          mainConfigFile: "<%= gen.base %>/main.js"
+          include: 'main'
           locale: "en-us"
-          baseUrl: "<%= comp.base %>"
           optimize: "uglify2"
           useStrict: true
 
@@ -353,68 +300,51 @@ module.exports = (grunt) ->
 
           uglify2:
             output:
-              beautify: true
+              beautify: false
             compress:
               sequences: false
-
-            warnings: true,
+              dead_code: true
+              unused: true
+            warnings: false
             mangle: false
+            inSourceMap: true
 
           name: "app"
-          out: "<%= dist.base %>/main.js"
+          out: "<%= dist.base %>/main.min.js"
           keepBuildDir: true
           removeCombined: true
           fileExclusionRegExp: /\.tpl\.html/
-          onBuildWrite: (name, path, contents) ->
-            grunt.log.writeln "Writing: " + name
-            contents
 
-        done: (done, output) ->
-          duplicates = require("rjs-build-analysis").duplicates(output)
-          if duplicates.length > 0
-            grunt.log.subhead "Duplicates found in requirejs build:"
-            grunt.log.warn duplicates
-            done new Error("r.js built duplicate modules, please check the excludes option.")
-          done()
+  grunt.registerTask 'chtml2js',
+    'Dynamically generate html2js sub tasks',
+    (target) ->
+      html2js = createHtml2JsConfig '.generated'
+      grunt.config 'html2js', html2js
+      grunt.task.run 'html2js'
+      #grunt.config 'clean', tplhtml: ["<%= comp.base %>/**/*.tpl.html"]
+      #grunt.task.run 'clean:tplhtml'
 
-  grunt.loadNpmTasks 'grunt-contrib-cssmin'
-  grunt.loadNpmTasks "grunt-contrib-concat"
-  grunt.loadNpmTasks "grunt-contrib-jshint"
-  grunt.loadNpmTasks "grunt-contrib-requirejs"
-  grunt.loadNpmTasks "grunt-contrib-clean"
-  grunt.loadNpmTasks "grunt-contrib-copy"
-  grunt.loadNpmTasks "grunt-contrib-watch"
-  grunt.loadNpmTasks "grunt-contrib-compass"
-  grunt.loadNpmTasks "grunt-html2js"
-  grunt.loadNpmTasks "grunt-bower-requirejs"
-  grunt.loadNpmTasks "grunt-contrib-coffee"
-  grunt.loadNpmTasks "grunt-contrib-haml"
-  grunt.loadNpmTasks "grunt-karma"
-  grunt.loadNpmTasks "grunt-ngmin"
+  grunt.registerTask "build", [
+    "clean",
+    "haml",
+    "chtml2js",
+    "coffee",
+    "ngmin",
+    "bowercopy",
+    "compass",
+    "requirejs",
+    "copy",
+    "htmlmin:index"
+  ]
 
-  grunt.registerTask 'chtml2js', 'Dynamically generate html2js sub tasks', (target) ->
-    html2js = createHtml2JsConfig 'src/app'
-    grunt.config 'html2js', html2js
-    grunt.task.run 'html2js'
-    #grunt.config 'clean', tplhtml: ["<%= comp.base %>/**/*.tpl.html"]
-    #grunt.task.run 'clean:tplhtml'
+  # # magic continues: test
+  # grunt.registerTask "test", ["karma"]
 
+  # # full build from scratch
+  # grunt.registerTask 'build', ["compile", "package"]
 
-  # clean task
-  grunt.registerTask "cleanup", ["clean:comp", "clean:dist"]
+  # # deploy: do a full build from scratch
+  # grunt.registerTask "deploy", ["clean", "build", "test"]
 
-  # basic build tasks
-  grunt.registerTask "compile", ["haml", "chtml2js", "coffee", "ngmin", "compass", "concat:bootstrap"]
-  grunt.registerTask "package", ["bower", "requirejs", "concat:index", "cssmin", "copy:requirejs", "copy:images", "copy:fonts", "copy:languages"]
-
-  # magic continues: test
-  grunt.registerTask "test", ["karma"]
-
-  # full build from scratch
-  grunt.registerTask 'build', ["compile", "package"]
-
-  # deploy: do a full build from scratch
-  grunt.registerTask "deploy", ["clean", "build", "test"]
-
-  # watchers
-  grunt.registerTask "build-watch", ["watch"]
+  # # watchers
+  # grunt.registerTask "build-watch", ["watch"]
