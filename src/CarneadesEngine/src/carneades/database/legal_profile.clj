@@ -15,8 +15,26 @@
 
 (def db-name "legal-profiles")
 
+(defentity metadata
+  (entity-fields :key
+                 :contributor
+                 :coverage
+                 :creator
+                 :date
+                 :format
+                 :identifier
+                 :language
+                 :publisher
+                 :relation
+                 :rights
+                 :source
+                 :subject
+                 :title
+                 :type))
+
 (defentity profiles
-  (entity-fields :id :title))
+  (entity-fields :id :title)
+  (has-one metadata))
 
 (defentity rules
   (entity-fields :id :ruleid :value)
@@ -145,24 +163,54 @@
   [id]
   (delete rules (where {:id [= id]})))
 
+(defn create-metadatum
+  "Create a metadatum in the database."
+  [metadatum]
+  (first (vals
+          (insert metadata
+                  (values metadatum)))))
+
+(defn read-metadatum
+  "Read a metadatum in the database."
+  [id]
+  (first (select metadata
+                 (where {:id [= id]}))))
+
+(defn update-metadatum
+  "Update a metadatum in the database."
+  [id change]
+  (update metadata
+          (set-fields change)
+          (where {:id [= id]})))
+
+(defn delete-metadatum
+  "Delete a metadatum."
+  [id]
+  (delete metadata
+          (where {:id [= id]})))
+
 (defn pack-profile+
-  [profile+]
-  (dissoc profile+ :rules))
+  [profile+ metadatumid]
+  (-> profile+
+      (dissoc :rules)
+      (assoc :metadatum metadatumid)))
 
 (defn create-profile+
-  "Create a profile with its associated rules in the database."
+  "Create a profile with its associated rules and metadata in the database."
   [profile+]
-  (let [profile' (pack-profile+ profile+)
-        p (first (vals (insert profiles
-                               (values profile'))))]
+  (let [metadatumid (create-metadatum (:metadatum profile+))
+        profile' (pack-profile+ profile+ metadatumid)
+        p (create-profile profile')]
     (doseq [rule (:rules profile+)]
       (create-rule p rule))
     p))
 
 (defn read-profile+
-  "Read a profile and its associated rules in the database."
+  "Read a profile and its associated rules and metadatum in the database."
   [id]
-  (assoc (read-profile id)
-    :rules (map unpack-rule
-                (select rules
-                    (where {:profile [= id]})))))
+  (let [profile (read-profile id)]
+   (assoc profile
+     :rules (map unpack-rule
+                 (select rules
+                         (where {:profile [= id]})))
+     :metadatum (read-metadatum (:metadatum profile)))))
