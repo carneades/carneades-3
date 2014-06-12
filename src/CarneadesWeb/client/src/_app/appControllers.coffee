@@ -56,7 +56,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive 'cssInject', ($compile, $stateParams) ->
     restrict: 'E'
     replace: true
-    template: '<link rel="stylesheet" href="api/projects/{{theme}}/theme/css/{{theme}}.min.css" media="screen"/>'
+    template: '<link rel="stylesheet" ng-href="api/projects/{{theme}}/theme/css/{{theme}}.css" media="screen"/>'
     scope:
       defaultTheme: '@'
     controller: ($scope, $element, $attrs, $stateParams) ->
@@ -73,61 +73,27 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
     replace: 'true'
     scope:
       display: '@'
-    controller: ($scope, $element, $attrs, $stateParams, $location, $q, $http, $timeout) ->
-      getFile = (filename) ->
-        string = []
-        string.push $location.protocol()
-        string.push "://"
-        string.push $location.host()
-        string.push ":"
-        string.push $location.port()
-        string.push "/carneades/api/projects/"
-        string.push if $scope.display then $scope.display else $stateParams.pid
-        string.push "/theme/html/"
-        string.push filename
+    template: '<div ng-include="\'api/projects/\' + theme + \'/theme/html/banner.tpl\'"></div>'
+    controller: ($scope, $element, $attrs, $stateParams) ->
+      unless $scope.display then $scope.theme = 'default'
+      setTheme = () ->
+        if $stateParams.pid and $scope.default isnt $stateParams.pid
+          $scope.theme = $stateParams.pid
 
-        dfd = $q.defer()
-        $timeout(() ->
-          $http.get(string.join("")).success((result) ->
-            dfd.resolve result
-          )
-        , 2000)
-
-        return dfd.promise
-
-      if ($stateParams.pid or $scope.display)
-        getFile('banner.tpl').then (result) ->
-          if result
-            $element.append $compile(result)($scope)
+      $scope.$on '$stateChangeSuccess', ->
+        setTheme()
 
   .directive 'projectFooter', ($compile) ->
     restrict: 'E'
     replace: 'true'
     scope:
       display: '@'
-    controller: ($scope, $element, $attrs, $stateParams, $location, $q, $http, $timeout) ->
-      getFile = (filename) ->
-        string = []
-        string.push $location.protocol()
-        string.push "://"
-        string.push $location.host()
-        string.push ":"
-        string.push $location.port()
-        string.push "/carneades/api/projects/"
-        string.push if $scope.display then $scope.display else $stateParams.pid
-        string.push "/theme/html/"
-        string.push filename
+    template: '<div ng-include="\'api/projects/\' + theme + \'/theme/html/footer.tpl\'"></div>'
+    controller: ($scope, $element, $attrs, $stateParams) ->
+      unless $scope.display then $scope.theme = 'default'
+      setTheme = () ->
+        if $stateParams.pid and $scope.default isnt $stateParams.pid
+          $scope.theme = $stateParams.pid
 
-        dfd = $q.defer()
-        $timeout(() ->
-          $http.get(string.join("")).success((result) ->
-            dfd.resolve result
-          )
-        , 2000)
-
-        return dfd.promise
-
-      if ($stateParams.pid or $scope.display)
-        getFile('footer.tpl').then (result) ->
-          if result
-            $element.append $compile(result)($scope)
+      $scope.$on '$stateChangeSuccess', ->
+        setTheme()
