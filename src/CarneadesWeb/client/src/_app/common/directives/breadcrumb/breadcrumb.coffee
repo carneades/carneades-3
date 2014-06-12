@@ -105,6 +105,7 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
     restrict: 'EA'
     scope:
       states: '='
+      style: '='
     replace: true
     templateUrl: 'directives/breadcrumb/breadcrumb.tpl.html'
     controller: ($scope, $state, $stateParams, $breadcrumb) ->
@@ -145,14 +146,19 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
       state: '='
       bcOpen: '&'
       index: '='
+      style: '='
     templateUrl: 'directives/breadcrumb/breadcrumb-entry.tpl.html'
     controller: ($scope, $element, $attrs, $state, $breadcrumb) ->
       $scope.openView = (name, params) ->
         $state.go name, params
     link: (scope, element, attrs) ->
-      i = scope.index + 1
-      index = i % 7
-      scope.cssClass = if index > 0 then "bc-level-" + index
+      if scope.style is 'markos'
+        scope.cssClass = 'bc-level-simple'
+      else
+        i = scope.index + 1
+        index = i % 7
+        scope.cssClass = if index > 0 then "bc-level-" + index
+
       if scope.state.isActive
         element.addClass "active"
       else if scope.state.isLast
