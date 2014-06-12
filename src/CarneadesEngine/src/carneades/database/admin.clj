@@ -13,13 +13,10 @@
 
 (defn create-missing-dbs
   [project username password]
-  (when-not (f/exists? (db/dbfilename "legal-profiles"))
+  (when-not (f/exists? (db/dbfilename project "legal-profiles"))
     (lp/create-db project username password))
-  (when-not (f/exists? (db/dbfilename "main"))
-    (let [ag (ag/make-argument-graph 
-              :header (dc/make-metadata 
-                       :title "Default empty database"))]
-      (ag-db/create-argument-database project "main"
-                                      username password
-                                      (dc/make-metadata
-                                       :title "Default empty database")))))
+  (when-not (f/exists? (db/dbfilename project "main"))
+    (ag-db/create-argument-database project "main"
+                                    username password
+                                    (dc/make-metadata
+                                     :title "Default empty database"))))
