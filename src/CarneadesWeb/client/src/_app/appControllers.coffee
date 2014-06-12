@@ -50,7 +50,21 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive('bcNavigation', () ->
     restrict: 'E'
     replace: 'true'
-    template: '<div class=\"my-fluid-container\" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates"></breadcrumb></div>'
+    template: '<div class=\"my-fluid-container\" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates" style="style"></breadcrumb></div>'
+    controller: ($scope, $element, $attrs, $stateParams) ->
+      if $stateParams.pid is 'markos'
+        $scope.style = 'simple'
+      else
+        $scope.style = 'emacs'
+
+      setTheme = () ->
+        if $stateParams.pid is 'markos'
+          $scope.style = 'simple'
+        else
+          $scope.style = 'emacs'
+
+      $scope.$on '$stateChangeSuccess', ->
+        setTheme()
     )
 
   .directive 'cssInject', ($compile, $stateParams) ->
