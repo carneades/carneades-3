@@ -1,4 +1,6 @@
 .breadcrumbs {
+    background-color: $breadcrumbs-bg;
+
     border: {
         bottom: 1px solid $breadcrumbs-link-color;
     }

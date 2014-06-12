@@ -845,6 +845,10 @@ $container-lg:                 $container-large-desktop !default;
 // Module configuration
 //
 ///////////////////////////////////
+///////////////////////////////////
+// Navbar
+$navbar-bg: $markos-green !default;
+
 
 ///////////////////////////////////
 // Breadcrumb
@@ -852,9 +856,9 @@ $container-lg:                 $container-large-desktop !default;
 $breadcrumbs-levels: 7 !default;
 $breadcrumbs-height: 2em !default;
 $breadcrumbs-border-radius: 4px !default;
-$breadcrumbs-link-color: #fff !default;
+$breadcrumbs-link-color: #296b97 !default;
 $breadcrumbs-link-hover-color: $link-hover-color !default;
-$breadcrumbs-bg: $markos-green !default;
+$breadcrumbs-bg: #f5ffd6 !default;
 $breadcrumbs-border: $breadcrumbs-bg !default;
 $breadcrumbs-dark-bg: darken($breadcrumbs-bg,15%) !default;
 
