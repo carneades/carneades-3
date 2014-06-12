@@ -7,6 +7,7 @@
   }
 
   .nav {
+      float: right;
       > li {
           > a {
               padding: 5px 10px;
@@ -52,10 +53,6 @@
         color: #fff;
     }
   }
-}
-
-.navbar-project {
-    background-color: $breadcrumbs-bg;
 }
 
 .navbar {
