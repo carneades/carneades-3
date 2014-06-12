@@ -28,9 +28,27 @@
   (let [conn (db/make-connection project db-name user password
                                  :create true)]
     (with-connection conn
+      (create (table :metadata
+                     (integer :id :auto-inc :primary-key :unique)
+                     (varchar :key '(MAX) :unique)
+                     (varchar :contributor '(MAX))
+                     (varchar :coverage '(MAX))
+                     (varchar :creator '(MAX))
+                     (varchar :date '(MAX))
+                     ;; (:description)
+                     (varchar :format '(MAX))    
+                     (varchar :identifier '(MAX))
+                     (varchar :language '(MAX))
+                     (varchar :publisher '(MAX))
+                     (varchar :relation '(MAX))
+                     (varchar :rights '(MAX))
+                     (varchar :source '(MAX))
+                     (varchar :subject '(MAX))
+                     (varchar :title '(MAX))
+                     (varchar :type '(MAX))))
       (create (table :profiles
                      (integer :id :auto-inc :primary-key :unique)
-                     (varchar :title 255)))
+                     (integer :metadatum [:refer :metadata :id :on-delete :set-null])))
       (create (table :rules
                      (integer :id :auto-inc :primary-key :unique)
                      (varchar :ruleid 255)
