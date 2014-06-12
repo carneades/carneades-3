@@ -28,6 +28,8 @@
       "haml": "~0.4.3",
       "grunt-mkdir": "~0.1.1",
       "grunt-bowercopy": "~1.0.0",
+      "load-grunt-tasks": "~0.5.0",
+      "time-grunt": "~0.3.2",
       "grunt-contrib-htmlmin": "~0.3.0",
       "grunt-contrib-compass": "~0.7.1",
       "grunt-contrib-clean": "~0.5.0",
