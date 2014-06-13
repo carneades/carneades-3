@@ -4,9 +4,16 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ['angular', '../common/resources/projects'], (angular) ->
+define [
+  'angular',
+  '../common/resources/projects'
+], (angular) ->
   "use strict"
-  angular.module('projects.states', ['resources.projects']).config ($stateProvider) ->
+  angular.module('projects.states', [
+    'resources.projects'
+  ])
+
+  .config ($stateProvider) ->
     states = [
       name: 'home.projects'
       label: 'Projects'
@@ -15,7 +22,7 @@ define ['angular', '../common/resources/projects'], (angular) ->
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
-          templateUrl: 'list.tpl.html'
+          templateUrl: 'projects/list.jade'
           controller: ($scope, $location, projects) ->
             $scope.projects = projects
 
@@ -28,7 +35,7 @@ define ['angular', '../common/resources/projects'], (angular) ->
             projects: (MultiProjectLoader) ->
               return new MultiProjectLoader()
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve:
             commands: ($state) -> return []
           controller: 'SubnavController'

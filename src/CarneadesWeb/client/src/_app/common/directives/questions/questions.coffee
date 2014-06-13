@@ -2,17 +2,18 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
 define ["angular"], (angular) ->
   "use strict"
-  angular.module("directives.questions", []).directive("questionGroup", ->
+  angular.module("directives.questions", [])
+
+  .directive("questionGroup", ->
     restrict: "E"
     replace: true
-    templateUrl: "directives/questions/questionGroup.tpl.html"
+    templateUrl: "common/directives/questions/questionGroup.jade"
     scope:
       group: "=group"
 
-  ).controller "RoleQuestionCtrl", ["$scope", ($scope) ->
+  ).controller "RoleQuestionCtrl", ($scope) ->
     capitalize = (s) ->
       s[0].toUpperCase() + s.slice(1)
 
@@ -37,4 +38,3 @@ define ["angular"], (angular) ->
     $scope.question.suffixText = result[1]
     $scope.question.jsType = typeof ($scope.question.type)
     undefined
-  ]

@@ -4,29 +4,58 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-bootstrap", "angular-ui-router",
-"angular-ui-utils",
-"projects/projectsModule", "lican/licanModule", "admin/adminModule",
-"appStates", "appControllers",
-"angular-markdown", "common/directives/breadcrumb/breadcrumb",
-"common/providers/css-injector",
-"common/providers/stateUtil",
-"common/directives/page-navigation/page-navigation", "templates/app",
-"templates/common", "angular-translate", "angular-animate",
-"angular-translate-loader-static-files"], (angular) ->
-  angular.module("app", ["ui.bootstrap", 'ui.utils'
-  "ui.bootsrap.breadcrumb", "ngAnimate",
-  "directives.pagenav", "ui.router", "css.injector", "state.util",
-  "app.states", "app.controllers", "templates.app", "templates.common",
-  "projects.module", "lican.module", "admin.module", "angular-markdown",
-  "pascalprecht.translate"])
+define [
+  "angular",
+  "angular-bootstrap",
+  "angular-ui-router",
+  "angular-ui-utils",
+  "projects/projectsModule",
+  "lican/licanModule",
+  "admin/adminModule",
+  "appStates",
+  "appControllers",
+  "angular-markdown",
+  "common/directives/breadcrumb/breadcrumb",
+  "common/providers/css-injector",
+  "common/providers/stateUtil",
+  "common/directives/page-navigation/page-navigation",
+  "templates/app",
+  "angular-translate",
+  "angular-animate",
+  "angular-translate-loader-static-files"
+], (angular) ->
+  angular.module("app", [
+    "ui.bootstrap",
+    'ui.utils'
+    "ui.bootsrap.breadcrumb",
+    "ngAnimate",
+    "directives.pagenav",
+    "ui.router",
+    "css.injector",
+    "state.util",
+    "app.states",
+    "app.controllers",
+    "templates.app",
+    "projects.module",
+    "lican.module",
+    "admin.module",
+    "angular-markdown",
+    "pascalprecht.translate"
+  ])
 
   .run(($rootScope, $state, $stateParams) ->
     $rootScope.$state = $state
     $rootScope.$stateParams = $stateParams
   )
 
-  .config(($urlRouterProvider, $stateProvider, $httpProvider, $provide, $translateProvider, $uiViewScrollProvider) ->
+  .config((
+    $urlRouterProvider,
+    $stateProvider,
+    $httpProvider,
+    $provide,
+    $translateProvider,
+    $uiViewScrollProvider
+  ) ->
 
     $translateProvider.useStaticFilesLoader(
       prefix: '/carneades/languages/',

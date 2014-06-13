@@ -2,7 +2,6 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
 define ['angular'], (angular) ->
   "use strict"
 
@@ -23,8 +22,8 @@ define ['angular'], (angular) ->
   services = angular.module('lican.resources', [])
   #
   # notes on mocking the backend http://docs.angularjs.org/api/ngMock.$httpBackend
-  # 
-  services.factory 'MultiQuestionLoader', ['$http', ($http) ->
+  #
+  services.factory 'MultiQuestionLoader', ($http) ->
     class Questions
       questions: []
       solution: {db: undefined}
@@ -32,15 +31,15 @@ define ['angular'], (angular) ->
 
       pushNewQuestions: (questions) ->
         initQuestionGroupInputs questions
-        @questions.push questions 
+        @questions.push questions
 
       processData: (data) ->
         @transaction_id = data.uuid
-            
+
         if data.db?
           @solution.db = data.db
         else
-          @pushNewQuestions data.questions        
+          @pushNewQuestions data.questions
 
       analyse: (entity) ->
         console.log 'MultiQuestionLoader', entity
@@ -74,13 +73,12 @@ define ['angular'], (angular) ->
           .success (data) =>
             console.log 'received new questions'
             @processData data
-            
+
           .error (data, status) ->
             # TODO: notifications
             console.log 'error sending the answers'
 
     new Questions
-  ]
 
   services.factory 'DemoMultiQuestionLoader', ->
     class Questions
@@ -150,7 +148,7 @@ define ['angular'], (angular) ->
       questions: []
       idx: -1
       solution: {db: undefined}
-  
+
       getNextQuestionGroup: ->
         if @hasQuestions()
           @idx++
@@ -160,10 +158,10 @@ define ['angular'], (angular) ->
           console.log 'Error, no more questions'
 
         undefined
-          
+
       analyse: (entity) ->
         @getNextQuestionGroup()
-           
+
       getCurrentQuestionGroup: ->
         if @questions[@idx]?
           @questions[@idx]
@@ -178,13 +176,12 @@ define ['angular'], (angular) ->
 
       sendAnswer: () ->
         console.log @getCurrentQuestionGroup()
-        
+
         if @hasQuestions()
           @getNextQuestionGroup()
         else
           @solution.db = "main"
 
     new Questions
-    
 
   services

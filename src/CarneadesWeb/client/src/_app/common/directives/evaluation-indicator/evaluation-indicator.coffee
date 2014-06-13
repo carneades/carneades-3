@@ -4,8 +4,11 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 # Display an image representing the value of the evaluation
-define ['angular'], (angular) ->
+define [
+  'angular'
+], (angular) ->
   angular.module("directives.evaluationIndicator", [])
+
   .directive("evaluationIndicator", ->
     restrict: "E"
     scope:
