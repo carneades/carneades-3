@@ -1,9 +1,0 @@
-%a{"ui-sref" => "home.projects.project.theory({pid: $stateParams.pid, tpid: $stateParams.tpid, tid: $stateParams.tid, scrollTo: section.id})"}
-  %h2 {{section.header.title}}
-%ul
-  %li{"ng-repeat" => "scheme in section.schemes"}
-    %a{"ui-sref" => "home.projects.project.theory({pid: $stateParams.pid, tpid: $stateParams.tpid, tid: $stateParams.tid, scrollTo: scheme.id})"}
-      {{scheme.header.title}}
-%ul
-  %li{"ng-repeat" => "section in section.sections",
-     "ng-include" => "'project/theory/theory-subtoc.tpl.html'"}

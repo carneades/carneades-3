@@ -2,9 +2,13 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+define [
+  'angular'
+], (angular) ->
+  angular.module('map.states', [
+    'map.controllers'
+  ])
 
-  define ['angular'], (angular) ->
-  angular.module('map.states', ["map.controllers"])
   .config(($stateProvider, $stateUtilProvider) ->
     helper = $stateUtilProvider.$get()
     states = [
@@ -15,11 +19,11 @@
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.outline','home.projects.project.theory')).build()
           controller: 'SubnavController'
         "content@":
-          templateUrl: "project/map/map.tpl.html"
+          templateUrl: "projects/project/map/map.jade"
           controller: "MapCtrl"
           resolve:
             map: ($http, $stateParams, $location) ->

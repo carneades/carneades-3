@@ -5,11 +5,17 @@
 
 # Displays an ordered list of properties in a table
 # If the properties is a scheme, it is linked to its page
-define ['angular', 'angular-translate'], (angular) ->
-  angular.module("directives.properties", ['pascalprecht.translate'])
+define [
+  'angular',
+  'angular-translate'
+], (angular) ->
+  angular.module("directives.properties", [
+    'pascalprecht.translate'
+  ])
+
   .directive("properties", ->
     restrict: "E"
-    templateUrl: "directives/properties/properties.tpl.html"
+    templateUrl: "common/directives/properties/properties.jade"
     scope:
       keys: "=",
       model: "="
@@ -38,7 +44,7 @@ define ['angular', 'angular-translate'], (angular) ->
 
       $scope.schemesProject = $scope.getSchemesProject($scope.project)
       $scope.schemesName = $scope.getSchemesName($scope.project)
-      
+
       $scope.typeOfDisplay = (k, v) ->
         if k == 'scheme' and v.formalized
           'formalizedScheme'
@@ -51,5 +57,4 @@ define ['angular', 'angular-translate'], (angular) ->
 
       $scope.standardName = (s) ->
         $translate.instant "projects.#{s}"
-
   )
