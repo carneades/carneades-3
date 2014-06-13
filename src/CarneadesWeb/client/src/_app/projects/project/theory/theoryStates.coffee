@@ -2,9 +2,16 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+define [
+  'angular',
+  './theoryControllers',
+  '../../../common/resources/projects'
+], (angular) ->
+  angular.module('theory.states', [
+    'theory.controllers'
+  ])
 
-define ['angular', './theoryControllers', '../../../common/resources/projects'], (angular) ->
-  angular.module('theory.states', ['theory.controllers']).config ($stateProvider, $stateUtilProvider) ->
+  .config ($stateProvider, $stateUtilProvider) ->
     helper = $stateUtilProvider.$get()
     states = [{
       name: "home.projects.project.theory"
@@ -14,12 +21,12 @@ define ['angular', './theoryControllers', '../../../common/resources/projects'],
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
           controller: 'SubnavController'
         "content@":
           controller: 'TheoryCtrl'
-          templateUrl: 'project/theory/theory.tpl.html'
+          templateUrl: 'projects/project/theory/theory.jade'
           resolve:
             theory: ($http, $stateParams, $location) ->
               $http(

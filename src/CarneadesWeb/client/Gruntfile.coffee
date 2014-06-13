@@ -70,37 +70,25 @@ module.exports = (grunt) ->
     removeOptionalTags: removeOptionalTags
 
   cfgHtml2Js = (mapcfg) ->
-    recursiveSearch = (isRecursive = true) ->
-      if isRecursive then "/**/*.tpl.html" else "/*.tpl.html"
-
     config = {}
     config.options =
       base: mapcfg.base
       useStrict: true
       htmlmin: mapcfg.htmlmin
 
-    config.src = mapcfg.base + recursiveSearch mapcfg.recursive
+    config.src = [mapcfg.base + '/**/*.jade', '!' + mapcfg.base + '/index.jade']
     config.dest = mapcfg.dest + "/" + mapcfg.name + ".js"
     config.module = "templates." + mapcfg.name
     return config
 
-  createHtml2JsConfig = (dir) ->
+  createHtml2JsConfig = () ->
     config = {}
-    dirs = readSubdirNames(dir)
-    dirs.forEach (d) ->
-      config[d] = cfgHtml2Js(
-        name: d
-        base: "<%= gen.base %>/" + d
-        dest: "<%= gen.templates.base %>"
-        htmlmin: cfgHtmlmin()
-      )
-
     config.app = cfgHtml2Js(
       name: "app"
-      base: "<%= gen.base %>"
+      base: "<%= src.base %>"
       dest: "<%= gen.templates.base %>"
       htmlmin: cfgHtmlmin()
-      recursive: false)
+    )
 
     return config
 
@@ -160,6 +148,14 @@ module.exports = (grunt) ->
           'angular-bootstrap.js': 'angular-bootstrap/ui-bootstrap-tpls.js'
           'requirejs-domready.js': 'requirejs-domready/domReady.js'
           'showdown': 'showdown/src'
+
+    jade:
+      compile:
+        options:
+          data:
+            debug: false
+        files:
+          '<%= dist.base %>/index.html': '<%= src.base %>/index.jade'
 
     copy:
       index:
@@ -232,21 +228,6 @@ module.exports = (grunt) ->
           ignores: ["assets/*"]
         ]
 
-    htmlmin:
-      index:
-        options:
-          collapseWhitespace: true
-          collapseBooleanAttributes: true
-          removeCommentsFromCDATA: true
-          removeOptionalTags: true
-        files: [
-          cwd: '<%= gen.base %>'
-          src: ['index.html']
-          expand: true
-          dest: "<%= dist.base %>"
-          ext: '.html'
-        ]
-
     ngmin:
       scripts:
         expand: true
@@ -254,16 +235,6 @@ module.exports = (grunt) ->
         src: ['./**/*.gen.js']
         dest: "<%= gen.base %>"
         ext: '.js'
-
-    haml:
-      scripts:
-        files: [
-          expand: true
-          cwd: "<%= src.base %>"
-          src: ["./**/*.haml"]
-          dest: "<%= gen.base %>"
-          ext: ".tpl.html"
-        ]
 
     compass:
       carneades:
@@ -318,7 +289,7 @@ module.exports = (grunt) ->
   grunt.registerTask 'chtml2js',
     'Dynamically generate html2js sub tasks',
     (target) ->
-      html2js = createHtml2JsConfig '.generated'
+      html2js = createHtml2JsConfig()
       grunt.config 'html2js', html2js
       grunt.task.run 'html2js'
       #grunt.config 'clean', tplhtml: ["<%= comp.base %>/**/*.tpl.html"]
@@ -326,7 +297,6 @@ module.exports = (grunt) ->
 
   grunt.registerTask "build", [
     "clean",
-    "haml",
     "chtml2js",
     "coffee",
     "ngmin",
@@ -334,7 +304,7 @@ module.exports = (grunt) ->
     "compass",
     "requirejs",
     "copy",
-    "htmlmin:index"
+    "jade"
   ]
 
   # # magic continues: test

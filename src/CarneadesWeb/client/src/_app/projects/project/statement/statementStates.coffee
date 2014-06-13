@@ -2,9 +2,16 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+define [
+  'angular',
+  './statementControllers',
+  '../../../common/resources/statements'
+], (angular) ->
+  angular.module('statement.states', [
+    'statement.controllers',
+    'resources.statements'
+  ])
 
-define ['angular', './statementControllers', '../../../common/resources/statements'], (angular) ->
-  angular.module('statement.states', ['statement.controllers', 'resources.statements'])
   .config ($stateProvider, $stateUtilProvider) ->
     helper = $stateUtilProvider.$get()
     states = [
@@ -15,11 +22,11 @@ define ['angular', './statementControllers', '../../../common/resources/statemen
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.map','home.projects.project.outline')).build()
           controller: 'SubnavController'
         'content@': {
-          templateUrl: 'project/statement/view.tpl.html'
+          templateUrl: 'projects/project/statement/view.jade'
           controller: 'StatementCtrl'
           resolve: {
             statement: (StatementLoader, $stateParams) ->

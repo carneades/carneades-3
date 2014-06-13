@@ -3,12 +3,21 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-define ['angular', 'angular-translate',
-   './argumentControllers', '../../../common/resources/arguments',
+define [
+  'angular',
+  'angular-translate',
+   './argumentControllers',
+   '../../../common/resources/arguments',
    '../../../common/resources/projects',
-   '../../../common/directives/evaluation-indicator/evaluation-indicator'],
-(angular) ->
-  angular.module('argument.states', ['argument.controllers', 'resources.arguments', 'directives.evaluationIndicator']).config ($stateProvider, $stateUtilProvider) ->
+   '../../../common/directives/evaluation-indicator/evaluation-indicator'
+], (angular) ->
+  angular.module('argument.states', [
+    'argument.controllers',
+    'resources.arguments',
+    'directives.evaluationIndicator'
+  ])
+
+  .config ($stateProvider, $stateUtilProvider) ->
     helper = $stateUtilProvider.$get()
     states = [{
       name: "home.projects.project.argument"
@@ -18,7 +27,7 @@ define ['angular', 'angular-translate',
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
-          templateUrl: "project/argument/view.tpl.html"
+          templateUrl: "projects/project/argument/view.tpl.html"
           controller: "ArgumentCtrl"
           resolve:
             argument: (ArgumentLoader, $stateParams) ->
@@ -26,7 +35,7 @@ define ['angular', 'angular-translate',
             project: (ProjectLoader, $stateParams) ->
               new ProjectLoader($stateParams)
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.map','home.projects.project.outline')).build()
           controller: 'SubnavController'
       }
@@ -38,10 +47,10 @@ define ['angular', 'angular-translate',
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
-          templateUrl: "project/argument/edit.tpl.html"
+          templateUrl: "projects/project/argument/edit.tpl.html"
           controller: "ArgumentEditCtrl"
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
           controller: 'SubnavController'
       }
