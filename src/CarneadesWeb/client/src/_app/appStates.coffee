@@ -4,7 +4,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-bootstrap"], (angular) ->
+define [
+  "angular",
+  "angular-bootstrap"
+], (angular) ->
   "use strict"
   angular.module("app.states", ["ui.bootstrap.buttons"])
   .config(($stateProvider, $stateUtilProvider) ->
@@ -25,7 +28,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
         "content@":
           template: "<h1>Home</h1>"
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve: helper.builder().add('commands', helper.cmdBuilder('home','home.projects','home.about','home.privacy','home.help','home.admin','home.signin')).build()
           controller: 'SubnavController'
     ,
@@ -38,7 +41,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
         "content@":
           template: "<h1>About</h1>"
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
           controller: 'SubnavController'
     ,
@@ -51,7 +54,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
         "content@":
           template: "<h1>Privacy</h1>"
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
           controller: 'SubnavController'
     ,
@@ -64,7 +67,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
         "content@":
           template: "<h1>Help</h1>"
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
           controller: 'SubnavController'
     ,
@@ -77,7 +80,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
         "content@":
           template: "<h1>Admin</h1>"
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
           controller: 'SubnavController'
     ,
@@ -90,7 +93,7 @@ define ["angular", "angular-bootstrap"], (angular) ->
         "content@":
           template: "<h1>Sign in</h1>"
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
+          templateUrl: 'subnav.jade'
           resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
           controller: 'SubnavController'
     ]

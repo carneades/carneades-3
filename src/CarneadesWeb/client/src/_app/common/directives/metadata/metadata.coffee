@@ -4,19 +4,25 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ## Displays a group of metadata
-define ['angular', 'angular-translate'], (angular) ->
-  angular.module("directives.metadata", ['pascalprecht.translate'])
+define [
+  'angular',
+  'angular-translate'
+], (angular) ->
+  angular.module("directives.metadata", [
+    'pascalprecht.translate'
+  ])
+
   .directive("metadata", ->
     restrict: "E"
     replace: true
-    templateUrl: "directives/metadata/metadata.tpl.html"
+    templateUrl: 'common/directives/metadata/metadata.jade'
     scope:
       model: "=model",
       skipped: "=skipped"
     controller: ($scope) ->
       $scope.getTranslateKey = (k) ->
         "projects.#{k}"
-        
+
       $scope.isHidden = (k, v) ->
         (not v?) or ($scope.skipped? and $scope.skipped.indexOf k != -1)
   )
