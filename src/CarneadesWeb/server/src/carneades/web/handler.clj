@@ -85,20 +85,18 @@
 
 (def tomcat-app (-> (apply routes tomcat-all-routes)
                     (session/wrap-stateful-session)
-                    ;; (wrap-json-params)
+                    (wrap-keyword-params)
                     (wrap-json-body {:keywords? true})
                     (wrap-params)
-                    (wrap-keyword-params)
                     (wrap-multipart-params)))
 
 (def tomcat-war-handler (middleware/war-handler tomcat-app))
 
 (def app (-> (apply routes all-routes)
              (session/wrap-stateful-session)
-             ;; (wrap-json-params)
+             (wrap-keyword-params)
              (wrap-json-body {:keywords? true})
              (wrap-params)
-             (wrap-keyword-params)
              (wrap-multipart-params)
              (wrap-file "../client/dist")))
 
