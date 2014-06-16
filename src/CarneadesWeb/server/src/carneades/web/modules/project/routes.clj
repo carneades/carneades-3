@@ -20,7 +20,9 @@
                      get-theories
                      get-theme
                      get-project-archive
-                     post-project-archive]]
+                     post-project-archive
+                     get-profiles
+                     post-profile]]
             [sandbar.stateful-session :refer :all]
             [clojure.string :refer [split]]
             [ring.middleware.session.cookie :refer :all]
@@ -209,6 +211,26 @@
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
                (get-argument-map pid db :lang (keyword lang) :host host)))
 
+(defresource list-legal-profiles-resources [pid profile]
+  :available-media-types ["application/json"]
+  :allowed-methods [:get :post]
+  :available-charsets["utf-8"]
+  :post! (fn [_]
+           (debug "post: " profile)
+           (prn profile)
+           (post-profile pid profile)
+           {:id 42})
+  :handle-ok (fn [_]
+               (get-profiles pid)))
+
+(defresource entry-legal-profiles-resource [id update]
+  :available-media-types ["application/json"]
+  :allowed-methods [:get :put]
+  :available-charsets ["utf-8"]
+  :put! (fn [ctx] (debug "put! " update))
+  :handle-ok (fn [_]
+               {:id 1 :title "German Legal Profile"}))
+
 (defroutes carneades-projects-api-routes
   (ANY "/" [] (list-project-resource))
   (ANY "/upload" [file] (entry-upload-project-resource file))
@@ -225,6 +247,10 @@
            (context "/theories" []
                     (ANY "/" [] (list-theories-resource pid))
                     (ANY "/:tpid/:tid" {params :params} (entry-theories-resource params)))
+
+           (context "/legalprofiles" []
+             (ANY "/" req (list-legal-profiles-resources pid (:body req)))
+             (ANY "/:id" req (entry-legal-profiles-resource (-> req :id) (:json-params req))))
 
            (context "/:db" [db]
                     (context "/metadata" []
