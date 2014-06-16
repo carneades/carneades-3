@@ -182,6 +182,7 @@
   :allowed-methods [:get]
   :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
   :handle-ok (fn [{lang :language}]
+               (info "params:" params)
                (generate-string (assoc (get-theories params)
                                   :lang lang))))
 
@@ -216,10 +217,7 @@
   :allowed-methods [:get :post]
   :available-charsets["utf-8"]
   :post! (fn [_]
-           (debug "post: " profile)
-           (prn profile)
-           (post-profile pid profile)
-           {:id 42})
+           (post-profile pid profile))
   :handle-ok (fn [_]
                (get-profiles pid)))
 
