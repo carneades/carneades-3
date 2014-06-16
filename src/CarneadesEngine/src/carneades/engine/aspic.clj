@@ -83,10 +83,11 @@
           (:subargs p)))
 
 (defn position-conclusion
-  "position -> symbol
+  "position -> statement-node
    Returns the id of the conclusion statement of the last link of the position"
   [p]
-  (:conclusion (get (:argument-nodes (:ag p)) (:root p))))
+  (get (:statement-nodes (:ag p))
+       (:conclusion (get (:argument-nodes (:ag p)) (:root p)))))
 
 (defn position-weight
   "position -> real number
@@ -190,7 +191,8 @@
         gamma 0.2] ; maximum weight for con for :brd
     (some (fn [id]
             (and (not (strict-position? p2))
-                 (= (position-conclusion p1) (position-conclusion p2))
+                 (= (:id (position-conclusion p1))
+                    (:id (position-conclusion p2)))
                  (not= (pro-position? p1) (pro-position? p2)) 
                  ;; one position is pro and the other con
                  (case (:standard (position-conclusion p1))
