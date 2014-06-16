@@ -80,8 +80,8 @@
     :conclusion-translation (:translation (translator {:literal (:conclusion scheme)
                                                        :lang lang}))
     :premises (translate-premises (:premises scheme) translator lang)
-    :assumptions (translate-premises (:premises scheme) translator lang)
-    :exceptions (translate-premises (:premises scheme) translator lang)))
+    :assumptions (translate-premises (:assumptions scheme) translator lang)
+    :exceptions (translate-premises (:exceptions scheme) translator lang)))
 
 (defn translate-schemes
   [translator lang section]
