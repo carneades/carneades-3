@@ -63,35 +63,9 @@
   :available-charsets ["utf-8"]
   :post! (fn [ctx] {::body (debug-analysis/ask e r q l)}))
 
-(defresource list-legal-profiles-resources [profile]
-  :available-media-types ["application/json"]
-  :allowed-methods [:get :post]
-  :available-charsets["utf-8"]
-  :post! (fn [_]
-           (debug "post! " profile)
-           {:id 42})
-  :handle-ok (fn [_]
-               [{:id 1 :title "German Legal Profile"}
-                {:id 2 :title "English Legal Profile"}]))
-
-(defresource entry-legal-profiles-resource [id update]
-  :available-media-types ["application/json"]
-  :allowed-methods [:get :put]
-  :available-charsets ["utf-8"]
-  :put! (fn [ctx] (debug "put! " update))
-  :handle-ok (fn [_]
-               {:id 1 :title "German Legal Profile"}))
-
 (defroutes carneades-lican-api-routes
   (GET "/analyse" [entity] (entry-analyse-resource entity))
-
-  (context "/legalprofiles" []
-    (ANY "/" req (list-legal-profiles-resources (:json-params req)))
-    (ANY "/:id" req (entry-legal-profiles-resource (-> req :id) (:json-params req))))
-  ;; /configurablerules
-  ;; /:id/rules
-  ;; /:id/rules/:rid
-
+  
   (context "/entities" []
            (ANY "/:pid" [pid uri] (entry-entity-resource pid uri)))
 

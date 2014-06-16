@@ -23,7 +23,8 @@
             [clojure.java.io :as io]
             [carneades.engine.utils :refer [dissoc-in unserialize-atom]]
             [carneades.engine.theory :as theory]
-            [carneades.engine.theory.zip :as tz]))
+            [carneades.engine.theory.zip :as tz]
+            [carneades.database.legal-profile :as lp]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
@@ -353,3 +354,13 @@
 (defn get-theme
   [[project did :as params] & {:keys [host]}]
   (get-raw-resource host :theme [project did]))
+
+(defn get-profiles
+  [pid]
+  (lp/set-default-connection pid "root" "pw1")
+  (lp/read-profiles+))
+
+(defn post-profile
+  [pid profile]
+  (lp/set-default-connection pid "root" "pw1")
+  (lp/create-profile+ profile))
