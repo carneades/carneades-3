@@ -18,6 +18,14 @@
     %br
     %span{class: "conclusion-text"}
       {{scheme['conclusion-translation']}}
+      
+    %div{"ng-show" => "scheme.exceptions.length > 0"}
+      .span{translate: "projects.exceptions_text", class: "exceptions-indication"}
+
+      %ul
+        %li{"ng-repeat" => "exceptions in scheme.exceptions"}
+          {{exceptions['translation']}}
+
 
     -# %h4{translate: "projects.properties"} Properties
     %properties{keys: "[['id', 'projects.id'],
