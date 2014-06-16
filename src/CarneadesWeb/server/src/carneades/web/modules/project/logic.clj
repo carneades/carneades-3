@@ -185,7 +185,7 @@
   "Removes unused information from an argument (from the perspective
   of a statement)."
   [argument]
-  (select-keys argument [:scheme :premises :id :conclusion]))
+  (select-keys argument [:scheme :premises :id :conclusion :exceptions]))
 
 (defn set-scheme-description-text
   [lang s]
@@ -214,7 +214,7 @@
         do-translation (or (= translate "t") (= translate "true"))]
     (cond (and do-translation scheme)
           (when-let [s (t/find-scheme theory (symbol scheme))]
-            (let [s (ttr/translate-scheme translator lang)
+            (let [s (ttr/translate-scheme s translator lang)
                   s (set-scheme-description-text lang s)
                   s (assoc s :formalized true)]
               s))
