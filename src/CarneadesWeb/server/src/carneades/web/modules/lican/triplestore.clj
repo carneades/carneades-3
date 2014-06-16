@@ -16,8 +16,7 @@
   "Returns the template licenses for a given entity"
   [entity endpoint repo-name markos-namespaces]
   (let [conn (triplestore/make-conn endpoint repo-name markos-namespaces)
-        query (list (list 'lic:coveringLicense entity '?lic)
-                    '(lic:template ?lic ?tpl))
+        query (list (list 'lic:licenseTemplate entity '?tpl))
         query (namespace/to-absolute-literal query markos-namespaces)
         bindings (triplestore/sparql-query conn query markos-namespaces)
         tpls (set (map #(get % '?/tpl) bindings))
