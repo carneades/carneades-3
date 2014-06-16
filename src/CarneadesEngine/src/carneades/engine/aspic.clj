@@ -101,7 +101,7 @@
   "position -> boolean
    Returns true if the last link argument of the position is a pro argument node."
   [p]
-  (:pro (get (:argument-nodes (:ag p) (:root p)))))
+  (:pro (get (:argument-nodes (:ag p)) (:root p))))
 
 (defn position-map
   "argument-graph ->  map from argument node ids to a vector of positions"
