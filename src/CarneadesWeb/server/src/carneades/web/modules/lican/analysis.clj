@@ -139,6 +139,44 @@
     (prn "nb statements=" (count (:statement-nodes ag)))
     (prn "AG NUMBER = " agnumber)))
 
+(defn license-analyzer-test
+  []
+  (let [query "(
+               )"
+        sexp (unserialize-atom query)
+        project "markos"
+        theories "oss_licensing_theory"
+        endpoint "http://markos.man.poznan.pl/openrdf-sesame"
+        repo-name "markos_test_15_04_2014"
+        loaded-theories (project/load-theory project theories)
+        [argument-from-user-generator questions send-answer]
+        (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
+        ag (ag/make-argument-graph)
+        properties (project/load-project-properties project)
+        theories (:policies properties)
+        triplestore (:triplestore properties)
+        repo-name (:repo-name properties)
+        markos-namespaces (:namespaces properties)
+        engine (shell/make-engine ag 3000 #{}
+                                  (list
+                                   (triplestore/generate-arguments-from-triplestore endpoint
+                                                                                    repo-name
+                                                                                    markos-namespaces)
+                                   (theory/generate-arguments-from-theory loaded-theories)
+                                   argument-from-user-generator))
+        ag (shell/argue engine sexp)
+        ag (evaluation/evaluate caes ag)
+        ag (ag/set-main-issues ag sexp)
+        ;; TODO: ag (agr/enter-language ag (:language loaded-theories) markos-namespaces)
+        agnumber (inc-ag-number!)
+        dbname (str "ag" (str agnumber))]
+    ;; (pprint ag)
+    (ag-db/create-argument-database "markos" dbname "root" "pw1" (dc/make-metadata))
+    (import-from-argument-graph (db/make-connection "markos" dbname "root" "pw1") ag true)
+    (lacij/export ag "/tmp/ag1.svg")
+    (prn "nb statements=" (count (:statement-nodes ag)))
+    (prn "AG NUMBER = " agnumber)))
+
 (defn on-ag-built
   [entity ag]
   (assoc ag :header (dc/make-metadata
@@ -163,6 +201,7 @@
                                  licenses)
         theories (:policies properties)
         query (first licenses-statements)
+        _ (info "licenses-statements: " licenses-statements)
         loaded-theories (project/load-theory project theories)
         translator (comp (tr/make-default-translator)
                          (ttr/make-language-translator (:language loaded-theories))
