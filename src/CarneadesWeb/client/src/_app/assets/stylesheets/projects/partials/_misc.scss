@@ -1,14 +1,18 @@
 .conclusion-text {
-    margin-left: 2%
+    margin-left: 2%;
 }
 
 .properties {
     margin-top: 10px;
 }
 
-.conclusion-indication, .premises-indication, .argument-indication, .premise-of-indication {
+.conclusion-indication, .premises-indication, .argument-indication, .premise-of-indication, .exceptions-indication {
    font-style: italic;
    margin-bottom: 4px;
+}
+
+.exceptions-indication {
+    margin-top: 4px;
 }
 
 .references .scrolled {
