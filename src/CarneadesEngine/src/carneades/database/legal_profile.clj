@@ -11,7 +11,8 @@
             [lobos.schema :as schema :refer [table varchar integer]]
             [lobos.connectivity :refer [with-connection]]
             [korma.core :refer :all :exclude [table]]
-            [korma.db :refer :all :exclude [create-db]]))
+            [korma.db :refer :all :exclude [create-db]]
+            [taoensso.timbre :as timbre :refer [debug info spy]]))
 
 (def db-name "legal-profiles")
 
@@ -193,12 +194,13 @@
   [profile+ metadatumid]
   (-> profile+
       (dissoc :rules)
-      (assoc :metadatum metadatumid)))
+      (assoc :metadatum metadatumid)
+      (dissoc :metadata)))
 
 (defn create-profile+
   "Create a profile with its associated rules and metadata in the database."
   [profile+]
-  (let [metadatumid (create-metadatum (:metadatum profile+))
+  (let [metadatumid (create-metadatum (:metadata profile+))
         profile' (pack-profile+ profile+ metadatumid)
         p (create-profile profile')]
     (doseq [rule (:rules profile+)]
@@ -206,11 +208,17 @@
     p))
 
 (defn read-profile+
-  "Read a profile and its associated rules and metadatum in the database."
+  "Read a profile and its associated rules and metadata in the database."
   [id]
   (let [profile (read-profile id)]
-   (assoc profile
-     :rules (map unpack-rule
-                 (select rules
-                         (where {:profile [= id]})))
-     :metadatum (read-metadatum (:metadatum profile)))))
+    (-> profile
+        (assoc
+          :rules (map unpack-rule
+                      (select rules
+                              (where {:profile [= id]})))
+          :metadata (read-metadatum (:metadatum profile)))
+        (dissoc :metadatum))))
+
+(defn read-profiles+
+  []
+  (map #(read-profile+ (:id %)) (select profiles (fields :id))))
