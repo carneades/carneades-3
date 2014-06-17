@@ -1,0 +1,2 @@
+div(ng-class="['alert', 'alert-'+notification.type]", ng-repeat='notification in notifications.getCurrent()')
+  button.close(ng-click = 'removeNotification(notification)') x
