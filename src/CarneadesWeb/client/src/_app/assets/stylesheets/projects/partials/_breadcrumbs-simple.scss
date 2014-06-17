@@ -1,0 +1,48 @@
+.breadcrumbs {
+    background-color: $breadcrumbs-bg;
+    
+    @include clearfix;
+  
+    > ul {
+        @include inline-list;
+
+        > li:last-child {
+            > a {     
+                &:after { content: normal; }
+            }
+        }
+
+        > li {
+            > a {
+                color: $breadcrumbs-link-color;
+                display: block;
+                float: left;
+                position: relative;
+                line-height: $breadcrumbs-height;
+                padding: 0 1em 0 1.5em;
+                background: $breadcrumbs-border;
+                text-decoration: none;
+
+                &:hover {
+                    color: #0D92EB;
+                }
+                
+                @include make-breadcrumb-simple-link-after(); 
+            }
+            &.active {
+                > a {
+                    color: $breadcrumbs-link-color;
+                    text-decoration: underline;
+                    background: $breadcrumbs-border;
+
+                    &:after {
+                        border-color: $breadcrumbs-border;
+                        background: $breadcrumbs-border;
+                    }
+                }
+            }
+
+            @include make-breadcrumb-simple-entry();
+        }
+    } 
+}

@@ -1,0 +1,13 @@
+div(ng-controller='RoleQuestionCtrl')
+  div(ng-repeat='fact in question.facts')
+    {{question.prefixText}}
+    span(ng-switch='question.jsType')
+      span(ng-switch-when='object')
+      ng-form(name='factSelectForm')
+        select(ng-disabled='question.answered',ng-model='fact.input',ng-options='question.typename[question.type.indexOf(item)] for item in question.type',required='',name='factSelect')
+        span.error.glyphicon.glyphicon-exclamation-sign(ng-show='factSelectForm.factSelect.$invalid')
+      span(ng-switch-default='')
+        Error! The type of this question, {{question.type}}, is not supported.
+      {{question.suffixText}}
+      span.glyphicon.glyphicon-remove-sign(ng-click='deleteFact(fact)',ng-show='isFactDeletionAllowed()')
+      span.glyphicon.glyphicon-plus-sign(ng-click='addFact()',ng-show='isFactAdditionAllowed(fact)')

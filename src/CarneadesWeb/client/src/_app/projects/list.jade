@@ -1,0 +1,27 @@
+.container.project
+  .row
+    .col-md-12
+      .section#projects
+        .page-header
+          h1(translate='projects.headline')
+
+        accordion
+          accordion-group(ng-repeat='project in projects')
+            accordion-heading
+              span.arrow
+              markdown(ng-model='project.title', strip='true')
+
+            section
+              button.btn.btn-default.btn-xs(type='button',ng-click='copyLink(project.id)')
+                small copy link
+              button.btn.btn-default.btn-xs(type='button',ng-click='open(project.id)')
+                small open
+
+            p
+
+            section
+              markdown(extensions='carneades', ng-model='project.description',strip='true')
+            section
+              ul.nav.nav-pills
+                li(ng-repeat='tool in project.tools')
+                  a(tooltip='{{tool.description}}',tooltip-append-to-body='true',ui-sref='{{tool.link}}') {{tool.name}}
