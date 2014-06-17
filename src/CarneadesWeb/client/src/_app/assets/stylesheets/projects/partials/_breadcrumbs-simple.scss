@@ -22,9 +22,10 @@
                 padding: 0 1em 0 1.5em;
                 background: $breadcrumbs-border;
                 text-decoration: none;
-
+                
                 &:hover {
-                    color: #0D92EB;
+                    color: $breadcrumbs-link-hover-color;
+                    cursor: pointer;
                 }
                 
                 @include make-breadcrumb-simple-link-after(); 
@@ -35,6 +36,9 @@
                     text-decoration: underline;
                     background: $breadcrumbs-border;
 
+                    &:hover {
+                        color: $breadcrumbs-link-hover-color;
+                    }
                     &:after {
                         border-color: $breadcrumbs-border;
                         background: $breadcrumbs-border;
