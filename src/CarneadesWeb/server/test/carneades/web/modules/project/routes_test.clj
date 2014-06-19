@@ -9,8 +9,6 @@
             [carneades.project.admin :as project]
             [carneades.database.admin :as db]))
 
-;; TODO: creates a temporary project directory
-
 (def base-url "/carneades/api")
 (def user "root")
 (def password "pw1")
@@ -28,7 +26,8 @@
 
 (defn delete-project
   []
-  (utils/delete-file-recursively (project/get-project-path (:project-name @state))))
+  (utils/delete-file-recursively
+   (project/get-project-path (:project-name @state))))
 
 (defn parse
   [s]
@@ -37,7 +36,6 @@
 (defn get-rule-value
   [rules sid]
   (:value (first (filter #(= (:ruleid %) sid) rules))))
-
 
 (with-state-changes [(before :facts (create-project))
                      (after :facts (delete-project))]
