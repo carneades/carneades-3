@@ -1,8 +1,8 @@
 div(ng-hide='questionGroups.length == 0')
-  h2(translate='lican.questions.title')
+  h2 {{'lican.questions.title' | translate}}
   form(ng-submit='sendAnswer()',name='questionsForm')
     div(ng-repeat='group in questionGroups')
       question-group(group='group')
-    button.btn.btn-default(type='submit',translate='lican.questions.send')
+    button.btn.btn-default(type='submit') {{'lican.questions.send' | translate}}
 div(ng-show='questionGroups.length == 0')
-  span(translate='lican.questions.processing')
+  span {{'lican.questions.processing' | translate}}
