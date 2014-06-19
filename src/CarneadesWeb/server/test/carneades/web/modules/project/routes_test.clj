@@ -29,12 +29,6 @@
                                              id))
                                (content-type "application/json")))
             profile' (parse (:body response2))]
-        (spy response)
-        (spy response2)
-        (spy profile')))
-
-
-;; (let [response 
-;;       (handler/app (request :get (str base-url
-;;                                       "/projects/markos/legalprofiles/")))]
-;;   (info (parse (:body response))))
+        (expect (select-keys (:metadata profile') (keys (:metadata profile))) =>
+                (:metadata profile))
+        (expect (:default profile') => true)))
