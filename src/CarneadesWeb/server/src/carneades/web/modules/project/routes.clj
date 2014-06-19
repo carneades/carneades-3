@@ -197,7 +197,7 @@
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
                (get-argument-map pid db :lang (keyword lang) :host host)))
 
-(defresource list-legal-profiles-resources [pid profile]
+(defresource legal-profiles-resources [pid profile]
   :available-media-types ["application/json"]
   :allowed-methods [:post :get]
   :available-charsets["utf-8"]
@@ -234,7 +234,7 @@
                     (ANY "/:tpid/:tid" {params :params} (entry-theories-resource params)))
 
            (context "/legalprofiles" []
-             (ANY "/" req (list-legal-profiles-resources pid (:body req)))
+             (ANY "/" req (legal-profiles-resources pid (:body req)))
              (ANY "/:id" req (entry-legal-profiles-resource pid
                                                             (-> req :params :id)
                                                             (:json-params req))))
