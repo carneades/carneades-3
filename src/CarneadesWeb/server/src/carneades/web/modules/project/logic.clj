@@ -355,12 +355,20 @@
   [[project did :as params] & {:keys [host]}]
   (get-raw-resource host :theme [project did]))
 
+(def legal-profiles-user "root")
+(def legal-profiles-password "pw1")
+
 (defn get-profiles
   [pid]
-  (lp/set-default-connection pid "root" "pw1")
+  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
   (lp/read-profiles+))
+
+(defn get-profile
+  [pid id]
+  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
+  (lp/read-profile+ id))
 
 (defn post-profile
   [pid profile]
-  (lp/set-default-connection pid "root" "pw1")
+  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
   (lp/create-profile+ profile))

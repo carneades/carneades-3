@@ -218,23 +218,21 @@
   :allowed-methods [:post :get]
   :available-charsets["utf-8"]
   :handle-created (fn [ctx]
-                    (debug "handle-created")
-                    (debug (str ::id))
                     {:id (::id ctx)})
   :handle-ok (fn [ctx]
-               (debug "handle-ok")
                (get-profiles pid))
   :post! (fn [_]
-           (debug "post-profiles")
            {::id (post-profile pid profile)}))
 
-(defresource entry-legal-profiles-resource [id update]
+(defresource entry-legal-profiles-resource [pid id update]
   :available-media-types ["application/json"]
   :allowed-methods [:get :put]
   :available-charsets ["utf-8"]
   :put! (fn [ctx] (debug "put! " update))
   :handle-ok (fn [_]
-               {:id 1 :title "German Legal Profile"}))
+               (get-profile pid id)
+               ;; {:id 1 :title "German Legal Profile"}
+               ))
 
 (defroutes carneades-projects-api-routes
   (ANY "/" [] (list-project-resource))
@@ -255,7 +253,9 @@
 
            (context "/legalprofiles" []
              (ANY "/" req (list-legal-profiles-resources pid (:body req)))
-             (ANY "/:id" req (entry-legal-profiles-resource (-> req :id) (:json-params req))))
+             (ANY "/:id" req (entry-legal-profiles-resource (-> req :pid)
+                                                            (-> req :id)
+                                                            (:json-params req))))
 
            (context "/:db" [db]
                     (context "/metadata" []
