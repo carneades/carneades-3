@@ -28,12 +28,13 @@
             [ring.middleware.session.cookie :refer :all]
             [ring.middleware.json :refer [wrap-json-response]]
             [compojure.core :refer [defroutes context ANY GET]]
-            [liberator.core :refer [defresource]]
+            [liberator.core :refer [defresource request-method-in]]
             [cheshire.core :refer :all]
             [clojure.set :as set]
             [clabango.parser :as parser]
             [noir.request :refer :all]
-            [taoensso.timbre :as timbre :refer [debug info warn error]]))
+            [taoensso.timbre :as timbre :refer [debug info spy]])
+  (:import java.net.URL))
 
 (defresource list-metadata-resource [pid db k]
   :available-media-types ["application/json"]
@@ -214,12 +215,18 @@
 
 (defresource list-legal-profiles-resources [pid profile]
   :available-media-types ["application/json"]
-  :allowed-methods [:get :post]
+  :allowed-methods [:post :get]
   :available-charsets["utf-8"]
+  :handle-created (fn [ctx]
+                    (debug "handle-created")
+                    (debug (str ::id))
+                    {:id (::id ctx)})
+  :handle-ok (fn [ctx]
+               (debug "handle-ok")
+               (get-profiles pid))
   :post! (fn [_]
-           (post-profile pid profile))
-  :handle-ok (fn [_]
-               (get-profiles pid)))
+           (debug "post-profiles")
+           {::id (post-profile pid profile)}))
 
 (defresource entry-legal-profiles-resource [id update]
   :available-media-types ["application/json"]
@@ -270,7 +277,7 @@
                              (ANY "/:sid" [sid] (entry-statement-resource pid db sid)))
 
                     (context "/nodes" []
-                             (ANY "/" [] (list-node-resource pid db))
+                      (ANY "/" [] (list-node-resource pid db))
                              (ANY "/:nid" [nid] (entry-node-resource pid db nid)))
 
                     (context "/map" []

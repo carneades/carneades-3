@@ -31,7 +31,7 @@
                  [cheshire "5.2.0"]
                  [http-kit "2.0.0"]
 
-                 [liberator "0.10.0"]
+                 [liberator "0.11.0"]
                  [sandbar/sandbar "0.4.0-SNAPSHOT"]
 
                  [dire "0.4.3"] ;; uses logging 2.6.3
