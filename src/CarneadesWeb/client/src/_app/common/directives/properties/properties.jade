@@ -1,7 +1,7 @@
 .properties
   table.table.table-striped
     tr.block(ng-repeat='k in keys')
-      td.object-key(translate='{{k[1]}}') {{k[0]}}
+      td.object-key {{k[1] | translate}}
       td.object-value
         span(ng-switch='', on='typeOfDisplay(k[0], model[k[0]])')
           span(ng-switch-when='formalizedScheme')
