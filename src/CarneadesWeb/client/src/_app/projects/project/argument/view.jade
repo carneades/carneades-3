@@ -1,20 +1,20 @@
 .container.node
   .row
     evaluation-indicator(value='argument.value',size='32x32',position='after')
-      h1(translate='projects.argument')
+      h1 {{'projects.argument' | translate}}
         Argument
 
     div(ng-hide='headerIsEmpty')
       metadata(model='argument.header')
 
     div(ng-hide='argument.premises.length == 0')
-      .premises-indication(translate='projects.premises_text')
+      .premises-indication {{'projects.premises_text' | translate}}
       ul(ng-repeat='p in argument.premises')
         li
           span(ng-hide="p.role == ''")
             {{p.role}}.
           span(ng-show="!p.positive")
-            span(translate='projects.negative_premise')
+            span {{'projects.negative_premise' | translate}}
           a(ui-sref='home.projects.project.statement({pid: pid, db: db, sid: p.id})')
             {{p.text}}
 
