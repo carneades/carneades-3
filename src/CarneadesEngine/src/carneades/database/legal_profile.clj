@@ -34,7 +34,7 @@
                  :type))
 
 (defentity profiles
-  (entity-fields :id :title)
+  (entity-fields :id :title :default)
   (has-one metadata))
 
 (defentity rules
@@ -67,6 +67,7 @@
                      (varchar :type '(MAX))))
       (create (table :profiles
                      (integer :id :auto-inc :primary-key :unique)
+                     (schema/boolean :default)          
                      (integer :metadatum [:refer :metadata :id :on-delete :set-null])))
       (create (table :rules
                      (integer :id :auto-inc :primary-key :unique)
@@ -84,8 +85,14 @@
 (defn create-profile
   "Create a profile in the database."
   [profile]
-  (first (vals (insert profiles
-                 (values profile)))))
+  (transaction
+   (let [id (first (vals (insert profiles
+                                 (values profile))))]
+     (when (:default profile)
+       (update profiles
+               (set-fields {:default false})
+               (where {:id [not= id]})))
+     id)))
 
 (defn read-profiles
   "Read all profiles in the database."
@@ -109,8 +116,9 @@
 (defn delete-profile
   "Delete a profile in the database."
   [id]
-  (delete rules (where {:profile [= id]}))
-  (delete profiles (where {:id [= id]})))
+  (transaction
+   (delete rules (where {:profile [= id]}))
+   (delete profiles (where {:id [= id]}))))
 
 (defn pack-rule
   [rule]
@@ -200,25 +208,28 @@
 (defn create-profile+
   "Create a profile with its associated rules and metadata in the database."
   [profile+]
-  (let [metadatumid (create-metadatum (:metadata profile+))
-        profile' (pack-profile+ profile+ metadatumid)
-        p (create-profile profile')]
-    (doseq [rule (:rules profile+)]
-      (create-rule p rule))
-    p))
+  (transaction
+   (let [metadatumid (create-metadatum (:metadata profile+))
+         profile' (pack-profile+ profile+ metadatumid)
+         p (create-profile profile')]
+     (doseq [rule (:rules profile+)]
+       (create-rule p rule))
+     p)))
 
 (defn read-profile+
   "Read a profile and its associated rules and metadata in the database."
   [id]
-  (let [profile (read-profile id)]
-    (-> profile
-        (assoc
-          :rules (map unpack-rule
-                      (select rules
-                              (where {:profile [= id]})))
-          :metadata (read-metadatum (:metadatum profile)))
-        (dissoc :metadatum))))
+  (transaction
+   (let [profile (read-profile id)]
+     (-> profile
+         (assoc
+             :rules (map unpack-rule
+                         (select rules
+                                 (where {:profile [= id]})))
+             :metadata (read-metadatum (:metadatum profile)))
+         (dissoc :metadatum)))))
 
 (defn read-profiles+
   []
-  (map #(read-profile+ (:id %)) (select profiles (fields :id))))
+  (transaction
+   (map #(read-profile+ (:id %)) (select profiles (fields :id)))))
