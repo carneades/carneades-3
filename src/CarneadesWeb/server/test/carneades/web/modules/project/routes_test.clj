@@ -13,8 +13,18 @@
   [s]
   (parse-string s true))
 
+(defn get-rule-value
+  [rules sid]
+  (:value (first (filter #(= (:ruleid %) sid) rules))))
+
 (fact "It is possible to post a profile and read it back."
       (let [profile {:metadata {:title "One profile"}
+                     :rules '[{:ruleid r1-a
+                               :value 1.0}
+                              {:ruleid r2-b
+                               :value 0.0}
+                              {:ruleid r3-c
+                               :value 0.5}]
                      :default true}
             response (app (-> (request :post
                                        (str base-url
@@ -31,4 +41,9 @@
             profile' (parse (:body response2))]
         (expect (select-keys (:metadata profile') (keys (:metadata profile))) =>
                 (:metadata profile))
-        (expect (:default profile') => true)))
+        (expect (:default profile') => true)
+        (expect (get-rule-value (:rules profile') "r1-a") => 1.0)
+        (expect (get-rule-value (:rules profile') "r2-b") => 0.0)
+        (expect (get-rule-value (:rules profile') "r3-c") => 0.5)))
+
+(fact "It is possible to update the metadata of a profile.")
