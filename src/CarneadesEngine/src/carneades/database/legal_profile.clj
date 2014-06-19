@@ -34,7 +34,7 @@
                  :type))
 
 (defentity profiles
-  (entity-fields :id :title :default)
+  (entity-fields :id :default)
   (has-one metadata))
 
 (defentity rules
