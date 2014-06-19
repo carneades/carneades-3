@@ -27,7 +27,7 @@ define [
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
-          templateUrl: "projects/project/argument/view.tpl.html"
+          templateUrl: "projects/project/argument/view.jade"
           controller: "ArgumentCtrl"
           resolve:
             argument: (ArgumentLoader, $stateParams) ->
@@ -47,7 +47,7 @@ define [
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
-          templateUrl: "projects/project/argument/edit.tpl.html"
+          templateUrl: "projects/project/argument/edit.jade"
           controller: "ArgumentEditCtrl"
         "subnav@":
           templateUrl: 'subnav.jade'
