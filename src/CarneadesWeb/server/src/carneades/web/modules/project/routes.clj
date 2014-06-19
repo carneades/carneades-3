@@ -6,23 +6,7 @@
 (ns carneades.web.modules.project.routes
   ^{:doc "Definition of project routes."}
   (:require [carneades.web.modules.session.logic :refer [session-put-language]]
-            [carneades.web.modules.project.logic
-             :refer [get-projects
-                     get-metadata
-                     get-metadatum
-                     get-references
-                     get-outline
-                     get-issues
-                     get-statement
-                     get-argument
-                     get-nodes
-                     get-argument-map
-                     get-theories
-                     get-theme
-                     get-project-archive
-                     post-project-archive
-                     get-profiles
-                     post-profile]]
+            [carneades.web.modules.project.logic :refer :all]
             [sandbar.stateful-session :refer :all]
             [clojure.string :refer [split]]
             [ring.middleware.session.cookie :refer :all]
@@ -230,9 +214,7 @@
   :available-charsets ["utf-8"]
   :put! (fn [ctx] (debug "put! " update))
   :handle-ok (fn [_]
-               (get-profile pid id)
-               ;; {:id 1 :title "German Legal Profile"}
-               ))
+               (get-profile pid id)))
 
 (defroutes carneades-projects-api-routes
   (ANY "/" [] (list-project-resource))
@@ -253,8 +235,8 @@
 
            (context "/legalprofiles" []
              (ANY "/" req (list-legal-profiles-resources pid (:body req)))
-             (ANY "/:id" req (entry-legal-profiles-resource (-> req :pid)
-                                                            (-> req :id)
+             (ANY "/:id" req (entry-legal-profiles-resource pid
+                                                            (-> req :params :id)
                                                             (:json-params req))))
 
            (context "/:db" [db]
