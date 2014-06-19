@@ -29,28 +29,21 @@ define [
       $scope.getSchemesProject = (project) ->
         schemes = project.schemes
         res = schemes.split '/'
-        if res.length == 1
-          project.id
-        else
-          res[0]
+        if res.length is 1 then project.id else res[0]
 
       $scope.getSchemesName = (project) ->
-        schemes = project.schemes
-        res = schemes.split '/'
-        if res.length == 1
-          res[0]
-        else
-          res[1]
+        res = project.schemes.split '/'
+        if res.length is 1 then res[0] else res[1]
 
       $scope.schemesProject = $scope.getSchemesProject($scope.project)
       $scope.schemesName = $scope.getSchemesName($scope.project)
 
       $scope.typeOfDisplay = (k, v) ->
-        if k == 'scheme' and v.formalized
+        if k is 'scheme' and v.formalized
           'formalizedScheme'
-        else if k == 'scheme' and not v.formalized
+        else if k is 'scheme' and not v.formalized
           'unformalizedScheme'
-        else if k == 'standard'
+        else if k is 'standard'
           'standard'
         else
           'default'
