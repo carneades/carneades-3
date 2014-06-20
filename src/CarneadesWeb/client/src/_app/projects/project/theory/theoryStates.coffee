@@ -17,13 +17,11 @@ define [
       name: "home.projects.project.theory"
       label: "Theory"
       url: "/theories/:tpid/:tid?scrollTo"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
         "content@":
           controller: 'TheoryCtrl'
           templateUrl: 'projects/project/theory/theory.jade'

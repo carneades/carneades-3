@@ -21,11 +21,11 @@ define [
         url: '/lican?entity'
         views:
           "css@":
-            template: '<css-inject default-theme="markos"></css-inject>'
+            template: '<css-inject theme="\'markos\'"></css-inject>'
           "banner@":
-            template: '<project-banner display=\"markos\"></project-banner>'
+            template: '<project-banner theme="\'markos\'"></project-banner>'
           "footer@":
-            template: '<project-footer display=\"markos\"></project-footer>'
+            template: '<project-footer theme="\'markos\'"></project-footer>'
           "nav@":
             template: "<bc-navigation></bc-navigation>"
           "content@":
@@ -40,12 +40,6 @@ define [
         label: 'License Analyser Questions'
         url: '/questions'
         views:
-          "css@":
-            template: '<css-inject default-theme="markos"></css-inject>'
-          "banner@":
-            template: '<project-banner display=\"markos\"></project-banner>'
-          "footer@":
-            template: '<project-footer display=\"markos\"></project-footer>'
           "nav@":
             template: "<bc-navigation></bc-navigation>"
           "content@":
@@ -60,12 +54,6 @@ define [
         label: 'License Analyser Questions (Demo)'
         url: '/lican/demo'
         views:
-          "css@":
-            template: '<css-inject default-theme="markos"></css-inject>'
-          "banner@":
-            template: '<project-banner display=\"markos\"></project-banner>'
-          "footer@":
-            template: '<project-footer display=\"markos\"></project-footer>'
           "nav@":
             template: "<bc-navigation></bc-navigation>"
           "content@":

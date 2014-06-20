@@ -23,6 +23,8 @@ define [
       name: "home.projects.project.argument"
       label: "Argument"
       url: "/:db/arguments/:aid"
+      data:
+        commands: ['home.projects.project.map','home.projects.project.outline']
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
@@ -34,25 +36,19 @@ define [
               new ArgumentLoader($stateParams)
             project: (ProjectLoader, $stateParams) ->
               new ProjectLoader($stateParams)
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.map','home.projects.project.outline')).build()
-          controller: 'SubnavController'
       }
     ,
       {
       name: "home.projects.project.argument.edit"
       url: "/edit"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           templateUrl: "projects/project/argument/edit.jade"
           controller: "ArgumentEditCtrl"
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
       }
     ]
 
