@@ -9,93 +9,88 @@ define [
   "angular-bootstrap"
 ], (angular) ->
   "use strict"
-  angular.module("app.states", ["ui.bootstrap.buttons"])
+  angular.module("app.states", [
+    "ui.bootstrap.buttons"
+  ])
+
   .config(($stateProvider, $stateUtilProvider) ->
     helper = $stateUtilProvider.$get()
     states = [
       name: "home"
       label: "Carneades"
       url: "/"
+      data:
+        commands: ['home','home.projects','home.about','home.privacy','home.help','home.admin','home.signin']
       views:
         "css@":
-          template: '<css-inject default-theme="default"></css-inject>'
+          template: '<css-inject theme="$stateParams.pid"></css-inject>'
         "banner@":
-          template: "<project-banner></project-banner>"
+          template: '<project-banner theme="$stateParams.pid"></project-banner>'
         "footer@":
-          template: "<project-footer></project-footer>"
+          template: '<project-footer theme="$stateParams.pid"></project-footer>'
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Home</h1>"
         "subnav@":
           templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder('home','home.projects','home.about','home.privacy','home.help','home.admin','home.signin')).build()
           controller: 'SubnavController'
     ,
       name: "home.about"
       label: "About"
+      parent: 'home'
       url: "about"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>About</h1>"
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
     ,
       name: "home.privacy"
       label: "Privacy"
       url: "privacy"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Privacy</h1>"
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
     ,
       name: "home.help"
       label: "Help"
       url: "help"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Help</h1>"
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
     ,
       name: "home.admin"
       label: "Admin"
       url: "admin"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Admin</h1>"
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
     ,
       name: "home.signin"
       label: "Sign in"
       url: "signin"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Sign in</h1>"
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
     ]
 
     angular.forEach states, (state) ->
@@ -104,5 +99,13 @@ define [
 
     undefined
   )
-  .controller('SubnavController', ($scope, commands) ->
-    $scope.commands = commands)
+
+  .controller('SubnavController', ($scope, $state, $stateUtil) ->
+    update = () ->
+      $scope.commands = $stateUtil.builder().add('commands', $stateUtil.cmdBuilder($state.current.data.commands...)).build().commands $state
+
+    $scope.$on '$stateChangeSuccess', ->
+      update()
+
+    update()
+  )

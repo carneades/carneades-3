@@ -15,13 +15,11 @@ define [
       name: "home.projects.project.map"
       label: "Map"
       url: "/:db/map"
+      data:
+        commands: ['home.projects.project.outline','home.projects.project.theory']
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.outline','home.projects.project.theory')).build()
-          controller: 'SubnavController'
         "content@":
           templateUrl: "projects/project/map/map.jade"
           controller: "MapCtrl"

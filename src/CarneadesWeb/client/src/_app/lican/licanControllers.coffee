@@ -23,7 +23,6 @@ define [
   # Example of call http://localhost:8080/carneades/#/lican?entity=http:%2F%2Fmarkosproject.eu%2Fkb%2FSoftwareRelease%2F366
   # http://markosproject.eu/kb/SoftwareRelease/9209
   .controller('IntroCtrl', ($scope, $state, $stateParams, entity, $translate) ->
-
     # TODO: check success + error msg
     sEntity = entity.get uri: $stateParams.entity, ->
       $scope.title = $translate.instant 'lican.title', {entity: sEntity.name}
