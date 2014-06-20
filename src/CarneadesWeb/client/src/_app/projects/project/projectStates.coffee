@@ -11,12 +11,13 @@ define [
     'resources.projects'
   ])
 
-  .config ($stateProvider, $stateUtilProvider) ->
-    helper = $stateUtilProvider.$get()
+  .config ($stateProvider) ->
     states = [
       name: "home.projects.project"
-      url: "/:pid"
+      url: '/:pid'
       label: "Project"
+      data:
+        commands: ['home.projects.project.outline']
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
@@ -31,10 +32,6 @@ define [
           resolve:
             project: ($stateParams, ProjectLoader) ->
               new ProjectLoader($stateParams)
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.outline')).build()
-          controller: 'SubnavController'
     ]
 
     angular.forEach states, (state) ->

@@ -27,13 +27,11 @@ define [
         name: 'home.projects.project.outline'
         label: 'Outline'
         url: '/:db/outline?scrollTo'
+        data:
+          commands: ['home.projects.project.map', 'home.projects.project.theory']
         views:
           "nav@":
             template: "<bc-navigation></bc-navigation>"
-          "subnav@":
-            templateUrl: 'subnav.jade'
-            resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.map', 'home.projects.project.theory')).build()
-            controller: 'SubnavController'
           "content@":
             templateUrl: 'projects/project/outline/outline-main.jade'
             controller: ($scope, $stateParams, scroll, project, tproject, references) ->
