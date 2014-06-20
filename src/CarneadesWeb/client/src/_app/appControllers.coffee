@@ -70,44 +70,45 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive 'cssInject', ($compile, $stateParams) ->
     restrict: 'E'
     replace: true
+    require: '?theme'
     template: '<link rel="stylesheet" ng-href="api/projects/{{theme}}/theme/css/{{theme}}.css" media="screen"/>'
     scope:
-      defaultTheme: '@'
-    controller: ($scope, $element, $attrs, $stateParams) ->
-      unless $scope.theme then $scope.theme = $scope.defaultTheme
-      setTheme = () ->
-        if $stateParams.pid and $scope.theme isnt $stateParams.pid
-          $scope.theme = $stateParams.pid
+      theme: '=?'
+    controller: ($scope) ->
+      update = () ->
+        $scope.theme = $scope.theme || 'default'
 
-      $scope.$on '$stateChangeSuccess', ->
-        setTheme()
+      $scope.$watch 'theme', () ->
+        update()
+
+      update()
 
   .directive 'projectBanner', ($compile) ->
     restrict: 'E'
     replace: 'true'
     scope:
-      display: '@'
+      theme: '=?'
     template: '<div ng-include="\'api/projects/\' + theme + \'/theme/html/banner.tpl\'"></div>'
-    controller: ($scope, $element, $attrs, $stateParams) ->
-      unless $scope.display then $scope.theme = 'default'
-      setTheme = () ->
-        if $stateParams.pid and $scope.default isnt $stateParams.pid
-          $scope.theme = $stateParams.pid
+    controller: ($scope) ->
+      update = () ->
+        $scope.theme = $scope.theme || 'default'
 
-      $scope.$on '$stateChangeSuccess', ->
-        setTheme()
+      $scope.$watch 'theme', () ->
+        update()
+
+      update()
 
   .directive 'projectFooter', ($compile) ->
     restrict: 'E'
     replace: 'true'
     scope:
-      display: '@'
+      theme: '=?'
     template: '<div ng-include="\'api/projects/\' + theme + \'/theme/html/footer.tpl\'"></div>'
-    controller: ($scope, $element, $attrs, $stateParams) ->
-      unless $scope.display then $scope.theme = 'default'
-      setTheme = () ->
-        if $stateParams.pid and $scope.default isnt $stateParams.pid
-          $scope.theme = $stateParams.pid
+    controller: ($scope) ->
+      update = () ->
+        $scope.theme = $scope.theme || 'default'
 
-      $scope.$on '$stateChangeSuccess', ->
-        setTheme()
+      $scope.$watch 'theme', () ->
+        update()
+
+      update()

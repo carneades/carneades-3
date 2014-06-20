@@ -18,13 +18,11 @@ define [
       name: 'home.projects.project.statement'
       label: 'Statement'
       url: '/:db/statements/:sid'
+      data:
+        commands: ['home.projects.project.map','home.projects.project.outline']
       views: {
         "nav@":
           template: "<bc-navigation></bc-navigation>"
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.map','home.projects.project.outline')).build()
-          controller: 'SubnavController'
         'content@': {
           templateUrl: 'projects/project/statement/view.jade'
           controller: 'StatementCtrl'
