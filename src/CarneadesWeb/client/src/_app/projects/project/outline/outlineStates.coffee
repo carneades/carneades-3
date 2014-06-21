@@ -18,10 +18,9 @@ define [
     'services.scroll'
   ])
 
-  .config(($stateProvider, $stateUtilProvider) ->
+  .config(($stateProvider) ->
     emptyReferences = (references) ->
       (v for k,v of references when v? and k != '$promise' and k != '$resolved').length is 0
-    helper = $stateUtilProvider.$get()
     states = [
       {
         name: 'home.projects.project.outline'
