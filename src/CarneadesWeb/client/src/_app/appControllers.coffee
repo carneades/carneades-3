@@ -50,13 +50,9 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive('bcNavigation', () ->
     restrict: 'E'
     replace: 'true'
+    #templateUrl: 'breadcrumb-navigation.jade'
     template: '<div class=\"my-fluid-container\" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates" style="style"></breadcrumb></div>'
     controller: ($scope, $element, $attrs, $stateParams) ->
-      if $stateParams.pid is 'markos'
-        $scope.style = 'simple'
-      else
-        $scope.style = 'emacs'
-
       setTheme = () ->
         if $stateParams.pid is 'markos'
           $scope.style = 'simple'
@@ -65,6 +61,8 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
 
       $scope.$on '$stateChangeSuccess', ->
         setTheme()
+
+      setTheme()
     )
 
   .directive 'cssInject', ($compile, $stateParams) ->

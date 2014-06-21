@@ -12,8 +12,7 @@ define [
     'resources.statements'
   ])
 
-  .config ($stateProvider, $stateUtilProvider) ->
-    helper = $stateUtilProvider.$get()
+  .config ($stateProvider) ->
     states = [
       name: 'home.projects.project.statement'
       label: 'Statement'

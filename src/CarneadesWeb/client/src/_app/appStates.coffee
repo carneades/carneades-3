@@ -13,8 +13,7 @@ define [
     "ui.bootstrap.buttons"
   ])
 
-  .config(($stateProvider, $stateUtilProvider) ->
-    helper = $stateUtilProvider.$get()
+  .config(($stateProvider) ->
     states = [
       name: "home"
       label: "Carneades"
@@ -100,9 +99,30 @@ define [
     undefined
   )
 
-  .controller('SubnavController', ($scope, $state, $stateUtil) ->
+  .controller('SubnavController', ($scope, $state) ->
     update = () ->
-      $scope.commands = $stateUtil.builder().add('commands', $stateUtil.cmdBuilder($state.current.data.commands...)).build().commands $state
+      builder = (params...) ->
+        create = (label, state, clazz) ->
+          return {label: label, state: state, clazz: clazz}
+        command = ($state,state) ->
+          return create $state.get(state).label, state, undefined
+        divider = () ->
+          return create '', undefined, 'divider'
+
+        createCommands = ($state,states...) ->
+          commands = []
+          for state in states
+            commands.push command($state, state)
+            commands.push divider()
+
+          # since last item is a divider we must get rid off it
+          if commands.length > 0 then commands.pop()
+          return commands
+
+        return ($state) ->
+          return createCommands($state, params...)
+
+      $scope.commands = builder($state.current.data.commands...) $state
 
     $scope.$on '$stateChangeSuccess', ->
       update()
