@@ -9,8 +9,7 @@ define [
     'map.controllers'
   ])
 
-  .config(($stateProvider, $stateUtilProvider) ->
-    helper = $stateUtilProvider.$get()
+  .config(($stateProvider) ->
     states = [
       name: "home.projects.project.map"
       label: "Map"
