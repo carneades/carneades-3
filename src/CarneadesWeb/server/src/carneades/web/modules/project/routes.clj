@@ -212,7 +212,8 @@
   :available-media-types ["application/json"]
   :allowed-methods [:get :put]
   :available-charsets ["utf-8"]
-  :put! (fn [ctx] (debug "put! " update))
+  :put! (fn [ctx]
+          (put-profile pid id update))
   :handle-ok (fn [_]
                (get-profile pid id)))
 
@@ -237,7 +238,7 @@
              (ANY "/" req (legal-profiles-resources pid (:body req)))
              (ANY "/:id" req (entry-legal-profiles-resource pid
                                                             (-> req :params :id)
-                                                            (:json-params req))))
+                                                            (:body req))))
 
            (context "/:db" [db]
                     (context "/metadata" []
