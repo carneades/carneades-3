@@ -67,7 +67,7 @@
                      (varchar :type '(MAX))))
       (create (table :profiles
                      (integer :id :auto-inc :primary-key :unique)
-                     (schema/boolean :default)          
+                     (schema/boolean :default)
                      (integer :metadatum [:refer :metadata :id :on-delete :set-null])))
       (create (table :rules
                      (integer :id :auto-inc :primary-key :unique)
@@ -200,13 +200,15 @@
 
 (defn pack-profile+
   [profile+ metadatumid]
-  (-> profile+
-      (dissoc :rules)
-      (assoc :metadatum metadatumid)
-      (dissoc :metadata)))
+  (let [profile (-> profile+
+                    (dissoc :rules)
+                    (dissoc :metadata))]
+    (if metadatumid
+      (assoc profile :metadatum metadatumid)
+      profile)))
 
 (defn create-profile+
-  "Create a profile with its associated rules and metadata in the database."
+   "Create a profile with its associated rules and metadata in the database."
   [profile+]
   (transaction
    (let [metadatumid (create-metadatum (:metadata profile+))
@@ -230,6 +232,26 @@
          (dissoc :metadatum)))))
 
 (defn read-profiles+
+  "Read a profile with its associated rules and metadata in the database."
   []
   (transaction
    (map #(read-profile+ (:id %)) (select profiles (fields :id)))))
+
+(defn update-profile+
+  "Update a profile with its associated rules and metadata in the database."
+  [id update]
+  (transaction
+   (let [update' (if (seq (:metadata update))
+                   (let [oldmetadataid (:metadatum (read-profile id))
+                         metadataid (create-metadatum (:metadata update))]
+                     (when oldmetadataid
+                       (delete-metadatum oldmetadataid))
+                     (pack-profile+ update metadataid))
+                   (pack-profile+ update nil))]
+     (when (seq (:rules update))
+       (do
+         (delete rules (where {:profile [= id]}))
+         (doseq [r (:rules update)]
+           (create-rule id r))))
+     (when-not (empty? update')
+       (update-profile id update')))))
