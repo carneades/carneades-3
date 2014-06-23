@@ -8,7 +8,7 @@
   (:require [carneades.engine.utils :refer [unserialize-atom serialize-atom]]
             [carneades.database.db :as db]
             [lobos.core :refer [create]]
-            [lobos.schema :as schema :refer [table varchar integer]]
+            [lobos.schema :as schema :refer [table default varchar integer]]
             [lobos.connectivity :refer [with-connection]]
             [korma.core :refer :all :exclude [table]]
             [korma.db :refer :all :exclude [create-db]]
@@ -47,34 +47,35 @@
   (let [conn (db/make-connection project db-name user password
                                  :create true)]
     (with-connection conn
-      (create (table :metadata
-                     (integer :id :auto-inc :primary-key :unique)
-                     (varchar :key '(MAX) :unique)
-                     (varchar :contributor '(MAX))
-                     (varchar :coverage '(MAX))
-                     (varchar :creator '(MAX))
-                     (varchar :date '(MAX))
-                     ;; (:description)
-                     (varchar :format '(MAX))    
-                     (varchar :identifier '(MAX))
-                     (varchar :language '(MAX))
-                     (varchar :publisher '(MAX))
-                     (varchar :relation '(MAX))
-                     (varchar :rights '(MAX))
-                     (varchar :source '(MAX))
-                     (varchar :subject '(MAX))
-                     (varchar :title '(MAX))
-                     (varchar :type '(MAX))))
-      (create (table :profiles
-                     (integer :id :auto-inc :primary-key :unique)
-                     (schema/boolean :default)
-                     (integer :metadatum [:refer :metadata :id :on-delete :set-null])))
-      (create (table :rules
-                     (integer :id :auto-inc :primary-key :unique)
-                     (varchar :ruleid 255)
-                     ;; TRUE, FALSE or UNKNOWN that is in, out, undecided
-                     (schema/boolean :value)
-                     (integer :profile [:refer :profiles :id :on-delete :set-null] :not-null))))))
+      (transaction
+       (create (table :metadata
+                      (integer :id :auto-inc :primary-key :unique)
+                      (varchar :key '(MAX) :unique)
+                      (varchar :contributor '(MAX))
+                      (varchar :coverage '(MAX))
+                      (varchar :creator '(MAX))
+                      (varchar :date '(MAX))
+                      ;; (:description)
+                      (varchar :format '(MAX))    
+                      (varchar :identifier '(MAX))
+                      (varchar :language '(MAX))
+                      (varchar :publisher '(MAX))
+                      (varchar :relation '(MAX))
+                      (varchar :rights '(MAX))
+                      (varchar :source '(MAX))
+                      (varchar :subject '(MAX))
+                      (varchar :title '(MAX))
+                      (varchar :type '(MAX))))
+       (create (table :profiles
+                      (integer :id :auto-inc :primary-key :unique)
+                      (schema/boolean :default (default false))
+                      (integer :metadatum [:refer :metadata :id :on-delete :set-null])))
+       (create (table :rules
+                      (integer :id :auto-inc :primary-key :unique)
+                      (varchar :ruleid 255)
+                      ;; TRUE, FALSE or UNKNOWN that is in, out, undecided
+                      (schema/boolean :value)
+                      (integer :profile [:refer :profiles :id :on-delete :set-null] :not-null)))))))
 
 (defn set-default-connection
   "Set the default connection for the database."
@@ -87,7 +88,8 @@
   [profile]
   (transaction
    (let [id (first (vals (insert profiles
-                                 (values profile))))]
+                                 (values (merge {:default false}
+                                                profile)))))]
      (when (:default profile)
        (update profiles
                (set-fields {:default false})
