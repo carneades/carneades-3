@@ -240,6 +240,7 @@
 (defn update-profile+
   "Update a profile with its associated rules and metadata in the database."
   [id update]
+  (debug "update" update)
   (transaction
    (let [update' (if (seq (:metadata update))
                    (let [oldmetadataid (:metadatum (read-profile id))
