@@ -372,3 +372,14 @@
   [pid profile]
   (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
   (lp/create-profile+ profile))
+
+(defn put-profile
+  [pid id update]
+  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
+  (let [pack-rule (fn [r]
+                    (-> r
+                        (update-in [:value] #(Double/parseDouble %))
+                        (update-in [:ruleid] unserialize-atom)))
+        pack-rules (fn [rs] (map pack-rule rs))
+        update (update-in update [:rules] pack-rules)]
+   (lp/update-profile+ id update)))
