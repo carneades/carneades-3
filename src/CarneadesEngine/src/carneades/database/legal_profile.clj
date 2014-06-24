@@ -88,8 +88,7 @@
   [profile]
   (transaction
    (let [id (first (vals (insert profiles
-                                 (values (merge {:default false}
-                                                profile)))))]
+                                 (values profile))))]
      (when (:default profile)
        (update profiles
                (set-fields {:default false})
