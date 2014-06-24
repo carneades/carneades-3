@@ -143,7 +143,21 @@
                      (after :facts (delete-project))]
   (fact "It is not possible to directly set the default property of a
   profile to false."
-        (let [project (:project-name @state)])))
+        (let [project (:project-name @state)
+              profile {:metadata {:title "A profile without update"}
+                       :rules '[{:ruleid r1-a
+                                 :value 1.0}
+                                {:ruleid r2-b
+                                 :value 0.0}
+                                {:ruleid r3-c
+                                 :value 0.5}]
+                       :default true}
+              response (post-profile project profile)
+              body-content (parse (:body response))
+              id (:id body-content)
+              update '{:default false}]
+          (put-profile project id update) =>
+          (throws Exception #"Invalid update.+"))))
 
 (with-state-changes [(before :facts (create-project))
                      (after :facts (delete-project))]
