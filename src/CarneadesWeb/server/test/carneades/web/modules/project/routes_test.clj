@@ -116,4 +116,36 @@
 (with-state-changes [(before :facts (create-project))
                      (after :facts (delete-project))]
   (fact "It is possible to update the rules of a profile."
+        (let [project (:project-name @state)
+              profile {:metadata {:title "A profile without update"}
+                       :rules '[{:ruleid r1-a
+                                 :value 1.0}
+                                {:ruleid r2-b
+                                 :value 0.0}
+                                {:ruleid r3-c
+                                 :value 0.5}]
+                       :default true}
+              response (post-profile project profile)
+              body-content (parse (:body response))
+              id (:id body-content)
+              update '{:rules [{:ruleid "ra"
+                                :value 0.0}
+                               {:ruleid "rb"
+                                :value 0.5}
+                               {:ruleid "rc"
+                                :value 1.0}]}
+              response2 (put-profile project id update)
+              response3 (get-profile project id)
+              profile' (parse (:body response3))]
+          (expect (-> profile' :rules) => (:rules update)))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "It is not possible to directly set the default property of a
+  profile to false."
+        (let [project (:project-name @state)])))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "It is not possible to delete the default profile."
         (let [project (:project-name @state)])))
