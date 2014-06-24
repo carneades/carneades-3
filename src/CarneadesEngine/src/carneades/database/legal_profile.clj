@@ -123,6 +123,10 @@
   "Delete a profile in the database."
   [id]
   (transaction
+   (let [profile (read-profile id)]
+     (when (:default profile)
+       (throw (ex-info "Deleting the default profile is forbidden."
+                       {:profile profile}))))
    (delete rules (where {:profile [= id]}))
    (delete profiles (where {:id [= id]}))))
 
@@ -228,7 +232,7 @@
   "Read a profile and its associated rules and metadata in the database."
   [id]
   (transaction
-   (let [profile (read-profile id)]
+   (when-let [profile (read-profile id)]
      (-> profile
          (assoc
              :rules (map unpack-rule
