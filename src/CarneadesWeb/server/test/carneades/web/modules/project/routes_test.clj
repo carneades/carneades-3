@@ -68,6 +68,16 @@
            (body (encode update))
            (content-type "application/json"))))
 
+(defn delete-profile
+  [project id]
+  (app (-> (request :delete
+                    (str base-url
+                         "/projects/"
+                         project
+                         "/legalprofiles/"
+                         id)) 
+           (content-type "application/json"))))
+
 (with-state-changes [(before :facts (create-project))
                      (after :facts (delete-project))]
   (fact "It is possible to post a profile and read it back."
@@ -161,5 +171,37 @@
 
 (with-state-changes [(before :facts (create-project))
                      (after :facts (delete-project))]
+  (fact "It is possible to delete a profile."
+        (let [project (:project-name @state)
+              profile {:metadata {:title "A profile without update"}
+                       :rules '[{:ruleid r1-a
+                                 :value 1.0}
+                                {:ruleid r2-b
+                                 :value 0.0}
+                                {:ruleid r3-c
+                                 :value 0.5}]
+                       :default false}
+              response (post-profile project profile)
+              body-content (parse (:body response))
+              id (:id body-content)
+              _ (delete-profile project id)
+              content (get-profile project id)]
+          (:status content) => 404)))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
   (fact "It is not possible to delete the default profile."
-        (let [project (:project-name @state)])))
+        (let [project (:project-name @state)
+              profile {:metadata {:title "A profile without update"}
+                       :rules '[{:ruleid r1-a
+                                 :value 1.0}
+                                {:ruleid r2-b
+                                 :value 0.0}
+                                {:ruleid r3-c
+                                 :value 0.5}]
+                       :default true}
+              response (post-profile project profile)
+              body-content (parse (:body response))
+              id (:id body-content)]
+          (delete-profile project id) =>
+          (throws Exception #"Deleting the default profile is forbidden.+"))))

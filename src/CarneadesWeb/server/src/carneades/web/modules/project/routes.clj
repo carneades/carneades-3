@@ -199,7 +199,7 @@
 
 (defresource legal-profiles-resources [pid profile]
   :available-media-types ["application/json"]
-  :allowed-methods [:post :get]
+  :allowed-methods [:get :post]
   :available-charsets["utf-8"]
   :handle-created (fn [ctx]
                     {:id (::id ctx)})
@@ -210,12 +210,16 @@
 
 (defresource entry-legal-profiles-resource [pid id update]
   :available-media-types ["application/json"]
-  :allowed-methods [:get :put]
+  :allowed-methods [:get :put :delete]
   :available-charsets ["utf-8"]
+  :exists? (fn [ctx]
+             (when-let [p (get-profile pid id)]
+               {::entry p}))
   :put! (fn [ctx]
           (put-profile pid id update))
-  :handle-ok (fn [_]
-               (get-profile pid id)))
+  :delete! (fn [ctx]
+             (delete-profile pid id))
+  :handle-ok ::entry)
 
 (defroutes carneades-projects-api-routes
   (ANY "/" [] (list-project-resource))

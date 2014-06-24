@@ -382,4 +382,9 @@
                         (update-in [:ruleid] unserialize-atom)))
         pack-rules (fn [rs] (map pack-rule rs))
         update (update-in update [:rules] pack-rules)]
-   (lp/update-profile+ id update)))
+    (lp/update-profile+ id update)))
+
+(defn delete-profile
+  [pid id]
+  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
+  (lp/delete-profile id))
