@@ -110,6 +110,11 @@
 (defn update-profile
   "Update a profile in the database."
   [id change]
+  (when (= (:default change) false)
+    (throw (ex-info "Invalid update. Cannot set the default property
+           to false. Set the default property of another profile to
+           true if you want to change this one."
+                    {:update change})))
   (update profiles
           (set-fields change)
           (where {:id [= id]})))
@@ -240,19 +245,19 @@
 
 (defn update-profile+
   "Update a profile with its associated rules and metadata in the database."
-  [id update]
+  [id change]
   (transaction
-   (let [update' (if (seq (:metadata update))
+   (let [change' (if (seq (:metadata change))
                    (let [oldmetadataid (:metadatum (read-profile id))
-                         metadataid (create-metadatum (:metadata update))]
+                         metadataid (create-metadatum (:metadata change))]
                      (when oldmetadataid
                        (delete-metadatum oldmetadataid))
-                     (pack-profile+ update metadataid))
-                   (pack-profile+ update nil))]
-     (when (seq (:rules update))
+                     (pack-profile+ change metadataid))
+                   (pack-profile+ change nil))]
+     (when (seq (:rules change))
        (do
          (delete rules (where {:profile [= id]}))
-         (doseq [r (:rules update)]
+         (doseq [r (:rules change)]
            (create-rule id r))))
-     (when-not (empty? update')
-       (update-profile id update')))))
+     (when-not (empty? change')
+       (update-profile id change')))))
