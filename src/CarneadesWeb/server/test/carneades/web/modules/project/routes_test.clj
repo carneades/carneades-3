@@ -42,13 +42,13 @@
   (fact "It is possible to post a profile and read it back."
         (let [project (:project-name @state)
               profile {:metadata {:title "One profile"}
-                      :rules '[{:ruleid r1-a
-                                :value 1.0}
-                               {:ruleid r2-b
-                                :value 0.0}
-                               {:ruleid r3-c
-                                :value 0.5}]
-                      :default true}
+                       :rules '[{:ruleid r1-a
+                                 :value 1.0}
+                                {:ruleid r2-b
+                                 :value 0.0}
+                                {:ruleid r3-c
+                                 :value 0.5}]
+                       :default true}
              response (app (-> (request :post
                                         (str base-url
                                              "/projects/"
@@ -56,8 +56,8 @@
                                              "/legalprofiles/"))
                                (body (encode profile))
                                (content-type "application/json")))
-             body (parse (:body response))
-             id (:id body)
+             body-content (parse (:body response))
+             id (:id body-content)
              response2 (app (-> (request :get
                                          (str base-url
                                               "/projects/"
@@ -73,4 +73,47 @@
          (expect (get-rule-value (:rules profile') "r2-b") => 0.0)
          (expect (get-rule-value (:rules profile') "r3-c") => 0.5))))
 
-(fact "It is possible to update the metadata of a profile.")
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "It is possible to update the metadata of a profile."
+        (let [project (:project-name @state)
+              profile {:metadata {:title "A profile without update"}
+                       :rules '[{:ruleid r1-a
+                                 :value 1.0}
+                                {:ruleid r2-b
+                                 :value 0.0}
+                                {:ruleid r3-c
+                                 :value 0.5}]
+                       :default true}
+              response (app (-> (request :post
+                                         (str base-url
+                                              "/projects/"
+                                              project
+                                              "/legalprofiles/"))
+                                (body (encode profile))
+                                (content-type "application/json")))
+              body-content (parse (:body response))
+              id (:id body-content)
+              update {:metadata {:title "A profile with update"}}
+              response2 (app (-> (request :put
+                                          (str base-url
+                                               "/projects/"
+                                               project
+                                               "/legalprofiles/"
+                                               id))
+                                 (body (encode update))
+                                 (content-type "application/json")))
+              response3 (app (-> (request :get
+                                          (str base-url
+                                               "/projects/"
+                                               project
+                                               "/legalprofiles/"
+                                               id))
+                                 (content-type "application/json")))
+              profile' (parse (:body response3))]
+          (expect (-> profile' :metadata :title) => "A profile with update"))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "It is possible to update the rules of a profile."
+        (let [project (:project-name @state)])))
