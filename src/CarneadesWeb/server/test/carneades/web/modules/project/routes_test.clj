@@ -37,6 +37,37 @@
   [rules sid]
   (:value (first (filter #(= (:ruleid %) sid) rules))))
 
+(defn post-profile
+  [project profile]
+  (app (-> (request :post
+                    (str base-url
+                         "/projects/"
+                         (:project-name @state)
+                         "/legalprofiles/"))
+           (body (encode profile))
+           (content-type "application/json"))))
+
+(defn get-profile
+  [project id]
+  (app (-> (request :get
+                    (str base-url
+                         "/projects/"
+                         (:project-name @state)
+                         "/legalprofiles/"
+                         id))
+           (content-type "application/json"))))
+
+(defn put-profile
+  [project id update]
+  (app (-> (request :put
+                    (str base-url
+                         "/projects/"
+                         project
+                         "/legalprofiles/"
+                         id))
+           (body (encode update))
+           (content-type "application/json"))))
+
 (with-state-changes [(before :facts (create-project))
                      (after :facts (delete-project))]
   (fact "It is possible to post a profile and read it back."
@@ -49,23 +80,11 @@
                                 {:ruleid r3-c
                                  :value 0.5}]
                        :default true}
-             response (app (-> (request :post
-                                        (str base-url
-                                             "/projects/"
-                                             project
-                                             "/legalprofiles/"))
-                               (body (encode profile))
-                               (content-type "application/json")))
-             body-content (parse (:body response))
-             id (:id body-content)
-             response2 (app (-> (request :get
-                                         (str base-url
-                                              "/projects/"
-                                              project
-                                              "/legalprofiles/"
-                                              id))
-                                (content-type "application/json")))
-             profile' (parse (:body response2))]
+              response (post-profile project profile)
+              body-content (parse (:body response))
+              id (:id body-content)
+              response2 (get-profile project id)
+              profile' (parse (:body response2))]
          (expect (select-keys (:metadata profile') (keys (:metadata profile))) =>
                  (:metadata profile))
          (expect (:default profile') => true)
@@ -85,31 +104,12 @@
                                 {:ruleid r3-c
                                  :value 0.5}]
                        :default true}
-              response (app (-> (request :post
-                                         (str base-url
-                                              "/projects/"
-                                              project
-                                              "/legalprofiles/"))
-                                (body (encode profile))
-                                (content-type "application/json")))
+              response (post-profile project profile)
               body-content (parse (:body response))
               id (:id body-content)
               update {:metadata {:title "A profile with update"}}
-              response2 (app (-> (request :put
-                                          (str base-url
-                                               "/projects/"
-                                               project
-                                               "/legalprofiles/"
-                                               id))
-                                 (body (encode update))
-                                 (content-type "application/json")))
-              response3 (app (-> (request :get
-                                          (str base-url
-                                               "/projects/"
-                                               project
-                                               "/legalprofiles/"
-                                               id))
-                                 (content-type "application/json")))
+              response2 (put-profile project id update)
+              response3 (get-profile project id)
               profile' (parse (:body response3))]
           (expect (-> profile' :metadata :title) => "A profile with update"))))
 
