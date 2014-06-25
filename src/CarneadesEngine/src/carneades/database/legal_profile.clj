@@ -115,9 +115,14 @@
            to false. Set the default property of another profile to
            true if you want to change this one."
                     {:update change})))
-  (update profiles
-          (set-fields change)
-          (where {:id [= id]})))
+  (transaction
+   (update profiles
+           (set-fields change)
+           (where {:id [= id]}))
+   (when (:default change)
+     (update profiles
+             (set-fields {:default false})
+             (where {:id [not= id]})))))
 
 (defn delete-profile
   "Delete a profile in the database."
