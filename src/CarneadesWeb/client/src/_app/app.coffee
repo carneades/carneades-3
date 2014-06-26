@@ -14,14 +14,15 @@ define [
   "admin/adminModule",
   "appStates",
   "appControllers",
-  "angular-markdown",
   "common/directives/breadcrumb/breadcrumb",
   "common/providers/css-injector",
   "common/directives/page-navigation/page-navigation",
   "templates/app",
   "angular-translate",
   "angular-animate",
-  "angular-translate-loader-static-files"
+  "angular-translate-loader-static-files",
+  "common/directives/markdown/markdown",
+  'showdown'
 ], (angular) ->
   angular.module("app", [
     "ui.bootstrap",
@@ -37,8 +38,8 @@ define [
     "projects.module",
     "lican.module",
     "admin.module",
-    "angular-markdown",
-    "pascalprecht.translate"
+    "pascalprecht.translate",
+    'markdown',
   ])
 
   .run(($rootScope, $state, $stateParams) ->
@@ -52,8 +53,32 @@ define [
     $httpProvider,
     $provide,
     $translateProvider,
-    $uiViewScrollProvider
+    $uiViewScrollProvider,
+    markdownConverterProvider
   ) ->
+    carneades = (converter) ->
+      return [
+        #  ? title ? syntax
+        type: "lang"
+        regex: "\\[@([^\\,]+)[^\\]]*\\]"
+        replace: (match, citation_key) ->
+          "<a href='/carneades/#/projects/pid/db/outline?scrollTo=#{citation_key}'>#{match}</a>";
+      ,
+        type: "output"
+        filter: (source) ->
+          source.replace /file:\/\/(\w+)\/(\w+)/g, (match, project, document) ->
+            "carneadesws/documents/#{project}/#{document}"
+      ]
+
+    if typeof window.Showdown isnt
+    'undefined' and
+    window.Showdown and
+    window.Showdown.extensions
+      window.Showdown.extensions.carneades = carneades
+
+    markdownConverterProvider.config(
+      extensions: ['carneades']
+    )
 
     $translateProvider.useStaticFilesLoader(
       prefix: '/carneades/languages/',

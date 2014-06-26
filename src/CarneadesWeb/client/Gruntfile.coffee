@@ -139,10 +139,10 @@ module.exports = (grunt) ->
         files:
           'angular.js': 'angular/angular.js'
           'angular-animate.js': 'angular-animate/angular-animate.js'
+          'angular-sanitize.js': 'angular-sanitize/angular-sanitize.js'
           'angular-ui-router.js': 'angular-ui-router/release/angular-ui-router.js'
           'angular-ui-utils.js': 'angular-ui-utils/ui-utils.js'
           'angular-resource.js': 'angular-resource/angular-resource.js'
-          'angular-markdown.js': 'angular-markdown/angular.markdown.js'
           'angular-translate.js': 'angular-translate/angular-translate.js'
           'angular-translate-loader-static-files.js': 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
           'angular-bootstrap.js': 'angular-bootstrap/ui-bootstrap-tpls.js'
