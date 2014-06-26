@@ -20,7 +20,9 @@
             p
 
             section
-              markdown(extensions='carneades', ng-model='project.description',strip='true')
+              markdown(strip='true', ng-model='project.description')
+            // section
+            //   markdown(extensions='carneades', ng-model='project.description',strip='true')
             section
               ul.nav.nav-pills
                 li(ng-repeat='tool in project.tools')
