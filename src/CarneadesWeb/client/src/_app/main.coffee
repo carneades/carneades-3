@@ -15,9 +15,6 @@ require.config
     "angular-resource":
       deps: ["angular"]
 
-    "showdown-carneades":
-      deps: ["showdown"]
-
     "angular-markdown":
       deps: ["angular", "showdown"]
 
@@ -32,6 +29,7 @@ require.config
 
   paths:
     "angular": "./libs/angular"
+    'angular-sanitize': './libs/angular-sanitize'
     "angular-animate": "./libs/angular-animate"
     'angular-ui-router': './libs/angular-ui-router'
     'angular-ui-utils': './libs/angular-ui-utils'
