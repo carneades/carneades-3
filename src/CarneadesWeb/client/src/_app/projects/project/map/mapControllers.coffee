@@ -16,6 +16,7 @@ define [
           scope.$apply(-> invoker(scope, { $event: event } ) )
           )
       )
+
     .directive('bnMapMouseover', ($document, $parse) ->
       restrict: 'A'
       link: (scope, element, attrs) ->
@@ -25,6 +26,25 @@ define [
           scope.$apply(-> invoker(scope, { $event: event } ) )
           )
       )
+
+    .directive('bnMapMouseout', ($document, $parse) ->
+      restrict: 'A'
+      link: (scope, element, attrs) ->
+        scopeExpression = attrs.bnMapMouseout
+        invoker = $parse scopeExpression
+        $document.on("mouseout", ( event ) ->
+          element = event.relatedTarget
+          e = angular.element(element)
+
+          if e[0]
+            if e[0].nodeName
+              if e[0].nodeName is 'tspan' or
+              e[0].nodeName is 'rect'
+                return
+          scope.$apply(-> invoker(scope, { $event: event } ) )
+          )
+      )
+
     .directive('map', ($compile) ->
       restrict: 'E'
       replace: true
@@ -38,7 +58,8 @@ define [
 
         if attrs['ngModel']
           scope.$watch(attrs['ngModel'], render)
-        )
+    )
+
     .controller('MapCtrl', ($scope, map) ->
       $scope.handleClick = (event) ->
         element = event.target
@@ -64,11 +85,35 @@ define [
         element = event.target
         e = angular.element(element).parent()
         nid = angular.element(element).parent().attr('id')
+
         if nid
-          if nid[0] == 's' or nid[0] != 'e'
+          if nid[0] is 's' or nid[0] isnt 'e'
             e.addClass "map-mouseover"
+            if nid[0] is 's'
+              item = e.find 'rect'
+              item.css 'stroke', 'rgb(230,1,0)'
+            # else if nid[0] is 'a'
+            #   item = e.find 'circle'
+            #   item.css 'stroke', 'rgb(230,1,0)'
 
         return undefined
 
+      $scope.handleMouseout = (event) ->
+        element = event.target
+        e = angular.element(element).parent()
+        nid = angular.element(element).parent().attr('id')
+        if nid
+          if nid[0] is 's' or nid[0] isnt 'e'
+            if nid[0] is 's'
+              item = e.find 'rect'
+              item.css 'stroke', 'rgb(0,0,0)'
+        #     # else if nid[0] is 'a'
+        #     #   item = e.find 'circle'
+        #     #   item.css 'stroke', 'rgb(0,0,0)'
+
+        return undefined
+
+
       $scope.svg = map
+
     )
