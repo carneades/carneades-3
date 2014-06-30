@@ -33,9 +33,8 @@
        (construct-arguments+ argument-graph issues max-goals facts generators))))
 
 (defn argue
-  "engine argument-evaluator literal  -> argument-graph
-   The evaluator is optional. If none is provided the arguments
-   are constructed but not evaluated."
+  "engine argument-evaluator literal profile -> argument-graph The evaluator and legal profile are optional. If no evaluator is provided the
+  arguments are constructed but not evaluated."
   ([engine evaluator issue profile]
      {:pre [(literal? issue)]}
      (apply-legal-profile (engine issue) evaluator profile))
