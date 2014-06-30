@@ -72,7 +72,7 @@ argument graph."
                      500
                      facts
                      [(t/generate-arguments-from-theory theory')])
-             g (shell/argue engine aspic-grounded query)
+             g (shell/argue engine aspic-grounded query profile)
              conclusion (ag/get-statement-node
                          g
                          '(mayBuildHouse Tom t1-cotedazur))]
