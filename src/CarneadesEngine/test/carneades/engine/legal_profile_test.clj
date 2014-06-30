@@ -6,7 +6,11 @@
             [carneades.engine.shell :as shell]
             [taoensso.timbre :as timbre :refer [debug info spy]]
             [carneades.engine.aspic :refer [aspic-grounded]]
-            [carneades.maps.lacij :refer [export]]))
+            [carneades.maps.lacij :refer [export]]
+            [carneades.engine.legal-profile :refer [apply-legal-profile]]
+            [carneades.engine.argument-graph :as ag]
+            [carneades.engine.argument-evaluation :refer [in-node?
+                                                          out-node?]]))
 
 (def theory
   (t/make-theory
@@ -31,30 +35,70 @@
        :header (dc/make-metadata
                 :title "Building rule.")
        :conclusion '(mayBuildHouse ?Person ?Terrain)
-       :premises [(a/pm '(hasBuildingPermit ?Person ?Terrain))
-                  (a/pm '(hasTerrain ?Person ?Terrain))])
+       :premises [(a/pm '(hasTerrain ?Person ?Terrain))
+                  (a/pm '(hasBuildingPermit ?Person ?Terrain))])
 
       (t/make-scheme
-       :id 's-building-permit
+       :id 's-permit
        :weight 0.5
        :header (dc/make-metadata
                 :title "Permit rule.")
        :conclusion '(hasBuildingPermit ?Person ?Terrain)
-       :premises [(a/pm '(authoritiesContacted ?Person ?Terrain))
+       :premises [(a/pm '(hasContactedAuthorities ?Person ?Terrain))
                   (a/pm '(hasBuildingPlan ?Terrain))])
 
       (t/make-scheme
-       :id 's-has-terrain
+       :id 's-terrain
        :weight 0.5
        :header (dc/make-metadata
                 :title "Terrain rule.")
        :conclusion '(hasTerrain ?Person ?Terrain)
-       :premises [(a/pm '(isOwner ?Person ?Terrain))])
+       :premises [(a/pm '(isOwner ?Person ?Terrain))
+                  (a/pm '(Terrain ?Terrain))])
       ])]))
 
-(let [query '(hasTerrain ?Person ?Terrain)
-      facts '[(isOwner Tom t1-cotedazur)]
-      engine (shell/make-engine 500 facts [(t/generate-arguments-from-theory theory)])
-      ag (shell/argue engine aspic-grounded query)]
-  (debug ag)
-  (export ag "/tmp/ag1.svg"))
+(facts "A profile without rules does not affect the evaluation of the
+argument graph."
+       (let [query '(mayBuildHouse ?Person ?Terrain)
+             facts '[(Terrain t1-cotedazur)
+                     (isOwner Tom t1-cotedazur)
+                     (hasContactedAuthorities Tom t1-cotedazur)
+                     (hasBuildingPlan t1-cotedazur)]
+             profile {:metadata {:title "An empty profile"}
+                      :default false
+                      :rules []}
+             theory' (apply-legal-profile theory profile)
+             engine (shell/make-engine
+                     500
+                     facts
+                     [(t/generate-arguments-from-theory theory')])
+             g (shell/argue engine aspic-grounded query)
+             conclusion (ag/get-statement-node
+                         g
+                         '(mayBuildHouse Tom t1-cotedazur))]
+         (expect (in-node? conclusion) => true)))
+
+(fact "A profile with a rule value set to false make the corresponding built
+argument unacceptable."
+      (let [query '(mayBuildHouse ?Person ?Terrain)
+            facts '[(Terrain t1-cotedazur)
+                    (isOwner Tom t1-cotedazur)
+                    (hasContactedAuthorities Tom t1-cotedazur)
+                    (hasBuildingPlan t1-cotedazur)]
+            profile {:metadata {:title "A profile with one rule"}
+                     :default false
+                     :rules [{:ruleid 's-permit
+                              :value 0.0}]}
+            theory' (apply-legal-profile theory profile)
+            engine (shell/make-engine
+                    500
+                    facts
+                    [(t/generate-arguments-from-theory theory')])
+            g (shell/argue engine aspic-grounded query)
+            argid (first (:pro (ag/get-statement-node
+                              g
+                              '(hasBuildingPermit Tom t1-cotedazur))))
+            arg (ag/get-argument-node g argid)]
+        (expect (out-node? arg) => true)
+        (export g "/tmp/ag1.svg")))
+
