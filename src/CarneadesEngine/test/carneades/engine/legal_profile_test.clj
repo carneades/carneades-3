@@ -57,7 +57,7 @@
                   (a/pm '(Terrain ?Terrain))])
       ])]))
 
-(facts "A profile without rules does not affect the evaluation of the
+(fact "A profile without rules does not affect the evaluation of the
 argument graph."
        (let [query '(mayBuildHouse ?Person ?Terrain)
              facts '[(Terrain t1-cotedazur)
