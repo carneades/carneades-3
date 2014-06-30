@@ -103,6 +103,33 @@ argument unacceptable."
                          '(valid s-permit))
             arg (ag/get-argument-node g argid)]
         (expect (out-node? arg) => true)
-        (expect (out-node? switch-node) => true)
+        (expect (out-node? switch-node) => true)))
+
+(fact "A profile with a rule value set to 1.1 make the corresponding built
+switch statement in"
+      (let [query '(mayBuildHouse ?Person ?Terrain)
+            facts '[(Terrain t1-cotedazur)
+                    (isOwner Tom t1-cotedazur)
+                    (hasContactedAuthorities Tom t1-cotedazur)
+                    (hasBuildingPlan t1-cotedazur)]
+            profile {:metadata {:title "A profile with one rule"}
+                     :default false
+                     :rules [{:ruleid 's-permit
+                              :value 1.0}]}
+            theory' (extend-theory theory profile)
+            engine (shell/make-engine
+                    500
+                    facts
+                    [(t/generate-arguments-from-theory theory')])
+            g (shell/argue engine aspic-grounded query profile)
+            argid (first (:pro (ag/get-statement-node
+                                g
+                                '(hasBuildingPermit Tom t1-cotedazur))))
+            switch-node (ag/get-statement-node
+                         g
+                         '(valid s-permit))
+            arg (ag/get-argument-node g argid)]
+        (expect (in-node? arg) => true)
+        (expect (in-node? switch-node) => true)
         (export g "/tmp/ag1.svg")))
 
