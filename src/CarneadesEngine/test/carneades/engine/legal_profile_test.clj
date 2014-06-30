@@ -130,6 +130,5 @@ switch statement in"
                          '(valid s-permit))
             arg (ag/get-argument-node g argid)]
         (expect (in-node? arg) => true)
-        (expect (in-node? switch-node) => true)
-        (export g "/tmp/ag1.svg")))
+        (expect (in-node? switch-node) => true)))
 
