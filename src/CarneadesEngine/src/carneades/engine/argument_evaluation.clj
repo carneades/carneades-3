@@ -29,17 +29,25 @@
 
 (defn standard-label? [key] (contains? #{:in, :out, :undecided} key))
 
+(defn in-value?
+  [v]
+  (= v 1.0))
+
+(defn out-value?
+  [v]
+  (= v 0.0))
+
 (defn in-node? 
   "A statement or argument node is in iff its value is 1.0."
   [node]
   {:pre [(or (statement-node? node) (argument-node? node))]}
-  (= (:value node) 1.0))
+  (in-value? (:value node)))
 
 (defn out-node?
   "A statement or argument node is out iff its value is 0.0."
   [node]
   {:pre [(or (statement-node? node) (argument-node? node))]}
-  (= (:value node) 0.0))
+  (out-value? (:value node)))
 
 (defn undecided-node?
   "A statement or argument node is undecided iff it is neither in nor out."
@@ -55,12 +63,3 @@
   (cond (in-node? node) :in
         (out-node? node) :out
         :else :undecided))
-
-
-
-
-
-
-
-
-

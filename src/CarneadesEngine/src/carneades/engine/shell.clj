@@ -11,7 +11,8 @@
         carneades.engine.argument-construction
         carneades.engine.argument-evaluation
         carneades.engine.aspic
-        carneades.engine.ask))
+        carneades.engine.ask)
+  (:require [carneades.engine.legal-profile :refer [apply-legal-profile]]))
 
 (defn make-engine
   "argument-graph integer (seq-of literal) (seq-of generator) ->
@@ -35,6 +36,9 @@
   "engine argument-evaluator literal  -> argument-graph
    The evaluator is optional. If none is provided the arguments
    are constructed but not evaluated."
+  ([engine evaluator issue profile]
+     {:pre [(literal? issue)]}
+     (apply-legal-profile (engine issue) evaluator profile))
   ([engine evaluator issue]
     {:pre [(literal? issue)]}
     (evaluate evaluator (engine issue)))

@@ -7,7 +7,7 @@
             [taoensso.timbre :as timbre :refer [debug info spy]]
             [carneades.engine.aspic :refer [aspic-grounded]]
             [carneades.maps.lacij :refer [export]]
-            [carneades.engine.legal-profile :refer [apply-legal-profile]]
+            [carneades.engine.legal-profile :refer [extend-theory]]
             [carneades.engine.argument-graph :as ag]
             [carneades.engine.argument-evaluation :refer [in-node?
                                                           out-node?]]))
@@ -67,7 +67,7 @@ argument graph."
              profile {:metadata {:title "An empty profile"}
                       :default false
                       :rules []}
-             theory' (apply-legal-profile theory profile)
+             theory' (extend-theory theory profile)
              engine (shell/make-engine
                      500
                      facts
@@ -78,7 +78,7 @@ argument graph."
                          '(mayBuildHouse Tom t1-cotedazur))]
          (expect (in-node? conclusion) => true)))
 
-(fact "A profile with a rule value set to false make the corresponding built
+(fact "A profile with a rule value set to 0.0 make the corresponding built
 argument unacceptable."
       (let [query '(mayBuildHouse ?Person ?Terrain)
             facts '[(Terrain t1-cotedazur)
@@ -89,16 +89,20 @@ argument unacceptable."
                      :default false
                      :rules [{:ruleid 's-permit
                               :value 0.0}]}
-            theory' (apply-legal-profile theory profile)
+            theory' (extend-theory theory profile)
             engine (shell/make-engine
                     500
                     facts
                     [(t/generate-arguments-from-theory theory')])
-            g (shell/argue engine aspic-grounded query)
+            g (shell/argue engine aspic-grounded query profile)
             argid (first (:pro (ag/get-statement-node
                               g
                               '(hasBuildingPermit Tom t1-cotedazur))))
+            switch-node (ag/get-statement-node
+                         g
+                         '(valid s-permit))
             arg (ag/get-argument-node g argid)]
         (expect (out-node? arg) => true)
+        (expect (out-node? switch-node) => true)
         (export g "/tmp/ag1.svg")))
 
