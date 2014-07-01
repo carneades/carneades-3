@@ -10,7 +10,7 @@ define ['angular', 'angular-resource', './licanControllers', './licanResources']
       {
         name: 'lican'
         label: 'License Analyser Introduction'
-        url: '/lican?entity'
+        url: '/lican?entity&legalprofile'
         views:
           "css@":
             template: '<css-inject default-theme="markos"></css-inject>'
