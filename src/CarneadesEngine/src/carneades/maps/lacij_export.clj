@@ -18,7 +18,8 @@
   (:require [analemma.xml :as xml]
             [analemma.svg :as svg]
             [clojure.string :as s]
-            [tikkba.utils.dom :as dom])
+            [tikkba.utils.dom :as dom]
+            [taoensso.timbre :as timbre :refer [debug info spy]])
   (:import (java.io InputStreamReader ByteArrayInputStream
                     ByteArrayOutputStream)))
 
@@ -130,14 +131,21 @@
   [svgmap arg ag]
   (add-argument-node svgmap arg ag))
 
+(defn is-undercutter-conclusion?
+  [ag stmt]
+  (let [literal (map->statement stmt)]
+    (and (= 'valid (literal-predicate literal))
+         (get-argument-node ag (first (term-args literal))))))
+
 (defn filter-out-undercutters-conclusions
-  [statements]
-  (filter #(not= 'valid (literal-predicate (map->statement %))) statements))
+  [ag]
+  (filter (complement
+           (partial is-undercutter-conclusion? ag))
+          (vals (:statement-nodes ag))))
 
 (defn add-entities
   [svgmap ag stmt-str]
-  (let [statements (filter-out-undercutters-conclusions
-                    (vals (:statement-nodes ag)))
+  (let [statements (filter-out-undercutters-conclusions ag)
         arguments (vals (:argument-nodes ag))]
     (let [svgmap (reduce (fn [svgmap stmt]
                            (add-statement svgmap stmt ag stmt-str))

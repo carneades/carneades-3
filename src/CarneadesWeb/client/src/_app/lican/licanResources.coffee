@@ -42,10 +42,10 @@ define ['angular'], (angular) ->
         else
           @pushNewQuestions data.questions        
 
-      analyse: (entity) ->
+      analyse: (entity, legalprofile) ->
         console.log 'MultiQuestionLoader', entity
 
-        ($http.get "../carneades/api/lican/analyse?entity=#{entity}")
+        ($http.get "../carneades/api/lican/analyse?entity=#{entity}&legalprofile=#{legalprofile}")
           .success (data) =>
             @processData data
           .error (data, status) ->
