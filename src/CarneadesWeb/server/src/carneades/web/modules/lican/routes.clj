@@ -8,18 +8,17 @@
   (:require [sandbar.stateful-session :refer :all]
             [ring.middleware.session.cookie :refer :all]
             [ring.middleware.json :refer [wrap-json-response]]
-            [compojure.core :refer [defroutes context ANY GET]]
+            [compojure.core :refer [defroutes context ANY GET POST PUT]]
             [liberator.core :refer [defresource]]
-            [cheshire.core :refer :all]
             [clojure.set :as set]
             [clabango.parser :as parser]
             [noir.request :refer :all]
             [carneades.engine.utils :refer [unserialize-atom]]
             [carneades.project.admin :as project]
-
             [carneades.web.modules.lican.entity :as entity]
             [carneades.web.modules.lican.analysis :as analysis]
-            [carneades.web.modules.lican.dbg-analysis :as debug-analysis]))
+            [carneades.web.modules.lican.dbg-analysis :as debug-analysis]
+            [taoensso.timbre :as timbre :refer [debug info warn error]]))
 
 
 (defresource entry-entity-resource [pid uri]
@@ -36,11 +35,13 @@
                     (::questions ctx))
   :post! (fn [ctx] (assoc ctx ::questions (analysis/process-answers answs uuid))))
 
-(defresource entry-analyse-resource [entity]
+(defresource entry-analyse-resource [entity legalprofile]
   :available-media-types ["application/json"]
   :allowed-methods [:get]
   :available-charsets ["utf-8"]
-  :handle-ok (fn [_] (analysis/analyse entity)))
+  :handle-ok (fn [_]
+               (debug "legalprofile " legalprofile)
+               (analysis/analyse entity legalprofile)))
 
 (defresource entry-dbg-analyse-resource [e r q l]
   ;; q := query; l := limit; e := endpoint; r:= repo-name
@@ -64,8 +65,8 @@
   :post! (fn [ctx] {::body (debug-analysis/ask e r q l)}))
 
 (defroutes carneades-lican-api-routes
-  (GET "/analyse" [entity] (entry-analyse-resource entity))
-
+  (GET "/analyse" [entity legalprofile] (entry-analyse-resource entity legalprofile))
+  
   (context "/entities" []
            (ANY "/:pid" [pid uri] (entry-entity-resource pid uri)))
 
@@ -76,5 +77,4 @@
   (context "/debug" [q l e r]
            ;; q := query; l := limit; e := endpoint; r:= repo-name
            (ANY "/analyse" [] (entry-dbg-analyse-resource e r q l))
-           (ANY "/query" [] (entry-dbg-query-resource e r q l))
-           (ANY "/ask" [] (entry-dbg-ask-resource e r q l))))
+           (ANY "/query" [] (entry-dbg-query-resource e r q l)) (ANY "/ask" [] (entry-dbg-ask-resource e r q l)))) 
