@@ -38,7 +38,10 @@
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
             [carneades.web.modules.lican.entity :as entity]
-            [taoensso.timbre :as timbre :refer [debug info warn error]]))
+            [taoensso.timbre :as timbre :refer [debug info warn error]]
+            [carneades.database.legal-profile :as lp]
+            [carneades.engine.legal-profile :refer [extend-theory]]
+            [carneades.engine.aspic :refer [aspic-grounded]]))
 
 (defn initial-state
   []
@@ -141,6 +144,8 @@
 
 (defn on-ag-built
   [nb-licenses entity ag]
+  (debug "on-ag-built")
+  (pprint ag)
   (assoc ag :header (dc/make-metadata
                      :title (str "Result of the analysis of " (:name entity))
                      :description {:en (if (> nb-licenses 1)
@@ -148,7 +153,7 @@
                                          "See below the analysis of the legal issue.")})))
 
 (defn start-engine
-  [entity]
+  [entity legalprofileid]
   (let [project "markos"
         properties (project/load-project-properties project)
         triplestore (:triplestore properties)
@@ -158,7 +163,6 @@
                                   triplestore
                                   repo-name
                                   markos-namespaces)
-        _ (prn "licenses retrieved")
         licenses-statements (map #(unserialize-atom
                                    (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
                                            entity
@@ -167,7 +171,9 @@
         theories (:policies properties)
         query (first licenses-statements)
         loaded-theories (project/load-theory project theories)
-        _ (prn "theory loaded")
+        _ (lp/set-default-connection project "root" "pw1")
+        profile (lp/read-profile+ legalprofileid)
+        _ (debug "profile = " profile)
         translator (comp (tr/make-default-translator)
                          (ttr/make-language-translator (:language loaded-theories))
                          (ttr/make-uri-shortening-translator markos-namespaces)
@@ -178,13 +184,14 @@
         triplestore-generator (triplestore/generate-arguments-from-triplestore triplestore
                                                                                repo-name
                                                                                markos-namespaces)
+        loaded-theories' (extend-theory loaded-theories profile)
         engine (shell/make-engine+ ag 500 #{}
                                    (list
                                     triplestore-generator
-                                    (theory/generate-arguments-from-theory loaded-theories)
+                                    (theory/generate-arguments-from-theory loaded-theories')
                                     argument-from-user-generator))
-        _ (prn "engine constructed")
-        future-ag (future (shell/argue+ engine licenses-statements))
+        future-ag (future (shell/argue+
+                           engine aspic-grounded licenses-statements profile))
         entity (entity/get-software-entity project (unserialize-atom entity))
         analysis {:ag nil
                   :project project
@@ -208,6 +215,6 @@
 (defn analyse
   "Begins an analysis of a given software entity. The theories inside project is used.
 Returns a set of questions for the frontend."
-  [entity]
+  [entity legalprofile]
   (info "[analyse]")
-  (start-engine entity))
+  (start-engine entity legalprofile))
