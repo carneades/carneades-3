@@ -16,8 +16,7 @@ define ['angular', 'angular-translate',
   angular.module('lican.controllers', ['services.notifications', 'directives.questions',
     'pascalprecht.translate'])
 
-  # Example of call http://localhost:8080/carneades/#/lican?entity=http:%2F%2Fmarkosproject.eu%2Fkb%2FSoftwareRelease%2F366
-  # http://markosproject.eu/kb/SoftwareRelease/9209
+  # Example of call http://localhost:8080/carneades/#/lican?entity=http:%2F%2Fmarkosproject.eu%2Fkb%2FSoftwareRelease%2F1970&legalprofile=1
   .controller('IntroCtrl', ['$scope', '$state', '$stateParams', 'entity', '$translate',
   ($scope, $state, $stateParams, entity, $translate) ->
 
@@ -33,7 +32,7 @@ define ['angular', 'angular-translate',
   'questions', 'notifications',
   ($scope, $state, $stateParams, questions, notifications) ->
 
-    questions.analyse $stateParams.entity
+    questions.analyse $stateParams.entity, $stateParams.legalprofile
       
     $scope.questionGroups = questions.getQuestionGroups();
     $scope.sendAnswer = () ->
