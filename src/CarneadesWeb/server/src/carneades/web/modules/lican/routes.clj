@@ -41,7 +41,7 @@
   :available-charsets ["utf-8"]
   :handle-ok (fn [_]
                (debug "legalprofile " legalprofile)
-               (analysis/analyse entity)))
+               (analysis/analyse entity legalprofile)))
 
 (defresource entry-dbg-analyse-resource [e r q l]
   ;; q := query; l := limit; e := endpoint; r:= repo-name
