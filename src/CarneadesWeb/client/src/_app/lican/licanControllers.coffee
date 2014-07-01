@@ -24,8 +24,12 @@ define ['angular', 'angular-translate',
     sEntity = entity.get uri: $stateParams.entity, ->
       $scope.title = $translate.instant 'lican.title', {entity: sEntity.name}
 
-      $scope.startAnalysis = () ->
-        $state.go('lican.questions')
+    console.log $stateParams.debug
+    if not $stateParams.debug
+      $state.go 'lican.questions'
+    
+    $scope.startAnalysis = () ->
+      $state.go 'lican.questions'
     ])
 
   .controller('QuestionsCtrl', ['$scope', '$state', '$stateParams',
