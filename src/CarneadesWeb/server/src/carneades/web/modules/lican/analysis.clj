@@ -40,7 +40,8 @@
             [carneades.web.modules.lican.entity :as entity]
             [taoensso.timbre :as timbre :refer [debug info warn error]]
             [carneades.database.legal-profile :as lp]
-            [carneades.engine.legal-profile :refer [extend-theory]]
+            [carneades.engine.legal-profile :refer [extend-theory
+                                                    empty-legal-profile]]
             [carneades.engine.aspic :refer [aspic-grounded]]))
 
 (defn initial-state
@@ -152,6 +153,14 @@
                                          (format "The analysed sofware entity is using %s licenses templates. See below the analysis of the legal issues." nb-licenses)
                                          "See below the analysis of the legal issue.")})))
 
+(defn load-profile
+  [project id]
+  (if (or (empty? id) (= id "null"))
+    empty-legal-profile
+    (do
+      (lp/set-default-connection project "root" "pw1")
+      (lp/read-profile+ id))))
+
 (defn start-engine
   [entity legalprofileid]
   (let [project "markos"
@@ -171,9 +180,6 @@
         theories (:policies properties)
         query (first licenses-statements)
         loaded-theories (project/load-theory project theories)
-        _ (lp/set-default-connection project "root" "pw1")
-        profile (lp/read-profile+ legalprofileid)
-        _ (debug "profile = " profile)
         translator (comp (tr/make-default-translator)
                          (ttr/make-language-translator (:language loaded-theories))
                          (ttr/make-uri-shortening-translator markos-namespaces)
@@ -184,6 +190,8 @@
         triplestore-generator (triplestore/generate-arguments-from-triplestore triplestore
                                                                                repo-name
                                                                                markos-namespaces)
+        profile (load-profile project legalprofileid)
+        _ (debug "profile " profile)
         loaded-theories' (extend-theory loaded-theories profile)
         engine (shell/make-engine+ ag 500 #{}
                                    (list

@@ -16,6 +16,10 @@ corresponding value v. This premise acts as a kind of switch to
             [carneades.engine.argument-evaluation :refer :all]
             [carneades.engine.argument-graph :as ag]))
 
+(def empty-legal-profile {:metadata {:title "Empty legal profile"}
+                          :default false
+                          :rules []})
+
 (defn- insert-switch-rule
   [premises scheme rule]
   (conj premises (a/pm (list 'valid (:id scheme)))))
