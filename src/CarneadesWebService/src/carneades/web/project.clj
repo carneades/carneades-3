@@ -7,6 +7,7 @@
   (:use [carneades.engine.utils :only [exists?]])
   (:require [carneades.database.db :as db]
             [carneades.database.case :as case]
+            [carneades.database.admin :as dbadmin]
             [carneades.project.admin :as project]))
 
 (defn init-debate-db
@@ -20,10 +21,11 @@
                            :id "main"}))))
 
 (defn init-projects-data!
-  "Returns the project data and creates debate databases if missing."
+  "Returns the project data and creates mandatory databases if missing."
   []
   (reduce (fn [m project]
-            (init-debate-db project)
+            ;; (init-debate-db project)
+            (dbadmin/create-missing-dbs project "root" "pw1")
             (assoc m project (project/load-project project)))
           {}
    (project/list-projects)))

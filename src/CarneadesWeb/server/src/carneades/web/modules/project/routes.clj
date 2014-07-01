@@ -6,32 +6,19 @@
 (ns carneades.web.modules.project.routes
   ^{:doc "Definition of project routes."}
   (:require [carneades.web.modules.session.logic :refer [session-put-language]]
-            [carneades.web.modules.project.logic
-             :refer [get-projects
-                     get-metadata
-                     get-metadatum
-                     get-references
-                     get-outline
-                     get-issues
-                     get-statement
-                     get-argument
-                     get-nodes
-                     get-argument-map
-                     get-theories
-                     get-theme
-                     get-project-archive
-                     post-project-archive]]
+            [carneades.web.modules.project.logic :refer :all]
             [sandbar.stateful-session :refer :all]
             [clojure.string :refer [split]]
             [ring.middleware.session.cookie :refer :all]
             [ring.middleware.json :refer [wrap-json-response]]
             [compojure.core :refer [defroutes context ANY GET]]
-            [liberator.core :refer [defresource]]
+            [liberator.core :refer [defresource request-method-in]]
             [cheshire.core :refer :all]
             [clojure.set :as set]
             [clabango.parser :as parser]
             [noir.request :refer :all]
-            [taoensso.timbre :as timbre :refer [debug info warn error]]))
+            [taoensso.timbre :as timbre :refer [debug info spy]])
+  (:import java.net.URL))
 
 (defresource list-metadata-resource [pid db k]
   :available-media-types ["application/json"]
@@ -180,6 +167,7 @@
   :allowed-methods [:get]
   :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
   :handle-ok (fn [{lang :language}]
+               (info "params:" params)
                (generate-string (assoc (get-theories params)
                                   :lang lang))))
 
@@ -209,6 +197,30 @@
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
                (get-argument-map pid db :lang (keyword lang) :host host)))
 
+(defresource legal-profiles-resources [pid profile]
+  :available-media-types ["application/json"]
+  :allowed-methods [:get :post]
+  :available-charsets["utf-8"]
+  :handle-created (fn [ctx]
+                    {:id (::id ctx)})
+  :handle-ok (fn [ctx]
+               (get-profiles pid))
+  :post! (fn [_]
+           {::id (post-profile pid profile)}))
+
+(defresource entry-legal-profiles-resource [pid id update]
+  :available-media-types ["application/json"]
+  :allowed-methods [:get :put :delete]
+  :available-charsets ["utf-8"]
+  :exists? (fn [ctx]
+             (when-let [p (get-profile pid id)]
+               {::entry p}))
+  :put! (fn [ctx]
+          (put-profile pid id update))
+  :delete! (fn [ctx]
+             (delete-profile pid id))
+  :handle-ok ::entry)
+
 (defroutes carneades-projects-api-routes
   (ANY "/" [] (list-project-resource))
   (ANY "/upload" [file] (entry-upload-project-resource file))
@@ -225,6 +237,12 @@
            (context "/theories" []
                     (ANY "/" [] (list-theories-resource pid))
                     (ANY "/:tpid/:tid" {params :params} (entry-theories-resource params)))
+
+           (context "/legalprofiles" []
+             (ANY "/" req (legal-profiles-resources pid (:body req)))
+             (ANY "/:id" req (entry-legal-profiles-resource pid
+                                                            (-> req :params :id)
+                                                            (:body req))))
 
            (context "/:db" [db]
                     (context "/metadata" []
@@ -246,7 +264,7 @@
                              (ANY "/:sid" [sid] (entry-statement-resource pid db sid)))
 
                     (context "/nodes" []
-                             (ANY "/" [] (list-node-resource pid db))
+                      (ANY "/" [] (list-node-resource pid db))
                              (ANY "/:nid" [nid] (entry-node-resource pid db nid)))
 
                     (context "/map" []
