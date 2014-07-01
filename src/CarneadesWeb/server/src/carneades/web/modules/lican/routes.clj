@@ -15,7 +15,6 @@
             [noir.request :refer :all]
             [carneades.engine.utils :refer [unserialize-atom]]
             [carneades.project.admin :as project]
-
             [carneades.web.modules.lican.entity :as entity]
             [carneades.web.modules.lican.analysis :as analysis]
             [carneades.web.modules.lican.dbg-analysis :as debug-analysis]
@@ -36,11 +35,13 @@
                     (::questions ctx))
   :post! (fn [ctx] (assoc ctx ::questions (analysis/process-answers answs uuid))))
 
-(defresource entry-analyse-resource [entity]
+(defresource entry-analyse-resource [entity legalprofile]
   :available-media-types ["application/json"]
   :allowed-methods [:get]
   :available-charsets ["utf-8"]
-  :handle-ok (fn [_] (analysis/analyse entity)))
+  :handle-ok (fn [_]
+               (debug "legalprofile " legalprofile)
+               (analysis/analyse entity)))
 
 (defresource entry-dbg-analyse-resource [e r q l]
   ;; q := query; l := limit; e := endpoint; r:= repo-name
@@ -64,7 +65,7 @@
   :post! (fn [ctx] {::body (debug-analysis/ask e r q l)}))
 
 (defroutes carneades-lican-api-routes
-  (GET "/analyse" [entity] (entry-analyse-resource entity))
+  (GET "/analyse" [entity legalprofile] (entry-analyse-resource entity legalprofile))
   
   (context "/entities" []
            (ANY "/:pid" [pid uri] (entry-entity-resource pid uri)))
