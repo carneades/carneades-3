@@ -3,8 +3,8 @@
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-(ns carneades.web.modules.project.logic
-  ^{:doc "Basic functions for serving project requests"}
+(ns ^{:doc "Basic functions for serving project requests"}
+  carneades.web.modules.project.logic
   (:require [clojure.string :refer [join]]
             [clojure.set :as set]
             [clojure.zip :as z]
@@ -24,7 +24,8 @@
             [carneades.engine.utils :refer [dissoc-in serialize-atom unserialize-atom]]
             [carneades.engine.theory :as theory]
             [carneades.engine.theory.zip :as tz]
-            [carneades.database.legal-profile :as lp]))
+            [carneades.database.legal-profile :as lp]
+            [carneades.web.modules.project.service :as s]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
@@ -284,12 +285,16 @@
   (let [arg (get-argument [project db aid] :host host :lang lang)]
     (trim-argument arg)))
 
+(defn to-map
+  [rec]
+  (into {} rec))
+
 (defn get-statement
   [[project db id :as params]
    & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (let [stmt (get-resource host :statement params)
+  (let [stmt (s/get-statement project db id)
         stmt (update-in stmt [:header] trim-metadata lang)
         stmt (assoc stmt :text (or (lang (:text stmt)) (serialize-atom (:atom stmt))))
         stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
@@ -298,7 +303,8 @@
                                    (:con stmt)))
         stmt (assoc stmt :premise-of
                     (map (partial get-trimed-argument project db host lang) (:premise-of stmt)))]
-    stmt))
+    (debug "stmt" stmt)
+    (to-map stmt)))
 
 (defn get-nodes
   [project db id & {:keys [lang host] :or {lang :en host "localhost:8080"}}]

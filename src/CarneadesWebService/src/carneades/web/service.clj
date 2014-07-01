@@ -277,12 +277,7 @@
   (GET "/statement/:project/:db" [project db]
        (let [db2 (db/make-connection project db "guest" "")]
          (db/with-db db2 {:body (map pack-statement (ag-db/list-statements))})))
-
-  (GET "/statement/:project/:db/:id" [project db id]
-       (let [db2 (db/make-connection project db "guest" "")]
-         (db/with-db db2
-           {:body (pack-statement (ag-db/read-statement id))})))
-
+  
   (POST "/statement/:project/:db" request
         (let [m (json/read-json (slurp (:body request)))
               s (unpack-statement m)
