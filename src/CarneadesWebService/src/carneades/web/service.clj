@@ -98,43 +98,43 @@
             :headers {"Content-Type" "application/clojure;charset=UTF-8"}
             })))
 
-  (POST "/project/:id/theories" [id file]
-        (let [tempfile (:tempfile file)
-              filename (:filename file)]
-          (if (not= (extension filename) "clj")
-           {:status 415
-            :body "Invalid format. Clojure file expected."}
-           (do
-             (project/import-theories id (.getPath tempfile) filename)
-             (reset! state (init-projects-data))
-             {:status 200}))
-          {:status 200}))
+  ;; (POST "/project/:id/theories" [id file]
+  ;;       (let [tempfile (:tempfile file)
+  ;;             filename (:filename file)]
+  ;;         (if (not= (extension filename) "clj")
+  ;;          {:status 415
+  ;;           :body "Invalid format. Clojure file expected."}
+  ;;          (do
+  ;;            (project/import-theories id (.getPath tempfile) filename)
+  ;;            (reset! state (init-projects-data))
+  ;;            {:status 200}))
+  ;;         {:status 200}))
 
-  (DELETE "/project/:id/theories/:theories" [id theories]
-          (project/delete-theories id theories)
-          (reset! state (init-projects-data))
-          {:status 200})
+  ;; (DELETE "/project/:id/theories/:theories" [id theories]
+  ;;         (project/delete-theories id theories)
+  ;;         (reset! state (init-projects-data))
+  ;;         {:status 200})
 
-  (PUT "/project/:id" request
-       (let [m (json/read-json (slurp (:body request)))
-             id (-> request :params :id)
-             [username password] (get-username-and-password request)
-             m (dissoc m :id)
-             accepted-keys (filter (fn [k] (not (and (string? (k m))
-                                                     (empty? (k m)))))
-                                   (keys m))
-             m (select-keys m accepted-keys)]
-         (project/update-project-properties id m)
-         (reset! state (init-projects-data))
-         {:status 200
-          :body (get-project-properties id state)}))
+  ;; (PUT "/project/:id" request
+  ;;      (let [m (json/read-json (slurp (:body request)))
+  ;;            id (-> request :params :id)
+  ;;            [username password] (get-username-and-password request)
+  ;;            m (dissoc m :id)
+  ;;            accepted-keys (filter (fn [k] (not (and (string? (k m))
+  ;;                                                    (empty? (k m)))))
+  ;;                                  (keys m))
+  ;;            m (select-keys m accepted-keys)]
+  ;;        (project/update-project-properties id m)
+  ;;        (reset! state (init-projects-data))
+  ;;        {:status 200
+  ;;         :body (get-project-properties id state)}))
 
-  (DELETE "/project/:id" request
-          (let [id (-> request :params :id)
-                [username password] (get-username-and-password request)]
-            (project/delete-project id)
-            (reset! state (init-projects-data))
-            {:status 200}))
+  ;; (DELETE "/project/:id" request
+  ;;         (let [id (-> request :params :id)
+  ;;               [username password] (get-username-and-password request)]
+  ;;           (project/delete-project id)
+  ;;           (reset! state (init-projects-data))
+  ;;           {:status 200}))
 
   (GET "/theme/:project/:doc" [project doc]
        (let [path (str project/projects-directory file-separator project file-separator
@@ -349,14 +349,14 @@
 
   ;; Arguments
 
-  (GET "/argument/:project/:db" [project db]
-       (let [db2 (db/make-connection project db "guest" "")]
-         (db/with-db db2 {:body (map pack-argument (ag-db/list-arguments))})))
+  ;; (GET "/argument/:project/:db" [project db]
+  ;;      (let [db2 (db/make-connection project db "guest" "")]
+  ;;        (db/with-db db2 {:body (map pack-argument (ag-db/list-arguments))})))
 
-  (GET "/argument/:project/:db/:id" [project db id]
-       (let [db2 (db/make-connection project db "guest" "")]
-         (db/with-db db2 {:body (pack-argument (ag-db/read-argument
-                                                id))})))
+  ;; (GET "/argument/:project/:db/:id" [project db id]
+  ;;      (let [db2 (db/make-connection project db "guest" "")]
+  ;;        (db/with-db db2 {:body (pack-argument (ag-db/read-argument
+  ;;                                               id))})))
 
   ;; (POST "/argument/:project/:db" request
   ;;       (let [m (json/read-json (slurp (:body request)))
