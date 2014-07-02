@@ -69,21 +69,21 @@
 (defroutes carneades-web-service-routes
 
   ;; Projects
-  (GET "/debug/reload-projects" []
-       (reset! state (init-projects-data)))
+  ;; (GET "/debug/reload-projects" []
+  ;;      (reset! state (init-projects-data)))
 
-  (GET "/project" []
-       {:body
-        (let [s (deref state)]
+  ;; (GET "/project" []
+  ;;      {:body
+  ;;       (let [s (deref state)]
 
-          (reduce (fn [projects id]
-                    (let [props (get-in s [:projects-data id :properties])]
-                     (conj projects (merge props {:id id}))))
-                  []
-                  (:projects s)))})
+  ;;         (reduce (fn [projects id]
+  ;;                   (let [props (get-in s [:projects-data id :properties])]
+  ;;                    (conj projects (merge props {:id id}))))
+  ;;                 []
+  ;;                 (:projects s)))})
 
-  (GET "/project/:id" [id]
-       {:body (get-project-properties id state)})
+  ;; (GET "/project/:id" [id]
+  ;;      {:body (get-project-properties id state)})
 
   (GET "/project/:id/theories" [id]
        {:body {:theories (get-project-theories id state)}})

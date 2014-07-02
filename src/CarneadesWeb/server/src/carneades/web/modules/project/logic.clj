@@ -35,8 +35,6 @@
 
 (defn- filter-refs [x] (not (= (:key x) nil)))
 
-(defn- rename-keys [x] (set/rename-keys x {:creation-date :date}))
-
 (defn to-map
   [rec]
   (into {} rec))
@@ -54,6 +52,8 @@
 (defn get-resource
   "Returns a JSON resource from the old carneades REST api."
   [host resource params]
+  (prn "resource=" resource)
+  (prn "params=" params)
   {:pre [(not (nil? resource))]}
   (let [url (build-url host resource params)
         content (:body (client/get url))]
@@ -124,15 +124,17 @@
 ;; Definition of service calls
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn get-projects
+(defn augment-project
+  [lang project]
+  (set-description-text lang project))
+
+(defn get-project
   [& {:keys [id lang host]}]
-  (->> (if (nil? id) [] [id])
-       (#(get-resource host :project %))
-       (#(if-not (seq? %) (list %) %))
-       (#(map (comp (partial set-description-text lang)
-                    (partial rename-keys))
-              %))
-       (#(if (= (count %) 1) (first %) %))))
+  (augment-project lang (s/get-project id)))
+
+(defn get-projects
+  [& {:keys [lang host]}]
+  (map (partial augment-project lang) (s/get-projects)))
 
 (defn get-outline
   [[project db id :as params]
