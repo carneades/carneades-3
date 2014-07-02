@@ -8,7 +8,8 @@
   (:require 
    [carneades.database.db :as db]
    [carneades.web.pack :as p]
-   [carneades.database.argument-graph :as ag-db]))
+   [carneades.database.argument-graph :as ag-db]
+   [carneades.web.outline :refer [create-outline]]))
 
 (defn get-statement
   [project db id]
@@ -45,3 +46,9 @@
   (let [dbconn (db/make-connection project db "guest" "")]
     (db/with-db dbconn
       (p/pack-argument (ag-db/read-argument id)))))
+
+(defn get-outline
+  [project db]
+  (let [dbconn (db/make-connection project db "guest" "")]
+    (db/with-db dbconn
+      {:outline (create-outline (map p/pack-statement (ag-db/main-issues)) 5)})))

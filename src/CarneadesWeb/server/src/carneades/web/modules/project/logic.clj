@@ -115,7 +115,7 @@
 
 (defn make-outline
   [project db & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
-  (make-node (get (:outline (get-resource host :outline [project db])) 1) lang 0))
+  (make-node (get (:outline (s/get-outline project db)) 1) lang 0))
 
 (defn get-sub-outline [outline id] outline)
 

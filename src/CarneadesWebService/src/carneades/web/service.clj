@@ -582,10 +582,10 @@
   ;;                                :main-issues main-issues
   ;;                                :outline outline}}))))
 
-  (GET "/outline/:project/:db" [project db]
-       (let [dbconn (db/make-connection project db "guest" "")]
-         (db/with-db dbconn
-           {:body {:outline (create-outline (map pack-statement (ag-db/main-issues)) 5)}})))
+  ;; (GET "/outline/:project/:db" [project db]
+  ;;      (let [dbconn (db/make-connection project db "guest" "")]
+  ;;        (db/with-db dbconn
+  ;;          {:body {:outline (create-outline (map pack-statement (ag-db/main-issues)) 5)}})))
 
   ;; (GET "/statement-info/:project/:db" [project db]
   ;;      (let [dbconn (db/make-connection project db "guest" "")]
