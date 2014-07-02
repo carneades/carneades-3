@@ -20,9 +20,10 @@ define [
     'pascalprecht.translate'
   ])
 
-  # Example of call http://localhost:8080/carneades/#/lican?entity=http:%2F%2Fmarkosproject.eu%2Fkb%2FSoftwareRelease%2F366
-  # http://markosproject.eu/kb/SoftwareRelease/9209
-  .controller('IntroCtrl', ($scope, $state, $stateParams, entity, $translate) ->
+  # Example of call http://localhost:8080/carneades/#/lican?entity=http:%2F%2Fmarkosproject.eu%2Fkb%2FSoftwareRelease%2F1970&legalprofile=1
+  .controller('IntroCtrl', ['$scope', '$state', '$stateParams', 'entity', '$translate'] ,
+  ($scope, $state, $stateParams, entity, $translate) ->
+
     # TODO: check success + error msg
     sEntity = entity.get uri: $stateParams.entity, ->
       $scope.title = $translate.instant 'lican.title', {entity: sEntity.name}
@@ -41,6 +42,7 @@ define [
     questions.analyse $stateParams.entity, $stateParams.legalprofile
 
     $scope.questionGroups = questions.getQuestionGroups()
+
     $scope.sendAnswer = () ->
 
       if $scope.questionsForm.$invalid

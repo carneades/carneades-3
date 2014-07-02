@@ -4,8 +4,8 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (defproject carneades/carneades-web "1.0.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "The REST and Web parts of the Carneades system."
+  :url "http://carneades.github.io"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [lib-noir "0.5.6"]
                  [compojure "1.1.5"]
@@ -24,7 +24,6 @@
                  [org.clojure/data.json "0.2.2"]
 
                  [carneades/carneades-engine "2.0.3"]
-                 [carneades/carneades-rest "1.0.0"]
 
                  [clj-http "0.7.2"]
                  [clj-json "0.5.3"]

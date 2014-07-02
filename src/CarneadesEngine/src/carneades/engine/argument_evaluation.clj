@@ -37,7 +37,7 @@
   [v]
   (= v 0.0))
 
-(defn in-node?
+(defn in-node? 
   "A statement or argument node is in iff its value is 1.0."
   [node]
   {:pre [(or (statement-node? node) (argument-node? node))]}

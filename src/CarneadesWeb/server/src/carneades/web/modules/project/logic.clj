@@ -3,8 +3,8 @@
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-(ns carneades.web.modules.project.logic
-  ^{:doc "Basic functions for serving project requests"}
+(ns ^{:doc "Basic functions for serving project requests"}
+  carneades.web.modules.project.logic
   (:require [clojure.string :refer [join]]
             [clojure.set :as set]
             [clojure.zip :as z]
@@ -24,7 +24,9 @@
             [carneades.engine.utils :refer [dissoc-in serialize-atom unserialize-atom]]
             [carneades.engine.theory :as theory]
             [carneades.engine.theory.zip :as tz]
-            [carneades.database.legal-profile :as lp]))
+            [carneades.database.legal-profile :as lp]
+            [carneades.web.modules.project.service :as s]))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
@@ -34,7 +36,9 @@
 
 (defn- filter-refs [x] (not (= (:key x) nil)))
 
-(defn- rename-keys [x] (set/rename-keys x {:creation-date :date}))
+(defn to-map
+  [rec]
+  (into {} rec))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of resources
@@ -49,6 +53,8 @@
 (defn get-resource
   "Returns a JSON resource from the old carneades REST api."
   [host resource params]
+  (prn "resource=" resource)
+  (prn "params=" params)
   {:pre [(not (nil? resource))]}
   (let [url (build-url host resource params)
         content (:body (client/get url))]
@@ -110,7 +116,7 @@
 
 (defn make-outline
   [project db & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
-  (make-node (get (:outline (get-resource host :outline [project db])) 1) lang 0))
+  (make-node (get (:outline (s/get-outline project db)) 1) lang 0))
 
 (defn get-sub-outline [outline id] outline)
 
@@ -119,15 +125,17 @@
 ;; Definition of service calls
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn get-projects
+(defn augment-project
+  [lang project]
+  (set-description-text lang project))
+
+(defn get-project
   [& {:keys [id lang host]}]
-  (->> (if (nil? id) [] [id])
-       (#(get-resource host :project %))
-       (#(if-not (seq? %) (list %) %))
-       (#(map (comp (partial set-description-text lang)
-                    (partial rename-keys))
-              %))
-       (#(if (= (count %) 1) (first %) %))))
+  (augment-project lang (s/get-project id)))
+
+(defn get-projects
+  [& {:keys [lang host]}]
+  (map (partial augment-project lang) (s/get-projects)))
 
 (defn get-outline
   [[project db id :as params]
@@ -137,25 +145,27 @@
        (#(if-not (nil? id) (get-sub-outline % id) %))))
 
 (defn get-metadata
-  [[project db id :as params] & {:keys [k lang host]}]
+  [[project db :as params] & {:keys [k lang host]}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (->> (get-resource host :metadata params)
+  (->> (s/get-metadata project db)
        (#(if (nil? k)
            %
-           (filter (fn [x] (= (:key x) k)) %)))))
+           (filter (fn [x] (= (:key x) k)) %)))
+       (to-map)))
 
 (defn get-metadatum
   [[project db id :as params] & {:keys [k lang host]}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (->> (get-resource host :metadata params)
+  (->> (s/get-metadatum project db id)
        (#(if (nil? k)
            %
            (filter (fn [x] (= (:key x) k)) %)))
         (#(if (contains? % :description)
            (set-description-text lang %)
-           %))))
+           %))
+        (to-map)))
 
 (defn trim-premises
   "Removes premises information that are not used from a collection of premises."
@@ -245,7 +255,7 @@
     (if (:tid params)
       (get-theory params)
       (map #(get-theory (assoc params :tid %))
-           (:theories (get-resource (:host params) :project [(:tpid params) "theories"]))))))
+           (:theories (s/get-theories (:tpid params)))))))
 
 (defn trim-scheme
   [scheme]
@@ -253,7 +263,7 @@
 
 (defn get-scheme-from-arg
   [project arg host lang]
-  (let [pcontent (get-resource host :project [project])
+  (let [pcontent (s/get-project project)
         schemestr (str (first (unserialize-atom (:scheme arg))))
         schemes-project (theory/get-schemes-project project (:schemes pcontent))
         schemes-name (theory/get-schemes-name (:schemes pcontent))
@@ -271,13 +281,14 @@
   (debug "get-argument")
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (let [arg (get-resource host :argument [project db id])
+  (let [arg (s/get-argument project db id)
         scheme (get-scheme-from-arg project arg host lang)]
     (-> arg
         (update-in [:header] trim-metadata lang)
         (update-in [:conclusion] trim-conclusion lang)
         (update-in [:premises] trim-premises lang)
-        (assoc :scheme (trim-scheme scheme)))))
+        (assoc :scheme (trim-scheme scheme))
+        (to-map))))
 
 (defn get-trimed-argument
   [project db host lang aid]
@@ -289,16 +300,17 @@
    & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (let [stmt (get-resource host :statement params)
+  (debug "get-statement")
+  (let [stmt (s/get-statement project db id)
         stmt (update-in stmt [:header] trim-metadata lang)
         stmt (assoc stmt :text (or (lang (:text stmt)) (serialize-atom (:atom stmt))))
-        stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
-                                   (:pro stmt)))
+        stmt (assoc stmt :pro (spy (map (partial get-trimed-argument project db host lang)
+                                    (:pro stmt))))
         stmt (assoc stmt :con (map (partial get-trimed-argument project db host lang)
                                    (:con stmt)))
         stmt (assoc stmt :premise-of
                     (map (partial get-trimed-argument project db host lang) (:premise-of stmt)))]
-    stmt))
+    (to-map stmt)))
 
 (defn get-nodes
   [project db id & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
@@ -353,7 +365,8 @@
 
 (defn get-theme
   [[project did :as params] & {:keys [host]}]
-  (get-raw-resource host :theme [project did]))
+  (s/get-theme project did))
+
 (def legal-profiles-user "root")
 (def legal-profiles-password "pw1")
 

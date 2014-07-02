@@ -65,7 +65,6 @@
 
 (defroutes carneades-lican-api-routes
   (GET "/analyse" [entity legalprofile] (entry-analyse-resource entity legalprofile))
-
   (context "/entities" []
            (ANY "/:pid" [pid uri] (entry-entity-resource pid uri)))
 
