@@ -361,7 +361,7 @@
 
 (defn get-theme
   [[project did :as params] & {:keys [host]}]
-  (get-raw-resource host :theme [project did]))
+  (s/get-theme project did))
 
 (def legal-profiles-user "root")
 (def legal-profiles-password "pw1")

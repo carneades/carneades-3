@@ -9,7 +9,10 @@
    [carneades.database.db :as db]
    [carneades.web.pack :as p]
    [carneades.database.argument-graph :as ag-db]
-   [carneades.web.outline :refer [create-outline]]))
+   [carneades.web.outline :refer [create-outline]]
+   [carneades.project.admin :as project]
+   [carneades.engine.utils :as f]
+   [clojure.java.io :as io]))
 
 (defn get-statement
   [project db id]
@@ -52,3 +55,12 @@
   (let [dbconn (db/make-connection project db "guest" "")]
     (db/with-db dbconn
       {:outline (create-outline (map p/pack-statement (ag-db/main-issues)) 5)})))
+
+(defn get-theme
+  [project doc]
+  (let [path (str project/projects-directory f/file-separator project f/file-separator
+                  "theme" f/file-separator doc)]
+    (if (not (f/exists? path))
+      {:status 404
+       :body "File not found"}
+      (io/input-stream path))))
