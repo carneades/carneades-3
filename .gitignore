@@ -2,3 +2,5 @@
 *~
 pom.xml
 *.h2*
+*.jar
+*.war
