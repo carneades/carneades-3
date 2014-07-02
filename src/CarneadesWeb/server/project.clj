@@ -11,9 +11,10 @@
                  [compojure "1.1.5"]
                  [ring-server "0.2.8"]
                  [ring-middleware-format "0.3.1"]
-                 [ring/ring-json "0.2.0"]
+                 [ring/ring-json "0.3.1"]
                  [clabango "0.5"]
-
+                 [ring-mock "0.1.5"]
+                 
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [com.taoensso/timbre "3.1.6"]
 
@@ -22,7 +23,7 @@
                  [markdown-clj "0.9.28"]
                  [org.clojure/data.json "0.2.2"]
 
-                 [carneades/carneades-engine "2.0.2"]
+                 [carneades/carneades-engine "2.0.3"]
                  [carneades/carneades-rest "1.0.0"]
 
                  [clj-http "0.7.2"]
@@ -30,12 +31,15 @@
                  [cheshire "5.2.0"]
                  [http-kit "2.0.0"]
 
-                 [liberator "0.10.0"]
+                 [liberator "0.11.0"]
                  [sandbar/sandbar "0.4.0-SNAPSHOT"]
 
-                 [dire "0.4.3"]] ;; uses logging 2.6.3
+                 [dire "0.4.3"] ;; uses logging 2.6.3
+                 
+                 [midje "1.5.1"]]
 
-  :plugins [[lein-ring "0.8.10"]]
+  :plugins [[lein-ring "0.8.10"]
+            [lein-midje "3.0.0"]]
 
   :ring {:handler carneades.web.handler/war-handler
          :init carneades.web.handler/init

@@ -38,7 +38,11 @@
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
             [carneades.web.modules.lican.entity :as entity]
-            [taoensso.timbre :as timbre :refer [debug info warn error]]))
+            [taoensso.timbre :as timbre :refer [debug info warn error]]
+            [carneades.database.legal-profile :as lp]
+            [carneades.engine.legal-profile :refer [extend-theory
+                                                    empty-legal-profile]]
+            [carneades.engine.aspic :refer [aspic-grounded]]))
 
 (defn initial-state
   []
@@ -183,8 +187,16 @@
                      :title (str "Analysis of the software release " (:name entity))
                      :description {:en (format "[Go back to %s page](http://demo.markosproject.eu/#t4&p12=%s)" (:name entity) (:uri entity))})))
 
+(defn load-profile
+  [project id]
+  (if (or (empty? id) (= id "null"))
+    empty-legal-profile
+    (do
+      (lp/set-default-connection project "root" "pw1")
+      (lp/read-profile+ id))))
+
 (defn start-engine
-  [entity]
+  [entity legalprofileid]
   (let [project "markos"
         properties (project/load-project-properties project)
         triplestore (:triplestore properties)
@@ -213,12 +225,16 @@
         triplestore-generator (triplestore/generate-arguments-from-triplestore triplestore
                                                                                repo-name
                                                                                markos-namespaces)
+        profile (load-profile project legalprofileid)
+        _ (debug "profile " profile)
+        loaded-theories' (extend-theory loaded-theories profile)
         engine (shell/make-engine+ ag 500 #{}
                                    (list
                                     triplestore-generator
-                                    (theory/generate-arguments-from-theory loaded-theories)
+                                    (theory/generate-arguments-from-theory loaded-theories')
                                     argument-from-user-generator))
-        future-ag (future (shell/argue+ engine licenses-statements))
+        future-ag (future (shell/argue+
+                           engine aspic-grounded licenses-statements profile))
         entity (entity/get-software-entity project (unserialize-atom entity))
         analysis {:ag nil
                   :project project
@@ -242,6 +258,6 @@
 (defn analyse
   "Begins an analysis of a given software entity. The theories inside project is used.
 Returns a set of questions for the frontend."
-  [entity]
+  [entity legalprofile]
   (info "[analyse]")
-  (start-engine entity))
+  (start-engine entity legalprofile))
