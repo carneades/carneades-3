@@ -5,7 +5,7 @@
   a {
       color: $link-color;
   }
-
+   @media (min-width: $grid-float-breakpoint) {
   .nav {
       float: right;
       > li {
@@ -46,13 +46,14 @@
           }
       } 
   }
-  
+  }
   &.ui-scrollfix {
     top: 0;
     position:fixed;
     width: 100%;
     background:$breadcrumbs-bg;
   }
+  
 }
 
 .navbar {
