@@ -24,4 +24,4 @@ div(ng-repeat='scheme in section.schemes')
         li(ng-repeat='exceptions in scheme.exceptions')
           {{exceptions['translation']}}
     
-    properties(keys="[['id', 'projects.id'],['weight', 'projects.weight']]", model: "scheme")
+    properties(keys="[['id', 'projects.id'],['weight', 'projects.weight']]", model="scheme")
