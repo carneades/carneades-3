@@ -30,7 +30,7 @@ define [
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
-          template: "<h1>Home</h1>"
+          templateUrl: 'home.jade'
         "subnav@":
           templateUrl: 'subnav.jade'
           controller: 'SubnavController'

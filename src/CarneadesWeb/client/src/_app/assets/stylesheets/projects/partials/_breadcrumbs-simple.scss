@@ -2,7 +2,6 @@
     background-color: $breadcrumbs-bg;
     
     @include clearfix;
-  
     > ul {
         @include inline-list;
 
@@ -48,5 +47,5 @@
 
             @include make-breadcrumb-simple-entry();
         }
-    } 
+    }
 }
