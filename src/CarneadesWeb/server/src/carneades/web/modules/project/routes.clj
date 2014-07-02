@@ -130,7 +130,7 @@
   :allowed-methods [:get]
   :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
-               (get-projects :id id :lang (keyword lang) :host host)))
+               (get-project :id id :lang (keyword lang) :host host)))
 
 (defresource entry-download-project-resource [id]
   :available-media-types ["application/zip"]

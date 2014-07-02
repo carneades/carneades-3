@@ -12,7 +12,23 @@
    [carneades.web.outline :refer [create-outline]]
    [carneades.project.admin :as project]
    [carneades.engine.utils :as f]
-   [clojure.java.io :as io]))
+   [clojure.java.io :as io]
+   [carneades.web.handler :as handler]
+   [carneades.web.project :as pr]))
+
+(defn get-projects
+  []
+  (let [s (deref handler/state)]
+    (reduce
+     (fn [projects id]
+       (let [props (get-in s [:projects-data id :properties])]
+         (conj projects (merge props {:id id}))))
+     []
+     (:projects s))))
+
+(defn get-project
+  [id]
+  (pr/get-project-properties id (deref handler/state)))
 
 (defn get-statement
   [project db id]

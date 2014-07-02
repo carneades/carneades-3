@@ -21,7 +21,11 @@
             [ring.util.codec :as codec]
             [ring.util.response :as response]
             [com.postspectacular.rotor :as rotor]
-            [ring.middleware.json :refer [wrap-json-params wrap-json-body]]))
+            [ring.middleware.json :refer [wrap-json-params wrap-json-body]]
+            [carneades.web.project :refer [init-projects-data!]]
+            [carneades.project.admin :as p]))
+
+(def state (atom nil))
 
 (defroutes app-routes
   (route/resources "/")
@@ -51,12 +55,18 @@
 
 (timbre/merge-config! logger-config)
 
+(defn init-projects-data
+  []
+  {:projects (p/list-projects)
+   :projects-data (init-projects-data!)})
+
 (defn init
   "Called when app is deployed as a servlet on an app server such as
    Tomcat. Put any initialization code here."
   []
   (timbre/merge-config! logger-config)
   (service/start)
+  (reset! state (init-projects-data))
   (info "Carneades started successfully."))
 
 (defn destroy
