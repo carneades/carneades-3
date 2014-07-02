@@ -352,7 +352,7 @@
   ;; (GET "/argument/:project/:db" [project db]
   ;;      (let [db2 (db/make-connection project db "guest" "")]
   ;;        (db/with-db db2 {:body (map pack-argument (ag-db/list-arguments))})))
-
+  
   ;; (GET "/argument/:project/:db/:id" [project db id]
   ;;      (let [db2 (db/make-connection project db "guest" "")]
   ;;        (db/with-db db2 {:body (pack-argument (ag-db/read-argument
@@ -646,22 +646,22 @@
 
   ;; SVG Maps
 
-  (ANY "/map/:project/:db" {params :params}
-       (let [db (:db params)
-             project (:project params)
-             lang (keyword (:lang params))
-             depth (when (:depth params) (Integer/parseInt (:depth params)))
-             focus (when (:focus params) (unserialize-atom (:focus params)))
-             dbconn (db/make-connection project db "guest" "")]
-         (db/with-db dbconn
-           (let [ag (export-to-argument-graph dbconn)
-                 svg (lacij/export-str (if focus
-                                         (subag ag focus depth)
-                                         ag)
-                                       lang)]
-             {:status 200
-              :headers {"Content-Type" "image/svg+xml;charset=UTF-8"}
-              :body svg}))))
+  ;; (ANY "/map/:project/:db" {params :params}
+  ;;      (let [db (:db params)
+  ;;            project (:project params)
+  ;;            lang (keyword (:lang params))
+  ;;            depth (when (:depth params) (Integer/parseInt (:depth params)))
+  ;;            focus (when (:focus params) (unserialize-atom (:focus params)))
+  ;;            dbconn (db/make-connection project db "guest" "")]
+  ;;        (db/with-db dbconn
+  ;;          (let [ag (export-to-argument-graph dbconn)
+  ;;                svg (lacij/export-str (if focus
+  ;;                                        (subag ag focus depth)
+  ;;                                        ag)
+  ;;                                      lang)]
+  ;;            {:status 200
+  ;;             :headers {"Content-Type" "image/svg+xml;charset=UTF-8"}
+  ;;             :body svg}))))
 
   ;; ;; Theory
   ;; (GET "/theory/:project/:theory" [project theory]
