@@ -112,9 +112,13 @@
   :available-media-types ["application/json"]
   :allowed-methods [:get]
   :available-charsets["utf-8"]
-  :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
+  :exists? (fn [_]
+             (session-put-language nil)
+             {:language (session-get :language)})
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
-               (get-statement [pid db] :host host :lang (keyword lang))))
+               (let [s (get-statement [pid db] :host host :lang (keyword lang))]
+                 (debug "s = " s)
+                 s)))
 
 (defresource entry-statement-resource [pid db id]
   :available-media-types ["application/json"]
@@ -130,7 +134,7 @@
   :allowed-methods [:get]
   :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
-               (get-projects :id id :lang (keyword lang) :host host)))
+               (get-project :id id :lang (keyword lang) :host host)))
 
 (defresource entry-download-project-resource [id]
   :available-media-types ["application/zip"]

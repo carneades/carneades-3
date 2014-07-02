@@ -614,7 +614,6 @@
   (let [main-nodes (doall (filter
                            (fn [s] (= (literal-predicate s) (literal-predicate stmt)))
                            (atomic-statements ag)))]
-
     (reduce (fn [ag atom]
               (update-statement-node ag (get-statement-node ag atom) :main true))
             ag

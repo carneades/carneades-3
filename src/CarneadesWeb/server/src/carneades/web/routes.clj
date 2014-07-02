@@ -8,7 +8,7 @@
     :doc "Definition of routing domains."}
   (:require [compojure.core :refer [defroutes context GET]]
             [carneades.web.util :as util]
-            [carneades.web.service :as service]
+            ;; [carneades.web.service :as service]
             [ring.util.response :as resp]
             [ring.middleware.format-response
              :refer [wrap-restful-response]]
@@ -19,13 +19,13 @@
             [carneades.web.modules.lican.routes
              :refer [carneades-lican-api-routes]]))
 
-(def carneades-rest-routes
-  (-> #'service/carneades-web-service-routes wrap-restful-response))
+;; (def carneades-rest-routes
+;;   (-> #'service/carneades-web-service-routes wrap-restful-response))
 
 (defroutes carneades-web-routes
   (context "/carneades" []
            (GET "/" [] (resp/resource-response "index.html" {:root "public/carneades"}))
-           (context "/carneadesws" [] carneades-rest-routes)
+           ;; (context "/carneadesws" [] carneades-rest-routes)
            (context "/api" []
                     (context "/session" [] carneades-session-api-routes)
                     (context "/projects" [] carneades-projects-api-routes)
@@ -33,7 +33,7 @@
 
 (defroutes tomcat-carneades-web-routes
   (GET "/" [] (resp/resource-response "index.html" {:root "public/carneades"}))
-  (context "/carneadesws" [] carneades-rest-routes)
+  ;; (context "/carneadesws" [] carneades-rest-routes)
   (context "/api" []
            (context "/session" [] carneades-session-api-routes)
            (context "/projects" [] carneades-projects-api-routes)

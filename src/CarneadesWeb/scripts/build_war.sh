@@ -11,9 +11,6 @@ prepare_local_deps () {
 
     cd $SCRIPTPATH/../../CarneadesEngine
     lein install
-
-    cd $SCRIPTPATH/../../CarneadesWebService
-    lein install
 }
 
 build_webclient () {
