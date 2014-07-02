@@ -52,8 +52,11 @@
   [session]
   (prn "[on-questions-answered]")
   (let [ag (:ag session)
+        _ (debug "set-main-issues")
+        _ (debug "query:" (:query session))
         ag (set-main-issues ag (:query session))
         answers (get-in session [:dialog :answers])
+        _ (debug "answer-statements")
         answers-statements (keys answers)
         ;;;; adds all answers to the argument graph since some answers
         ;;;; may have not been created by the rules
@@ -64,12 +67,16 @@
         ;; rejects answers with a weight of 0.0
         rejected-statements (filter (fn [s] ((answers s) 0.0)) answers-statements)
         ag (reject ag rejected-statements)
+        _ (debug "translate")
         ag (tr/translate-ag ag (:translator session))
+        _ (debug "evaluate")
         ag (evaluate aspic-grounded ag)
+        _ (debug "post-build")
         ag (if (fn? (:post-build session))
              ((:post-build session) ag)
              ag)
         project (:project session)
+        _ (debug "store")
         dbname (store-ag project ag)
         session (assoc session
                   :all-questions-answered true

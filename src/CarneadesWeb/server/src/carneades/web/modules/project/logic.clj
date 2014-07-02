@@ -23,7 +23,8 @@
             [clojure.java.io :as io]
             [carneades.engine.utils :refer [dissoc-in serialize-atom unserialize-atom]]
             [carneades.engine.theory :as theory]
-            [carneades.engine.theory.zip :as tz]))
+            [carneades.engine.theory.zip :as tz]
+            [carneades.database.legal-profile :as lp]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
@@ -353,3 +354,36 @@
 (defn get-theme
   [[project did :as params] & {:keys [host]}]
   (get-raw-resource host :theme [project did]))
+(def legal-profiles-user "root")
+(def legal-profiles-password "pw1")
+
+(defn get-profiles
+  [pid]
+  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
+  (lp/read-profiles+))
+
+(defn get-profile
+  [pid id]
+  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
+  (lp/read-profile+ id))
+
+(defn post-profile
+  [pid profile]
+  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
+  (lp/create-profile+ profile))
+
+(defn put-profile
+  [pid id update]
+  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
+  (let [pack-rule (fn [r]
+                    (-> r
+                        ;; (update-in [:value] #(Double/parseDouble %))
+                        (update-in [:ruleid] unserialize-atom)))
+        pack-rules (fn [rs] (map pack-rule rs))
+        update (update-in update [:rules] pack-rules)]
+    (lp/update-profile+ id update)))
+
+(defn delete-profile
+  [pid id]
+  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
+  (lp/delete-profile id))

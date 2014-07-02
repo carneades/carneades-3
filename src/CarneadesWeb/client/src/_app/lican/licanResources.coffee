@@ -23,7 +23,7 @@ define ['angular'], (angular) ->
   services = angular.module('lican.resources', [])
   #
   # notes on mocking the backend http://docs.angularjs.org/api/ngMock.$httpBackend
-  # 
+  #
   services.factory 'MultiQuestionLoader', ['$http', ($http) ->
     class Questions
       questions: []
@@ -32,20 +32,20 @@ define ['angular'], (angular) ->
 
       pushNewQuestions: (questions) ->
         initQuestionGroupInputs questions
-        @questions.push questions 
+        @questions.push questions
 
       processData: (data) ->
         @transaction_id = data.uuid
-            
+
         if data.db?
           @solution.db = data.db
         else
-          @pushNewQuestions data.questions        
+          @pushNewQuestions data.questions
 
-      analyse: (entity) ->
+      analyse: (entity, legalprofile) ->
         console.log 'MultiQuestionLoader', entity
 
-        ($http.get "../carneades/api/lican/analyse?entity=#{entity}")
+        ($http.get "../carneades/api/lican/analyse?entity=#{entity}&legalprofile=#{legalprofile}")
           .success (data) =>
             @processData data
           .error (data, status) ->
@@ -74,7 +74,7 @@ define ['angular'], (angular) ->
           .success (data) =>
             console.log 'received new questions'
             @processData data
-            
+
           .error (data, status) ->
             # TODO: notifications
             console.log 'error sending the answers'
@@ -150,7 +150,7 @@ define ['angular'], (angular) ->
       questions: []
       idx: -1
       solution: {db: undefined}
-  
+
       getNextQuestionGroup: ->
         if @hasQuestions()
           @idx++
@@ -160,10 +160,10 @@ define ['angular'], (angular) ->
           console.log 'Error, no more questions'
 
         undefined
-          
+
       analyse: (entity) ->
         @getNextQuestionGroup()
-           
+
       getCurrentQuestionGroup: ->
         if @questions[@idx]?
           @questions[@idx]
@@ -178,13 +178,13 @@ define ['angular'], (angular) ->
 
       sendAnswer: () ->
         console.log @getCurrentQuestionGroup()
-        
+
         if @hasQuestions()
           @getNextQuestionGroup()
         else
           @solution.db = "main"
 
     new Questions
-    
+
 
   services
