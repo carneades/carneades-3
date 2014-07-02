@@ -11,10 +11,11 @@
             [org.httpkit.server :refer [run-server]]
             [ring.server.standalone :refer [serve]]
             [noir.util.middleware :as middleware]
-            [carneades.web.routes :refer [carneades-web-routes tomcat-carneades-web-routes]]
+            [carneades.web.routes :refer [carneades-web-routes
+                                          tomcat-carneades-web-routes]]
             [compojure.route :as route :refer [files resources not-found]]
             [sandbar.stateful-session :as session]
-            [carneades.web.service :as service]
+            ;; [carneades.web.service :as service]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
@@ -22,14 +23,12 @@
             [ring.util.response :as response]
             [com.postspectacular.rotor :as rotor]
             [ring.middleware.json :refer [wrap-json-params wrap-json-body]]
-            [carneades.web.project :refer [init-projects-data!]]
-            [carneades.project.admin :as p]))
-
-(def state (atom nil))
+            [carneades.project.admin :as p]
+            [carneades.web.system :as system]))
 
 (defroutes app-routes
   (route/resources "/")
-  (route/not-found "Not Found"))
+  (route/not-found "Not Found :-("))
 
 (defroutes tomcat-app-routes
   (route/resources "/" {:root "public/carneades"})
@@ -55,25 +54,20 @@
 
 (timbre/merge-config! logger-config)
 
-(defn init-projects-data
-  []
-  {:projects (p/list-projects)
-   :projects-data (init-projects-data!)})
-
 (defn init
   "Called when app is deployed as a servlet on an app server such as
    Tomcat. Put any initialization code here."
   []
   (timbre/merge-config! logger-config)
-  (service/start)
-  (reset! state (init-projects-data))
+  ;; (service/start)
+  (system/init)
   (info "Carneades started successfully."))
 
 (defn destroy
   "destroy will be called when your application
    shuts down, put any clean up code here"
   []
-  (service/stop)
+  ;; (service/stop)
   (println "shutting down..."))
 
 (defn wrap-file
@@ -89,7 +83,8 @@
           (or (response/file-response path opts)
               (app req)))))))
 
-(def all-routes [carneades-web-routes app-routes])
+(def all-routes [carneades-web-routes
+                 app-routes])
 
 (def tomcat-all-routes [tomcat-carneades-web-routes tomcat-app-routes])
 

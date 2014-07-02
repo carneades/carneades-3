@@ -13,12 +13,12 @@
    [carneades.project.admin :as project]
    [carneades.engine.utils :as f]
    [clojure.java.io :as io]
-   [carneades.web.handler :as handler]
+   [carneades.web.system :as s]
    [carneades.web.project :as pr]))
 
 (defn get-projects
   []
-  (let [s (deref handler/state)]
+  (let [s (deref s/state)]
     (reduce
      (fn [projects id]
        (let [props (get-in s [:projects-data id :properties])]
@@ -28,7 +28,7 @@
 
 (defn get-project
   [id]
-  (pr/get-project-properties id handler/state))
+  (pr/get-project-properties id s/state))
 
 (defn get-statement
   [project db id]
@@ -64,7 +64,7 @@
   [project db id]
   (let [dbconn (db/make-connection project db "guest" "")]
     (db/with-db dbconn
-      (p/pack-argument (ag-db/read-argument id)))))
+      (p/pack-argument (ag-db/read-argument (str id))))))
 
 (defn get-outline
   [project db]
@@ -76,13 +76,11 @@
   [project doc]
   (let [path (str project/projects-directory f/file-separator project f/file-separator
                   "theme" f/file-separator doc)]
-    (if (not (f/exists? path))
-      {:status 404
-       :body "File not found"}
+    (when (f/exists? path)
       (io/input-stream path))))
 
 (defn get-theories
   [tid]
-  {:theories (pr/get-project-theories tid handler/state)})
+  {:theories (pr/get-project-theories tid s/state)})
 
 
