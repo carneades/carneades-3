@@ -1,0 +1,23 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    title Carneades Web Application
+    meta(name='viewport',content='width=device-width, initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible',content='IE=edge')
+    link(rel='stylesheet',href='css/layout.css',media='screen')
+    link(href='http://fonts.googleapis.com/css?family=Open+Sans',rel='stylesheet',type='text/css')
+
+  body(ng-controller='AppCtrl')
+    div(ui-view='css')
+    header#top
+      div(ui-view='banner',ng-cloak='')
+      div.navbar.subnav-navbar(ui-view='nav',ng-cloak='')
+
+    div
+      div(ui-view='subnav',ng-cloak='')
+      div(ui-view='content',style='margin-bottom: 4em;',ng-cloak='')
+
+    div(ui-view='footer',ng-cloak='')
+
+    script(src='require.js',data-main='main.min.js')

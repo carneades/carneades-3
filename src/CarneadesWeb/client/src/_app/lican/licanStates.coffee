@@ -2,10 +2,18 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+define [
+  'angular',
+  'angular-resource',
+  './licanControllers',
+  './licanResources'
+], (angular) ->
+  angular.module('lican.states', [
+    'ngResource',
+    'lican.resources'
+  ])
 
-define ['angular', 'angular-resource', './licanControllers', './licanResources'], (angular) ->
-  angular.module('lican.states', ['ngResource', 'lican.resources'])
-  .config ['$stateProvider',  ($stateProvider) ->
+  .config ($stateProvider) ->
     states = [
       {
         name: 'lican'
@@ -13,15 +21,15 @@ define ['angular', 'angular-resource', './licanControllers', './licanResources']
         url: '/lican?entity&legalprofile&debug'
         views:
           "css@":
-            template: '<css-inject default-theme="markos"></css-inject>'
+            template: '<css-inject theme="\'markos\'"></css-inject>'
           "banner@":
-            template: '<project-banner display=\"markos\"></project-banner>'
+            template: '<project-banner theme="\'markos\'"></project-banner>'
           "footer@":
-            template: '<project-footer display=\"markos\"></project-footer>'
+            template: '<project-footer theme="\'markos\'"></project-footer>'
           "nav@":
             template: "<bc-navigation></bc-navigation>"
           "content@":
-            templateUrl: 'introduction.tpl.html'
+            templateUrl: 'lican/introduction.jade'
             controller: 'IntroCtrl',
             resolve:
               entity: ($resource) ->
@@ -32,16 +40,10 @@ define ['angular', 'angular-resource', './licanControllers', './licanResources']
         label: 'License Analyser Questions'
         url: '/questions'
         views:
-          "css@":
-            template: '<css-inject default-theme="markos"></css-inject>'
-          "banner@":
-            template: '<project-banner display=\"markos\"></project-banner>'
-          "footer@":
-            template: '<project-footer display=\"markos\"></project-footer>'
           "nav@":
             template: "<bc-navigation></bc-navigation>"
           "content@":
-            templateUrl: 'questions.tpl.html'
+            templateUrl: 'lican/questions.jade'
             controller: 'QuestionsCtrl'
             resolve:
               questions: (MultiQuestionLoader) ->
@@ -52,16 +54,10 @@ define ['angular', 'angular-resource', './licanControllers', './licanResources']
         label: 'License Analyser Questions (Demo)'
         url: '/lican/demo'
         views:
-          "css@":
-            template: '<css-inject default-theme="markos"></css-inject>'
-          "banner@":
-            template: '<project-banner display=\"markos\"></project-banner>'
-          "footer@":
-            template: '<project-footer display=\"markos\"></project-footer>'
           "nav@":
             template: "<bc-navigation></bc-navigation>"
           "content@":
-            templateUrl: 'questions.tpl.html'
+            templateUrl: 'lican/questions.jade'
             controller: 'QuestionsCtrl'
             resolve:
               questions: (MultiQuestionLoader) ->
@@ -74,4 +70,3 @@ define ['angular', 'angular-resource', './licanControllers', './licanResources']
       undefined
 
     undefined
-  ]

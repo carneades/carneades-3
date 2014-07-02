@@ -11,5 +11,7 @@ server/*.log*
 server/.nrepl-port
 client/node_modules/
 .sass-cache
+client/.generated
+client/bower_components
 client/src/app/*
 client/dist

@@ -4,95 +4,92 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-bootstrap"], (angular) ->
+define [
+  "angular",
+  "angular-bootstrap"
+], (angular) ->
   "use strict"
-  angular.module("app.states", ["ui.bootstrap.buttons"])
-  .config(($stateProvider, $stateUtilProvider) ->
-    helper = $stateUtilProvider.$get()
+  angular.module("app.states", [
+    "ui.bootstrap.buttons"
+  ])
+
+  .config(($stateProvider) ->
     states = [
       name: "home"
       label: "Carneades"
       url: "/"
+      data:
+        commands: ['home','home.projects','home.about','home.privacy','home.help','home.admin','home.signin']
       views:
         "css@":
-          template: '<css-inject default-theme="default"></css-inject>'
+          template: '<css-inject theme="$stateParams.pid"></css-inject>'
         "banner@":
-          template: "<project-banner></project-banner>"
+          template: '<project-banner theme="$stateParams.pid"></project-banner>'
         "footer@":
-          template: "<project-footer></project-footer>"
+          template: '<project-footer theme="$stateParams.pid"></project-footer>'
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
-          template: "<h1>Home</h1>"
+          templateUrl: 'home.jade'
         "subnav@":
-          templateUrl: 'subnav.tpl.html'
-          resolve: helper.builder().add('commands', helper.cmdBuilder('home','home.projects','home.about','home.privacy','home.help','home.admin','home.signin')).build()
+          templateUrl: 'subnav.jade'
           controller: 'SubnavController'
     ,
       name: "home.about"
       label: "About"
+      parent: 'home'
       url: "about"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>About</h1>"
-        "subnav@":
-          templateUrl: 'subnav.tpl.html'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
     ,
       name: "home.privacy"
       label: "Privacy"
       url: "privacy"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Privacy</h1>"
-        "subnav@":
-          templateUrl: 'subnav.tpl.html'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
     ,
       name: "home.help"
       label: "Help"
       url: "help"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Help</h1>"
-        "subnav@":
-          templateUrl: 'subnav.tpl.html'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
     ,
       name: "home.admin"
       label: "Admin"
       url: "admin"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Admin</h1>"
-        "subnav@":
-          templateUrl: 'subnav.tpl.html'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
     ,
       name: "home.signin"
       label: "Sign in"
       url: "signin"
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Sign in</h1>"
-        "subnav@":
-          templateUrl: 'subnav.tpl.html'
-          resolve: helper.builder().add('commands', helper.cmdBuilder()).build()
-          controller: 'SubnavController'
     ]
 
     angular.forEach states, (state) ->
@@ -101,5 +98,34 @@ define ["angular", "angular-bootstrap"], (angular) ->
 
     undefined
   )
-  .controller('SubnavController', ($scope, commands) ->
-    $scope.commands = commands)
+
+  .controller('SubnavController', ($scope, $state) ->
+    update = () ->
+      builder = (params...) ->
+        create = (label, state, clazz) ->
+          return {label: label, state: state, clazz: clazz}
+        command = ($state,state) ->
+          return create $state.get(state).label, state, undefined
+        divider = () ->
+          return create '', undefined, 'divider'
+
+        createCommands = ($state,states...) ->
+          commands = []
+          for state in states
+            commands.push command($state, state)
+            commands.push divider()
+
+          # since last item is a divider we must get rid off it
+          if commands.length > 0 then commands.pop()
+          return commands
+
+        return ($state) ->
+          return createCommands($state, params...)
+
+      $scope.commands = builder($state.current.data.commands...) $state
+
+    $scope.$on '$stateChangeSuccess', ->
+      update()
+
+    update()
+  )

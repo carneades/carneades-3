@@ -1,0 +1,13 @@
+.container.project
+  .row
+    .col-md-12(role='main')
+      .section#overview
+        .page-header
+          h1 {{project.title}}
+        markdown(strip='true',ng-model='project.description')
+
+      .section#issues(ui-view='issues')
+
+      .section#outline(ui-view='outline')
+
+      .section#references(ui-view='references')

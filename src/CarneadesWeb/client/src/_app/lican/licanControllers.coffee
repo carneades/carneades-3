@@ -2,25 +2,27 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-define ['angular', 'angular-translate',
+define [
+  'angular',
+  'angular-translate',
   '../common/services/notifications',
-  '../common/directives/questions/questions'], (angular) ->
-
+  '../common/directives/questions/questions'
+], (angular) ->
   markQuestionGroupAnswered = (questions) ->
     for question in questions.getCurrentQuestionGroup()
       question.answered = true
 
     undefined
 
-  angular.module('lican.controllers', ['services.notifications', 'directives.questions',
-    'pascalprecht.translate'])
+  angular.module('lican.controllers', [
+    'services.notifications',
+    'directives.questions',
+    'pascalprecht.translate'
+  ])
 
-
-  # Example of call http://localhost:8080/carneades/#/lican?entity=http:%2F%2Fmarkosproject.eu%2Fkb%2FSoftwareRelease%2F1970&legalprofile=1
-  .controller('IntroCtrl', ['$scope', '$state', '$stateParams', 'entity', '$translate',
-  ($scope, $state, $stateParams, entity, $translate) ->
-
+  # Example of call http://localhost:8080/carneades/#/lican?entity=http:%2F%2Fmarkosproject.eu%2Fkb%2FSoftwareRelease%2F366
+  # http://markosproject.eu/kb/SoftwareRelease/9209
+  .controller('IntroCtrl', ($scope, $state, $stateParams, entity, $translate) ->
     # TODO: check success + error msg
     sEntity = entity.get uri: $stateParams.entity, ->
       $scope.title = $translate.instant 'lican.title', {entity: sEntity.name}
@@ -31,13 +33,14 @@ define ['angular', 'angular-translate',
 
     $scope.startAnalysis = () ->
       $state.go 'lican.questions'
-    ])
+    )
 
-  .controller('QuestionsCtrl', ['$scope', '$state', '$stateParams',
-  'questions', 'notifications',
-  ($scope, $state, $stateParams, questions, notifications) ->
+  .controller('QuestionsCtrl', (
+    $scope, $state, $stateParams, questions, notifications) ->
+
     questions.analyse $stateParams.entity, $stateParams.legalprofile
-    $scope.questionGroups = questions.getQuestionGroups();
+
+    $scope.questionGroups = questions.getQuestionGroups()
     $scope.sendAnswer = () ->
 
       if $scope.questionsForm.$invalid
@@ -57,5 +60,4 @@ define ['angular', 'angular-translate',
       ), true
 
     undefined
-
-    ])
+  )

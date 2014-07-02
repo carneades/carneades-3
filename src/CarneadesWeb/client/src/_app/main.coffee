@@ -6,7 +6,7 @@
 #global require, document
 require.config
   shim:
-    angular:
+    "angular":
       exports: "angular"
 
     "angular-ui-router":
@@ -15,11 +15,8 @@ require.config
     "angular-resource":
       deps: ["angular"]
 
-    "showdown-carneades":
-      deps: ["components/showdown/compressed/showdown"]
-
     "angular-markdown":
-      deps: ["angular", "components/showdown/compressed/showdown"]
+      deps: ["angular", "showdown"]
 
     "angular-translate":
       deps: ["angular"]
@@ -27,7 +24,21 @@ require.config
     "angular-translate-loader-static-files":
       deps: ["angular-translate"]
 
-    "angular-ui-bootstrap3-patched":
+    "angular-ui-bootstrap":
       deps: ["angular"]
+
+  paths:
+    "angular": "./libs/angular"
+    'angular-sanitize': './libs/angular-sanitize'
+    "angular-animate": "./libs/angular-animate"
+    'angular-ui-router': './libs/angular-ui-router'
+    'angular-ui-utils': './libs/angular-ui-utils'
+    'angular-resource': './libs/angular-resource'
+    'angular-markdown': './libs/angular-markdown'
+    'angular-translate': './libs/angular-translate'
+    'angular-translate-loader-static-files': './libs/angular-translate-loader-static-files'
+    'angular-bootstrap': './libs/angular-bootstrap'
+    'requirejs-domready': './libs/requirejs-domready'
+    'showdown': './libs/showdown/showdown'
 
   deps: ["./bootstrap"]

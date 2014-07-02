@@ -5,17 +5,18 @@
   a {
       color: $link-color;
   }
-
+   @media (min-width: $grid-float-breakpoint) {
   .nav {
+      float: right;
       > li {
           > a {
               padding: 5px 10px;
-              border-bottom: 2px solid $body-bg;
               cursor: pointer;
               &:hover,
               &:focus {
                   border-bottom-color: $breadcrumbs-bg;
                   background-color: $body-bg;
+                  text-decoration: underline;
               }
           }
 
@@ -38,24 +39,21 @@
       > li {
           > a {
               border-radius: 0;
+              cursor: pointer;
+              &:hover {
+                  text-decoration: underline;
+              }
           }
       } 
   }
-  
+  }
   &.ui-scrollfix {
     top: 0;
     position:fixed;
     width: 100%;
     background:$breadcrumbs-bg;
-
-    a {
-        color: #fff;
-    }
   }
-}
-
-.navbar-project {
-    background-color: $breadcrumbs-bg;
+  
 }
 
 .navbar {

@@ -2,7 +2,13 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-define ["angular", "./mapControllers", "./mapStates"], (angular) ->
+define [
+  "angular",
+  "./mapControllers",
+  "./mapStates"
+], (angular) ->
   "use strict"
-  angular.module 'map.module', ['map.controllers', 'map.states']
+  angular.module 'map.module', [
+    'map.controllers',
+    'map.states'
+  ]

@@ -42,14 +42,15 @@ $link-hover-color:      darken($link-color, 15%) !default;
 //== Typography
 //
 //## Font, line-height, and color for body text, headings, and more.
-$font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+//$font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+$font-family-sans-serif:  'Open Sans', sans-serif !default;
 $font-family-serif:       "museo-slab", Georgia, "Times New Roman", Times, serif !default;
 
 //** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace !default;
 $font-family-base:        $font-family-sans-serif !default;
 
-$font-size-base:          16px !default;
+$font-size-base:          14px !default;
 $font-size-large:         ceil(($font-size-base * 1.25)) !default; // ~18px
 $font-size-small:         ceil(($font-size-base * 0.85)) !default; // ~12px
 
@@ -841,6 +842,8 @@ $container-lg:                 $container-large-desktop !default;
 // Module configuration
 //
 ///////////////////////////////////
+// Navbar
+$navbar-bg: $navbar-inverse-bg !default;
 
 ///////////////////////////////////
 // MISC
@@ -854,9 +857,9 @@ $breadcrumbs-levels: 7 !default;
 $breadcrumbs-height: 2em !default;
 $breadcrumbs-border-radius: 4px !default;
 $breadcrumbs-link-color: $link-color !default;
-$breadcrumbs-link-hover-color: $link-hover-color !default;
+$breadcrumbs-link-hover-color: #C3DDF3 !default;
 $breadcrumbs-border: $navbar-inverse-border !default;
-$breadcrumbs-bg: $navbar-inverse-bg !default;
+$breadcrumbs-bg: $navbar-inverse-border !default;
 $breadcrumbs-dark-bg: darken($breadcrumbs-bg,15%) !default;
 
 

@@ -2,10 +2,17 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
+define [
+  "angular",
+  "angular-ui-router",
+  "angular-bootstrap"
+], (angular) ->
   # Prefix state
-  angular.module("ui.bootsrap.breadcrumb", ['ui.bootstrap.collapse', "ui.router.state"])
+  angular.module("ui.bootsrap.breadcrumb", [
+    'ui.bootstrap.collapse',
+    "ui.router.state"
+  ])
+
   .provider("$breadcrumb", () ->
     class DS
       constructor: (@length) ->
@@ -101,12 +108,14 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
       getNavigationStates: ($state, $stateParams) ->
         return render getNavigationStates($state, $stateParams), $state
   )
+
   .directive('breadcrumb', () ->
     restrict: 'EA'
     scope:
       states: '='
+      style: '='
     replace: true
-    templateUrl: 'directives/breadcrumb/breadcrumb.tpl.html'
+    templateUrl: 'common/directives/breadcrumb/breadcrumb.jade'
     controller: ($scope, $state, $stateParams, $breadcrumb) ->
       getIndexOfActiveState = () ->
         index = 0
@@ -132,12 +141,14 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
       $scope.getActiveCommandView = () ->
         return _index
   )
+
   .directive('breadcrumbEntries', () ->
     restrict: 'E'
     replace: true
     transclude: true
-    templateUrl: 'directives/breadcrumb/breadcrumb-entries.tpl.html'
+    templateUrl: 'common/directives/breadcrumb/breadcrumb-entries.jade'
   )
+
   .directive('breadcrumbEntry', () ->
     restrict: 'E'
     replace: true
@@ -145,14 +156,19 @@ define ["angular", "angular-ui-router", "angular-bootstrap"], (angular) ->
       state: '='
       bcOpen: '&'
       index: '='
-    templateUrl: 'directives/breadcrumb/breadcrumb-entry.tpl.html'
+      style: '='
+    templateUrl: 'common/directives/breadcrumb/breadcrumb-entry.jade'
     controller: ($scope, $element, $attrs, $state, $breadcrumb) ->
       $scope.openView = (name, params) ->
         $state.go name, params
     link: (scope, element, attrs) ->
-      i = scope.index + 1
-      index = i % 7
-      scope.cssClass = if index > 0 then "bc-level-" + index
+      if scope.style is 'markos'
+        scope.cssClass = 'bc-level-simple'
+      else
+        i = scope.index + 1
+        index = i % 7
+        scope.cssClass = if index > 0 then "bc-level-" + index
+
       if scope.state.isActive
         element.addClass "active"
       else if scope.state.isLast

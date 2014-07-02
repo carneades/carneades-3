@@ -52,7 +52,9 @@
 @import "projects/vendor/bootstrap/responsive-utilities";
 
 @import "projects/modules/mixins";
-@import "projects/partials/breadcrumbs";
+//@import "projects/partials/breadcrumbs";
+@import "projects/partials/breadcrumbs-simple";
 @import "projects/partials/navigation";
 @import "projects/partials/misc";
+@import "projects/default/outline";
 //@import "projects/partials/theory";
