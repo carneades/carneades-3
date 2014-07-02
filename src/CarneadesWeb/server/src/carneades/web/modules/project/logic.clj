@@ -37,6 +37,10 @@
 
 (defn- rename-keys [x] (set/rename-keys x {:creation-date :date}))
 
+(defn to-map
+  [rec]
+  (into {} rec))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of resources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -138,25 +142,27 @@
        (#(if-not (nil? id) (get-sub-outline % id) %))))
 
 (defn get-metadata
-  [[project db id :as params] & {:keys [k lang host]}]
+  [[project db :as params] & {:keys [k lang host]}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (->> (get-resource host :metadata params)
+  (->> (s/get-metadata project db)
        (#(if (nil? k)
            %
-           (filter (fn [x] (= (:key x) k)) %)))))
+           (filter (fn [x] (= (:key x) k)) %)))
+       (to-map)))
 
 (defn get-metadatum
   [[project db id :as params] & {:keys [k lang host]}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (->> (get-resource host :metadata params)
+  (->> (s/get-metadatum project db id)
        (#(if (nil? k)
            %
            (filter (fn [x] (= (:key x) k)) %)))
         (#(if (contains? % :description)
            (set-description-text lang %)
-           %))))
+           %))
+        (to-map)))
 
 (defn trim-premises
   "Removes premises information that are not used from a collection of premises."
@@ -284,10 +290,6 @@
   [project db host lang aid]
   (let [arg (get-argument [project db aid] :host host :lang lang)]
     (trim-argument arg)))
-
-(defn to-map
-  [rec]
-  (into {} rec))
 
 (defn get-statement
   [[project db id :as params]

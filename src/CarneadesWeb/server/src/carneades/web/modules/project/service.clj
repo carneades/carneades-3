@@ -15,3 +15,21 @@
   (let [dbconn (db/make-connection project db "guest" "")]
     (db/with-db dbconn
       (p/pack-statement (ag-db/read-statement id)))))
+
+(defn get-statements
+  [project db]
+  (let [dbconn (db/make-connection project db "guest" "")]
+    (db/with-db dbconn
+      (map p/pack-statement (ag-db/list-statements)))))
+
+(defn get-metadatum
+  [project db id]
+  (let [dbconn (db/make-connection project db "guest" "")]
+    (db/with-db dbconn
+      (ag-db/read-metadata id))))
+
+(defn get-metadata
+  [project db]
+  (let [dbconn (db/make-connection project db "guest" "")]
+    (db/with-db dbconn
+      (ag-db/list-metadata))))

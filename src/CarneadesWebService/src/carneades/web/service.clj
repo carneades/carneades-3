@@ -148,129 +148,131 @@
 
   ;; documents for projects
   ;; TODO: maybe scope on /project/documents OR add a query parameter to /project
-  (GET "/documents/:project/:doc" [project doc]
-       (let [path (str project/projects-directory file-separator project file-separator
-                       "documents" file-separator doc)]
-         (if (not (exists? path))
-           {:status 404
-            :body "File not found"}
-           {:body
-            (io/input-stream path)})))
+  ;; (GET "/documents/:project/:doc" [project doc]
+  ;;      (let [path (str project/projects-directory file-separator project file-separator
+  ;;                      "documents" file-separator doc)]
+  ;;        (if (not (exists? path))
+  ;;          {:status 404
+  ;;           :body "File not found"}
+  ;;          {:body
+  ;;           (io/input-stream path)})))
 
-  (GET "/documents/:project" [project]
-       {:body {:documents (get-project-documents project state)}})
+  ;; (GET "/documents/:project" [project]
+  ;;      {:body {:documents (get-project-documents project state)}})
 
-  (POST "/documents/:project" [project file]
-        (let [tempfile (:tempfile file)
-              filename (:filename file)]
-          (project/import-document project (.getPath tempfile) filename)
-          (reset! state (init-projects-data))
-          {:status 200}))
+  ;; (POST "/documents/:project" [project file]
+  ;;       (let [tempfile (:tempfile file)
+  ;;             filename (:filename file)]
+  ;;         (project/import-document project (.getPath tempfile) filename)
+  ;;         (reset! state (init-projects-data))
+  ;;         {:status 200}))
 
-  (DELETE "/documents/:project/:doc" [project doc]
-          (project/delete-document project doc)
-          (reset! state (init-projects-data))
-          {:status 200})
+  ;; (DELETE "/documents/:project/:doc" [project doc]
+  ;;         (project/delete-document project doc)
+  ;;         (reset! state (init-projects-data))
+  ;;         {:status 200})
 
-  (PUT "/debate/:id" request
-       (let [m (json/read-json (slurp (:body request)))
-             [username password] (get-username-and-password request)
-             db (db/make-connection *debatedb-name* username password)
-             id (:id (:params request))]
-         (db/with-db db {:body (case/update-debate id m)})))
+  ;; (PUT "/debate/:id" request
+  ;;      (let [m (json/read-json (slurp (:body request)))
+  ;;            [username password] (get-username-and-password request)
+  ;;            db (db/make-connection *debatedb-name* username password)
+  ;;            id (:id (:params request))]
+  ;;        (db/with-db db {:body (case/update-debate id m)})))
 
-  (GET "/debate-poll/:project/:debateid" [project debateid]
-       (db/with-db (db/make-connection project *debatedb-name* "guest" "")
-         {:body (case/list-polls debateid)}))
+  ;; (GET "/debate-poll/:project/:debateid" [project debateid]
+  ;;      (db/with-db (db/make-connection project *debatedb-name* "guest" "")
+  ;;        {:body (case/list-polls debateid)}))
 
-  (GET "/debate-poll/:project/:debateid/:id" request
-       (let [id (get-in request [:params :id])
-             project (get-in request [:params :project])
-             dbconn (db/make-connection project *debatedb-name* "guest" "")]
-         (db/with-db dbconn
-           {:body (case/read-poll id)})))
+  ;; (GET "/debate-poll/:project/:debateid/:id" request
+  ;;      (let [id (get-in request [:params :id])
+  ;;            project (get-in request [:params :project])
+  ;;            dbconn (db/make-connection project *debatedb-name* "guest" "")]
+  ;;        (db/with-db dbconn
+  ;;          {:body (case/read-poll id)})))
 
-  (POST "/debate-poll/:project/:debateid" request
-        (let [m (json/read-json (slurp (:body request)))
-              project (get-in request [:params :project])
-              cookies (:cookies request)
-              cookieid (get-in cookies ["ring-session" :value])
-              policies (map str (vote/find-policies-matching-vote
-                                 project
-                                 (get-in (deref state)
-                                         [:projects-data
-                                          project :properties])
-                                 m))
-              m (dissoc m :id :policykey :qid :issueid :project)
-              ;; the userid of the poll is a sha256 hash of the cookie id
-              ;; thus we are sure the user can vote only once for the session.
-              ;; The id is hashed to prevent other users of guessing the cookie
-              ;; number by calling the GET debate-poll API.
-              id (sha256 cookieid)
-              m (assoc m :userid id)
-              _ (pprint m)
-              debateid (get-in request [:params :debateid])
-              [username password] (get-username-and-password request)
-              dbconn (db/make-connection project *debatedb-name* username password)]
-          (db/with-db dbconn
-            (let [id (case/create-poll debateid m policies)]
-              {:body {:id id}}))))
+  ;; (POST "/debate-poll/:project/:debateid" request
+  ;;       (let [m (json/read-json (slurp (:body request)))
+  ;;             project (get-in request [:params :project])
+  ;;             cookies (:cookies request)
+  ;;             cookieid (get-in cookies ["ring-session" :value])
+  ;;             policies (map str (vote/find-policies-matching-vote
+  ;;                                project
+  ;;                                (get-in (deref state)
+  ;;                                        [:projects-data
+  ;;                                         project :properties])
+  ;;                                m))
+  ;;             m (dissoc m :id :policykey :qid :issueid :project)
+  ;;             ;; the userid of the poll is a sha256 hash of the cookie id
+  ;;             ;; thus we are sure the user can vote only once for the session.
+  ;;             ;; The id is hashed to prevent other users of guessing the cookie
+  ;;             ;; number by calling the GET debate-poll API.
+  ;;             id (sha256 cookieid)
+  ;;             m (assoc m :userid id)
+  ;;             _ (pprint m)
+  ;;             debateid (get-in request [:params :debateid])
+  ;;             [username password] (get-username-and-password request)
+  ;;             dbconn (db/make-connection project *debatedb-name* username password)]
+  ;;         (db/with-db dbconn
+  ;;           (let [id (case/create-poll debateid m policies)]
+  ;;             {:body {:id id}}))))
 
-  (PUT "/debate-poll/:project/:debateid" request
-       ;; TODO: users can modify the vote of the others!
-       {:status 404}
-       ;; (let [m (json/read-json (slurp (:body request)))
-       ;;       debateid (get-in request [:params :debateid])
-       ;;       [username password] (get-username-and-password request)
-       ;;       dbconn (db/make-connection *debatedb-name* username password)]
-       ;;    (db/with-db dbconn
-       ;;      (when (update-poll (:id m) (dissoc m :id))
-       ;;        {:body (read-poll (:id m))})))
-       )
+  ;; (PUT "/debate-poll/:project/:debateid" request
+  ;;      ;; TODO: users can modify the vote of the others!
+  ;;      {:status 404}
+  ;;      ;; (let [m (json/read-json (slurp (:body request)))
+  ;;      ;;       debateid (get-in request [:params :debateid])
+  ;;      ;;       [username password] (get-username-and-password request)
+  ;;      ;;       dbconn (db/make-connection *debatedb-name* username password)]
+  ;;      ;;    (db/with-db dbconn
+  ;;      ;;      (when (update-poll (:id m) (dissoc m :id))
+  ;;      ;;        {:body (read-poll (:id m))})))
+  ;;      )
 
-  ;; poll results for the PMT (not for the SCT)
-  (GET "/poll-results/:project/:debateid/:casedb" [project debateid casedb]
-       {:body (vote/vote-stats project debateid casedb)})
+  ;; ;; poll results for the PMT (not for the SCT)
+  ;; (GET "/poll-results/:project/:debateid/:casedb" [project debateid casedb]
+  ;;      {:body (vote/vote-stats project debateid casedb)})
 
-  (GET "/aggregated-poll-results/:project/:debateid" [project debateid]
-       {:body (vote/aggregated-vote-stats project debateid)})
+  ;; (GET "/aggregated-poll-results/:project/:debateid" [project debateid]
+  ;;      {:body (vote/aggregated-vote-stats project debateid)})
 
   ;; To Do: Deleting debates, poll-debate
 
   ;; Metadata
-  (GET "/metadata/:project/:db" [project db]
-       (let [db2 (db/make-connection project db "guest" "")]
-         (db/with-db db2 {:body (ag-db/list-metadata)})))
+  ;; (GET "/metadata/:project/:db" [project db]
+  ;;      (let [db2 (db/make-connection project db "guest" "")]
+  ;;        (prn "metadata")
+  ;;        (db/with-db db2 {:body (ag-db/list-metadata)})))
 
-  (GET "/metadata/:project/:db/:id" [project db id]
-       (let [db2 (db/make-connection project db "guest" "")]
-         (db/with-db db2 {:body
-                          (ag-db/read-metadata id)})))
+  ;; (GET "/metadata/:project/:db/:id" [project db id]
+  ;;      (let [db2 (db/make-connection project db "guest" "")]
+  ;;        (prn "metadata id")
+  ;;        (db/with-db db2 {:body
+  ;;                         (ag-db/read-metadata id)})))
 
-  (POST "/metadata/:project/:db" request
-        (let [db (:db (:params request))
-              m (json/read-json (slurp (:body request)))
-              [username password] (get-username-and-password request)
-              dbconn (db/make-connection db username password)]
-          (db/with-db dbconn {:body
-                              {:id (ag-db/create-metadata
-                                    (map->metadata m))}})))
+  ;; (POST "/metadata/:project/:db" request
+  ;;       (let [db (:db (:params request))
+  ;;             m (json/read-json (slurp (:body request)))
+  ;;             [username password] (get-username-and-password request)
+  ;;             dbconn (db/make-connection db username password)]
+  ;;         (db/with-db dbconn {:body
+  ;;                             {:id (ag-db/create-metadata
+  ;;                                   (map->metadata m))}})))
 
-  (PUT "/metadata/:project/:db/:id" request
-       (let [m (json/read-json (slurp (:body request)))
-             [username password] (get-username-and-password request)
-             db (db/make-connection (:db (:params request)) username password)
-             id (Integer/parseInt (:id (:params request)))]
-         (db/with-db db {:body (do
-                                 (ag-db/update-metadata id m)
-                                 (ag-db/read-metadata id))})))
+  ;; (PUT "/metadata/:project/:db/:id" request
+  ;;      (let [m (json/read-json (slurp (:body request)))
+  ;;            [username password] (get-username-and-password request)
+  ;;            db (db/make-connection (:db (:params request)) username password)
+  ;;            id (Integer/parseInt (:id (:params request)))]
+  ;;        (db/with-db db {:body (do
+  ;;                                (ag-db/update-metadata id m)
+  ;;                                (ag-db/read-metadata id))})))
 
-  (DELETE"/metadata/:project/:db/:id" request
-          (let [[username password] (get-username-and-password request)
-                dbname (:db (:params request))
-                dbconn (db/make-connection dbname username password)
-                id (:id (:params request))]
-            (db/with-db dbconn {:body (ag-db/delete-metadata (Integer/parseInt id))})))
+  ;; (DELETE"/metadata/:project/:db/:id" request
+  ;;         (let [[username password] (get-username-and-password request)
+  ;;               dbname (:db (:params request))
+  ;;               dbconn (db/make-connection dbname username password)
+  ;;               id (:id (:params request))]
+  ;;           (db/with-db dbconn {:body (ag-db/delete-metadata (Integer/parseInt id))})))
 
   ;; Statements
 
