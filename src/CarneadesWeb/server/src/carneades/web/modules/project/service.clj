@@ -33,3 +33,15 @@
   (let [dbconn (db/make-connection project db "guest" "")]
     (db/with-db dbconn
       (ag-db/list-metadata))))
+
+(defn get-arguments
+  [project db]
+  (let [dbconn (db/make-connection project db "guest" "")]
+    (db/with-db dbconn
+      (map p/pack-argument (ag-db/list-arguments)))))
+
+(defn get-argument
+  [project db id]
+  (let [dbconn (db/make-connection project db "guest" "")]
+    (db/with-db dbconn
+      (p/pack-argument (ag-db/read-argument id)))))

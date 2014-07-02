@@ -278,7 +278,7 @@
   (debug "get-argument")
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (let [arg (get-resource host :argument [project db id])
+  (let [arg (s/get-argument project db id)
         scheme (get-scheme-from-arg project arg host lang)]
     (-> arg
         (update-in [:header] trim-metadata lang)
