@@ -9,6 +9,7 @@ server/.lein-*
 server/.env
 server/*.log*
 server/.nrepl-port
+server/.lobos_stash.clj
 client/node_modules/
 .sass-cache
 client/.generated
