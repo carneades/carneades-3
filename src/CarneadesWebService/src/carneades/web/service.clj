@@ -85,18 +85,18 @@
   ;; (GET "/project/:id" [id]
   ;;      {:body (get-project-properties id state)})
 
-  (GET "/project/:id/theories" [id]
-       {:body {:theories (get-project-theories id state)}})
+  ;; (GET "/project/:id/theories" [id]
+  ;;      {:body {:theories (get-project-theories id state)}})
 
-  (GET "/project/:id/theories/:theoryid.clj" [id theoryid]
-       (let [path (str project/projects-directory file-separator id file-separator
-                       project/theories-directory file-separator theoryid ".clj")]
-         (if (not (exists? path))
-           {:status 404
-            :body "File not found"}
-           {:body (io/input-stream path)
-            :headers {"Content-Type" "application/clojure;charset=UTF-8"}
-            })))
+  ;; (GET "/project/:id/theories/:theoryid.clj" [id theoryid]
+  ;;      (let [path (str project/projects-directory file-separator id file-separator
+  ;;                      project/theories-directory file-separator theoryid ".clj")]
+  ;;        (if (not (exists? path))
+  ;;          {:status 404
+  ;;           :body "File not found"}
+  ;;          {:body (io/input-stream path)
+  ;;           :headers {"Content-Type" "application/clojure;charset=UTF-8"}
+  ;;           })))
 
   ;; (POST "/project/:id/theories" [id file]
   ;;       (let [tempfile (:tempfile file)
