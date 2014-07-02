@@ -7,31 +7,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   "use strict"
   angular.module('app.controllers', ['services.i18nNotifications', 'services.httpRequestTracker', 'resources.themes'])
 
-  .controller('AppCtrl', ($scope, $stateParams, $location, i18nNotifications) ->
-    ( ->
-      carneades = (converter) ->
-        [
-          #  ? title ? syntax
-          type: "lang"
-          regex: "\\[@([^\\,]+)[^\\]]*\\]"
-          replace: (match, citation_key) ->
-            "<a href='" + "/carneades/#/projects/#{$stateParams.pid}/#{$stateParams.db}/outline?scrollTo=#{citation_key}" + "'>#{match}</a>";
-        ,
-          type: "output"
-          filter: (source) ->
-            source.replace /file:\/\/(\w+)\/(\w+)/g, (match, project, document) ->
-              "carneadesws/documents/" + project + "/" + document
-        ]
-
-      # Client-side export
-      window.Showdown.extensions.carneades = carneades  if typeof window isnt "undefined" and window.Showdown and window.Showdown.extensions
-
-      # Server-side export
-      module.exports = carneades  if typeof module isnt "undefined"
-
-      undefined
-    )()
-
+  .controller('AppCtrl', () ->
     undefined
   )
 
@@ -50,84 +26,63 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   .directive('bcNavigation', () ->
     restrict: 'E'
     replace: 'true'
-    template: '<div class=\"my-fluid-container\" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates"></breadcrumb></div>'
+    #templateUrl: 'breadcrumb-navigation.jade'
+    template: '<div class=\"my-fluid-container\" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates" style="style"></breadcrumb></div>'
+    controller: ($scope, $element, $attrs, $stateParams) ->
+      setTheme = () ->
+        if $stateParams.pid is 'markos'
+          $scope.style = 'simple'
+        else
+          $scope.style = 'emacs'
+
+      $scope.$on '$stateChangeSuccess', ->
+        setTheme()
+
+      setTheme()
     )
 
   .directive 'cssInject', ($compile, $stateParams) ->
     restrict: 'E'
     replace: true
-    template: '<link rel="stylesheet" href="api/projects/{{theme}}/theme/css/{{theme}}.min.css" media="screen"/>'
+    require: '?theme'
+    template: '<link rel="stylesheet" ng-href="api/projects/{{theme}}/theme/css/{{theme}}.css" media="screen"/>'
     scope:
-      defaultTheme: '@'
-    controller: ($scope, $element, $attrs, $stateParams) ->
-      unless $scope.theme then $scope.theme = $scope.defaultTheme
-      setTheme = () ->
-        if $stateParams.pid and $scope.theme isnt $stateParams.pid
-          $scope.theme = $stateParams.pid
+      theme: '=?'
+    controller: ($scope) ->
+      update = () ->
+        $scope.theme = $scope.theme || 'default'
 
-      $scope.$on '$stateChangeSuccess', ->
-        setTheme()
+      $scope.$watch 'theme', () ->
+        update()
+
+      update()
 
   .directive 'projectBanner', ($compile) ->
     restrict: 'E'
     replace: 'true'
     scope:
-      display: '@'
-    controller: ($scope, $element, $attrs, $stateParams, $location, $q, $http, $timeout) ->
-      getFile = (filename) ->
-        string = []
-        string.push $location.protocol()
-        string.push "://"
-        string.push $location.host()
-        string.push ":"
-        string.push $location.port()
-        string.push "/carneades/api/projects/"
-        string.push if $scope.display then $scope.display else $stateParams.pid
-        string.push "/theme/html/"
-        string.push filename
+      theme: '=?'
+    template: '<div ng-include="\'api/projects/\' + theme + \'/theme/html/banner.tpl\'"></div>'
+    controller: ($scope) ->
+      update = () ->
+        $scope.theme = $scope.theme || 'default'
 
-        dfd = $q.defer()
-        $timeout(() ->
-          $http.get(string.join("")).success((result) ->
-            dfd.resolve result
-          )
-        , 2000)
+      $scope.$watch 'theme', () ->
+        update()
 
-        return dfd.promise
-
-      if ($stateParams.pid or $scope.display)
-        getFile('banner.tpl').then (result) ->
-          if result
-            $element.append $compile(result)($scope)
+      update()
 
   .directive 'projectFooter', ($compile) ->
     restrict: 'E'
     replace: 'true'
     scope:
-      display: '@'
-    controller: ($scope, $element, $attrs, $stateParams, $location, $q, $http, $timeout) ->
-      getFile = (filename) ->
-        string = []
-        string.push $location.protocol()
-        string.push "://"
-        string.push $location.host()
-        string.push ":"
-        string.push $location.port()
-        string.push "/carneades/api/projects/"
-        string.push if $scope.display then $scope.display else $stateParams.pid
-        string.push "/theme/html/"
-        string.push filename
+      theme: '=?'
+    template: '<div ng-include="\'api/projects/\' + theme + \'/theme/html/footer.tpl\'"></div>'
+    controller: ($scope) ->
+      update = () ->
+        $scope.theme = $scope.theme || 'default'
 
-        dfd = $q.defer()
-        $timeout(() ->
-          $http.get(string.join("")).success((result) ->
-            dfd.resolve result
-          )
-        , 2000)
+      $scope.$watch 'theme', () ->
+        update()
 
-        return dfd.promise
-
-      if ($stateParams.pid or $scope.display)
-        getFile('footer.tpl').then (result) ->
-          if result
-            $element.append $compile(result)($scope)
+      update()

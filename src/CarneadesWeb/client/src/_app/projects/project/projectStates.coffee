@@ -3,19 +3,26 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-define ['angular', '../../common/resources/projects'], (angular) ->
-  angular.module('project.states', ['resources.projects'])
-  .config ($stateProvider, $stateUtilProvider) ->
-    helper = $stateUtilProvider.$get()
+define [
+  'angular',
+  '../../common/resources/projects'
+], (angular) ->
+  angular.module('project.states', [
+    'resources.projects'
+  ])
+
+  .config ($stateProvider) ->
     states = [
       name: "home.projects.project"
-      url: "/:pid"
+      url: '/:pid'
       label: "Project"
+      data:
+        commands: ['home.projects.project.outline']
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
-          templateUrl: 'project/project.tpl.html'
+          templateUrl: 'projects/project/project.jade'
           controller: ($scope, project) ->
             $scope.project = project
             $scope.$stateParams.mid = 1
@@ -25,10 +32,6 @@ define ['angular', '../../common/resources/projects'], (angular) ->
           resolve:
             project: ($stateParams, ProjectLoader) ->
               new ProjectLoader($stateParams)
-        "subnav@":
-          templateUrl: 'subnav.tpl.html'
-          resolve: helper.builder().add('commands', helper.cmdBuilder('home.projects.project.outline')).build()
-          controller: 'SubnavController'
     ]
 
     angular.forEach states, (state) ->

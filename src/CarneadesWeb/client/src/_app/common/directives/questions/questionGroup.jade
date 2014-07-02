@@ -1,0 +1,11 @@
+.question-groups
+  span.category
+    {{group[0].category_name}}
+  div(ng-repeat='question in group')
+    p Hint: {{question.hint}}
+    span(ng-switch='question.grounded')
+      span(ng-switch-when='true')
+        div(ng-include="'directives/questions/groundedQuestion.jade'")
+      span(ng-switch-when='false')
+        div(ng-include="'directives/questions/roleQuestion.jade'")
+  br

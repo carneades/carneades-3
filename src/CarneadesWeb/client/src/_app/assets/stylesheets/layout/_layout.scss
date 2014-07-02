@@ -13,3 +13,9 @@
 .map-mouseover {
     cursor: pointer;
 }
+
+.panel-default {
+    &:hover {
+        cursor: pointer;
+    }
+}
