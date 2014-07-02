@@ -262,7 +262,7 @@
 
 (defn get-scheme-from-arg
   [project arg host lang]
-  (let [pcontent (get-resource host :project [project])
+  (let [pcontent (s/get-project project)
         schemestr (str (first (unserialize-atom (:scheme arg))))
         schemes-project (theory/get-schemes-project project (:schemes pcontent))
         schemes-name (theory/get-schemes-name (:schemes pcontent))
@@ -286,7 +286,8 @@
         (update-in [:header] trim-metadata lang)
         (update-in [:conclusion] trim-conclusion lang)
         (update-in [:premises] trim-premises lang)
-        (assoc :scheme (trim-scheme scheme)))))
+        (assoc :scheme (trim-scheme scheme))
+        (to-map))))
 
 (defn get-trimed-argument
   [project db host lang aid]
@@ -298,16 +299,16 @@
    & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
+  (debug "get-statement")
   (let [stmt (s/get-statement project db id)
         stmt (update-in stmt [:header] trim-metadata lang)
         stmt (assoc stmt :text (or (lang (:text stmt)) (serialize-atom (:atom stmt))))
-        stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
-                                   (:pro stmt)))
+        stmt (assoc stmt :pro (spy (map (partial get-trimed-argument project db host lang)
+                                    (:pro stmt))))
         stmt (assoc stmt :con (map (partial get-trimed-argument project db host lang)
                                    (:con stmt)))
         stmt (assoc stmt :premise-of
                     (map (partial get-trimed-argument project db host lang) (:premise-of stmt)))]
-    (debug "stmt" stmt)
     (to-map stmt)))
 
 (defn get-nodes
