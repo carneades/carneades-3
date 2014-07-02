@@ -4,16 +4,29 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns carneades.web.system
-  (:require [carneades.web.project :refer [init-projects-data!]]
-            [carneades.project.admin :as p]))
+  (:require [carneades.project.admin :as p]
+            [carneades.database.admin :as dbadmin]))
 
 (def state (atom nil))
+
+(defn- init-projects-data!
+  "Returns the project data and creates mandatory databases if missing."
+  []
+  (reduce (fn [m project]
+            (dbadmin/create-missing-dbs project "root" "pw1")
+            (assoc m project (p/load-project project)))
+          {}
+          (p/list-projects)))
 
 (defn- init-projects-data
   []
   {:projects (p/list-projects)
    :projects-data (init-projects-data!)})
 
-(defn init
+(defn start
   []
   (reset! state (init-projects-data)))
+
+(defn stop
+  []
+  )

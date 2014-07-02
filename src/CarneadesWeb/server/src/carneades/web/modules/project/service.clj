@@ -7,14 +7,22 @@
   carneades.web.modules.project.service
   (:require 
    [carneades.database.db :as db]
-   [carneades.web.pack :as p]
+   [carneades.web.modules.project.pack :as p]
    [carneades.database.argument-graph :as ag-db]
-   [carneades.web.outline :refer [create-outline]]
+   [carneades.web.modules.project.outline :refer [create-outline]]
    [carneades.project.admin :as project]
    [carneades.engine.utils :as f]
    [clojure.java.io :as io]
-   [carneades.web.system :as s]
-   [carneades.web.project :as pr]))
+   [carneades.web.system :as s]))
+
+(defn- get-project-properties
+  [id]
+  (merge (get-in (deref s/state) [:projects-data id :properties])
+         {:id id}))
+
+(defn- get-project-theories
+  [id state]
+  (get-in (deref s/state) [:projects-data id :available-theories]))
 
 (defn get-projects
   []
@@ -28,7 +36,7 @@
 
 (defn get-project
   [id]
-  (pr/get-project-properties id s/state))
+  (get-project-properties id))
 
 (defn get-statement
   [project db id]
@@ -81,6 +89,6 @@
 
 (defn get-theories
   [tid]
-  {:theories (pr/get-project-theories tid s/state)})
+  {:theories (get-project-theories tid)})
 
 
