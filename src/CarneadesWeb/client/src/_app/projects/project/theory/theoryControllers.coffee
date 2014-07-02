@@ -19,7 +19,6 @@ define [
 
     if $stateParams.scrollTo?
       scroll.scrollTo $stateParams.scrollTo
-
   )
 
   .controller('SchemeCtrl', ($scope, $translate) ->
