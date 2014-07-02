@@ -254,7 +254,7 @@
     (if (:tid params)
       (get-theory params)
       (map #(get-theory (assoc params :tid %))
-           (:theories (get-resource (:host params) :project [(:tpid params) "theories"]))))))
+           (:theories (s/get-theories (:tpid params)))))))
 
 (defn trim-scheme
   [scheme]

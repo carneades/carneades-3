@@ -28,7 +28,7 @@
 
 (defn get-project
   [id]
-  (pr/get-project-properties id (deref handler/state)))
+  (pr/get-project-properties id handler/state))
 
 (defn get-statement
   [project db id]
@@ -80,3 +80,9 @@
       {:status 404
        :body "File not found"}
       (io/input-stream path))))
+
+(defn get-theories
+  [tid]
+  {:theories (pr/get-project-theories tid handler/state)})
+
+
