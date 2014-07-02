@@ -136,14 +136,14 @@
   ;;           (reset! state (init-projects-data))
   ;;           {:status 200}))
 
-  (GET "/theme/:project/:doc" [project doc]
-       (let [path (str project/projects-directory file-separator project file-separator
-                       "theme" file-separator doc)]
-         (if (not (exists? path))
-           {:status 404
-            :body "File not found"}
-           {:body
-            (io/input-stream path)})))
+  ;; (GET "/theme/:project/:doc" [project doc]
+  ;;      (let [path (str project/projects-directory file-separator project file-separator
+  ;;                      "theme" file-separator doc)]
+  ;;        (if (not (exists? path))
+  ;;          {:status 404
+  ;;           :body "File not found"}
+  ;;          {:body
+  ;;           (io/input-stream path)})))
 
 
   ;; documents for projects
