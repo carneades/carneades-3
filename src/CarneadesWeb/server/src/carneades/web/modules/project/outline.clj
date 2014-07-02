@@ -3,9 +3,9 @@
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-(ns carneades.web.outline
+(ns carneades.web.modules.project.outline
   (:use (carneades.engine statement argument)
-        carneades.web.pack
+        carneades.web.modules.project.pack
         carneades.database.argument-graph))
 
 (defn create-outline-helper

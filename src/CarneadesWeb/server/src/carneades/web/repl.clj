@@ -1,7 +1,7 @@
 (ns carneades.web.repl
   ^{:author "Sebastian Kaiser"}
   (:require [taoensso.timbre :as timbre :refer (trace debug info warn error fatal spy)]
-            [carneades.web.service :as service]
+            [carneades.web.system :as system]
             [carneades.web.handler :refer [app init destroy]]
             [ring.server.standalone :refer [serve]]
             [ring.middleware.file :refer [wrap-file]]
@@ -32,11 +32,11 @@
                     :auto-reload? true
                     :destroy destroy
                     :join? false}))
-    (service/start)
+    (system/start)
     (info (str "You can view the site at http://localhost:" port))))
 
 (defn stop-server [system]
   (let [server (:server system)]
     (.stop @server)
-    (service/stop)
+    (system/stop)
     (reset! server nil)))

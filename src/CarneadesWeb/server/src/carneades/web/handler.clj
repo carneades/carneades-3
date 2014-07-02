@@ -60,7 +60,7 @@
   []
   (timbre/merge-config! logger-config)
   ;; (service/start)
-  (system/init)
+  (system/start)
   (info "Carneades started successfully."))
 
 (defn destroy
