@@ -22,6 +22,7 @@ define [
   "angular-animate",
   "angular-translate-loader-static-files",
   "common/directives/markdown/markdown",
+  "common/directives/loader/loader",
   'showdown'
 ], (angular) ->
   angular.module("app", [
@@ -30,6 +31,7 @@ define [
     "ui.bootsrap.breadcrumb",
     "ngAnimate",
     "directives.pagenav",
+    "directives.loaders",
     "ui.router",
     "css.injector",
     "app.states",
@@ -50,7 +52,6 @@ define [
   .config((
     $urlRouterProvider,
     $stateProvider,
-    $httpProvider,
     $provide,
     $translateProvider,
     $uiViewScrollProvider,
@@ -92,72 +93,6 @@ define [
 
     # disable autoscrolling on ui-views
     $uiViewScrollProvider.useAnchorScroll()
-
-    $provide.factory "requestInterceptor", ($q, $injector) ->
-      requestEnded = ->
-        # get $http via $injector because of circular dependency problem
-        $http = $http or $injector.get '$http'
-        # don't send notification until all requests are complete
-        if $http.pendingRequests.length < 1
-          # get requestNotificationChannel via $injector because of circular dependency problem
-          notificationChannel = notificationChannel or $injector.get 'requestNotificationChannel'
-          # send a notification requests are complete
-          notificationChannel.requestEnded()
-          undefined
-
-      request: (config) ->
-        notificationChannel = notificationChannel or $injector.get 'requestNotificationChannel'
-        notificationChannel.requestStarted()
-        config
-
-      requestError: (rejection) ->
-        requestEnded()
-        $q.reject(rejection)
-
-      response: (response) ->
-        requestEnded()
-        response
-
-      responseError: (rejection) ->
-        requestEnded()
-        $q.reject(rejection)
-
-    $httpProvider.interceptors.push 'requestInterceptor'
-    undefined
-  )
-  .factory('requestNotificationChannel', ($rootScope) ->
-    # private notification messages
-    _START_REQUEST_ = '_START_REQUEST_'
-    _END_REQUEST_ = '_END_REQUEST_'
-
-    # publish start request notification
-    requestStarted = ->
-      $rootScope.$broadcast _START_REQUEST_
-      undefined
-
-    # publish end request notification
-    requestEnded = ->
-      $rootScope.$broadcast _END_REQUEST_
-      undefined
-
-    # subscribe to start request notification
-    onRequestStarted = ($scope, handler) ->
-      $scope.$on _START_REQUEST_, (event) ->
-        handler()
-        undefined
-      undefined
-
-    # subscribe to end request notification
-    onRequestEnded = ($scope, handler) ->
-      $scope.$on _END_REQUEST_, (event) ->
-        handler()
-        undefined
-      undefined
-
-    requestStarted:  requestStarted
-    requestEnded: requestEnded
-    onRequestStarted: onRequestStarted
-    onRequestEnded: onRequestEnded
   )
 
   .directive('loading', (requestNotificationChannel) ->

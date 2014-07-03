@@ -40,5 +40,6 @@ require.config
     'angular-bootstrap': './libs/angular-bootstrap'
     'requirejs-domready': './libs/requirejs-domready'
     'showdown': './libs/showdown/showdown'
+    'spinjs': './libs/spin'
 
   deps: ["./bootstrap"]
