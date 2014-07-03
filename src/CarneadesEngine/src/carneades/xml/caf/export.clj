@@ -104,8 +104,7 @@
              arg'
              (metadata (:header arg))
              (conclusion (:conclusion arg))
-             (premises (:premises arg))
-             )))
+             (premises (:premises arg)))))
 
 (defn- arguments
   [args]
@@ -114,7 +113,9 @@
            (map argument args)))
 
 (defn references
-  [g])
+  [g]
+  (element :references
+           {}))
 
 (defn export
   [g]
@@ -122,7 +123,7 @@
                        (metadata (:header g))
                        (statements (vals (:statement-nodes g)))
                        (arguments (vals (:argument-nodes g)))
-                       ;; (references (:references g))
+                       (references (:references g))
                        )))
   
 
