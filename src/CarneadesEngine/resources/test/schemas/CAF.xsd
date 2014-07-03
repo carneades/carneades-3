@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2011 Fraunhofer Gesellschaft 
+  Licensed under the EUPL V.1.1
+-->
+<!--
+  Carneades Argument Format (CAF), Version 1.3
+  CAF is based on the argument graph part of 
+  the Legal Knowledge Interchange Format (LKIF)
+  and may be considered a "reification" of the 
+  Argument Interchange Format (AIF).
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="caf">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="metadata"/>
+        <xs:element ref="statements"/>
+        <xs:element ref="arguments"/>
+        <xs:element ref="references"/>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <!--
+    Simple Dublin Core Elements
+    See: http://en.wikipedia.org/wiki/Dublin_Core
+    Multiple values of all attributes except descriptions
+    are represented in a single string with the values separated
+    by semicolons.
+  -->
+  <xs:element name="metadata">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="descriptions"/>
+      </xs:sequence>
+      <xs:attribute name="key" type="xs:string"/>
+      <xs:attribute name="contributor" type="xs:string"/>
+      <xs:attribute name="coverage" type="xs:string"/>
+      <xs:attribute name="creator" type="xs:string"/>
+      <xs:attribute name="date" type="xs:string"/>
+      <xs:attribute name="format" type="xs:string"/>
+      <xs:attribute name="identifier" type="xs:string"/>
+      <xs:attribute name="language" type="xs:language"/>
+      <xs:attribute name="publisher" type="xs:string"/>
+      <xs:attribute name="relation" type="xs:string"/>
+      <xs:attribute name="rights" type="xs:string"/>
+      <xs:attribute name="source" type="xs:string"/>
+      <xs:attribute name="subject" type="xs:string"/>
+      <xs:attribute name="title" type="xs:string"/>
+      <xs:attribute name="type" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="description">
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:language"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="descriptions">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="description"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="statements">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="statement"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="statement">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="metadata"/>
+        <xs:element ref="descriptions"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:Name"/>
+      <xs:attribute name="weight" type="xs:float"/>
+      <xs:attribute name="value" type="xs:float"/>
+      <xs:attribute name="standard">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="DV"/>
+            <xs:enumeration value="PE"/>
+            <xs:enumeration value="CCE"/>
+            <xs:enumeration value="BRD"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="atom" type="xs:string"/>
+      <xs:attribute name="main" type="xs:boolean"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="arguments">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="argument"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="argument">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="metadata"/>
+        <xs:element ref="conclusion"/>
+        <xs:element ref="premises"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:Name"/>
+      <xs:attribute name="strict" type="xs:boolean"/>
+      <xs:attribute name="pro" type="xs:boolean"/>
+      <xs:attribute name="scheme">
+        <xs:simpleType>
+          <xs:union memberTypes="xs:anyURI xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="weight" type="xs:float"/>
+      <xs:attribute name="value" type="xs:float"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="premises">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="premise"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="premise">
+    <xs:complexType>
+      <xs:attribute name="positive" type="xs:boolean"/>
+      <xs:attribute name="role" type="xs:string"/>
+      <xs:attribute name="implicit" type="xs:boolean"/>
+      <xs:attribute name="statement" use="required" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="conclusion">
+    <xs:complexType>
+      <xs:attribute name="statement" use="required" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="references">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="metadata"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
