@@ -90,7 +90,7 @@
 ; The Frisian example, ibid., page 11
 
 (fact "The fristian example works"
-         (let [frisian (make-statement :text {:en "Wiebe is Frisian."})
+      (let [frisian (make-statement :text {:en "Wiebe is Frisian."})
                dutch (make-statement :text {:en "Wiebe is Dutch."})
                tall (make-statement :text {:en "Wiebe is Tall."})
 
