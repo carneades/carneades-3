@@ -13,13 +13,14 @@
                  [org.clojars.pallix/owlapi "3.4.5"]
                  [org.clojars.pallix/hermit "1.2.4"]
 
-                 [org.clojars.pallix/clojure.prxml "1.3.0"]
+                 [org.clojure/data.xml "0.0.7"]
+                 ;; [org.clojars.pallix/clojure.prxml "1.3.0"]
                  [org.clojure/math.combinatorics "0.0.2"]
                  [com.h2database/h2 "1.3.170"]
                  [org.clojure/java.jdbc "0.3.0-beta1"]
                  [lobos "1.0.0-beta1"]
                  [korma "0.3.0-RC5"]
-                 [com.h2database/h2 "1.3.170"]
+
                  [org.clojure/tools.trace "0.7.1"]
                  [lacij "0.9.0"]
                  [me.raynes/fs "1.4.0"]
