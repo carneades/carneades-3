@@ -23,7 +23,8 @@ define [
           template: "<bc-navigation></bc-navigation>"
         "content@":
           templateUrl: 'projects/list.jade'
-          controller: ($scope, $location, projects) ->
+          controller: ($scope, $q, $location, projects) ->
+            $scope.viewLoading = true
             $scope.projects = projects
 
             $scope.copyLink = (pid) ->
@@ -31,6 +32,10 @@ define [
 
             $scope.open = (pid) ->
               $scope.$state.go "home.projects.project", {pid: pid}
+
+            $q.all([projects]).then((data) ->
+              $scope.viewLoading = false
+            )
           resolve:
             projects: (MultiProjectLoader) ->
               return new MultiProjectLoader()

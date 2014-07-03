@@ -11,7 +11,8 @@ define [
     'pascalprecht.translate'
   ])
 
-  .controller('TheoryCtrl', ($scope, $stateParams, scroll, theory, project) ->
+  .controller('TheoryCtrl', ($scope, $stateParams, $q, scroll, theory, project) ->
+    $scope.viewLoading = true
     $scope.stateParams = $stateParams
     $scope.lang = theory.lang
     $scope.section = theory
@@ -19,6 +20,10 @@ define [
 
     if $stateParams.scrollTo?
       scroll.scrollTo $stateParams.scrollTo
+
+    $q.all([scroll, theory, project]).then((data) ->
+      $scope.viewLoading = false
+    )
   )
 
   .controller('SchemeCtrl', ($scope, $translate) ->

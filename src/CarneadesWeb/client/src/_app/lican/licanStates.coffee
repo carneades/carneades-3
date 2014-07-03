@@ -27,7 +27,7 @@ define [
           "footer@":
             template: '<project-footer theme="\'markos\'"></project-footer>'
           "nav@":
-            template: "<bc-navigation></bc-navigation>"
+            template: "<bc-navigation ng-cloak></bc-navigation>"
           "content@":
             templateUrl: 'lican/introduction.jade'
             controller: 'IntroCtrl',
