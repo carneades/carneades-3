@@ -36,7 +36,7 @@
 (fact "The generated XML contains the relevant information."
       (let [wears-ring (s/make-statement :text {:en "Fred wears a ring."}
                                          :header {:description {:en "A long description from Fred wearing a ring."}
-                                                  :author "John"})
+                                                  :creator "John"})
             married (s/make-statement :text {:en "Fred is married."} :atom '(married Fred))
             a1 (a/make-argument :id 'a1 :conclusion married :premises [(a/pm wears-ring)])
             g (-> (ag/make-argument-graph)
@@ -60,9 +60,7 @@
             attrs1 (:attrs node1)
             node2 (second stmts-nodes)
             attrs2 (:attrs node2)]
-        (debug n1)
-        (debug n1attrs)
-        (debug node1)
+        (debug output)
         (if (= (symbol (:id attrs1)) (:id n1attrs))
           (do
             (:main attrs1) => (str (:main n1attrs))

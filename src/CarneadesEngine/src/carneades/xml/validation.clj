@@ -6,7 +6,9 @@
            java.io.StringReader
            javax.xml.transform.stream.StreamSource))
 
-(defn create-validation-fn [schema]
+(defn create-validation-fn
+  "Creates a validator from scheme. Return {:right true} or {:left msg}."
+  [schema]
   (let [validator (.newValidator
                    (.newSchema
                     (SchemaFactory/newInstance XMLConstants/W3C_XML_SCHEMA_NS_URI)
