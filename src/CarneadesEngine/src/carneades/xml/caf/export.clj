@@ -15,7 +15,7 @@
 ;   CAF could be extended with elements for the namespaces.  Perhaps another name should be used, to 
 ;   avoid confusion with XML namespaces, which are at another level.
 
-(defn- remove-nil-values
+(defn- remove-nils-map
   [m]
   (into {} (remove (comp nil? second) m)))
 
@@ -46,18 +46,20 @@
                     (remove-blank-values descs))))
 
 (defn- metadata
+  "Builds an element from the header or returns nil if the header has no values."
   [header]
   (let [header (clean-header header)]
-    (if (:description header)
-      (let [desc (:description header)]
-        (element :metadata (dissoc header :description)
-                 (descriptions (:description header))))
-      (element :metadata header))))
+    (when-not (empty? header)
+      (if (:description header)
+        (let [desc (:description header)]
+          (element :metadata (dissoc header :description)
+                   (descriptions (:description header))))
+        (element :metadata header)))))
 
 (defn- pack-statement
   [{:keys [standard atom] :as stmt}]
   (let [stmt (-> stmt
-                 remove-nil-values
+                 remove-nils-map
                  remove-blank-values
                  (select-keys [:id :weight :value :standard :atom :main])
                  (assoc :standard (.toUpperCase (name standard))))]
@@ -65,10 +67,14 @@
       (assoc stmt :atom (serialize-atom atom))
       stmt)))
 
+(defn mk-element
+  [k attrs & children]
+  (apply element k attrs (remove-nils-seq children)))
+
 (defn- statement
   [stmt]
   (element :statement (pack-statement stmt)
-           (metadata (dissoc (:header stmt) :description))
+           (metadata (:header stmt))
            (descriptions (:text stmt))))
 
 (defn- statements
@@ -85,7 +91,7 @@
 (defn- premise
   [prem]
   (let [prem' (-> prem
-                  remove-nil-values
+                  remove-nils-map
                   (select-keys [:positive :role :implicit :statement]))]
     (element :premise prem')))
 
@@ -98,7 +104,7 @@
 (defn- argument
   [arg]
   (let [arg' (-> arg
-                 remove-nil-values
+                 remove-nils-map
                  (select-keys [:id :strict :pro :scheme :weight :value]))]
     (element :argument
              arg'
