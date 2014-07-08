@@ -24,6 +24,7 @@
   (into {} (remove (comp #(and (string? %) (s/blank? %)) second) m)))
 
 (defn- clean-header
+  "Removes blank values from the header."
   [header]
   (reduce-kv (fn [m k v]
                (if (and (not= k :description)
