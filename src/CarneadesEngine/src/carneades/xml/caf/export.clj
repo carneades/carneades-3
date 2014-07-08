@@ -46,7 +46,7 @@
                     (remove-blank-values descs))))
 
 (defn- metadata
-  "Builds an element from the header or returns nil if the header has no values."
+  "Build an element from the header. Return nil if the header has no values."
   [header]
   (let [header (clean-header header)]
     (when-not (empty? header)
