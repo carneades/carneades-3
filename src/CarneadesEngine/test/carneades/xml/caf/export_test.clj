@@ -14,9 +14,12 @@
             [clojure.xml :as xml]))
 
 (fact "The exported XML is conform to the schema."
-      (let [wears-ring (s/make-statement :text {:en "Fred wears a ring."})
-            married (s/make-statement :text {:en "Fred is married."} :atom '(married Fred))
-            a1 (a/make-argument :id 'a1 :conclusion married :premises [(a/pm wears-ring)])
+      (let [wears-ring (s/make-statement :text {:en "Fred wears a ring."}
+                                         :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+            married (s/make-statement :text {:en "Fred is
+            married."} :atom '(married Fred)) a1 (a/make-argument :id
+            'a1 :conclusion married :premises [(a/pm wears-ring)])
             g (-> (ag/make-argument-graph)
                   (ag/enter-arguments [a1])
                   (ag/accept [wears-ring]))
@@ -31,7 +34,9 @@
         (:right (validator output)) => true))
 
 (fact "The generated XML contains the relevant information."
-      (let [wears-ring (s/make-statement :text {:en "Fred wears a ring."})
+      (let [wears-ring (s/make-statement :text {:en "Fred wears a ring."}
+                                         :header {:description {:en "A long description from Fred wearing a ring."}
+                                                  :author "John"})
             married (s/make-statement :text {:en "Fred is married."} :atom '(married Fred))
             a1 (a/make-argument :id 'a1 :conclusion married :premises [(a/pm wears-ring)])
             g (-> (ag/make-argument-graph)
@@ -42,12 +47,17 @@
                                 :description {:en "Wedding"
                                               :de "Hochzeit"
                                               :fr ""}})
+            n1 (into {} (ag/get-statement-node g wears-ring))
             output (caf/export g)
             xml (xml/parse (io/input-stream (into-array Byte/TYPE output)))
             zipper (z/xml-zip xml)
-            ]
-        ;; (debug zipper)
-        (debug output)
-        (debug (map z/node (xml-> zipper :statements :statement)))
+            stmts-nodes (map z/node (xml-> zipper :statements :statement))
+            node1 (first stmts-nodes)
+            node2 (second stmts-nodes)]
+        ;; (debug output)
+        (debug n1)
+        (debug node1)
+        ;; (debug stmts-nodes)
+        
         ;; (debug output)
         ))
