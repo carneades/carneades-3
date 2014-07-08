@@ -67,10 +67,6 @@
       (assoc stmt :atom (serialize-atom atom))
       stmt)))
 
-(defn mk-element
-  [k attrs & children]
-  (apply element k attrs (remove-nils-seq children)))
-
 (defn- statement
   [stmt]
   (element :statement (pack-statement stmt)
