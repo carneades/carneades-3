@@ -47,17 +47,33 @@
                                 :description {:en "Wedding"
                                               :de "Hochzeit"
                                               :fr ""}})
-            n1 (into {} (ag/get-statement-node g wears-ring))
+            get-stmt (fn [id] (into {} (ag/get-statement-node g id)))
+            n1 (get-stmt wears-ring)
+            n1attrs (select-keys n1 [:id :main :standard :value :weight])
+            n2 (get-stmt married)
+            n2attrs (select-keys n2 [:id :main :standard :value :weight])
             output (caf/export g)
             xml (xml/parse (io/input-stream (into-array Byte/TYPE output)))
             zipper (z/xml-zip xml)
             stmts-nodes (map z/node (xml-> zipper :statements :statement))
             node1 (first stmts-nodes)
-            node2 (second stmts-nodes)]
-        ;; (debug output)
+            attrs1 (:attrs node1)
+            node2 (second stmts-nodes)
+            attrs2 (:attrs node2)]
         (debug n1)
+        (debug n1attrs)
         (debug node1)
-        ;; (debug stmts-nodes)
-        
-        ;; (debug output)
-        ))
+        (if (= (symbol (:id attrs1)) (:id n1attrs))
+          (do
+            (:main attrs1) => (str (:main n1attrs))
+            (:weight attrs1) => (str (:weight n1attrs))
+            (:standard attrs1) => (.toUpperCase (name (:standard n1attrs)))
+            (:value attrs1) => (str (:value n1attrs))
+            (let [md (:attrs (first (:content node1)))]
+              md => (dissoc (:header n1) :description)))
+          ;; else
+          (do
+            (:main attrs2) => (str (:main n2attrs))
+            (:weight attrs2) => (str (:weight n2attrs))
+            (:standard attrs2) => (.toUpperCase (name (:standard n2attrs)))
+            (:value attrs2) => (str (:value n2attrs))))))
