@@ -3,7 +3,7 @@
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-(ns ^{:doc "Functions for exporting argument graphs to XML using the Carneades Argument Format (CAF)."}
+(ns ^{:doc "Export from argument graphs to XML using the Carneades Argument Format (CAF)."}
   carneades.xml.caf.export
   (:require [clojure.string :as s]
             [clojure.data.xml :refer :all]
