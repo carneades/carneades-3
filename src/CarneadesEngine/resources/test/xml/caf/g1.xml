@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><caf version="1.3">
+<?xml version="1.0" encoding="UTF-8"?>
+<caf version="1.3">
   <metadata title="Marriage">
     <descriptions>
       <description lang="en">Wedding</description>
@@ -6,7 +7,7 @@
     </descriptions>
   </metadata>
   <statements>
-    <statement main="false" standard="PE" value="1.0" weight="1.0" id="urn:uuid:7013a5e2-adcd-40fd-9b2f-cf4400904de0">
+    <statement main="false" standard="PE" value="1.0" weight="1.0" id="urn:uuid:dd61cd20-ff75-41bd-b6f1-84934b2b5f71">
       <metadata creator="John">
         <descriptions>
           <description lang="en">A long description from Fred wearing a ring.</description>
@@ -16,7 +17,7 @@
         <description lang="en">Fred wears a ring.</description>
       </descriptions>
     </statement>
-    <statement main="false" atom="(married Fred)" standard="PE" value="1.0" id="urn:uuid:4f7b2a0f-4e28-459b-9597-38a469c88252">
+    <statement main="false" atom="(married Fred)" standard="PE" value="1.0" id="urn:uuid:4a044d08-c2e9-4575-a6fb-223144e011ed">
       <descriptions>
         <description lang="en">Fred is married.</description>
       </descriptions>
@@ -24,9 +25,9 @@
   </statements>
   <arguments>
     <argument value="1.0" weight="0.5" pro="true" strict="false" id="a1">
-      <conclusion statement="urn:uuid:4f7b2a0f-4e28-459b-9597-38a469c88252"/>
+      <conclusion statement="urn:uuid:4a044d08-c2e9-4575-a6fb-223144e011ed"/>
       <premises>
-        <premise statement="urn:uuid:7013a5e2-adcd-40fd-9b2f-cf4400904de0" implicit="false" role="" positive="true"/>
+        <premise statement="urn:uuid:dd61cd20-ff75-41bd-b6f1-84934b2b5f71" implicit="false" positive="true"/>
       </premises>
     </argument>
   </arguments>
