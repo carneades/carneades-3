@@ -31,5 +31,8 @@
       </premises>
     </argument>
   </arguments>
-  <references/>
+  <references>
+    <metadata key="k2" title="ref2"/>
+    <metadata key="k1" title="ref1"/>
+  </references>
 </caf>
