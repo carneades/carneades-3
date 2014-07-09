@@ -136,19 +136,19 @@
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
                (get-project :id id :lang (keyword lang) :host host)))
 
-(defresource entry-download-project-resource [id]
-  :available-media-types ["application/zip"]
-  :available-charsets ["utf-8"]
-  :allowed-methods [:get]
-  :handle-ok (fn [{{{host "host"} :headers} :request}]
-               (get-project-archive :project id :host host)))
+;; (defresource entry-download-project-resource [id]
+;;   :available-media-types ["application/zip"]
+;;   :available-charsets ["utf-8"]
+;;   :allowed-methods [:get]
+;;   :handle-ok (fn [{{{host "host"} :headers} :request}]
+;;                (get-project-archive :project id :host host)))
 
-(defresource entry-upload-project-resource [file]
-  :available-media-types ["application/octet-stream"]
-  :available-charsets ["utf-8"]
-  :allowed-methods [:post]
-  :post! (fn [{{{host "host"} :headers} :request}]
-           (post-project-archive :file file :host host)))
+;; (defresource entry-upload-project-resource [file]
+;;   :available-media-types ["application/octet-stream"]
+;;   :available-charsets ["utf-8"]
+;;   :allowed-methods [:post]
+;;   :post! (fn [{{{host "host"} :headers} :request}]
+;;            (post-project-archive :file file :host host)))
 
 (defresource list-project-resource []
   :allowed-methods [:get :post]
@@ -227,11 +227,11 @@
 
 (defroutes carneades-projects-api-routes
   (ANY "/" [] (list-project-resource))
-  (ANY "/upload" [file] (entry-upload-project-resource file))
+  ;; (ANY "/upload" [file] (entry-upload-project-resource file))
 
   (context "/:pid" [pid]
            (ANY "/" [] (entry-project-resource pid))
-           (ANY "/download" [] (entry-download-project-resource pid))
+           ;; (ANY "/download" [] (entry-download-project-resource pid))
 
            (context "/theme" []
                     (ANY "/css/:did" [did] (entry-theme-css-resource pid did))
