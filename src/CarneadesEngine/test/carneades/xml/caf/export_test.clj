@@ -30,7 +30,6 @@
                                               :de "Hochzeit"
                                               :fr ""}})
             output (caf/export g)]
-        (debug (validator output))
         (:right (validator output)) => true))
 
 (fact "The generated XML contains the relevant information."
@@ -47,6 +46,8 @@
                                 :description {:en "Wedding"
                                               :de "Hochzeit"
                                               :fr ""}})
+            g (ag/enter-reference g {:title "ref1" :key "k1"})
+            g (ag/enter-reference g {:title "ref2" :key "k2"})
             get-stmt (fn [id] (into {} (ag/get-statement-node g id)))
             n1 (get-stmt wears-ring)
             n1attrs (select-keys n1 [:id :main :standard :value :weight])
