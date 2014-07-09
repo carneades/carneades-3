@@ -23,17 +23,6 @@
   [m]
   (into {} (remove (comp #(and (string? %) (s/blank? %)) second) m)))
 
-(defn- clean-header
-  "Removes blank values from the header."
-  [header]
-  (reduce-kv (fn [m k v]
-               (if (and (not= k :description)
-                        (s/blank? v))
-                 m
-                 (assoc m k v)))
-             {}
-             header))
-
 (defn- descriptions
   [descs]
   (apply element
@@ -49,7 +38,7 @@
 (defn- metadata
   "Build an element from the header. Return nil if the header has no values."
   [header]
-  (let [header (clean-header header)]
+  (let [header (remove-blank-values header)]
     (when-not (empty? header)
       (if (:description header)
         (let [desc (:description header)]
@@ -89,6 +78,7 @@
   [prem]
   (let [prem' (-> prem
                   remove-nils-map
+                  remove-blank-values
                   (select-keys [:positive :role :implicit :statement]))]
     (element :premise prem')))
 
