@@ -191,8 +191,7 @@
   [project id]
   (if (or (empty? id) (= id "null"))
     empty-legal-profile
-    (do
-      (lp/set-default-connection project "root" "pw1")
+    (lp/with-db project "root" "pw1"
       (lp/read-profile+ id))))
 
 (defn start-engine

@@ -1,4 +1,4 @@
-;; Copyright (c) 2010 Fraunhofer Gesellschaft
+;; Copyright (c) 2014 Fraunhofer Gesellschaft
 ;; This Source Code Form is subject to the terms of the Mozilla Public
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -106,9 +106,10 @@
            (map argument args)))
 
 (defn references
-  [g]
+  [refs]
   (element :references
-           {}))
+           {}
+           (map metadata refs)))
 
 (defn export
   [g]
@@ -116,8 +117,7 @@
                        (metadata (:header g))
                        (statements (vals (:statement-nodes g)))
                        (arguments (vals (:argument-nodes g)))
-                       (references (:references g))
-                       )))
+                       (references (vals (:references g))))))
   
 
 ;; tests in carneades.xml.caf.export-test
