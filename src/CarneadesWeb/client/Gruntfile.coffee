@@ -308,6 +308,11 @@ module.exports = (grunt) ->
     "jade"
   ]
 
+  grunt.registerTask 'css-only', [
+    'compass'
+    'copy'
+  ]
+
   # # magic continues: test
   # grunt.registerTask "test", ["karma"]
 

@@ -93,9 +93,10 @@ define [
 
     ##########################################################
     ##########################################################
-
-    getNavigationStates = ($state, $stateParams) ->
+    updateNavigatedStates = ($state, $stateParams) ->
       _navigationStates.push buildState $state, $stateParams
+
+    getNavigatedStates = () ->
       return _navigationStates.asArray()
 
     $get: () ->
@@ -105,8 +106,11 @@ define [
       setIndexOfItemClicked: (value) ->
         setIndexOfItemClicked value
 
-      getNavigationStates: ($state, $stateParams) ->
-        return render getNavigationStates($state, $stateParams), $state
+      updateNavigatedStates: ($state, $stateParams) ->
+        updateNavigatedStates($state, $stateParams)
+
+      getNavigatedStates: ($state) ->
+        return render getNavigatedStates(), $state
   )
 
   .directive('breadcrumb', () ->
@@ -116,7 +120,8 @@ define [
       style: '='
     replace: true
     templateUrl: 'common/directives/breadcrumb/breadcrumb.jade'
-    controller: ($scope, $state, $stateParams, $breadcrumb) ->
+    #template: '<div class="row breadcrumbs"><breadcrumb-entries><breadcrumb-entry ng-repeat="s in states" state="s" bc-open="setCommandView($index)" index="$index" style="style"></breadcrumb-entry></breadcrumb-entries></div>'
+    controller: ($scope, $state) ->
       getIndexOfActiveState = () ->
         index = 0
         idx = 0
@@ -147,6 +152,7 @@ define [
     replace: true
     transclude: true
     templateUrl: 'common/directives/breadcrumb/breadcrumb-entries.jade'
+    #template: '<ul ng-transclude></ul>'
   )
 
   .directive('breadcrumbEntry', () ->
@@ -158,6 +164,7 @@ define [
       index: '='
       style: '='
     templateUrl: 'common/directives/breadcrumb/breadcrumb-entry.jade'
+    #template: '<li class="bc-default-a"><a bn-log-dom-creation="bn-log-dom-creation" ng-click="openView(state.name, state.params)" tooltip="{{state.tooltip}}" tooltip-append-to-body="true" tooltip-placement="bottom">{{state.label}}</a></li>'
     controller: ($scope, $element, $attrs, $state, $breadcrumb) ->
       $scope.openView = (name, params) ->
         $state.go name, params

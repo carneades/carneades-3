@@ -18,6 +18,8 @@ define [
       name: 'home.projects'
       label: 'Projects'
       url: 'projects'
+      data:
+        commands: []
       views:
         "nav@":
           template: "<bc-navigation></bc-navigation>"
@@ -39,11 +41,6 @@ define [
           resolve:
             projects: (MultiProjectLoader) ->
               return new MultiProjectLoader()
-        "subnav@":
-          templateUrl: 'subnav.jade'
-          resolve:
-            commands: ($state) -> return []
-          controller: 'SubnavController'
     ]
 
     angular.forEach states, (state) ->

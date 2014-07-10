@@ -7,39 +7,88 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   "use strict"
   angular.module('app.controllers', ['services.i18nNotifications', 'services.httpRequestTracker', 'resources.themes'])
 
-  .controller('AppCtrl', () ->
+  .controller('AppCtrl', ($scope, $element, $attrs, $stateParams) ->
+    setTheme = () ->
+      if $stateParams.pid is 'markos'
+        $scope.style = 'simple'
+      else
+        $scope.style = 'emacs'
+
+    $scope.$on '$stateChangeSuccess', ->
+      setTheme()
+
+    setTheme()
+
     undefined
   )
 
-  .controller 'HeaderCtrl', ($breadcrumb, $scope, $location, notifications, httpRequestTracker) ->
-    $scope.hasPendingRequests = ->
-      httpRequestTracker.hasPendingRequests()
+  .controller('MobSubnavController', ($scope, $state) ->
+    update = () ->
+      builder = (params...) ->
+        create = (label, state, clazz) ->
+          return {label: label, state: state, clazz: clazz}
+        command = ($state,state) ->
+          return create $state.get(state).label, state, undefined
 
-    setNavigationState = () ->
-      $scope.$navigationStates = $breadcrumb.getNavigationStates $scope.$state, $scope.$stateParams
+        createCommands = ($state,states...) ->
+          commands = []
+          for state in states
+            commands.push command($state, state)
+
+          return commands
+
+        return ($state) ->
+          return createCommands($state, params...)
+
+      $scope.commands = builder($state.current.data.commands...) $state
 
     $scope.$on '$stateChangeSuccess', ->
-      setNavigationState()
+      update()
+
+    update()
+  )
+
+  .controller('SubnavController', ($scope, $state) ->
+    update = () ->
+      builder = (params...) ->
+        create = (label, state, clazz) ->
+          return {label: label, state: state, clazz: clazz}
+        command = ($state,state) ->
+          return create $state.get(state).label, state, undefined
+        divider = () ->
+          return create '', undefined, 'divider'
+
+        createCommands = ($state,states...) ->
+          commands = []
+          for state in states
+            commands.push command($state, state)
+            commands.push divider()
+
+          # since last item is a divider we must get rid off it
+          if commands.length > 0 then commands.pop()
+          return commands
+
+        return ($state) ->
+          return createCommands($state, params...)
+
+      $scope.commands = builder($state.current.data.commands...) $state
+
+    $scope.$on '$stateChangeSuccess', ->
+      update()
+
+    update()
+  )
+
+  .controller 'HeaderCtrl', ($breadcrumb, $scope, $location, $state, $stateParams) ->
+    updateNavigatedStates = () ->
+      $breadcrumb.updateNavigatedStates $state, $stateParams
+      # In order to update the list passed to ng-repeat properly
+      $scope.navigatedStates = angular.copy $breadcrumb.getNavigatedStates $state
+
+    $scope.$on '$stateChangeSuccess', ->
+      updateNavigatedStates()
 
     undefined
-
-  .directive('bcNavigation', () ->
-    restrict: 'E'
-    replace: 'true'
-    #templateUrl: 'breadcrumb-navigation.jade'
-    template: '<div class=\"my-fluid-container\" ng-controller="HeaderCtrl"><breadcrumb states="$navigationStates" style="style"></breadcrumb></div>'
-    controller: ($scope, $element, $attrs, $stateParams) ->
-      setTheme = () ->
-        if $stateParams.pid is 'markos'
-          $scope.style = 'simple'
-        else
-          $scope.style = 'emacs'
-
-      $scope.$on '$stateChangeSuccess', ->
-        setTheme()
-
-      setTheme()
-    )
 
   .directive 'cssInject', ($compile, $stateParams) ->
     restrict: 'E'
@@ -86,3 +135,8 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
         update()
 
       update()
+
+  .directive 'bnLogDomCreation', () ->
+    restrict: 'A'
+    link: ($scope, element, attributes) ->
+      console.log "Link Executed:", $scope.state.name, $scope.state

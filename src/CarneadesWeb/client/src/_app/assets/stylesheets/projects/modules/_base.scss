@@ -95,31 +95,6 @@ ul.striped li.selected {
     display: block;
 }
 
-.breadcrumb a.navbar-brand {
-  padding: 0px 0px 0px 15px;
-  line-height: 10px;
-}
-
-.breadcrumb-cleared {
-  background-color: inherit;
-  margin-bottom: 0;
-}
-
-.breadcrumb-options {
-  padding: 0px 0px 0px 25px;
-}
-
-.breadcrumb > li + li:before {
-    background: #333333 url(../images/breadcrumb_trenn.jpg) no-repeat center center;
-    width: 30px;
-    height: 50px;
-    padding: 0 5px;
-}
-
-.breadcrumb-options > li + li:before, .breadcrumb > li.before-options + li:before {
-  content: "";
-}
-
 #overlay {
    position: fixed;
    z-index:199;

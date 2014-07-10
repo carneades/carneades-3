@@ -1,2 +1,5 @@
-div(style='overflow:scroll;',bn-map-click='handleClick( $event )',bn-map-mouseover='handleMouseover( $event )',bn-map-mouseout='handleMouseout( $event )')
-  map(ng-model='svg')
+.container.map
+  .row
+    .col-md-9
+      div.scroll(bn-map-click='handleClick( $event )',bn-map-mouseover='handleMouseover( $event )',bn-map-mouseout='handleMouseout( $event )')
+        map(ng-model='svg')
