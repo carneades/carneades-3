@@ -7,8 +7,6 @@
   ^{:author "Sebastian Kaiser"
     :doc "Definition of routing domains."}
   (:require [compojure.core :refer [defroutes context GET]]
-            [carneades.web.util :as util]
-            ;; [carneades.web.service :as service]
             [ring.util.response :as resp]
             [ring.middleware.format-response
              :refer [wrap-restful-response]]

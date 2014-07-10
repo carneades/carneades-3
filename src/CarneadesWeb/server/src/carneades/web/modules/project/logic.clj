@@ -8,7 +8,6 @@
   (:require [clojure.string :refer [join]]
             [clojure.set :as set]
             [clojure.zip :as z]
-            [clj-http.client :as client]
             [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]
             [compojure.route :as route]
             [cheshire.core :refer :all]
@@ -39,35 +38,6 @@
 (defn to-map
   [rec]
   (into {} rec))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Definition of resources
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn build-url
-  [host resource params]
-  (let [path (cons (str host "/carneades/carneadesws/" (name resource)) params)
-        url (str "http://" (join "/" path))]
-    url))
-
-(defn get-resource
-  "Returns a JSON resource from the old carneades REST api."
-  [host resource params]
-  (prn "resource=" resource)
-  (prn "params=" params)
-  {:pre [(not (nil? resource))]}
-  (let [url (build-url host resource params)
-        content (:body (client/get url))]
-    (parse-string content true)))
-
-(defn get-raw-resource
-  [host resource params]
-  (io/input-stream (:body (client/get (build-url host resource params)
-                                      {:as :byte-array}))))
-
-(defn post-resource
-  [host resource params post-params]
-  (client/post (build-url host resource params) post-params))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions for service calls
@@ -350,18 +320,18 @@
             svg (apply lacij/export-str ag lang optionsseq)]
         svg))))
 
-(defn get-project-archive
-  [& {:keys [project host]}]
-  (get-raw-resource host :export [(str project ".zip")]))
+;; (defn get-project-archive
+;;   [& {:keys [project host]}]
+;;   (get-raw-resource host :export [(str project ".zip")]))
 
-(defn post-project-archive
-  [& {:keys [file host]}]
-  ;; curl -F "file=@default2.zip;filename=nameinpost" http://localhost:8080/api/projects/upload
-  (post-resource host :import []
-                 {:multipart
-                  [{:name "Content/type" :content "application/zip"}
-                   {:name "file"
-                    :content (clojure.java.io/file (.getPath (:tempfile file)))}]}))
+;; (defn post-project-archive
+;;   [& {:keys [file host]}]
+;;   ;; curl -F "file=@default2.zip;filename=nameinpost" http://localhost:8080/api/projects/upload
+;;   (post-resource host :import []
+;;                  {:multipart
+;;                   [{:name "Content/type" :content "application/zip"}
+;;                    {:name "file"
+;;                     :content (clojure.java.io/file (.getPath (:tempfile file)))}]}))
 
 (defn get-theme
   [[project did :as params] & {:keys [host]}]
@@ -372,31 +342,31 @@
 
 (defn get-profiles
   [pid]
-  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
-  (lp/read-profiles+))
+  (lp/with-db pid legal-profiles-user legal-profiles-password
+   (lp/read-profiles+)))
 
 (defn get-profile
   [pid id]
-  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
-  (lp/read-profile+ id))
+  (lp/with-db pid legal-profiles-user legal-profiles-password
+   (lp/read-profile+ id)))
 
 (defn post-profile
   [pid profile]
-  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
-  (lp/create-profile+ profile))
+  (lp/with-db pid legal-profiles-user legal-profiles-password
+   (lp/create-profile+ profile)))
 
 (defn put-profile
   [pid id update]
-  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
-  (let [pack-rule (fn [r]
-                    (-> r
-                        ;; (update-in [:value] #(Double/parseDouble %))
-                        (update-in [:ruleid] unserialize-atom)))
-        pack-rules (fn [rs] (map pack-rule rs))
-        update (update-in update [:rules] pack-rules)]
-    (lp/update-profile+ id update)))
+  (lp/with-db pid legal-profiles-user legal-profiles-password
+    (let [pack-rule (fn [r]
+                      (-> r
+                          ;; (update-in [:value] #(Double/parseDouble %))
+                          (update-in [:ruleid] unserialize-atom)))
+          pack-rules (fn [rs] (map pack-rule rs))
+          update (update-in update [:rules] pack-rules)]
+      (lp/update-profile+ id update))))
 
 (defn delete-profile
   [pid id]
-  (lp/set-default-connection pid legal-profiles-user legal-profiles-password)
-  (lp/delete-profile id))
+  (lp/with-db pid legal-profiles-user legal-profiles-password
+    (lp/delete-profile id)))

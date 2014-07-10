@@ -11,7 +11,7 @@
             [lobos.schema :as schema :refer [table default varchar integer]]
             [lobos.connectivity :refer [with-connection]]
             [korma.core :refer :all :exclude [table]]
-            [korma.db :refer :all :exclude [create-db]]
+            [korma.db :refer :all :exclude [create-db with-db] :as k]
             [taoensso.timbre :as timbre :refer [debug info spy]]))
 
 (def db-name "legal-profiles")
@@ -77,11 +77,10 @@
                       (schema/boolean :value)
                       (integer :profile [:refer :profiles :id :on-delete :set-null] :not-null)))))))
 
-(defn set-default-connection
-  "Set the default connection for the database."
-  [project user password]
-  (let [conn (db/make-connection project db-name user password)]
-    (default-connection conn)))
+(defmacro with-db
+  [project user password & body]
+  `(let [conn# (db/make-connection ~project ~db-name ~user ~password)]
+     (k/with-db conn# ~@body)))
 
 (defn create-profile
   "Create a profile in the database."
