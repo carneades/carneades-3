@@ -19,3 +19,9 @@
         cursor: pointer;
     }
 }
+
+.scroll {
+  overflow:scroll;
+  width: 100%;
+  min-height: 400px;
+}

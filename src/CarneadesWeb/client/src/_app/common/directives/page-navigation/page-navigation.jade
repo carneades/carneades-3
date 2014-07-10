@@ -1,4 +1,8 @@
-.container#subnav(ui-scrollfix='+120')
+.my-fluid-container#subnav(ui-scrollfix='+120')
   .row
-    .col-md-12
-      ul.nav.nav-pills(ng-transclude='')
+    div.navbar-default
+      .container
+        .row
+          .col-md-12
+            div
+              ul.nav.nav-pills(ng-transclude='')

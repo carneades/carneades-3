@@ -27,13 +27,14 @@ define [
           template: '<project-banner theme="$stateParams.pid"></project-banner>'
         "footer@":
           template: '<project-footer theme="$stateParams.pid"></project-footer>'
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
         "content@":
           templateUrl: 'home.jade'
         "subnav@":
           templateUrl: 'subnav.jade'
           controller: 'SubnavController'
+        "mobsubnav@":
+          templateUrl: 'subnav.jade'
+          controller: 'MobSubnavController'
     ,
       name: "home.about"
       label: "About"
@@ -97,35 +98,4 @@ define [
       undefined
 
     undefined
-  )
-
-  .controller('SubnavController', ($scope, $state) ->
-    update = () ->
-      builder = (params...) ->
-        create = (label, state, clazz) ->
-          return {label: label, state: state, clazz: clazz}
-        command = ($state,state) ->
-          return create $state.get(state).label, state, undefined
-        divider = () ->
-          return create '', undefined, 'divider'
-
-        createCommands = ($state,states...) ->
-          commands = []
-          for state in states
-            commands.push command($state, state)
-            commands.push divider()
-
-          # since last item is a divider we must get rid off it
-          if commands.length > 0 then commands.pop()
-          return commands
-
-        return ($state) ->
-          return createCommands($state, params...)
-
-      $scope.commands = builder($state.current.data.commands...) $state
-
-    $scope.$on '$stateChangeSuccess', ->
-      update()
-
-    update()
   )

@@ -94,26 +94,3 @@ define [
     # disable autoscrolling on ui-views
     $uiViewScrollProvider.useAnchorScroll()
   )
-
-  .directive('loading', (requestNotificationChannel) ->
-    restrict: "A"
-    link: (scope, element, $modal) ->
-      # hide the element initally
-      element.hide()
-      startRequestHandler = ->
-        # got the request start notification, show the element4
-        element.show()
-        undefined
-
-      endRequestHandler = ->
-        # got the request start notification, show the element
-        element.hide()
-        undefined
-
-      requestNotificationChannel.onRequestStarted scope, startRequestHandler
-      requestNotificationChannel.onRequestEnded scope, endRequestHandler
-
-      undefined
-  )
-  .constant('_START_REQUEST_', '_START_REQUEST_')
-  .constant('_END_REQUEST_', '_END_REQUEST_')
