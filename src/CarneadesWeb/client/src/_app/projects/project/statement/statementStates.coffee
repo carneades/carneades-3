@@ -20,8 +20,6 @@ define [
       data:
         commands: ['home.projects.project.map','home.projects.project.outline']
       views: {
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
         'content@': {
           templateUrl: 'projects/project/statement/view.jade'
           controller: 'StatementCtrl'

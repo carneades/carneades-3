@@ -138,7 +138,6 @@ module.exports = (grunt) ->
           destPrefix: '<%= gen.base %>/libs'
         files:
           'angular.js': 'angular/angular.js'
-          'angular-animate.js': 'angular-animate/angular-animate.js'
           'angular-sanitize.js': 'angular-sanitize/angular-sanitize.js'
           'angular-ui-router.js': 'angular-ui-router/release/angular-ui-router.js'
           'angular-ui-utils.js': 'angular-ui-utils/ui-utils.js'

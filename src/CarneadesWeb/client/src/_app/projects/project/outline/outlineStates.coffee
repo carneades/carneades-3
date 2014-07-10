@@ -29,8 +29,6 @@ define [
         data:
           commands: ['home.projects.project.map', 'home.projects.project.theory']
         views:
-          "nav@":
-            template: "<bc-navigation></bc-navigation>"
           "content@":
             templateUrl: 'projects/project/outline/outline-main.jade'
             controller: ($scope, $stateParams, scroll, project, tproject, references) ->
