@@ -63,8 +63,24 @@
   :available-charsets ["utf-8"]
   :post! (fn [ctx] {::body (debug-analysis/ask e r q l)}))
 
+(defresource entry-findsoftwareentitieswithcompatiblelicenses
+  [params]
+  :allowed-methods [:post]
+  :available-charsets ["utf-8"]
+  :handle-created (fn [ctx]
+                    (::body ctx))
+  :post! (fn [_]
+           (let [{:keys [legalprofile licensetemplateuri usepropertyuris swentityuris]} params]
+             {::body (analysis/find-software-entities-with-compatible-licenses
+                      legalprofile licensetemplateuri usepropertyuris swentityuris)})))
+
 (defroutes carneades-lican-api-routes
   (GET "/analyse" [entity legalprofile] (entry-analyse-resource entity legalprofile))
+
+  (ANY "/findsoftwareentitieswithcompatiblelicenses"
+        req
+        (entry-findsoftwareentitieswithcompatiblelicenses (:body req)))
+  
   (context "/entities" []
            (ANY "/:pid" [pid uri] (entry-entity-resource pid uri)))
 
