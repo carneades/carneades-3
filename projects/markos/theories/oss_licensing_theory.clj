@@ -48,7 +48,7 @@ project."})
 
    :language
    (into (t/make-language
-          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/software#linkedLibrary-mock
+          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#linked
                        :forms {:en (t/make-form :positive "%s is linked to %s."
                                                 :negative "%s is not linked to %s."
                                                 :question "Is %s linked to %s?")})
@@ -202,16 +202,30 @@ project."})
                  :description {:en "The Free Software
        Foundation claims that linking creates derivative works."})
         :conclusion '(copyright:derivedFrom ?W1 ?W2)
-        :premises [(a/pm '(soft:linkedLibrary-mock ?W1 ?W2))])
+        :premises [(a/pm '(linked ?W1 ?W2))])
 
        (t/make-scheme
-        :id 'mock-linked-library
+        :id 'linked-library
         :header (dc/make-metadata
                  :title "Linked library"
                  :description {:en ""})
-        :conclusion '(soft:linkedLibrary-mock ?REL ?LIB)
+        :conclusion '(linked ?REL ?LIB)
         :premises [(a/pm '(soft:SoftwareRelease ?REL))
                    (a/pm '(top:containedEntity ?REL ?LIB))
+                   (a/pm '(soft:Library ?LIB))])
+
+       (t/make-scheme
+        :id 'dynamically-linked-library
+        :header (dc/make-metadata :title "Dynamically linked library")
+        :conclusion '(linked ?REL ?LIB)
+        :premises [(a/pm '(soft:dynamicallyLinkedEntity ?REL ?LIB))
+                   (a/pm '(soft:Library ?LIB))])
+
+       (t/make-scheme
+        :id 'statically-linked-library
+        :header (dc/make-metadata :title "Statically linked library")
+        :conclusion '(linked ?REL ?LIB)
+        :premises [(a/pm '(soft:staticallyLinkedEntity ?REL ?LIB))
                    (a/pm '(soft:Library ?LIB))])
 
        ;; (t/make-scheme
