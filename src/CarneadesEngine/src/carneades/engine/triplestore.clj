@@ -234,8 +234,8 @@ The IRI is returned with its last slash doubled."
 
 (defn make-scheme
   "Returns an s-exp representing a scheme."
-  [kbconn]
-  (list (symbol (str "triplestore:" (:host kbconn)))))
+  [kbconn suffix]
+  (list (symbol (str "triplestore:" (:host kbconn) ":" suffix))))
 
 (defn responses-from-ask
   "Generates responses for a grounded goal. Asks the triplestore if
@@ -244,14 +244,15 @@ argument if is the case."
   [kbconn goal subs]
   (let [query (sexp->sparqlquery goal)]
     ;; (prn "issuing ask= " query)
-    (debug "ask ")
-    (spy query)
+    ;; (debug "ask ")
+    ;; (spy query)
     (if (sparql/ask (:kb kbconn) query)
       (do
         ;; (prn "positive answer")
         (let [arg (argument/make-argument :conclusion goal
-                                          :scheme (make-scheme kbconn)
+                                          :scheme (make-scheme kbconn "ask")
                                           :strict true)]
+          ;; (debug "responses-from-ask" subs)
           [(generator/make-response subs [] arg)]))
       (do
         ;; (prn "negative answer")
@@ -264,9 +265,9 @@ argument if is the case."
         new-subs (merge subs returned-subs)
         arg (argument/make-argument
              :conclusion (unify/apply-substitutions new-subs goal)
-             :scheme (make-scheme kbconn)
+             :scheme (make-scheme kbconn "query")
              :strict true)]
-   (generator/make-response new-subs [] arg)))
+    (generator/make-response new-subs [] arg)))
 
 (defn to-absolute-bindings
   "Converts the values of bindings to absolute literals."
@@ -298,6 +299,10 @@ argument if is the case."
         bindings (map #(to-absolute-bindings % namespaces) bindings)]
     ;; (prn "[triplestore] absolute bindings size= " (count bindings))
     ;; (pprint bindings)
+    (debug "SPARQL:")
+    (debug 
+     (binding [kb/*kb* (:kb kbconn)]
+       (sparql/sparql-query-body query)))
     bindings))
 
 (defn responses-from-query
@@ -305,8 +310,6 @@ argument if is the case."
   with the goal as a query, if some new bindings are returned we
   construct one argument for each binding."
   [kbconn goal subs namespaces]
-  (debug "query ")
-  (spy goal)
   (let [bindings (sparql-query kbconn goal namespaces)]
     (map #(make-response-from-binding kbconn goal subs %) bindings)))
 
