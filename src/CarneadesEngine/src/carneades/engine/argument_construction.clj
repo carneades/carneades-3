@@ -361,7 +361,7 @@
           ;; (spy (count res))
           ;; (spy (count (:goals res)))
           ;; (spy (count (:open-goals res)))
-          (debug (:open-goals res))
+          ;; (debug (:open-goals res))
           ;; (when (< max-goals 270)
           ;;   (debug "result")
           ;;   (spy res))
