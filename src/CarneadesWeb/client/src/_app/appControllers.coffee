@@ -86,6 +86,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
       $scope.navigatedStates = angular.copy $breadcrumb.getNavigatedStates $state
 
     $scope.$on '$stateChangeSuccess', ->
+      $scope.navCollapsed = true
       updateNavigatedStates()
 
     undefined
@@ -135,8 +136,3 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
         update()
 
       update()
-
-  .directive 'bnLogDomCreation', () ->
-    restrict: 'A'
-    link: ($scope, element, attributes) ->
-      console.log "Link Executed:", $scope.state.name, $scope.state

@@ -26,8 +26,6 @@ define [
             template: '<project-banner theme="\'markos\'"></project-banner>'
           "footer@":
             template: '<project-footer theme="\'markos\'"></project-footer>'
-          "nav@":
-            template: "<bc-navigation ng-cloak></bc-navigation>"
           "content@":
             templateUrl: 'lican/introduction.jade'
             controller: 'IntroCtrl',
@@ -40,8 +38,6 @@ define [
         label: 'License Analyser Questions'
         url: '/questions'
         views:
-          "nav@":
-            template: "<bc-navigation></bc-navigation>"
           "content@":
             templateUrl: 'lican/questions.jade'
             controller: 'QuestionsCtrl'
@@ -54,8 +50,6 @@ define [
         label: 'License Analyser Questions (Demo)'
         url: '/lican/demo'
         views:
-          "nav@":
-            template: "<bc-navigation></bc-navigation>"
           "content@":
             templateUrl: 'lican/questions.jade'
             controller: 'QuestionsCtrl'

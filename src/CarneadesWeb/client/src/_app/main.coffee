@@ -30,7 +30,6 @@ require.config
   paths:
     "angular": "./libs/angular"
     'angular-sanitize': './libs/angular-sanitize'
-    "angular-animate": "./libs/angular-animate"
     'angular-ui-router': './libs/angular-ui-router'
     'angular-ui-utils': './libs/angular-ui-utils'
     'angular-resource': './libs/angular-resource'

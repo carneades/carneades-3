@@ -17,8 +17,6 @@ define [
       data:
         commands: ['home.projects.project.outline','home.projects.project.theory']
       views:
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
         "content@":
           templateUrl: "projects/project/map/map.jade"
           controller: "MapCtrl"
