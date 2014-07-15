@@ -19,7 +19,7 @@ define [
       label: "Carneades"
       url: "/"
       data:
-        commands: ['home','home.projects','home.about','home.privacy','home.help','home.admin','home.signin']
+        commands: ['home.projects','home.about','home.privacy','home.help','home.admin','home.signin']
       views:
         "css@":
           template: '<css-inject theme="$stateParams.pid"></css-inject>'
@@ -43,8 +43,6 @@ define [
       data:
         commands: []
       views:
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>About</h1>"
     ,
@@ -54,8 +52,6 @@ define [
       data:
         commands: []
       views:
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Privacy</h1>"
     ,
@@ -65,8 +61,6 @@ define [
       data:
         commands: []
       views:
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Help</h1>"
     ,
@@ -76,8 +70,6 @@ define [
       data:
         commands: []
       views:
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Admin</h1>"
     ,
@@ -87,8 +79,6 @@ define [
       data:
         commands: []
       views:
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
         "content@":
           template: "<h1>Sign in</h1>"
     ]

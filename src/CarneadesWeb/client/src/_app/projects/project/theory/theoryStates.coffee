@@ -19,8 +19,6 @@ define [
       data:
         commands: []
       views:
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
         "content@":
           controller: 'TheoryCtrl'
           templateUrl: 'projects/project/theory/theory.jade'

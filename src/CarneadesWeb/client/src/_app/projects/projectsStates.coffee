@@ -21,8 +21,6 @@ define [
       data:
         commands: []
       views:
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
         "content@":
           templateUrl: 'projects/list.jade'
           controller: ($scope, $q, $location, projects) ->
