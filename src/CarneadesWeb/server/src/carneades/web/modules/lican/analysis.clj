@@ -277,7 +277,7 @@
   [goal the-entity use-property-uris sw-entity-uris generators profile]
   (filter (partial goal-in? goal the-entity use-property-uris generators profile) sw-entity-uris))
 
-(defn find-sofware-entities-with-compatible-licenses
+(defn find-software-entities-with-compatible-licenses
   ;; Here's a sketch of a procedure for implementing 0000516: Find software
   ;; entities with compatible licenses.
 

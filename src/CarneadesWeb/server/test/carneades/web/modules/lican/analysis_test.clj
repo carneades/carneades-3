@@ -5,7 +5,7 @@
             [taoensso.timbre :as timbre :refer [debug info spy]]))
 
 (fact "It is not possible to use a GPL library from an Apache software."
-      (let [l (analysis/find-sofware-entities-with-compatible-licenses
+      (let [l (analysis/find-software-entities-with-compatible-licenses
                nil
                "http://www.markosproject.eu/ontologies/oss-licenses#Apache-2.0"
                ["http://www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity"]
@@ -14,7 +14,7 @@
         l => ()))
 
 (fact "It is possible to use a GPL library from a GPL software."
-      (let [l (analysis/find-sofware-entities-with-compatible-licenses
+      (let [l (analysis/find-software-entities-with-compatible-licenses
                nil
                "http://www.markosproject.eu/ontologies/oss-licenses#GPL-2.0"
                ["http://www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity"]
