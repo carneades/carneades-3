@@ -4,7 +4,7 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns ^{:doc "Export from argument graphs to XML using the Carneades Argument Format (CAF)."}
-  carneades.xml.caf.export
+  carneades.serialization.caf.export
   (:require [clojure.string :as s]
             [clojure.data.xml :refer :all]
             [carneades.engine.utils :refer [serialize-atom]]
@@ -120,4 +120,4 @@
                        (references (vals (:references g))))))
   
 
-;; tests in carneades.xml.caf.export-test
+;; tests in carneades.serialization.caf.export-test

@@ -1,11 +1,11 @@
-(ns carneades.xml.caf.import-test
+(ns carneades.serialization.caf.import-test
   (:require [midje.sweet :refer :all]
             [clojure.pprint :refer [pprint]]
             [carneades.engine.statement :as s]
             [carneades.engine.argument :as a]
             [carneades.engine.argument-graph :as ag]
-            [carneades.xml.caf.export :as cafo]
-            [carneades.xml.caf.import :as cafi]
+            [carneades.serialization.caf.export :as cafo]
+            [carneades.serialization.caf.import :as cafi]
             [carneades.engine.argument-evaluation :refer [evaluate]]
             [carneades.engine.aspic :refer [aspic-grounded]]
             [taoensso.timbre :as timbre :refer [debug info spy]]))

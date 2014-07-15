@@ -1,4 +1,4 @@
-(ns carneades.xml.validation
+(ns carneades.serialization.validation
   (:import javax.xml.XMLConstants
            org.xml.sax.SAXException
            javax.xml.validation.SchemaFactory

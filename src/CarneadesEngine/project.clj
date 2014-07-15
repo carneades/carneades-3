@@ -16,6 +16,7 @@
                  [org.clojure/data.xml "0.0.7"]
                  [org.clojure/data.zip "0.1.1"]
                  ;; [org.clojars.pallix/clojure.prxml "1.3.0"]
+                 [cheshire "5.2.0"]
 
                  [org.clojure/math.combinatorics "0.0.2"]
                  [com.h2database/h2 "1.3.170"]
