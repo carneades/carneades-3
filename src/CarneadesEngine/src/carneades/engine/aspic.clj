@@ -142,43 +142,6 @@
                    (= c1 `(~'valid ~arg)))))
           (:subargs p2))))
 
-;; (defn- rebuts?
-;;   "argument-graph position position -> boolean
-;;    Returns true if position p1 rebuts position p2.
-;;    Only the last link arguments of the positions are compared.
-;;    Strict arguments cannot be rebutted."
-;;   [ag p1 p2]
-;;   (let [an1 (get (:argument-nodes ag) (:argument p1)),
-;;         ;; an2 (get (:argument-nodes ag) (:argument p2)),
-;;         sn  (get (:statement-nodes ag) (:conclusion an1))
-;;         alpha 0.5 ; minimum weight of pro for :cce and :brd
-;;         beta 0.3  ; minimum difference between pro and con for :cce
-;;         gamma 0.2] ; maximum weight for con for :brd
-;;     (some (fn [id]
-;;             (let [an2 (get (:argument-nodes ag) id)]
-;;               (and (not (:strict an2))
-;;                    (= (:conclusion an1) (:conclusion an2))
-;;                    (not (= (:pro an1) (:pro an2))) ; one argument is pro and the other con
-;;                    (case (:standard sn)
-;;                      :dv true
-;;                      ;; with :pe the con argument need only be >= the pro arg to defeat it.
-;;                      :pe (and (not (nil? (:weight an1)))
-;;                               (not (nil? (:weight an2)))
-;;                               (>= (:weight an1) (:weight an2)))
-;;                      ;; with :cce the con arg defeats the pro arg unless pro's weight
-;;                      ;; is >= than alpha the difference between pro and con is >= gamma
-;;                      :cce (and (not (nil? (:weight an1)))
-;;                                (not (nil? (:weight an2)))
-;;                                (>= (:weight an1) (:weight an2))
-;;                                (< (:weight an2) alpha)
-;;                                (< (- (:weight an2) (:weight an1)) beta))
-;;                      :brd (and (not (nil? (:weight an1)))
-;;                                (not (nil? (:weight an2)))
-;;                                (>= (:weight an1) (:weight an2))
-;;                                (< (:weight an2) alpha)
-;;                                (< (- (:weight an2) (:weight an1)) beta)
-;;                                (>= (:weight an1) gamma))))))
-;;           (:subargs p2))))
 
 (defn- rebuts?
   "position position -> boolean
