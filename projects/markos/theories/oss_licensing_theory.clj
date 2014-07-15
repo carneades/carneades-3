@@ -199,8 +199,7 @@ project."})
         :id 'fsf-theory-of-linking
         :header (dc/make-metadata
                  :title "FSF theory of linking"
-                 :description {:en "The Free Software
-       Foundation claims that linking creates derivative works."})
+                 :description {:en "The Free Software Foundation claims that linking creates derivative works."})
         :conclusion '(copyright:derivedFrom ?W1 ?W2)
         :premises [(a/pm '(linked ?W1 ?W2))])
 

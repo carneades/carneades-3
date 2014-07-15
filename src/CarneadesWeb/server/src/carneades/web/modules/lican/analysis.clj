@@ -38,7 +38,7 @@
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
             [carneades.web.modules.lican.entity :as entity]
-            [taoensso.timbre :as timbre :refer [debug info warn error]]
+            [taoensso.timbre :as timbre :refer [debug spy info warn error]]
             [carneades.database.legal-profile :as lp]
             [carneades.engine.legal-profile :refer [extend-theory
                                                     empty-legal-profile]]
@@ -262,6 +262,21 @@
     (swap! state index-analysis analysis)
     (build-response analysis)))
 
+(defn goal-in?
+  [goal the-entity use-property-uris generators profile sw-entity-uri]
+  (let [g (ag/make-argument-graph)
+        use-facts (map (fn [usage]
+                         (unserialize-atom (str "(" usage " " the-entity " " sw-entity-uri ")")))
+                       use-property-uris)
+        engine (shell/make-engine g 500 use-facts generators)
+        g (shell/argue engine aspic-grounded goal profile)
+        goal-node (ag/get-statement-node g goal)]
+    (evaluation/in-node? goal-node)))
+
+(defn filter-software-entities
+  [goal the-entity use-property-uris sw-entity-uris generators profile]
+  (filter (partial goal-in? goal the-entity use-property-uris generators profile) sw-entity-uris))
+
 (defn find-sofware-entities-with-compatible-licenses
   ;; Here's a sketch of a procedure for implementing 0000516: Find software
   ;; entities with compatible licenses.
@@ -301,11 +316,13 @@
         markos-namespaces (:namespaces properties)
         theories (:policies properties)
         loaded-theories (project/load-theory project theories)
+        the-entity "http://www.markosproject.eu/ontologies/software#theSoftware"
         goal (unserialize-atom
               (format (str "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing"
-                           "http://www.markosproject.eu/ontologies/software#theSoftware"
+                           " " the-entity
                            " %s)")
-                       license-template-uri))
+                      license-template-uri))
+        _ (debug "goal: " goal)
         translator (make-translator triplestore
                                     repo-name
                                     (:language loaded-theories)
@@ -316,16 +333,10 @@
                                triplestore
                                repo-name
                                markos-namespaces)
-        engine (shell/make-engine 500 #{}
-                                  (list
-                                   triplestore-generator
-                                   (theory/generate-arguments-from-theory loaded-theories')))
-        g (shell/argue engine aspic-grounded goal profile)
-        g (ag/set-main-issues g goal)
-        g (tr/translate-ag g translator)
-        dbname (store-ag project g)]
-    (debug "dbname =" dbname)
-    g))
+        generators (list
+                    triplestore-generator
+                    (theory/generate-arguments-from-theory loaded-theories'))]
+    (filter-software-entities goal the-entity use-property-uris sw-entity-uris generators profile)))
 
 (defn analyse
   "Begins an analysis of a given software entity. The theories inside project is used.
