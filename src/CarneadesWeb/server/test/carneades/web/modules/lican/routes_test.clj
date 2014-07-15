@@ -28,4 +28,4 @@
                      }
             res (post-request content)
             body-content (parse (:body res))]
-        body-content) => '("http://markosproject.eu/kb/Library/549"))
+        body-content => '("http://markosproject.eu/kb/Library/549")))
