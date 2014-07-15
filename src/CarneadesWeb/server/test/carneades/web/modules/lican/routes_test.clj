@@ -8,6 +8,10 @@
 
 (def base-url "/carneades/api")
 
+(defn parse
+  [s]
+  (parse-string s true))
+
 (defn post-request
   [content]
   (app (-> (request :post
@@ -22,6 +26,6 @@
                      "usepropertyuris" ["http://www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity"]
                      "swentityuris" ["http://markosproject.eu/kb/Library/549"]
                      }
-            res (post-request content)]
-        (spy res))
-      )
+            res (post-request content)
+            body-content (parse (:body res))]
+        body-content) => '("http://markosproject.eu/kb/Library/549"))
