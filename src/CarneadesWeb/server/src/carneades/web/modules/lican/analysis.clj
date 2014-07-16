@@ -286,7 +286,7 @@ Returns a set of questions for the frontend."
   which are compatible with the licenses of the software entities used
   by s, using the quick and dirty procedure to perform the license
   compatibility analysis."
-  [legal-profile software-entity]
+  [legal-profile-id software-entity]
   (let [query-string (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s ?x)" software-entity)
         project "markos"
         properties (project/load-project-properties project)
@@ -296,15 +296,16 @@ Returns a set of questions for the frontend."
         markos-namespaces (:namespaces properties)
         query (unserialize-atom query-string)
         loaded-theories (project/load-theory project theories)
+        profile (load-profile project legal-profile-id)
+        loaded-theories' (extend-theory loaded-theories profile)
         ag (ag/make-argument-graph)
         engine (shell/make-engine ag 500 #{}
                                   (list
                                    (triplestore/generate-arguments-from-triplestore triplestore
                                                                                     repo-name
                                                                                     markos-namespaces)
-                                   (theory/generate-arguments-from-theory loaded-theories)))
-        ag (shell/argue engine query)
-        ag (evaluation/evaluate aspic-grounded ag)
+                                   (theory/generate-arguments-from-theory loaded-theories')))
+        ag (shell/argue engine aspic-grounded query profile)
         ag (ag/set-main-issues ag query)
         in-main-issues (get-in-main-issues ag)]
     (into [] (map str (get-compatible-licenses query in-main-issues)))))
