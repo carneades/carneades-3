@@ -79,8 +79,7 @@
    pro              ; (set-of symbol), pro argument node ids
    con])            ; (set-of symbol), con argument node ids
 
-
-(defn make-statement-node
+(defn- make-statement-node
   [stmt]
   {:pre [(literal? stmt)]}
   (let [sn (StatementNode.

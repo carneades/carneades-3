@@ -44,18 +44,23 @@ define [
     questions.analyse $stateParams.entity, $stateParams.legalprofile
     $scope.questionGroups = questions.getQuestionGroups()
 
-    $scope.sendAnswer = () ->
+    $scope.sendAnswer = (form) ->
 
-      if $scope.questionsForm.$invalid
-        # TODO: notification
-        notifications.pushSticky 'The form is invalid'
+      if form.$invalid
         console.log "the form is invalid"
       else
-        console.log('sending answer')
+        $scope.viewLoading = true
+        console.log 'sending answer'
         markQuestionGroupAnswered(questions)
         questions.sendAnswer()
 
     $scope.solution = questions.solution
+
+    $scope.$watch 'questionGroups', ((questions) ->
+      if questions.length > 0
+        $scope.viewLoading = false
+        ), true
+
     $scope.$watch 'solution', ((solution) ->
       if solution.db?
         $scope.viewLoading = false

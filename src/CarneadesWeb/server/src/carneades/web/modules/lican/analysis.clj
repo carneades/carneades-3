@@ -43,7 +43,9 @@
             [carneades.engine.legal-profile :refer [extend-theory
                                                     empty-legal-profile]]
             [carneades.engine.aspic :refer [aspic-grounded]]
-            [carneades.web.modules.common.dialog.utils :refer [store-ag]]))
+            [carneades.web.modules.common.dialog.utils :refer [store-ag]]
+
+            [carneades.engine.unify :refer [unify]]))
 
 (defn initial-state
   []
@@ -74,7 +76,9 @@
 (defn process-answers
   "Process the answers send by the user and returns new questions or an ag."
   [answers uuid]
-  (prn "process answers...")
+  (spy answers)
+  (spy uuid)
+  (spy (type uuid))
   (when-let [analysis (get-in @state [:analyses (symbol uuid)])]
     (let [{:keys [policies dialog]} analysis
           _ (prn "[process-answers]")
@@ -262,6 +266,55 @@
     (swap! state index-analysis analysis)
     (build-response analysis)))
 
+(defn analyse
+  "Begins an analysis of a given software entity. The theories inside project is used.
+Returns a set of questions for the frontend."
+  [entity legalprofile]
+  (info "[analyse]")
+  (start-engine entity legalprofile))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; find compatible licenses
+
+(defn- get-in-main-issues
+  [ag]
+  (filter (every-pred evaluation/in-node? :main) (vals (:statement-nodes ag))))
+
+(defn- get-compatible-licenses
+  [query in-main-issues]
+  (mapcat (comp vals (partial unify query)) (map :atom in-main-issues)))
+
+(defn find-compatible-licenses
+  "Returns a list of Open Source license templates (e.g. GPL, BSD)
+  which are compatible with the licenses of the software entities used
+  by s, using the quick and dirty procedure to perform the license
+  compatibility analysis."
+  [legal-profile-id software-entity]
+  (let [query-string (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s ?x)" software-entity)
+        project "markos"
+        properties (project/load-project-properties project)
+        theories (:policies properties)
+        triplestore (:triplestore properties)
+        repo-name (:repo-name properties)
+        markos-namespaces (:namespaces properties)
+        query (unserialize-atom query-string)
+        loaded-theories (project/load-theory project theories)
+        profile (load-profile project legal-profile-id)
+        loaded-theories' (extend-theory loaded-theories profile)
+        ag (ag/make-argument-graph)
+        engine (shell/make-engine ag 500 #{}
+                                  (list
+                                   (triplestore/generate-arguments-from-triplestore triplestore
+                                                                                    repo-name
+                                                                                    markos-namespaces)
+                                   (theory/generate-arguments-from-theory loaded-theories')))
+        ag (shell/argue engine aspic-grounded query profile)
+        ag (ag/set-main-issues ag query)
+        in-main-issues (get-in-main-issues ag)]
+    (into [] (map str (get-compatible-licenses query in-main-issues)))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; find software entities with compatible licenses
+
 (defn goal-in?
   [goal the-entity use-property-uris generators profile sw-entity-uri]
   (let [g (ag/make-argument-graph)
@@ -338,9 +391,4 @@
                     (theory/generate-arguments-from-theory loaded-theories'))]
     (filter-software-entities goal the-entity use-property-uris sw-entity-uris generators profile)))
 
-(defn analyse
-  "Begins an analysis of a given software entity. The theories inside project is used.
-Returns a set of questions for the frontend."
-  [entity legalprofile]
-  (info "[analyse]")
-  (start-engine entity legalprofile))
+
