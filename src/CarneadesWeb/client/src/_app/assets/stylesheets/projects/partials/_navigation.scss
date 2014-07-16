@@ -62,6 +62,11 @@
         background-color: $breadcrumbs-border;
       }
     }
+    .disabled {
+        cursor: default;
+        .icon-bar {background-color: #A8AEB4;}
+    }
+
 
     #mobbc {
       margin:1px 0 0 0 !important;

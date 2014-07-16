@@ -87,6 +87,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
 
     $scope.$on '$stateChangeSuccess', ->
       $scope.navCollapsed = true
+      $scope.isSubNavDisplayed = $state.$current.self.data.commands.length > 0
       updateNavigatedStates()
 
     undefined
