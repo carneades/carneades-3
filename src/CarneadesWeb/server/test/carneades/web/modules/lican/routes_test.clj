@@ -13,10 +13,9 @@
   (parse-string s true))
 
 (defn post-request
-  [content]
+  [url content]
   (app (-> (request :post
-                    (str base-url
-                         "/lican/findsoftwareentitieswithcompatiblelicenses"))
+                    (str base-url url))
            (body (encode content))
            (content-type "application/json"))))
 
@@ -26,6 +25,14 @@
                      "usepropertyuris" ["http://www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity"]
                      "swentityuris" ["http://markosproject.eu/kb/Library/549"]
                      }
-            res (post-request content)
+            res (post-request "/lican/findsoftwareentitieswithcompatiblelicenses" content)
             body-content (parse (:body res))]
         body-content => '("http://markosproject.eu/kb/Library/549")))
+
+(fact "The onlinetour is compatible with the GPL 3.0"
+      (let [content {"legalprofile" ""
+                     "softwareentity" "http://markosproject.eu/kb/SoftwareRelease/1970"
+                     }
+            res (post-request "/lican/findcompatiblelicenses" content)
+            body-content (parse (:body res))]
+        body-content => '("http://www.markosproject.eu/ontologies/oss-licenses#GPL-3.0")))

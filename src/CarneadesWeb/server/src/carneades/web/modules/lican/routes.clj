@@ -74,8 +74,22 @@
              {::body (analysis/find-software-entities-with-compatible-licenses
                       legalprofile licensetemplateuri usepropertyuris swentityuris)})))
 
+(defresource entry-findcompatiblelicenses
+  [params]
+  :allowed-methods [:post]
+  :available-charsets ["utf-8"]
+  :handle-created (fn [ctx]
+                    (::body ctx))
+  :post! (fn [_]
+           (let [{:keys [legalprofile softwareentity]} params]
+             {::body (analysis/find-compatible-licenses legalprofile softwareentity)})))
+
 (defroutes carneades-lican-api-routes
   (GET "/analyse" [entity legalprofile] (entry-analyse-resource entity legalprofile))
+
+  (ANY "/findcompatiblelicenses"
+       req
+       (entry-findcompatiblelicenses (:body req)))
 
   (ANY "/findsoftwareentitieswithcompatiblelicenses"
         req
