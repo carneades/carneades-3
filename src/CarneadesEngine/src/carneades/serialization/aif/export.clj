@@ -5,20 +5,12 @@
 
 (ns ^{:doc "Functions for exporting argument graphs to JSON using the Argument Interchange Format (AIF)."}
     carneades.serialization.aif.export
-<<<<<<< HEAD
-  (:require [carneades.engine.statement :as stmt]
+(:require [carneades.engine.statement :as stmt]
             [carneades.engine.argument-graph :as ag]
             [carneades.engine.uuid :as id]
             [cheshire.core :as json]
             [clojure.string :as str]
             [clojure.set :as set]))
-=======
-  (:use carneades.engine.statement
-        carneades.engine.argument-graph
-        carneades.engine.uuid)
-  (:require [cheshire.core :as json]
-            [clojure.string :as str]))
->>>>>>> 96967030f1a4a3132beec4982f49e1ac1df75f2c
 
 (defn- negate-text
   "(Map language string) -> (Map language string)
@@ -37,7 +29,6 @@
           (keys m1)))
                     
 (defn- make-complements
-<<<<<<< HEAD
   "ArgumentGraph -> (Map Symbol Statement) 
    Make a statement for the complement of each statement node of an argument graph.
    Returns a map from the ids of statement nodes in the argument graph to their complements."
@@ -97,52 +88,10 @@
                 ;; if the premise is not positive, make an edge from 
                 ;; the complement of the statement of the premise
                 :fromID (id/uuid->string (id/symbol->uuid 
-=======
-  "ArgumentGraph -> (Map Symbol StatementNode) 
-   Make a statement node for the complement of each statement node of an argument graph.
-   Returns a map from the ids of statement nodes in the argument graph to their complements."
-  [ag]
-  (reduce (fn [m sn]
-            (assoc m (:id sn) 
-                   (make-statement-node 
-                    (make-statement :id (make-urn-symbol))
-                                    :text (negate-text (:text sn)))))
-          {}
-          (:statement-nodes ag)))
-
-(defn- make-aif-node
-  "keyword (U StatementNode ArgumentNode) -> AifNode"
-  [lang node]
-  (cond (statement-node? node) 
-        {:nodeID (uuid->string (symbol->uuid (:id node))),
-         :text (lang (:text node)),
-         :type "I"}
-
-        (argument-node? node) 
-        {:nodeID (uuid->string (symbol->uuid (:id node))),
-         :text "RA",
-         :type "RA"}))
-
-(defn- make-aif-nodes
-  "Keyword (Seq (U StatementNode ArgumentNode)) -> (Seq AifNode)"
-  [lang nodes]
-  (map (fn [node] (make-aif-node lang node)) 
-       nodes))
-
-(defn- argnode->edges
-  "(Map Symbol StatementNode) ArgumentNode -> (Seq AifEdge)"
-  [complements an]
-  (conj (map (fn [premise] 
-               {:edgeID (uuid->string (make-uuid)),
-                ;; if the premise is not positive, make an edge from 
-                ;; the complement of the statement of the premise
-                :fromID (uuid->string (symbol->uuid 
->>>>>>> 96967030f1a4a3132beec4982f49e1ac1df75f2c
-                                       (if (:positive premise)
-                                         (:statement premise)
-                                         (:id (get complements 
-                                                   (:statement premise)))))) 
-<<<<<<< HEAD
+                                          (if (:positive premise)
+                                            (:statement premise)
+                                            (:id (get complements 
+                                                      (:statement premise)))))) 
                 :toID (id/uuid->string (id/symbol->uuid (:id an)))})
              (:premises an))
         ;; create an aif-edge from the argument node to its conclusion
@@ -150,20 +99,10 @@
         {:edgeID (id/uuid->string (id/make-uuid))
          :fromID (id/uuid->string (id/symbol->uuid (:id an)))
          :toID (id/uuid->string (id/symbol->uuid 
-=======
-                :toID (uuid->string (symbol->uuid (:id an)))})
-             (:premises an))
-        ;; create an aif-edge from the argument node to its conclusion
-        ;; If the argument is a con argument, use the complement of the conclusion.
-        {:edgeID (uuid->string (make-uuid))
-         :fromID (uuid->string (symbol->uuid (:id an)))
-         :toID (uuid->string (symbol->uuid 
->>>>>>> 96967030f1a4a3132beec4982f49e1ac1df75f2c
-                              (if (:pro an)
-                                (:conclusion an)
-                                (:id (get complements (:conclusion an)))))) }))
+                                 (if (:pro an)
+                                   (:conclusion an)
+                                   (:id (get complements (:conclusion an)))))) }))
 
-<<<<<<< HEAD
 (defn- make-ra-edges
   "(Map Symbol Statement) (Seq ArgumentNode) -> (Seq AifEdge)"
   [complements arg-nodes]
@@ -241,23 +180,3 @@
       :edges (concat (make-ra-edges complements (vals (:argument-nodes ag)))
                      (make-ca-edges conflicts))})))
 
-=======
-(defn- make-aif-edges
-  "(Map Symbol StatementNode) (Seq ArgumentNode) -> (Seq AifEdge)"
-  [complements arg-nodes]
-  (mapcat (fn [an] (argnode->edges complements an))
-          arg-nodes))
-  
-(defn argument-graph->aif
-  "ArgumentGraph Keyword -> String"
-  [ag lang]
-  (let [complements (make-complements (:statement-nodes ag))]
-    (json/encode 
-     {:nodes (make-aif-nodes lang 
-                             (concat (vals (:statement-nodes ag))
-                                     (vals complements)
-                                     (vals (:argument-nodes ag))))
-      :edges (make-aif-edges complements (vals (:argument-nodes ag)))})))
-
-  
->>>>>>> 96967030f1a4a3132beec4982f49e1ac1df75f2c

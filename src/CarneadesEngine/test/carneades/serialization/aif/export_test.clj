@@ -42,20 +42,3 @@
         (debug output)
         true => true))  ;; dummy test, only interested in the output.
         
-
-      ;; (let [all-men-are-mortal (s/make-statement :text {:en "All men are mortal."})
-      ;;       socrates-is-a-man (s/make-statement :text {:en "Socrates is a man."})
-      ;;       socrates-is-mortal (s/make-statement :text {:en "Socrates is mortal."})
-      ;;       socrates-is-an-angel (s/make-statement :text {:en "Socrates is an angel."})
-      ;;       a1 (a/make-argument :id (id/make-urn-symbol) 
-      ;;                           :conclusion socrates-is-mortal 
-      ;;                           :premises [(a/make-premise :statement all-men-are-mortal)
-      ;;                                      (a/make-premise :statement socrates-is-a-man)
-      ;;                                      (a/make-premise :positive false 
-      ;;                                                      :statement socrates-is-an-angel)])
-      ;;       g (-> (ag/make-argument-graph)
-      ;;             (ag/enter-arguments [a1]))
-      ;;       output (aif/argument-graph->aif g :en)]
-      ;;   (debug output)
-      ;;   true => true))  ;; dummy test, only interested in the output.
-            
