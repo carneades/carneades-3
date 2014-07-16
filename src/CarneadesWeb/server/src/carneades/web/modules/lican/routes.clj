@@ -26,13 +26,15 @@
   :available-charsets ["utf-8"]
   :handle-ok (fn [_] (entity/get-software-entity pid (unserialize-atom uri))))
 
-(defresource answers-send-resource [answs uuid]
+(defresource answers-send-resource [params]
   :available-media-types ["application/json"]
   :allowed-methods [:post]
   :available-charsets ["utf-8"]
   :handle-created (fn [ctx]
                     (::questions ctx))
-  :post! (fn [ctx] (assoc ctx ::questions (analysis/process-answers answs uuid))))
+  :post! (fn [ctx]
+           (let [{:keys [answers uuid]} params]
+             (assoc ctx ::questions (analysis/process-answers answers uuid)))))
 
 (defresource entry-analyse-resource [entity legalprofile]
   :available-media-types ["application/json"]
@@ -99,8 +101,7 @@
            (ANY "/:pid" [pid uri] (entry-entity-resource pid uri)))
 
   (context "/answers" []
-           (ANY "/send" {{answers :answers uuid :uuid} :body-params}
-                (answers-send-resource answers uuid)))
+           (ANY "/send" req (answers-send-resource (:body req))))
 
   (context "/debug" [q l e r]
            ;; q := query; l := limit; e := endpoint; r:= repo-name

@@ -76,7 +76,9 @@
 (defn process-answers
   "Process the answers send by the user and returns new questions or an ag."
   [answers uuid]
-  (prn "process answers...")
+  (spy answers)
+  (spy uuid)
+  (spy (type uuid))
   (when-let [analysis (get-in @state [:analyses (symbol uuid)])]
     (let [{:keys [policies dialog]} analysis
           _ (prn "[process-answers]")

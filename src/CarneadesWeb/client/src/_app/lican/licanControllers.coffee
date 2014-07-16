@@ -44,9 +44,9 @@ define [
     questions.analyse $stateParams.entity, $stateParams.legalprofile
     $scope.questionGroups = questions.getQuestionGroups()
 
-    $scope.sendAnswer = () ->
+    $scope.sendAnswer = (form) ->
 
-      if $scope.questionsForm.$invalid
+      if form.$invalid
         console.log "the form is invalid"
       else
         $scope.viewLoading = true
