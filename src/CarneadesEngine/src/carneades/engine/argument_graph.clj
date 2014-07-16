@@ -80,7 +80,11 @@
    con])            ; (set-of symbol), con argument node ids
 
 
+<<<<<<< HEAD
 (defn- make-statement-node
+=======
+(defn make-statement-node
+>>>>>>> 96967030f1a4a3132beec4982f49e1ac1df75f2c
   [stmt]
   {:pre [(literal? stmt)]}
   (let [sn (StatementNode.
