@@ -45,6 +45,13 @@
            (body (encode content))
            (content-type "application/json"))))
 
+(defn put-request
+  [url content]
+  (app (-> (request :put
+                    (str base-url url))
+           (body (encode content))
+           (content-type "application/json"))))
+
 (defn get-request
   [url]
   (app (-> (request :get
@@ -272,3 +279,25 @@
              stmt' (parse (:body response))]
          (:text stmt') => (-> stmt :text :en)
          (-> stmt' :header :description) => (-> stmt :header :description :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "Statements can be updated."
+        (let [project (:project-name @state)
+              stmt (s/make-statement :text {:en "Fred wears a ring."}
+                                     :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+              response (post-request
+                        (str "/projects/" project "/main/statements/")
+                        stmt)
+              id (:id (parse (:body response)))
+              update {:text {:en "Fread did wear a ring."
+                             :fr "Some french text"}}
+              response (put-request
+                        (str "/projects/" project "/main/statements/" id)
+                        update)
+              response (get-request
+                        (str "/projects/" project "/main/statements/" id))
+              stmt' (parse (:body response))]
+          (spy stmt')
+          (:text stmt') => (-> update :text :en))))

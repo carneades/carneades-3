@@ -145,15 +145,22 @@
   :handle-created (fn [ctx]
                     {:id (::id ctx)}))
 
-(defresource entry-statement-resource [pid db id]
+(defresource entry-statement-resource [pid db id context update]
   :available-media-types ["application/json"]
-  :allowed-methods [:get :post]
+  :allowed-methods [:get :put]
   :available-charsets["utf-8"]
   :exists? (fn [_]
              (session-put-language nil)
-             (when-let [s (get-statement [pid db id] :lang (get-lang))]
-               {::entry s}))
-  :handle-ok ::entry)
+             (spy context)
+             (condp = context
+               "edit" (when-let [s (get-edit-statement pid db id (get-lang))]
+                        {::entry s})
+               ;; else
+               (when-let [s (get-statement [pid db id] :lang (get-lang))]
+                 {::entry s})))
+  :handle-ok ::entry
+  :put! (fn [_]
+          (put-statement pid db id update)))
 
 (defresource entry-project-resource [id]
   :available-media-types ["application/json"]
@@ -287,7 +294,7 @@
 
            (context "/:db" [db]
                     (context "/metadata" []
-                             (ANY "/references" [] (list-reference-resource pid db))
+                      (ANY "/references" [] (list-reference-resource pid db))
                              (ANY "/" [k] (list-metadata-resource pid db k))
                              (ANY "/:mid" [mid] (entry-metadata-resource pid db mid)))
 
@@ -300,9 +307,18 @@
                              (ANY "/:aid" [aid] (entry-argument-resource pid db aid))
                              (ANY "/edit/:aid" [] (edit-argument-resource)))
 
+                    ;; GET /statement/1?context=edit
+                    ;; GET /statement/1
+                    ;; POST /statements
+                    ;; PUT /statements/1
+
                     (context "/statements" []
                       (ANY "/" req (statements-resource pid db (:body req)))
-                      (ANY "/:sid" [sid] (entry-statement-resource pid db sid)))
+                      (ANY "/:sid" req (entry-statement-resource pid
+                                                                 db
+                                                                 (-> req :params :sid)
+                                                                 (-> req :params :context)
+                                                                 (:body req))))
 
                     (context "/nodes" []
                       (ANY "/" [] (list-node-resource pid db))

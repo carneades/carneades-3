@@ -272,9 +272,11 @@
     (trim-argument arg)))
 
 (defn augment-statement
-  [stmt project db lang]
+  [stmt project db lang edit]
   (let [stmt (update-in stmt [:header] trim-metadata lang)
-        stmt (assoc stmt :text (or (lang (:text stmt)) (serialize-atom (:atom stmt))))
+        stmt (if edit
+               stmt
+               (assoc stmt :text (or (lang (:text stmt)) (serialize-atom (:atom stmt)))))
         stmt (assoc stmt :pro (map (partial get-trimed-argument project db lang)
                                    (:pro stmt)))
         stmt (assoc stmt :con (map (partial get-trimed-argument project db lang)
@@ -285,7 +287,7 @@
 
 (defn get-statements
   [project db lang]
-  (map #(augment-statement % project db lang)
+  (map #(augment-statement % project db lang false)
        (spy (s/get-statements project db))))
 
 (defn get-statement
@@ -294,7 +296,16 @@
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (let [stmt (s/get-statement project db id)]
-    (augment-statement stmt project db lang)))
+    (augment-statement stmt project db lang false)))
+
+(defn get-edit-statement
+  [project db id lang]
+  (let [stmt (s/get-statement project db id)]
+    (augment-statement stmt project db lang true)))
+
+(defn put-statement
+  [project db id update]
+  (s/put-statement project db id update))
 
 (defn post-statement
   [project db statement]
