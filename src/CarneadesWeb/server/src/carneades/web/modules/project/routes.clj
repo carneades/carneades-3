@@ -128,9 +128,9 @@
              {::entry (get-nodes pid db id :lang (get-lang))})
   :handle-ok ::entry)
 
-(defresource list-statement-resource [pid db]
+(defresource statements-resource [pid db statement]
   :available-media-types ["application/json"]
-  :allowed-methods [:get]
+  :allowed-methods [:get :post]
   :available-charsets["utf-8"]
   :exists? (fn [_]
              (debug "list-statement-resource")
@@ -138,7 +138,12 @@
              (let [lang (keyword (session-get :language))]
                (when-let [stmts (get-statements pid db (keyword lang))]
                  {::entry stmts})))
-  :handle-ok ::entry)
+  :handle-ok ::entry
+  :post! (fn [_]
+           (debug "post statement")
+           {::id (post-statement pid db statement)})
+  :handle-created (fn [ctx]
+                    {:id (::id ctx)}))
 
 (defresource entry-statement-resource [pid db id]
   :available-media-types ["application/json"]
@@ -296,8 +301,8 @@
                              (ANY "/edit/:aid" [] (edit-argument-resource)))
 
                     (context "/statements" []
-                             (ANY "/" [] (list-statement-resource pid db))
-                             (ANY "/:sid" [sid] (entry-statement-resource pid db sid)))
+                      (ANY "/" req (statements-resource pid db (:body req)))
+                      (ANY "/:sid" [sid] (entry-statement-resource pid db sid)))
 
                     (context "/nodes" []
                       (ANY "/" [] (list-node-resource pid db))

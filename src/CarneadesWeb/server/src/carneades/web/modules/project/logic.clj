@@ -296,6 +296,10 @@
   (let [stmt (s/get-statement project db id)]
     (augment-statement stmt project db lang)))
 
+(defn post-statement
+  [project db statement]
+  (s/post-statement project db statement))
+
 (defn get-nodes
   [project db id & {:keys [lang] :or {lang :en}}]
   (let [[info outline refs]
