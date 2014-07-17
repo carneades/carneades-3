@@ -13,7 +13,8 @@
    [carneades.project.admin :as project]
    [carneades.engine.utils :as f]
    [clojure.java.io :as io]
-   [carneades.web.system :as s]))
+   [carneades.web.system :as s]
+   [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]))
 
 (defn- get-project-properties
   [id]
@@ -21,7 +22,7 @@
          {:id id}))
 
 (defn- get-project-theories
-  [id state]
+  [id]
   (get-in (deref s/state) [:projects-data id :available-theories]))
 
 (defn get-projects
@@ -60,7 +61,7 @@
   [project db]
   (let [dbconn (db/make-connection project db "guest" "")]
     (db/with-db dbconn
-      (ag-db/list-metadata))))
+      (spy (ag-db/list-metadata)))))
 
 (defn get-arguments
   [project db]

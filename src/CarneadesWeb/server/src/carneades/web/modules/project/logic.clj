@@ -245,20 +245,27 @@
        :formalized false}
       scheme)))
 
-(defn get-argument
-  [[project db id :as params]
-   & {:keys [host lang] :or {host "localhost:8080" lang :en}}]
-  (debug "get-argument")
-  {:pre [(not (nil? project))
-         (not (nil? db))]}
-  (let [arg (s/get-argument project db id)
-        scheme (get-scheme-from-arg project arg host lang)]
+(defn augment-argument
+  [arg project db lang]
+  (let [scheme (get-scheme-from-arg project arg "localhost:8080" lang)]
     (-> arg
         (update-in [:header] trim-metadata lang)
         (update-in [:conclusion] trim-conclusion lang)
         (update-in [:premises] trim-premises lang)
         (assoc :scheme (trim-scheme scheme))
         (to-map))))
+
+(defn get-argument
+  [[project db id :as params]
+   & {:keys [host lang] :or {host "localhost:8080" lang :en}}]
+  (debug "get-argument")
+  {:pre [(not (nil? project))
+         (not (nil? db))]}
+  (augment-argument (s/get-argument project db id)))
+
+(defn get-arguments
+  [project db lang]
+  (map #(augment-argument % project db lang) (s/get-arguments project db)))
 
 (defn get-trimed-argument
   [project db host lang aid]
@@ -310,7 +317,7 @@
 
 (defn get-references
   [[project db :as params] & {:keys [lang host]}]
-  (let [references (get-metadata [project db] :host host :lang lang)]
+  (let [references (s/get-metadata project db)]
     (map #(select-keys % [:creator :date :identifier :title :key])
          (filter filter-refs references))))
 
