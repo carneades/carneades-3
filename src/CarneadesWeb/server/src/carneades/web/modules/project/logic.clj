@@ -85,7 +85,7 @@
   (map #(select-keys % [:id :text :value]) outline))
 
 (defn make-outline
-  [project db & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
+  [project db & {:keys [lang] :or {lang :en}}]
   (make-node (get (:outline (s/get-outline project db)) 1) lang 0))
 
 (defn get-sub-outline [outline id] outline)
@@ -100,22 +100,22 @@
   (set-description-text lang project))
 
 (defn get-project
-  [& {:keys [id lang host]}]
+  [& {:keys [id lang]}]
   (augment-project lang (s/get-project id)))
 
 (defn get-projects
-  [& {:keys [lang host]}]
+  [& {:keys [lang]}]
   (map (partial augment-project lang) (s/get-projects)))
 
 (defn get-outline
   [[project db id :as params]
-   & {:keys [lang host] :or {lang :en k nil host "localhost:8080"}}]
+   & {:keys [lang] :or {lang :en k nil}}]
   (info "calling outline")
-  (->> (make-outline project db :host host :lang lang)
+  (->> (make-outline project db :lang lang)
        (#(if-not (nil? id) (get-sub-outline % id) %))))
 
 (defn get-metadata
-  [[project db :as params] & {:keys [k lang host]}]
+  [[project db :as params] & {:keys [k lang]}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (->> (s/get-metadata project db)
@@ -125,7 +125,7 @@
        (to-map)))
 
 (defn get-metadatum
-  [[project db id :as params] & {:keys [k lang host]}]
+  [[project db id :as params] & {:keys [k lang]}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (->> (s/get-metadatum project db id)
@@ -219,8 +219,7 @@
 
 (defn get-theories
   [params]
-  (let [params (merge {:host "localhost:8080"
-                       :lang :en} params)
+  (let [params (merge {:lang :en} params)
         params (update-in params [:lang] keyword)]
     (if (:tid params)
       (get-theory params)
@@ -232,7 +231,7 @@
   (select-keys scheme [:id :header :formalized]))
 
 (defn get-scheme-from-arg
-  [project arg host lang]
+  [project arg lang]
   (let [pcontent (s/get-project project)
         schemestr (str (first (unserialize-atom (:scheme arg))))
         schemes-project (theory/get-schemes-project project (:schemes pcontent))
@@ -247,7 +246,7 @@
 
 (defn augment-argument
   [arg project db lang]
-  (let [scheme (get-scheme-from-arg project arg "localhost:8080" lang)]
+  (let [scheme (get-scheme-from-arg project arg lang)]
     (-> arg
         (update-in [:header] trim-metadata lang)
         (update-in [:conclusion] trim-conclusion lang)
@@ -257,7 +256,7 @@
 
 (defn get-argument
   [[project db id :as params]
-   & {:keys [host lang] :or {host "localhost:8080" lang :en}}]
+   & {:keys [lang] :or {lang :en}}]
   (debug "get-argument")
   {:pre [(not (nil? project))
          (not (nil? db))]}
@@ -268,41 +267,41 @@
   (map #(augment-argument % project db lang) (s/get-arguments project db)))
 
 (defn get-trimed-argument
-  [project db host lang aid]
-  (let [arg (get-argument [project db aid] :host host :lang lang)]
+  [project db lang aid]
+  (let [arg (get-argument [project db aid] :lang lang)]
     (trim-argument arg)))
 
 (defn augment-statement
-  [stmt project db host lang]
+  [stmt project db lang]
   (let [stmt (update-in stmt [:header] trim-metadata lang)
         stmt (assoc stmt :text (or (lang (:text stmt)) (serialize-atom (:atom stmt))))
-        stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
+        stmt (assoc stmt :pro (map (partial get-trimed-argument project db lang)
                                    (:pro stmt)))
-        stmt (assoc stmt :con (map (partial get-trimed-argument project db host lang)
+        stmt (assoc stmt :con (map (partial get-trimed-argument project db lang)
                                    (:con stmt)))
         stmt (assoc stmt :premise-of
-                    (map (partial get-trimed-argument project db host lang) (:premise-of stmt)))]
+                    (map (partial get-trimed-argument project db lang) (:premise-of stmt)))]
     (to-map stmt)))
 
 (defn get-statements
   [project db lang]
-  (map #(augment-statement % project db "localhost:8080" lang)
+  (map #(augment-statement % project db lang)
        (spy (s/get-statements project db))))
 
 (defn get-statement
   [[project db id :as params]
-   & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
+   & {:keys [lang] :or {lang :en }}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (let [stmt (s/get-statement project db id)]
-    (augment-statement stmt project db host lang)))
+    (augment-statement stmt project db lang)))
 
 (defn get-nodes
-  [project db id & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
+  [project db id & {:keys [lang] :or {lang :en}}]
   (let [[info outline refs]
-        [(get-metadata [project db id] :host host :lang lang)
-         (get-outline [project db] :host host :lang lang)
-         (get-metadata [project db] :host host :lang lang)]]
+        [(get-metadata [project db id] :lang lang)
+         (get-outline [project db] :lang lang)
+         (get-metadata [project db] :lang lang)]]
     (-> {}
         (assoc :description (-> info :description lang))
         (assoc :issues (make-issues outline))
@@ -311,17 +310,17 @@
                                 (filter filter-refs refs))))))
 
 (defn get-issues
-  [[project db :as params] & {:keys [lang host]}]
-  (let [outline (get-outline [project db] :host host :lang lang)]
+  [[project db :as params] & {:keys [lang]}]
+  (let [outline (get-outline [project db] :lang lang)]
     (make-issues outline)))
 
 (defn get-references
-  [[project db :as params] & {:keys [lang host]}]
+  [[project db :as params] & {:keys [lang]}]
   (let [references (s/get-metadata project db)]
     (map #(select-keys % [:creator :date :identifier :title :key])
          (filter filter-refs references))))
 
-(defn get-argument-map [project db & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
+(defn get-argument-map [project db & {:keys [lang] :or {lang :en}}]
   (let [options {:db db :lang lang}
         dbcon (db/make-connection project db "guest" "")]
     (db/with-db dbcon
@@ -349,7 +348,7 @@
 ;;                     :content (clojure.java.io/file (.getPath (:tempfile file)))}]}))
 
 (defn get-theme
-  [[project did :as params] & {:keys [host]}]
+  [[project did :as params]]
   (s/get-theme project did))
 
 (def legal-profiles-user "root")
