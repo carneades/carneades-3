@@ -265,22 +265,30 @@
   (let [arg (get-argument [project db aid] :host host :lang lang)]
     (trim-argument arg)))
 
-(defn get-statement
-  [[project db id :as params]
-   & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
-  {:pre [(not (nil? project))
-         (not (nil? db))]}
-  (debug "get-statement")
-  (let [stmt (s/get-statement project db id)
-        stmt (update-in stmt [:header] trim-metadata lang)
+(defn augment-statement
+  [stmt project db host lang]
+  (let [stmt (update-in stmt [:header] trim-metadata lang)
         stmt (assoc stmt :text (or (lang (:text stmt)) (serialize-atom (:atom stmt))))
-        stmt (assoc stmt :pro (spy (map (partial get-trimed-argument project db host lang)
-                                    (:pro stmt))))
+        stmt (assoc stmt :pro (map (partial get-trimed-argument project db host lang)
+                                   (:pro stmt)))
         stmt (assoc stmt :con (map (partial get-trimed-argument project db host lang)
                                    (:con stmt)))
         stmt (assoc stmt :premise-of
                     (map (partial get-trimed-argument project db host lang) (:premise-of stmt)))]
     (to-map stmt)))
+
+(defn get-statements
+  [project db lang]
+  (map #(augment-statement % project db "localhost:8080" lang)
+       (spy (s/get-statements project db))))
+
+(defn get-statement
+  [[project db id :as params]
+   & {:keys [lang host] :or {lang :en host "localhost:8080"}}]
+  {:pre [(not (nil? project))
+         (not (nil? db))]}
+  (let [stmt (s/get-statement project db id)]
+    (augment-statement stmt project db host lang)))
 
 (defn get-nodes
   [project db id & {:keys [lang host] :or {lang :en host "localhost:8080"}}]

@@ -113,20 +113,23 @@
   :allowed-methods [:get]
   :available-charsets["utf-8"]
   :exists? (fn [_]
+             (debug "list-statement-resource")
              (session-put-language nil)
-             {:language (session-get :language)})
-  :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
-               (let [s (get-statement [pid db] :host host :lang (keyword lang))]
-                 (debug "s = " s)
-                 s)))
+             (let [lang (keyword (session-get :language))]
+               (when-let [stmts (get-statements pid db (keyword lang))]
+                 {::entry stmts})))
+  :handle-ok ::entry)
 
 (defresource entry-statement-resource [pid db id]
   :available-media-types ["application/json"]
-  :allowed-methods [:get]
+  :allowed-methods [:get :post]
   :available-charsets["utf-8"]
-  :exists? (fn [_] (session-put-language nil) {:language (session-get :language)})
-  :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
-               (get-statement [pid db id] :host host :lang (keyword lang))))
+  :exists? (fn [ctx]
+             (session-put-language nil)
+             (let [lang (keyword (session-get :language))]
+               (when-let [s (get-statement [pid db id] :lang lang)]
+                {::entry s})))
+  :handle-ok ::entry)
 
 (defresource entry-project-resource [id]
   :available-media-types ["application/json"]
