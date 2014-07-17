@@ -86,7 +86,7 @@
   :available-charsets["utf-8"]
   :exists? (fn [_]
              (session-put-language nil)
-             (when-let [args (get-arguments pid db (get-lang))]
+             (when-let [args (get-arguments pid db :lang (get-lang))]
                {::entry args}))
   :handle-ok ::entry)
 
