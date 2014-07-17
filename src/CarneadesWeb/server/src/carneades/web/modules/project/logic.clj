@@ -260,7 +260,7 @@
   (debug "get-argument")
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (augment-argument (s/get-argument project db id)))
+  (augment-argument (s/get-argument project db id) project db lang))
 
 (defn get-arguments
   [project db lang]
