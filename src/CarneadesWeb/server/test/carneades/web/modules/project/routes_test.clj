@@ -58,6 +58,12 @@
                     (str base-url url))
            (content-type "application/json"))))
 
+(defn delete-request
+  [url]
+  (app (-> (request :delete
+                    (str base-url url))
+           (content-type "application/json"))))
+
 (defn post-profile
   [project profile]
   (app (-> (request :post
@@ -301,3 +307,20 @@
               stmt' (parse (:body response))]
           (spy stmt')
           (:text stmt') => (-> update :text :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "Statements can be deleted."
+        (let [project (:project-name @state)
+              stmt (s/make-statement :text {:en "Fred wears a ring."}
+                                     :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+              response (post-request
+                        (str "/projects/" project "/main/statements/")
+                        stmt)
+              id (:id (parse (:body response)))
+              response (delete-request
+                        (str "/projects/" project "/main/statements/" id))
+              response (get-request
+                        (str "/projects/" project "/main/statements/" id))]
+          (:status response) => 404)))

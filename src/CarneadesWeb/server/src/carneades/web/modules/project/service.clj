@@ -63,6 +63,12 @@
     (db/with-db dbconn
       (ag-db/create-statement (p/unpack-statement statement)))))
 
+(defn delete-statement
+  [project db id]
+  (let [dbconn (db/make-connection project db "root" "pw1")]
+    (db/with-db dbconn
+      (ag-db/delete-statement id))))
+
 (defn get-metadatum
   [project db id]
   (let [dbconn (db/make-connection project db "guest" "")]

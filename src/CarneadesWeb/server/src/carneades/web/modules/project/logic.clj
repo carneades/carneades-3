@@ -295,7 +295,7 @@
    & {:keys [lang] :or {lang :en }}]
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (let [stmt (s/get-statement project db id)]
+  (when-let [stmt (s/get-statement project db id)]
     (augment-statement stmt project db lang false)))
 
 (defn get-edit-statement
@@ -306,6 +306,10 @@
 (defn put-statement
   [project db id update]
   (s/put-statement project db id update))
+
+(defn delete-statement
+  [project db id]
+  (s/delete-statement project db id))
 
 (defn post-statement
   [project db statement]
