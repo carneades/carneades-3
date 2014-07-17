@@ -15,26 +15,21 @@
             real-estate (s/make-statement :text {:en "The agreement regards a sale of real estate."})
             email (s/make-statement :text {:en "The agreement was reached via email."})
             deed (s/make-statement :text {:en "A deed was attached to the email."})
-            a1 (a/make-argument :id (id/make-urn-symbol)
-                                :conclusion contract
+            a1 (a/make-argument :conclusion contract
                                 :premises [(a/make-premise :statement minor
                                                            :positive false)
                                            (a/make-premise :statement agreement)])
-            a2 (a/make-argument :id (id/make-urn-symbol)
-                                :pro false
+            a2 (a/make-argument :pro false
                                 :conclusion contract
                                 :premises [(a/make-premise :statement writing
                                                            :positive false)
                                            (a/make-premise :statement real-estate)])
-            a3 (a/make-argument :id (id/make-urn-symbol)
-                                :pro false
+            a3 (a/make-argument :pro false
                                 :conclusion writing
                                 :premises [(a/make-premise :statement email)])
-            a4 (a/make-argument :id (id/make-urn-symbol)
-                                :conclusion agreement
+            a4 (a/make-argument :conclusion agreement
                                 :premises [(a/make-premise :statement deed)])
-            a5 (a/make-argument :id (id/make-urn-symbol)
-                                :conclusion real-estate
+            a5 (a/make-argument :conclusion real-estate
                                 :premises [(a/make-premise :statement deed)])
             g (-> (ag/make-argument-graph)
                   (ag/enter-arguments [a1 a2 a3 a4 a5]))

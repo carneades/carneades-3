@@ -14,28 +14,30 @@ html(lang='en')
       .my-fluid-container#mobheader
         .row.border-bottom
           .col-md-1
-            .section#mobnav
-              div
-                button.navbar-toggle(type='button',ng-init='navCollapsed = true',ng-click='navCollapsed = !navCollapsed')
-                  span.sr-only Toggle navigation
-                  span.icon-bar
-                  span.icon-bar
-                  span.icon-bar
+            .section#mobnav(ng-show='isSubNavDisplayed')
+              button.navbar-toggle(type='button',ng-init='navCollapsed = true',ng-click='navCollapsed = !navCollapsed')
+                span.sr-only Toggle navigation
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+            .section#mobnav(ng-show='!isSubNavDisplayed')
+              button.navbar-toggle.disabled(type='button')
+                span.sr-only Toggle navigation
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
           .col-md-11
             .section#mobbc
               breadcrumb(states='navigatedStates',style='style')
-        .row.collapse#mobnavdetails(collapse='navCollapsed')
-          div(ui-view='mobsubnav',ng-cloak='')
-      div#global
+        .row.collapse#mobnavdetails(collapse='navCollapsed',ui-view='mobsubnav',ng-cloak='')
+      div#global.my-fluid-container
         div(ui-view='banner',ng-cloak='')
         div.navbar.subnav-navbar
-          .my-fluid-container
-            breadcrumb(states='navigatedStates',style='style')
-        div#subnav(ui-view='subnav',ng-cloak='')
+          breadcrumb(states='navigatedStates',style='style')
+        div#subnav.row(ui-view='subnav',ng-cloak='')
 
-    div
-      div(ui-view='content',style='margin-bottom: 4em;min-height:400px;',ng-cloak='')
+    div(ui-view='content',style='margin-bottom: 4em;',ng-cloak='')
 
-    div(ui-view='footer',ng-cloak='')
+    div(ui-view='footer', class='navbar-fixed-bottom',ng-cloak='')
 
     script(src='require.js',data-main='main.min.js')

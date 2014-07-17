@@ -1,4 +1,4 @@
-;; Copyright (c) 2010 Fraunhofer Gesellschaft
+;; Copyright (c) 2014 Fraunhofer Gesellschaft
 ;; This Source Code Form is subject to the terms of the Mozilla Public
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -178,5 +178,6 @@
                                      (vals (:argument-nodes ag))
                                      conflicts))
       :edges (concat (make-ra-edges complements (vals (:argument-nodes ag)))
-                     (make-ca-edges conflicts))})))
+                     (make-ca-edges conflicts))}
+     {:pretty true})))
 
