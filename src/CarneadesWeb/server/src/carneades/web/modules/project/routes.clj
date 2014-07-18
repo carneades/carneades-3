@@ -236,7 +236,7 @@
   :available-media-types ["image/png"]
   :available-charsets ["utf8"]
   :allowed-methods [:get]
-  :handle-ok (fn [{{{host "host"} :headers} :request}] (get-theme [pid did] :host host)))
+  :handle-ok (fn [{{{host "host"} :headers} :request}] (get-theme [pid did])))
 
 (defresource entry-map-resource [pid db]
   :available-media-types ["image/svg+xml"]

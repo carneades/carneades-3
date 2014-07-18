@@ -4,12 +4,47 @@
   margin-bottom: 0;
 }
 
+.font-inc-130 {
+  font-size: 130%;
+}
+
+.mob-bc-head {
+  float:left;
+  background-color: $breadcrumbs-border;
+  ul {
+    @include inline-list;
+    > li {
+      > a {
+        color: $breadcrumbs-link-color;
+        display: block;
+        float: left;
+        position: relative;
+        line-height: $breadcrumbs-height;
+        padding: 0 1em 0 1.5em;
+        text-decoration: none;
+        background: $breadcrumbs-border;
+        &:hover {
+            color: $breadcrumbs-link-hover-color;
+            cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
 .navbar-default {
   background:$body-bg;
 }
 
 #mobheader .border-bottom {
     border-bottom: 1px solid $breadcrumbs-link-color !important;
+}
+
+#mobbcnavdetails {
+  > ul {
+    padding: 5px 0px 5px 79px !important;
+    list-style:none;
+  }
 }
 
 #mobnavdetails {
@@ -49,6 +84,7 @@
     background-color: $breadcrumbs-border;
     margin: 0 0 0 -10px !important;
     .navbar-toggle {
+      z-index:100;
       float: left;
       border-width: 0;
       border-radius: 0;
