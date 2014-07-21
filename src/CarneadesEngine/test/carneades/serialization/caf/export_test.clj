@@ -7,11 +7,10 @@
             [carneades.engine.argument-evaluation :refer [evaluate]]
             [taoensso.timbre :as timbre :refer [debug info spy]]
             [carneades.serialization.caf.export :as caf]
-            [carneades.serialization.validation :refer [create-validation-fn]]
+            [carneades.serialization.xml.validation :refer [create-validation-fn]] 
             [clojure.java.io :as io]
             [clojure.data.zip.xml :refer [attr text xml->]]
-            [clojure.zip :as z]
-            [clojure.xml :as xml]))
+            [clojure.zip :as z] [clojure.xml :as xml]))
 
 (fact "The exported XML is conform to the schema."
       (let [wears-ring (s/make-statement :text {:en "Fred wears a ring."}

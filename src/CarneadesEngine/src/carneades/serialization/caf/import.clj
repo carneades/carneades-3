@@ -10,7 +10,7 @@
             [clojure.java.io :as io]
             [clojure.data.zip.xml :refer [attr text xml->]]
             [clojure.zip :as z]
-            [carneades.serialization.validation :refer [create-validation-fn]]
+            [carneades.serialization.xml.validation :refer [create-validation-fn]]
             [taoensso.timbre :as timbre :refer [debug info spy]]
             [carneades.engine.utils :refer [unserialize-atom]]
             [carneades.engine.statement :as st]
