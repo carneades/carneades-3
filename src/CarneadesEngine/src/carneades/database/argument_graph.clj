@@ -486,7 +486,6 @@
         premise (if argid
                   (assoc premise :argument argid)
                   premise)]
-    (debug "insert " premise)
     (first (vals (jdbc/insert-record
                   :premise premise)))))
 

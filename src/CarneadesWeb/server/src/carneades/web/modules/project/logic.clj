@@ -234,7 +234,7 @@
   [project arg lang]
   (let [pcontent (s/get-project project)
         schemestr (str (first (unserialize-atom (:scheme arg))))
-        schemes-project (theory/get-schemes-project project (:schemes (spy pcontent)))
+        schemes-project (theory/get-schemes-project project (:schemes pcontent))
         schemes-name (theory/get-schemes-name (:schemes pcontent))
         scheme (get-theory {:tpid schemes-project :tid schemes-name :scheme schemestr :lang lang})]
     (if (nil? scheme)
@@ -257,10 +257,10 @@
 (defn get-argument
   [[project db id :as params]
    & {:keys [lang] :or {lang :en}}]
-  (debug "get-argument")
   {:pre [(not (nil? project))
          (not (nil? db))]}
-  (augment-argument (s/get-argument project db id) project db lang))
+  (when-let [arg (s/get-argument project db id)]
+   (augment-argument arg  project db lang)))
 
 (defn get-arguments
   [project db lang]
@@ -273,6 +273,10 @@
 (defn post-argument
   [project db arg]
   (s/post-argument project db arg))
+
+(defn delete-argument
+  [project db id]
+  (s/delete-argument project db id))
 
 (defn get-trimed-argument
   [project db lang aid]
@@ -296,7 +300,7 @@
 (defn get-statements
   [project db lang]
   (map #(augment-statement % project db lang false)
-       (spy (s/get-statements project db))))
+       (s/get-statements project db)))
 
 (defn get-statement
   [[project db id :as params]
@@ -384,7 +388,7 @@
 (defn get-profiles
   [pid]
   (lp/with-db pid legal-profiles-user legal-profiles-password
-   (lp/read-profiles+)))
+    (lp/read-profiles+)))
 
 (defn get-profile
   [pid id]

@@ -373,3 +373,20 @@
           (spy arg')
           (-> arg' :conclusion :text) => (-> arg :conclusion :text :en)
           (:text (first (:premises arg'))) => (-> short :text :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "New arguments can be deleted."
+        (let [project (:project-name @state)
+              married (s/make-statement :text {:en "Fred is married."} :atom '(married Fred))
+              ring (s/make-statement :text {:en "Fred wears a ring."})
+              arg (a/make-argument :id 'a1 :conclusion married :premises [(a/pm ring)])
+              response (post-request
+                        (str "/projects/" project "/main/arguments/")
+                        arg)
+              id (:id (parse (:body response)))
+              _ (delete-request
+                 (str "/projects/" project "/main/arguments/" id))
+              response (get-request
+                        (str "/projects/" project "/main/arguments/" id))]
+          (:status response) => 404)))

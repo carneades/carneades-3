@@ -79,7 +79,7 @@
   [project db]
   (let [dbconn (db/make-connection project db "guest" "")]
     (db/with-db dbconn
-      (spy (ag-db/list-metadata)))))
+      (ag-db/list-metadata))))
 
 (defn get-argument
   [project db id]
@@ -95,7 +95,6 @@
 
 (defn put-argument
   [project db id update]
-  (debug "update argument")
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
       (ag-db/update-argument id update))))
@@ -105,6 +104,12 @@
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
       (ag-db/create-argument (p/unpack-argument arg)))))
+
+(defn delete-argument
+  [project db id]
+  (let [dbconn (db/make-connection project db "root" "pw1")]
+    (db/with-db dbconn
+      (ag-db/delete-argument id))))
 
 (defn get-outline
   [project db]

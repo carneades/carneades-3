@@ -96,7 +96,7 @@
 
 (defresource argument-resource [pid db id context update]
   :available-media-types ["application/json"]
-  :allowed-methods [:get :put]
+  :allowed-methods [:get :put :delete]
   :available-charsets["utf-8"]
   :exists? (fn [_]
              (session-put-language nil)
@@ -104,7 +104,9 @@
                {::entry arg}))
   :handle-ok ::entry
   :put! (fn [_]
-          (put-argument pid db id update)))
+          (put-argument pid db id update))
+  :delete! (fn [_]
+             (delete-argument pid db id)))
 
 (defresource list-node-resource [pid db]
   :available-media-types ["application/json"]
