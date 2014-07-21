@@ -80,15 +80,19 @@
                {::entry m}))
   :handle-ok ::entry)
 
-(defresource arguments-resource [pid db]
+(defresource arguments-resource [pid db argument]
   :available-media-types ["application/json"]
-  :allowed-methods [:get]
+  :allowed-methods [:get :post]
   :available-charsets["utf-8"]
   :exists? (fn [_]
              (session-put-language nil)
              (when-let [args (get-arguments pid db (get-lang))]
                {::entry args}))
-  :handle-ok ::entry)
+  :handle-ok ::entry
+  :post! (fn [_]
+           {::id (post-argument pid db argument)})
+  :handle-created (fn [ctx]
+                    {:id (::id ctx)}))
 
 (defresource argument-resource [pid db id]
   :available-media-types ["application/json"]
@@ -123,14 +127,12 @@
   :allowed-methods [:get :post]
   :available-charsets["utf-8"]
   :exists? (fn [_]
-             (debug "list-statement-resource")
              (session-put-language nil)
              (let [lang (keyword (session-get :language))]
                (when-let [stmts (get-statements pid db (keyword lang))]
                  {::entry stmts})))
   :handle-ok ::entry
   :post! (fn [_]
-           (debug "post statement")
            {::id (post-statement pid db statement)})
   :handle-created (fn [ctx]
                     {:id (::id ctx)}))
@@ -303,7 +305,7 @@
                                                            (:body req))))
 
                     (context "/arguments" []
-                      (ANY "/" [] (arguments-resource pid db))
+                      (ANY "/" req (arguments-resource pid db (:body req)))
                       (ANY "/:aid" [aid] (argument-resource pid db aid))
                       ;; (ANY "/edit/:aid" [] (edit-argument-resource))
                       )                    

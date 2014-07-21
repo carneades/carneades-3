@@ -81,17 +81,23 @@
     (db/with-db dbconn
       (spy (ag-db/list-metadata)))))
 
+(defn get-argument
+  [project db id]
+  (let [dbconn (db/make-connection project db "guest" "")]
+    (db/with-db dbconn
+      (p/pack-argument (ag-db/read-argument (str id))))))
+
 (defn get-arguments
   [project db]
   (let [dbconn (db/make-connection project db "guest" "")]
     (db/with-db dbconn
       (map p/pack-argument (ag-db/list-arguments)))))
 
-(defn get-argument
-  [project db id]
-  (let [dbconn (db/make-connection project db "guest" "")]
+(defn post-argument
+  [project db arg]
+  (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
-      (p/pack-argument (ag-db/read-argument (str id))))))
+      (ag-db/create-argument (spy (p/unpack-argument arg))))))
 
 (defn get-outline
   [project db]

@@ -553,7 +553,6 @@
   "Creates a one-step argument and inserts it into a database.  Returns
    the id of the new argument."
   [arg]
-  {:pre [(argument? arg)]}
   (let [arg-id (str (:id arg)),
         scheme-id (str (serialize-atom (:scheme arg)))
         conclusion-id (get-statement (:conclusion arg)),
