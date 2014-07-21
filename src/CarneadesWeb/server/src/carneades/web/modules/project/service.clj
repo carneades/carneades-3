@@ -93,11 +93,18 @@
     (db/with-db dbconn
       (map p/pack-argument (ag-db/list-arguments)))))
 
+(defn put-argument
+  [project db id update]
+  (debug "update argument")
+  (let [dbconn (db/make-connection project db "root" "pw1")]
+    (db/with-db dbconn
+      (ag-db/update-argument id update))))
+
 (defn post-argument
   [project db arg]
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
-      (ag-db/create-argument (spy (p/unpack-argument arg))))))
+      (ag-db/create-argument (p/unpack-argument arg)))))
 
 (defn get-outline
   [project db]

@@ -346,3 +346,30 @@
               arg' (parse (:body response))]
           (-> arg' :conclusion :text) => (-> arg :conclusion :text :en)
           (:text (first (:premises arg'))) => (-> ring :text :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "Arguments can be updated."
+        (let [project (:project-name @state)
+              married (s/make-statement :text {:en "Fred is married."} :atom '(married Fred))
+              ring (s/make-statement :atom '(wearsRing Fred) :text {:en "Fred wears a ring."})
+              short (s/make-statement :atom '(wearsShort Fred) :text {:en "Fred wears a short."})
+              arg (a/make-argument :id 'a1 :conclusion married :premises [(a/pm ring)])
+              response (post-request
+                        (str "/projects/" project "/main/arguments/")
+                        arg)
+              id (:id (parse (:body response)))
+              response (post-request
+                        (str "/projects/" project "/main/statements/")
+                        short)
+              _ (spy response)
+              update {:premises [(spy (a/pm short))]}
+              response (put-request
+                        (str "/projects/" project "/main/arguments/" id)
+                        update)
+              response (get-request
+                        (str "/projects/" project "/main/arguments/" id))
+              arg' (parse (:body response))]
+          (spy arg')
+          (-> arg' :conclusion :text) => (-> arg :conclusion :text :en)
+          (:text (first (:premises arg'))) => (-> short :text :en))))

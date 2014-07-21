@@ -266,6 +266,10 @@
   [project db lang]
   (map #(augment-argument % project db lang) (s/get-arguments project db)))
 
+(defn put-argument
+  [project db id update]
+  (s/put-argument project db id update))
+
 (defn post-argument
   [project db arg]
   (s/post-argument project db arg))
