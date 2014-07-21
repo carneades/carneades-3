@@ -94,15 +94,19 @@
   :handle-created (fn [ctx]
                     {:id (::id ctx)}))
 
-(defresource argument-resource [pid db id]
+(defresource argument-resource [pid db id context update]
   :available-media-types ["application/json"]
-  :allowed-methods [:get]
+  :allowed-methods [:get :put :delete]
   :available-charsets["utf-8"]
   :exists? (fn [_]
              (session-put-language nil)
              (when-let [arg (get-argument [pid db id] :lang (get-lang))]
                {::entry arg}))
-  :handle-ok ::entry)
+  :handle-ok ::entry
+  :put! (fn [_]
+          (put-argument pid db id update))
+  :delete! (fn [_]
+             (delete-argument pid db id)))
 
 (defresource list-node-resource [pid db]
   :available-media-types ["application/json"]
@@ -306,9 +310,11 @@
 
                     (context "/arguments" []
                       (ANY "/" req (arguments-resource pid db (:body req)))
-                      (ANY "/:aid" [aid] (argument-resource pid db aid))
-                      ;; (ANY "/edit/:aid" [] (edit-argument-resource))
-                      )                    
+                      (ANY "/:aid" req (argument-resource pid
+                                                          db
+                                                          (-> req :params :aid)
+                                                          (-> req :params :context)
+                                                          (:body req))))
                     
                     (context "/nodes" []
                       (ANY "/" [] (list-node-resource pid db))

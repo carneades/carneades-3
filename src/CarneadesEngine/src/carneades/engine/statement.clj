@@ -209,12 +209,12 @@
 
 (defn literal-atom
   [literal]
-  {:pre [(literal? literal)]}
   (cond (sliteral? literal) (if (literal-pos? literal)
                               literal
                               (second literal)),
-        (statement? literal) (or (:atom literal)
-                                 (:id literal))))
+        (or (statement? literal) (map? literal))
+        (or (:atom literal)
+            (:id literal))))
 
 ;; it's really unexpected to get a literal when given a sliteral
 ;; maybe we should change the API?
