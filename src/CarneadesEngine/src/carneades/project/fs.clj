@@ -5,13 +5,18 @@
 
 (ns ^{:doc "Interaction with the project files stored in the filesystem."}
   carneades.project.fs
-  (:use [carneades.engine.utils :only [file-separator exists? file-separator make-relative]])
+  (:use [carneades.engine.utils :only [delete-file-recursively
+                                       file-separator
+                                       exists?
+                                       file-separator
+                                       make-relative]])
   (:require [clojure.pprint :as pp]
             [clojure.java.io :as io]
             [clojure.string :as s]
             [me.raynes.fs :as fs]
             [carneades.config.config :as config]
-            [carneades.engine.theory :as theory]))
+            [carneades.engine.theory :as theory]
+            [taoensso.timbre :as timbre :refer [debug info spy]]))
 
 (def projects-directory (config/properties :projects-directory
                                            (str (System/getProperty "user.dir")
@@ -23,6 +28,11 @@
 (def documents-directory "documents")
 
 (def projects-lock (Object.))
+
+(def default-properties
+  {:title "A title"
+   :schemes "default/walton_schemes"
+   :description {:en "A description."}})
 
 (defn- project?
   "Returns true if the directory is a project."
@@ -187,7 +197,7 @@ representing the project."
   (let [dest (document-path project name)]
     (fs/copy pathname dest)))
 
-(defn create-project
+(defn create-project-files
   "Creates a new project in the projects' directory"
   [project]
   (let [docpath (str projects-directory file-separator
@@ -195,12 +205,14 @@ representing the project."
                      documents-directory)
         theoriespath (str projects-directory file-separator
                           project file-separator
-                          theories-directory)]
+                          theories-directory)
+        properties-path (get-properties-path project)]
     (fs/mkdirs docpath)
-    (fs/mkdir theoriespath)))
+    (fs/mkdir theoriespath)
+    (spit properties-path (pr-str default-properties))))
 
 (defn delete-project
   "Delete project from project's directory."
   [project]
   (let [path (str projects-directory file-separator project)]
-    (fs/delete-dir path)))
+    (delete-file-recursively (get-project-path project))))
