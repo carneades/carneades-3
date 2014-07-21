@@ -1,14 +1,16 @@
-(ns carneades.serialization.aif.export-test
+(ns carneades.serialization.aif.import-test
   (:require [midje.sweet :refer :all]
             [carneades.engine.uuid :as id]
             [carneades.engine.statement :as s]
             [carneades.engine.argument :as a]
             [carneades.engine.argument-graph :as ag]
             [taoensso.timbre :as timbre :refer [debug info spy]]
-            [carneades.serialization.aif.export :as aif])
-  (:import java.io.StringWriter))
+            [carneades.serialization.aif.import :as import]
+            [carneades.serialization.aif.export :as export])
+  (:import [java.io StringWriter StringReader]))
 
-(fact "The example argument graph is correctly translated into AIF."
+
+(fact "The example argument graph is translated into AIF."
       (let [contract (s/make-statement :text {:en "There is a contract."})
             minor (s/make-statement :text {:en "The person who made the offer is a minor."})
             writing (s/make-statement :text {:en "The offer was made in writing."})
@@ -32,10 +34,14 @@
                                 :premises [(a/make-premise :statement deed)])
             a5 (a/make-argument :conclusion real-estate
                                 :premises [(a/make-premise :statement deed)])
-            g (-> (ag/make-argument-graph)
-                  (ag/enter-arguments [a1 a2 a3 a4 a5]))
-            output (str (with-open [w (StringWriter.)]  
-                          (aif/argument-graph->aif g :en w)))]
-        (debug output)
-        true => true))  ;; dummy test, only interested in the output.
+            g1 (-> (ag/make-argument-graph)
+                   (ag/enter-arguments [a1 a2 a3 a4 a5]))
+            aif1 (str (with-open [w (StringWriter.)]  
+                       (export/argument-graph->aif g1 :en w)))
+            g2 (import/aif->argument-graph (StringReader. aif1) :en)
+            aif2 (str (with-open [w (StringWriter.)]  
+                       (export/argument-graph->aif g2 :en w)))]
+        ;; (debug g2)
+        (debug aif2)
+        true => true))  ;; dummy test. Interested only in the debugging output.
         

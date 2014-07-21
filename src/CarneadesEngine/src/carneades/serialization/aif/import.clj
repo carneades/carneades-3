@@ -13,6 +13,7 @@
             [cheshire.core :as json]
             ;; [clojure.string :as str]
             ;; [clojure.set :as set]
+            ;; [taoensso.timbre :as timbre :refer [debug info spy]]
             ))
 
 (defn- parse-i-nodes 
@@ -22,23 +23,23 @@
    A map from AIF ids to statements is returned."
   [aif lang]
   (reduce (fn [m node]
-            (if (= (:type node) "I")
+            (if (= (get node "type") "I")
               (let [stmt (stmt/make-statement 
-                          :text {lang (:text node)})]
-                (assoc m (:nodeID node) stmt))
+                          :text {lang (get node "text")})]
+                (assoc m (get node "nodeID") stmt))
               m))
           {}
-          (:nodes aif)))
+          (get aif "nodes")))
 
 (defn- ca-node-conclusion
   "String (Map Keyword Vector) (Map String Statement) -> Statement
    Returns the Carneades statement for the conclusion of 
    a CA-node in an AIF file."
    [ca-node-id aif stmts]
-   (->> (:edges aif)
-        (filter (fn [edge] (= (:fromID edge) ca-node-id)))
+   (->> (get aif "edges")
+        (filter (fn [edge] (= (get edge "fromID") ca-node-id)))
         (first)
-        (:toID)
+        ((fn [e] (get e "toID")))
         (get stmts)))
 
 (defn- ca-node-premise
@@ -47,10 +48,10 @@
    a CA-node in an AIF file. It is assumed that each CA node has 
    exactly one premise."
    [ca-node-id aif stmts]
-   (->> (:edges aif)
-        (filter (fn [edge] (= (:toID edge) ca-node-id)))
+   (->> (get aif "edges")
+        (filter (fn [edge] (= (get edge "toID") ca-node-id)))
         (first)
-        (:fromID)
+        ((fn [e] (get e "fromID")))
         (get stmts)))
 
 (defn- parse-ca-nodes
@@ -69,23 +70,23 @@
     looked up when constructing the argument graph."  
   [aif stmts]
   (reduce (fn [m node]
-            (if (= (:type node) "CA") 
+            (if (= (get node "type") "CA") 
               (assoc m 
-                (:id (ca-node-conclusion (:nodeID node) aif stmts))
-                (ca-node-premise (:nodeID node) aif stmts))
+                (:id (ca-node-conclusion (get node "nodeID") aif stmts))
+                (ca-node-premise (get node "nodeID") aif stmts))
               m))
           {}
-          (:nodes aif)))
+          (get aif "nodes")))
 
 (defn- ra-node-conclusion 
   "String (Map Keyword Vector) (Map Symbol Statement) -> Statement
    Returns the Carneades statement for the conclusion of an RA-node in 
    the Clojure map representation of an AIF JSON file."
   [ra-node-id aif stmts]
-  (->> (:edges aif)
-        (filter (fn [edge] (= (:fromID edge) ra-node-id)))
+  (->>  (get aif "edges")
+        (filter (fn [edge] (= (get edge "fromID") ra-node-id)))
         (first)
-        (:toID)
+        ((fn [e] (get e "toID")))
         (get stmts)))
 
 (defn- ra-node-premises 
@@ -93,39 +94,39 @@
    Returns a vector of Carneades statements for the premises of an RA-node in 
    the Clojure map representation of an AIF JSON file."
   [ra-node-id aif stmts]
-  (->> (:edges aif)
-       (filter (fn [edge] (= (:toID edge) ra-node-id)))
-       (map :fromID)
-       (map (fn [edge] (get stmts (:fromID edge))))))
+  (->> (get aif "edges")
+       (filter (fn [e] (= (get e "toID") ra-node-id)))
+       (map (fn [e] (get e "fromID")))
+       (map (fn [id] (get stmts id)))))
 
 (defn- parse-ra-nodes 
   "(Map Keyword Vector) (Map String Statement) (Map Symbol Statement) -> (Seq Argument)"
   [aif stmts complements]
   (reduce (fn [args node]
-            (if (= (:type node) "RA") 
-              (let [conclusion (ra-node-conclusion (:nodeID node) aif stmts)
-                    premises (ra-node-premises (:nodeID node) aif stmts)]
-              (conj args (arg/make-argument 
-                          :pro (not (contains? complements (:id conclusion)))
-                          :conclusion (if (contains? complements (:id conclusion))
-                                        (get complements (:id conclusion))
-                                        conclusion)
-                          :premises (map (fn [p] (arg/make-premise 
-                                                  :positive (not (contains? complements (:id p)))
-                                                  :statement (if (contains? complements (:id p))
-                                                               (get complements (:id p))
-                                                               p))) 
-                                         premises))))
-              m))
+            (if (= (get node "type") "RA") 
+              (let [conclusion (ra-node-conclusion (get node "nodeID") aif stmts)
+                    premises (ra-node-premises (get node "nodeID") aif stmts) ] 
+                (conj args (arg/make-argument 
+                            :pro (not (contains? complements (:id conclusion)))
+                            :conclusion (if (contains? complements (:id conclusion))
+                                          (get complements (:id conclusion))
+                                          conclusion)
+                            :premises (map (fn [p] (arg/make-premise 
+                                                    :positive (not (contains? complements (:id p)))
+                                                    :statement (if (contains? complements (:id p))
+                                                                 (get complements (:id p))
+                                                                 p))) 
+                                           premises))))
+              args))
           []
-          (:nodes aif)))
+          (get aif "nodes")))
                           
 (defn aif->argument-graph
-  "Stream Keyword -> ArgumentGraph
+  "Reader Keyword -> ArgumentGraph
    The lang keyword gives the language of the AIF file. It is assumed
    that the text of all nodes in an AIF file is in the same language."
-  [s lang]
-  (let [aif (json/parse-seq s)
+  [rdr lang]
+  (let [aif (json/parse-stream rdr)
         stmts (parse-i-nodes aif lang)
         complements (parse-ca-nodes aif stmts)
         args (parse-ra-nodes aif stmts complements)]

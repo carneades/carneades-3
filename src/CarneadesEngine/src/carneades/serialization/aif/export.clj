@@ -165,19 +165,20 @@
           conflicts))
 
 (defn argument-graph->aif
-  "ArgumentGraph Keyword -> String"
-  [ag lang]
+  "ArgumentGraph Keyword Writer -> Writer"
+  [ag lang writer]
   (let [complements (make-complements ag)
         used-stmts (used-statements (vals (:statement-nodes ag))
                                     complements 
                                     (vals (:argument-nodes ag)))
         conflicts (make-conflicts complements (map :id used-stmts))]
-    (json/encode 
+    (json/generate-stream
      {:nodes (make-aif-nodes lang 
                              (concat used-stmts
                                      (vals (:argument-nodes ag))
                                      conflicts))
       :edges (concat (make-ra-edges complements (vals (:argument-nodes ag)))
                      (make-ca-edges conflicts))}
+     writer
      {:pretty true})))
 
