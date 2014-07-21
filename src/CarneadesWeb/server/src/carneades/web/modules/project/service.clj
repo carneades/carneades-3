@@ -13,7 +13,8 @@
    [carneades.project.admin :as project]
    [carneades.engine.utils :as f]
    [clojure.java.io :as io]
-   [carneades.web.system :as s]))
+   [carneades.web.system :as s]
+   [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]))
 
 (defn- get-project-properties
   [id]
@@ -21,7 +22,7 @@
          {:id id}))
 
 (defn- get-project-theories
-  [id state]
+  [id]
   (get-in (deref s/state) [:projects-data id :available-theories]))
 
 (defn get-projects
@@ -50,6 +51,24 @@
     (db/with-db dbconn
       (map p/pack-statement (ag-db/list-statements)))))
 
+(defn put-statement
+  [project db id update]
+  (let [dbconn (db/make-connection project db "root" "pw1")]
+    (db/with-db dbconn
+      (ag-db/update-statement id update))))
+
+(defn post-statement
+  [project db statement]
+  (let [dbconn (db/make-connection project db "root" "pw1")]
+    (db/with-db dbconn
+      (ag-db/create-statement (p/unpack-statement statement)))))
+
+(defn delete-statement
+  [project db id]
+  (let [dbconn (db/make-connection project db "root" "pw1")]
+    (db/with-db dbconn
+      (ag-db/delete-statement id))))
+
 (defn get-metadatum
   [project db id]
   (let [dbconn (db/make-connection project db "guest" "")]
@@ -60,7 +79,7 @@
   [project db]
   (let [dbconn (db/make-connection project db "guest" "")]
     (db/with-db dbconn
-      (ag-db/list-metadata))))
+      (spy (ag-db/list-metadata)))))
 
 (defn get-arguments
   [project db]

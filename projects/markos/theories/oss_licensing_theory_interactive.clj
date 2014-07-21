@@ -61,7 +61,7 @@ project to be used in an interactive dialog with the user"})
       :header (dc/make-metadata :description {:en "The opinion of the user on the the Free Software
        Foundation claim that linking creates derivative works."})
       :conclusion '(copyright:derivedFrom ?W1 ?W2)
-      :premises [(a/pm '(soft:linkedLibrary-mock ?W1 ?W2))
+      :premises [(a/pm '(linked ?W1 ?W2))
                  (a/pm '(userAgreesFsfTheory))])
 
      (t/make-scheme
@@ -71,5 +71,5 @@ project to be used in an interactive dialog with the user"})
       :header (dc/make-metadata :description {:en "The opinion of the user on the the Free Software
        Foundation claim that linking creates derivative works."})
       :conclusion '(copyright:derivedFrom ?W1 ?W2)
-      :premises [(a/pm '(soft:linkedLibrary-mock ?W1 ?W2))
+      :premises [(a/pm '(linked ?W1 ?W2))
                  (a/pm '(not (userAgreesFsfTheory)))])])]))

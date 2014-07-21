@@ -6,6 +6,7 @@
             [cheshire.core :refer [parse-string encode]]
             [carneades.engine.utils :as utils]
             [carneades.engine.uuid :refer [make-uuid-str]]
+            [carneades.engine.statement :as s]
             [carneades.project.admin :as project]
             [carneades.database.admin :as db]))
 
@@ -36,6 +37,32 @@
 (defn get-rule-value
   [rules sid]
   (:value (first (filter #(= (:ruleid %) sid) rules))))
+
+(defn post-request
+  [url content]
+  (app (-> (request :post
+                    (str base-url url))
+           (body (encode content))
+           (content-type "application/json"))))
+
+(defn put-request
+  [url content]
+  (app (-> (request :put
+                    (str base-url url))
+           (body (encode content))
+           (content-type "application/json"))))
+
+(defn get-request
+  [url]
+  (app (-> (request :get
+                    (str base-url url))
+           (content-type "application/json"))))
+
+(defn delete-request
+  [url]
+  (app (-> (request :delete
+                    (str base-url url))
+           (content-type "application/json"))))
 
 (defn post-profile
   [project profile]
@@ -241,3 +268,59 @@
               id (:id body-content)]
           (delete-profile project id) =>
           (throws Exception #"Deleting the default profile is forbidden.+"))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+ (fact "New statements can be created."
+       (let [project (:project-name @state)
+             stmt (s/make-statement :text {:en "Fred wears a ring."}
+                                    :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+             response (post-request
+                       (str "/projects/" project "/main/statements/")
+                       stmt)
+             id (:id (parse (:body response)))
+             response (get-request
+                       (str "/projects/" project "/main/statements/" id))
+             stmt' (parse (:body response))]
+         (:text stmt') => (-> stmt :text :en)
+         (-> stmt' :header :description) => (-> stmt :header :description :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "Statements can be updated."
+        (let [project (:project-name @state)
+              stmt (s/make-statement :text {:en "Fred wears a ring."}
+                                     :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+              response (post-request
+                        (str "/projects/" project "/main/statements/")
+                        stmt)
+              id (:id (parse (:body response)))
+              update {:text {:en "Fread did wear a ring."
+                             :fr "Some french text"}}
+              response (put-request
+                        (str "/projects/" project "/main/statements/" id)
+                        update)
+              response (get-request
+                        (str "/projects/" project "/main/statements/" id))
+              stmt' (parse (:body response))]
+          (spy stmt')
+          (:text stmt') => (-> update :text :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "Statements can be deleted."
+        (let [project (:project-name @state)
+              stmt (s/make-statement :text {:en "Fred wears a ring."}
+                                     :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+              response (post-request
+                        (str "/projects/" project "/main/statements/")
+                        stmt)
+              id (:id (parse (:body response)))
+              response (delete-request
+                        (str "/projects/" project "/main/statements/" id))
+              response (get-request
+                        (str "/projects/" project "/main/statements/" id))]
+          (:status response) => 404)))
