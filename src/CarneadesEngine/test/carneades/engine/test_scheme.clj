@@ -8,7 +8,7 @@
         (carneades.engine statement argument argument-graph shell argument theory
          aspic dublin-core argument-evaluation policy ask  argument-generator)
         carneades.maps.lacij)
-  (:require [carneades.project.admin :as project]
+  (:require [carneades.project.fs :as project]
             [carneades.maps.lacij :refer [export]]
             [carneades.database.db :as db]
             [carneades.database.argument-graph :as ag-db]

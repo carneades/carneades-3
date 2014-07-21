@@ -10,7 +10,7 @@
             [carneades.engine.argument-graph :as ag]
             [carneades.engine.ask :as ask]
             [carneades.engine.dialog :as dialog]
-            [carneades.project.admin :as project]
+            [carneades.project.fs :as project]
             [carneades.engine.triplestore :as triplestore]
             [carneades.engine.uuid :as uuid]
             [edu.ucdenver.ccp.kr.sparql :as sparql]

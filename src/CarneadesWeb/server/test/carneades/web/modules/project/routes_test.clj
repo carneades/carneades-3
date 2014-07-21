@@ -8,7 +8,7 @@
             [carneades.engine.uuid :refer [make-uuid-str]]
             [carneades.engine.statement :as s]
             [carneades.engine.argument :as a]
-            [carneades.project.admin :as project]
+            [carneades.project.fs :as project]
             [carneades.database.admin :as db]))
 
 (def base-url "/carneades/api")

@@ -10,7 +10,7 @@
             [carneades.engine.utils :as utils]
             [clojure.java.jdbc :as jdbc]
             [clojure.java.io :as io]
-            [carneades.project.admin :as project]
+            [carneades.project.fs :as project]
             [midje.sweet :refer :all])
   (:import java.io.File))
 

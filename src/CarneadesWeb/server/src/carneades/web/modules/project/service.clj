@@ -10,7 +10,7 @@
    [carneades.web.modules.project.pack :as p]
    [carneades.database.argument-graph :as ag-db]
    [carneades.web.modules.project.outline :refer [create-outline]]
-   [carneades.project.admin :as project]
+   [carneades.project.fs :as project]
    [carneades.engine.utils :as f]
    [clojure.java.io :as io]
    [carneades.web.system :as s]

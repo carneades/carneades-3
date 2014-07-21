@@ -16,7 +16,7 @@
             [carneades.database.export :refer [export-to-argument-graph]]
             [carneades.engine.theory :as t]
             [carneades.engine.theory.zip :as tz]
-            [carneades.project.admin :as project]
+            [carneades.project.fs :as project]
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
             [clojure.java.io :as io]

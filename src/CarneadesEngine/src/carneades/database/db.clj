@@ -9,7 +9,7 @@
   (:require [carneades.config.config :as config]
             [clojure.java.jdbc :as jdbc]
             [carneades.engine.uuid :as uuid]
-            [carneades.project.admin :as project])
+            [carneades.project.fs :as project])
   (:import java.io.File))
 
 (defmacro with-db [db & body]

@@ -23,7 +23,7 @@
             [ring.util.response :as response]
             [com.postspectacular.rotor :as rotor]
             [ring.middleware.json :refer [wrap-json-params wrap-json-body]]
-            [carneades.project.admin :as p]
+            [carneades.project.fs :as p]
             [carneades.web.system :as system]))
 
 (defroutes app-routes

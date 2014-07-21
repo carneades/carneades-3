@@ -4,7 +4,7 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns carneades.project.admin-test
-  (:require [carneades.project.admin :as project]
+  (:require [carneades.project.fs :as project]
             [me.raynes.fs :as fs]
             [carneades.engine.uuid :refer [make-uuid-str]]
             [carneades.engine.utils :refer [file-separator]]

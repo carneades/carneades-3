@@ -3,8 +3,8 @@
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-(ns ^{:doc "Management functions for the projects."}
-  carneades.project.admin
+(ns ^{:doc "Interaction with the project files stored in the filesystem."}
+  carneades.project.fs
   (:use [carneades.engine.utils :only [file-separator exists? file-separator make-relative]])
   (:require [clojure.pprint :as pp]
             [clojure.java.io :as io]
@@ -136,11 +136,6 @@ representing the project."
       {:properties project-properties
        :available-theories theories
        :documents documents})))
-
-(defn delete-project
-  "Permanently delete project from the disk."
-  [project]
-  (fs/delete-dir (str projects-directory file-separator project)))
 
 (defn update-project-properties
   "Update the properties file of the project."

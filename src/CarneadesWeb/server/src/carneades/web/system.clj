@@ -4,7 +4,7 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns carneades.web.system
-  (:require [carneades.project.admin :as p]
+  (:require [carneades.project.fs :as p]
             [carneades.database.admin :as dbadmin]))
 
 (def state (atom nil))

@@ -6,7 +6,7 @@
              [carneades.engine.theory :as t]
              [carneades.engine.argument :as a]
              [carneades.owl.import :as owl]
-             [carneades.project.admin :as project]))
+             [carneades.project.fs :as project]))
 
 (def oss-licensing-theory
   (project/load-theory "markos" "oss_licensing_theory"))
