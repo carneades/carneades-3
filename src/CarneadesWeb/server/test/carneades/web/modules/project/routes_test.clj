@@ -9,7 +9,7 @@
             [carneades.engine.statement :as s]
             [carneades.engine.argument :as a]
             [carneades.project.fs :as project]
-            [carneades.database.admin :as db]))
+            [carneades.admin.db :as db]))
 
 (def base-url "/carneades/api")
 (def user "root")
@@ -24,7 +24,7 @@
 (defn create-project
   []
   (reset! state (initial-state-value))
-  (db/create-missing-dbs (:project-name @state) user password))
+  (db/create-project-dbs (:project-name @state) user password))
 
 (defn delete-project
   []

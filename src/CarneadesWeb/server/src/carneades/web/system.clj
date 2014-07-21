@@ -5,7 +5,7 @@
 
 (ns carneades.web.system
   (:require [carneades.project.fs :as p]
-            [carneades.database.admin :as dbadmin]))
+            [carneades.admin.db :as dbadmin]))
 
 (def state (atom nil))
 
@@ -13,7 +13,7 @@
   "Returns the project data and creates mandatory databases if missing."
   []
   (reduce (fn [m project]
-            (dbadmin/create-missing-dbs project "root" "pw1")
+            (dbadmin/create-project-dbs project "root" "pw1")
             (assoc m project (p/load-project project)))
           {}
           (p/list-projects)))
