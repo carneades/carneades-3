@@ -5,7 +5,7 @@
 
 (ns carneades.web.modules.lican.entity
   (:require [carneades.web.modules.lican.triplestore :as triplestore]
-            [carneades.project.admin :as project]))
+            [carneades.project.fs :as project]))
 
 (defn get-software-entity
   "Returns information about the software entity"

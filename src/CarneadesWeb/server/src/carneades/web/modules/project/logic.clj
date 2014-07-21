@@ -16,7 +16,7 @@
             [carneades.database.export :refer [export-to-argument-graph]]
             [carneades.engine.theory :as t]
             [carneades.engine.theory.zip :as tz]
-            [carneades.project.admin :as project]
+            [carneades.project.fs :as project]
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
             [clojure.java.io :as io]
@@ -234,7 +234,7 @@
   [project arg lang]
   (let [pcontent (s/get-project project)
         schemestr (str (first (unserialize-atom (:scheme arg))))
-        schemes-project (theory/get-schemes-project project (:schemes pcontent))
+        schemes-project (theory/get-schemes-project project (:schemes (spy pcontent)))
         schemes-name (theory/get-schemes-name (:schemes pcontent))
         scheme (get-theory {:tpid schemes-project :tid schemes-name :scheme schemestr :lang lang})]
     (if (nil? scheme)
@@ -265,6 +265,10 @@
 (defn get-arguments
   [project db lang]
   (map #(augment-argument % project db lang) (s/get-arguments project db)))
+
+(defn post-argument
+  [project db arg]
+  (s/post-argument project db arg))
 
 (defn get-trimed-argument
   [project db lang aid]

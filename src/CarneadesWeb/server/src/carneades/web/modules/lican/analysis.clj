@@ -13,7 +13,7 @@
             [carneades.engine.argument-graph :as ag]
             [carneades.engine.ask :as ask]
             [carneades.engine.dialog :as dialog]
-            [carneades.project.admin :as project]
+            [carneades.project.fs :as project]
             [carneades.web.modules.common.dialog.engine :as engine]
             [carneades.web.modules.common.dialog.questions :as questions]
             [carneades.engine.triplestore :as triplestore]

@@ -14,7 +14,7 @@
             [clabango.parser :as parser]
             [noir.request :refer :all]
             [carneades.engine.utils :refer [unserialize-atom]]
-            [carneades.project.admin :as project]
+            [carneades.project.fs :as project]
             [carneades.web.modules.lican.entity :as entity]
             [carneades.web.modules.lican.analysis :as analysis]
             [carneades.web.modules.lican.dbg-analysis :as debug-analysis]

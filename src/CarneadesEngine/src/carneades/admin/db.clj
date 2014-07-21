@@ -4,14 +4,14 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns ^{:doc "Administration of the different databases."}
-  carneades.database.admin
+  carneades.admin.db
   (:require [carneades.database.db :as db]
             [carneades.engine.utils :as f]
             [carneades.database.legal-profile :as lp]
             [carneades.engine.dublin-core :as dc]
             [carneades.database.argument-graph :as ag-db]))
 
-(defn create-missing-dbs
+(defn create-project-dbs
   [project username password]
   (when-not (f/exists? (db/dbfilename project "legal-profiles"))
     (lp/create-db project username password))

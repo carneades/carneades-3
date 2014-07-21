@@ -7,8 +7,10 @@
             [carneades.engine.utils :as utils]
             [carneades.engine.uuid :refer [make-uuid-str]]
             [carneades.engine.statement :as s]
-            [carneades.project.admin :as project]
-            [carneades.database.admin :as db]))
+            [carneades.engine.argument :as a]
+            [carneades.project.fs :as project]
+            [carneades.admin.project :as p]
+            [carneades.web.system :as system]))
 
 (def base-url "/carneades/api")
 (def user "root")
@@ -23,12 +25,13 @@
 (defn create-project
   []
   (reset! state (initial-state-value))
-  (db/create-missing-dbs (:project-name @state) user password))
+  (p/create-project (:project-name @state) user password)
+  (system/start))
 
 (defn delete-project
   []
-  (utils/delete-file-recursively
-   (project/get-project-path (:project-name @state))))
+  (project/delete-project (:project-name @state))
+  (system/stop))
 
 (defn parse
   [s]
@@ -298,7 +301,8 @@
                         stmt)
               id (:id (parse (:body response)))
               update {:text {:en "Fread did wear a ring."
-                             :fr "Some french text"}}
+                             :fr "Some french text"}
+                      :header {:description {:en "desc"}}}
               response (put-request
                         (str "/projects/" project "/main/statements/" id)
                         update)
@@ -306,7 +310,8 @@
                         (str "/projects/" project "/main/statements/" id))
               stmt' (parse (:body response))]
           (spy stmt')
-          (:text stmt') => (-> update :text :en))))
+          (:text stmt') => (-> update :text :en)
+          (-> stmt' :header :description) => (-> update :header :description :en))))
 
 (with-state-changes [(before :facts (create-project))
                      (after :facts (delete-project))]
@@ -324,3 +329,20 @@
               response (get-request
                         (str "/projects/" project "/main/statements/" id))]
           (:status response) => 404)))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "New arguments can be created."
+        (let [project (:project-name @state)
+              married (s/make-statement :text {:en "Fred is married."} :atom '(married Fred))
+              ring (s/make-statement :text {:en "Fred wears a ring."})
+              arg (a/make-argument :id 'a1 :conclusion married :premises [(a/pm ring)])
+              response (post-request
+                        (str "/projects/" project "/main/arguments/")
+                        arg)
+              id (:id (parse (:body response)))
+              response (get-request
+                        (str "/projects/" project "/main/arguments/" id))
+              arg' (parse (:body response))]
+          (-> arg' :conclusion :text) => (-> arg :conclusion :text :en)
+          (:text (first (:premises arg'))) => (-> ring :text :en))))
