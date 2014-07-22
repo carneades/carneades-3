@@ -195,7 +195,6 @@
   "Inserts a metadata structure into a database.
    Returns the id of the record in the database."
   [metadata]
-  {:pre [(metadata? metadata)]}
   (let [str-id (if (:description metadata)
                  (create-translation (:description metadata)))]
     (first (vals (jdbc/insert-record

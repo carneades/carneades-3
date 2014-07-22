@@ -9,7 +9,8 @@
         carneades.engine.statement
         carneades.engine.dublin-core
         carneades.engine.argument)
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s]
+            [taoensso.timbre :as timbre :refer [debug info spy]]))
 
 ;; A literal is a propositional letter, represented by a symbol,
 ;; or the negation of a propositional letter.
@@ -267,7 +268,7 @@
     (if (or (nil? (:key md)) (not (nil? md2)))
       ; the metadata has no key or metadata with the
       ; same key was already in the reference list, so
-      ; return the argument graph unchaneged
+      ; return the argument graph unchanged
       ag
       ; else add the new reference to the list
       (assoc ag :references

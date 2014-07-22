@@ -93,7 +93,7 @@
   [stmts arg]
   (let [metadata (first (map import-metadata (xml-> arg :metadata)))
         conclusionid (import-conclusion (first (xml-> arg :conclusion)))
-        conclusion (spy (find-statement conclusionid stmts))
+        conclusion (find-statement conclusionid stmts)
         premises (map (partial import-premise stmts) (xml-> arg :premises :premise))
         exceptions (map (partial import-premise stmts) (xml-> arg :exceptions :exception))
         attrs (:attrs (z/node arg))]
