@@ -7,7 +7,7 @@
   (:require [carneades.engine.dublin-core :as dc]
             [carneades.engine.statement :refer [literal-complement]]
             [carneades.engine.theory :as t]
-            [carneades.project.admin :as project]
+            [carneades.project.fs :as project]
             [carneades.owl.owl :as o]
             [carneades.engine.argument :as a]
             [taoensso.timbre :as timbre :refer [debug info warn error]])

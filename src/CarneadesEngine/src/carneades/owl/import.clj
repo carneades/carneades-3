@@ -5,7 +5,7 @@
 
 (ns carneades.owl.import
   (:refer-clojure :exclude [import])
-  (:require [carneades.project.admin :as project]
+  (:require [carneades.project.fs :as project]
             [carneades.owl.owl :as o]
             [carneades.owl.import-axioms :as axioms]
             [carneades.owl.import-language :as language]))

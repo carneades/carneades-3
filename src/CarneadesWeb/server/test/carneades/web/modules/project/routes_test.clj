@@ -6,8 +6,12 @@
             [cheshire.core :refer [parse-string encode]]
             [carneades.engine.utils :as utils]
             [carneades.engine.uuid :refer [make-uuid-str]]
-            [carneades.project.admin :as project]
-            [carneades.database.admin :as db]))
+            [carneades.engine.statement :as s]
+            [carneades.engine.argument :as a]
+            [carneades.project.fs :as project]
+            [carneades.admin.project :as p]
+            [carneades.web.system :as system]
+            [carneades.engine.dublin-core :as m]))
 
 (def base-url "/carneades/api")
 (def user "root")
@@ -22,12 +26,13 @@
 (defn create-project
   []
   (reset! state (initial-state-value))
-  (db/create-missing-dbs (:project-name @state) user password))
+  (p/create-project (:project-name @state) user password)
+  (system/start))
 
 (defn delete-project
   []
-  (utils/delete-file-recursively
-   (project/get-project-path (:project-name @state))))
+  (project/delete-project (:project-name @state))
+  (system/stop))
 
 (defn parse
   [s]
@@ -36,6 +41,32 @@
 (defn get-rule-value
   [rules sid]
   (:value (first (filter #(= (:ruleid %) sid) rules))))
+
+(defn post-request
+  [url content]
+  (app (-> (request :post
+                    (str base-url url))
+           (body (encode content))
+           (content-type "application/json"))))
+
+(defn put-request
+  [url content]
+  (app (-> (request :put
+                    (str base-url url))
+           (body (encode content))
+           (content-type "application/json"))))
+
+(defn get-request
+  [url]
+  (app (-> (request :get
+                    (str base-url url))
+           (content-type "application/json"))))
+
+(defn delete-request
+  [url]
+  (app (-> (request :delete
+                    (str base-url url))
+           (content-type "application/json"))))
 
 (defn post-profile
   [project profile]
@@ -241,3 +272,143 @@
               id (:id body-content)]
           (delete-profile project id) =>
           (throws Exception #"Deleting the default profile is forbidden.+"))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+ (fact "New statements can be created."
+       (let [project (:project-name @state)
+             stmt (s/make-statement :text {:en "Fred wears a ring."}
+                                    :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+             response (post-request
+                       (str "/projects/" project "/main/statements/")
+                       stmt)
+             id (:id (parse (:body response)))
+             response (get-request
+                       (str "/projects/" project "/main/statements/" id))
+             stmt' (parse (:body response))]
+         (:text stmt') => (-> stmt :text :en)
+         (-> stmt' :header :description) => (-> stmt :header :description :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "Statements can be updated."
+        (let [project (:project-name @state)
+              stmt (s/make-statement :text {:en "Fred wears a ring."}
+                                     :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+              response (post-request
+                        (str "/projects/" project "/main/statements/")
+                        stmt)
+              id (:id (parse (:body response)))
+              update {:text {:en "Fread did wear a ring."
+                             :fr "Some french text"}
+                      :header {:description {:en "desc"}}}
+              response (put-request
+                        (str "/projects/" project "/main/statements/" id)
+                        update)
+              response (get-request
+                        (str "/projects/" project "/main/statements/" id))
+              stmt' (parse (:body response))]
+          (spy stmt')
+          (:text stmt') => (-> update :text :en)
+          (-> stmt' :header :description) => (-> update :header :description :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "Statements can be deleted."
+        (let [project (:project-name @state)
+              stmt (s/make-statement :text {:en "Fred wears a ring."}
+                                     :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+              response (post-request
+                        (str "/projects/" project "/main/statements/")
+                        stmt)
+              id (:id (parse (:body response)))
+              response (delete-request
+                        (str "/projects/" project "/main/statements/" id))
+              response (get-request
+                        (str "/projects/" project "/main/statements/" id))]
+          (:status response) => 404)))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "New arguments can be created."
+        (let [project (:project-name @state)
+              married (s/make-statement :text {:en "Fred is married."} :atom '(married Fred))
+              ring (s/make-statement :text {:en "Fred wears a ring."})
+              arg (a/make-argument :id 'a1 :conclusion married :premises [(a/pm ring)])
+              response (post-request
+                        (str "/projects/" project "/main/arguments/")
+                        arg)
+              id (:id (parse (:body response)))
+              response (get-request
+                        (str "/projects/" project "/main/arguments/" id))
+              arg' (parse (:body response))]
+          (-> arg' :conclusion :text) => (-> arg :conclusion :text :en)
+          (:text (first (:premises arg'))) => (-> ring :text :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "Arguments can be updated."
+        (let [project (:project-name @state)
+              married (s/make-statement :text {:en "Fred is married."} :atom '(married Fred))
+              ring (s/make-statement :atom '(wearsRing Fred) :text {:en "Fred wears a ring."})
+              short (s/make-statement :atom '(wearsShort Fred) :text {:en "Fred wears a short."})
+              arg (a/make-argument :id 'a1 :conclusion married :premises [(a/pm ring)])
+              response (post-request
+                        (str "/projects/" project "/main/arguments/")
+                        arg)
+              id (:id (parse (:body response)))
+              response (post-request
+                        (str "/projects/" project "/main/statements/")
+                        short)
+              _ (spy response)
+              update {:premises [(spy (a/pm short))]}
+              response (put-request
+                        (str "/projects/" project "/main/arguments/" id)
+                        update)
+              response (get-request
+                        (str "/projects/" project "/main/arguments/" id))
+              arg' (parse (:body response))]
+          (spy arg')
+          (-> arg' :conclusion :text) => (-> arg :conclusion :text :en)
+          (:text (first (:premises arg'))) => (-> short :text :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "New arguments can be deleted."
+        (let [project (:project-name @state)
+              married (s/make-statement :text {:en "Fred is married."} :atom '(married Fred))
+              ring (s/make-statement :text {:en "Fred wears a ring."})
+              arg (a/make-argument :id 'a1 :conclusion married :premises [(a/pm ring)])
+              response (post-request
+                        (str "/projects/" project "/main/arguments/")
+                        arg)
+              id (:id (parse (:body response)))
+              _ (delete-request
+                 (str "/projects/" project "/main/arguments/" id))
+              response (get-request
+                        (str "/projects/" project "/main/arguments/" id))]
+          (:status response) => 404)))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "New argument graphs can be created."
+        (let [project (:project-name @state)
+              g {:name "mydb" :header (m/make-metadata :title "New argument")}
+              response (post-request
+                        (str "/projects/" project "?entity=ag")
+                        g)
+              id (:id (parse (:body response)))
+              stmt (s/make-statement :text {:en "Fred wears a ring."}
+                                     :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+              response (post-request
+                        (str "/projects/" project "/mydb/statements/")
+                        stmt)
+              stmtid (:id (parse (:body response)))
+              response (get-request
+                        (str "/projects/" project "/mydb/statements/" stmtid))]
+          id => "mydb"
+          (:status response) => 200)))

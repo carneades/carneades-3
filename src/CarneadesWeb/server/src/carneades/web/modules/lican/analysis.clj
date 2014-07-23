@@ -13,7 +13,7 @@
             [carneades.engine.argument-graph :as ag]
             [carneades.engine.ask :as ask]
             [carneades.engine.dialog :as dialog]
-            [carneades.project.admin :as project]
+            [carneades.project.fs :as project]
             [carneades.web.modules.common.dialog.engine :as engine]
             [carneades.web.modules.common.dialog.questions :as questions]
             [carneades.engine.triplestore :as triplestore]
@@ -38,11 +38,14 @@
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
             [carneades.web.modules.lican.entity :as entity]
-            [taoensso.timbre :as timbre :refer [debug info warn error]]
+            [taoensso.timbre :as timbre :refer [debug spy info warn error]]
             [carneades.database.legal-profile :as lp]
             [carneades.engine.legal-profile :refer [extend-theory
                                                     empty-legal-profile]]
-            [carneades.engine.aspic :refer [aspic-grounded]]))
+            [carneades.engine.aspic :refer [aspic-grounded]]
+            [carneades.web.modules.common.dialog.utils :refer [store-ag]]
+
+            [carneades.engine.unify :refer [unify]]))
 
 (defn initial-state
   []
@@ -73,7 +76,9 @@
 (defn process-answers
   "Process the answers send by the user and returns new questions or an ag."
   [answers uuid]
-  (prn "process answers...")
+  (spy answers)
+  (spy uuid)
+  (spy (type uuid))
   (when-let [analysis (get-in @state [:analyses (symbol uuid)])]
     (let [{:keys [policies dialog]} analysis
           _ (prn "[process-answers]")
@@ -194,6 +199,13 @@
     (lp/with-db project "root" "pw1"
       (lp/read-profile+ id))))
 
+(defn make-translator
+  [triplestore repo-name theories namespaces]
+  (comp (tr/make-default-translator)
+        (ttr/make-language-translator theories)
+        (ttr/make-uri-shortening-translator namespaces)
+        (tp/make-uri-translator triplestore repo-name namespaces)))
+
 (defn start-engine
   [entity legalprofileid]
   (let [project "markos"
@@ -214,10 +226,10 @@
         query (first licenses-statements)
         _ (info "licenses-statements: " licenses-statements)
         loaded-theories (project/load-theory project theories)
-        translator (comp (tr/make-default-translator)
-                         (ttr/make-language-translator (:language loaded-theories))
-                         (ttr/make-uri-shortening-translator markos-namespaces)
-                         (tp/make-uri-translator triplestore repo-name markos-namespaces))
+        translator (make-translator triplestore
+                                    repo-name
+                                    (:language loaded-theories)
+                                    markos-namespaces)
         [argument-from-user-generator questions send-answer]
         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
         ag (get-ag project "")
@@ -260,3 +272,123 @@ Returns a set of questions for the frontend."
   [entity legalprofile]
   (info "[analyse]")
   (start-engine entity legalprofile))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; find compatible licenses
+
+(defn- get-in-main-issues
+  [ag]
+  (filter (every-pred evaluation/in-node? :main) (vals (:statement-nodes ag))))
+
+(defn- get-compatible-licenses
+  [query in-main-issues]
+  (mapcat (comp vals (partial unify query)) (map :atom in-main-issues)))
+
+(defn find-compatible-licenses
+  "Returns a list of Open Source license templates (e.g. GPL, BSD)
+  which are compatible with the licenses of the software entities used
+  by s, using the quick and dirty procedure to perform the license
+  compatibility analysis."
+  [legal-profile-id software-entity]
+  (let [query-string (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s ?x)" software-entity)
+        project "markos"
+        properties (project/load-project-properties project)
+        theories (:policies properties)
+        triplestore (:triplestore properties)
+        repo-name (:repo-name properties)
+        markos-namespaces (:namespaces properties)
+        query (unserialize-atom query-string)
+        loaded-theories (project/load-theory project theories)
+        profile (load-profile project legal-profile-id)
+        loaded-theories' (extend-theory loaded-theories profile)
+        ag (ag/make-argument-graph)
+        engine (shell/make-engine ag 500 #{}
+                                  (list
+                                   (triplestore/generate-arguments-from-triplestore triplestore
+                                                                                    repo-name
+                                                                                    markos-namespaces)
+                                   (theory/generate-arguments-from-theory loaded-theories')))
+        ag (shell/argue engine aspic-grounded query profile)
+        ag (ag/set-main-issues ag query)
+        in-main-issues (get-in-main-issues ag)]
+    (into [] (map str (get-compatible-licenses query in-main-issues)))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; find software entities with compatible licenses
+
+(defn goal-in?
+  [goal the-entity use-property-uris generators profile sw-entity-uri]
+  (let [g (ag/make-argument-graph)
+        use-facts (map (fn [usage]
+                         (unserialize-atom (str "(" usage " " the-entity " " sw-entity-uri ")")))
+                       use-property-uris)
+        engine (shell/make-engine g 500 use-facts generators)
+        g (shell/argue engine aspic-grounded goal profile)
+        goal-node (ag/get-statement-node g goal)]
+    (evaluation/in-node? goal-node)))
+
+(defn filter-software-entities
+  [goal the-entity use-property-uris sw-entity-uris generators profile]
+  (filter (partial goal-in? goal the-entity use-property-uris generators profile) sw-entity-uris))
+
+(defn find-software-entities-with-compatible-licenses
+  ;; Here's a sketch of a procedure for implementing 0000516: Find software
+  ;; entities with compatible licenses.
+
+  ;; The strings are the URIs of the entities.  The strings returned are a
+  ;; subset of these URIs, for the entities with compatible licenses.
+
+  ;; 1. Create an argument graph, g1, with the main issue:
+  ;; (http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
+  ;;  theSoftwareEntity template), where theSoftwareEntity is a skolem
+  ;; constant representing the existence of some software entity of interest.
+
+  ;; (exists x (mayBeLicensedUsing x template)) => (mayBeLicensedUsing
+  ;;                                                theSoftwareEntity template)
+
+  ;; 2. Filter the entities, using this predicate function:
+
+  ;; 2.1 let g2 = g1 +  facts (accepted statements) for each use of e1.
+  ;; For example:
+
+  ;; let uses = [u1, u2]
+
+  ;; g2 = g1 + (u1 theSoftwareEntity e1) + (u2 theSoftwareEntity e1)
+
+  ;; 2.2. Run the inference engine to construct arguments using the
+  ;; copyright theory and the MARKOS repository, with the main issue as the
+  ;; query, and g2 as the initial argument graph
+
+  ;; 2.3 If the main issue is "in" (value = 1.0) then the argument graph
+  ;; returned by evaluating g2 is OK and the filter function should return
+  ;; true.  Otherwise false.
+  [legal-profile-id license-template-uri use-property-uris sw-entity-uris]
+  (let [project "markos"
+        properties (project/load-project-properties project)
+        triplestore (:triplestore properties)
+        repo-name (:repo-name properties)
+        markos-namespaces (:namespaces properties)
+        theories (:policies properties)
+        loaded-theories (project/load-theory project theories)
+        the-entity "http://www.markosproject.eu/ontologies/software#theSoftware"
+        goal (unserialize-atom
+              (format (str "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing"
+                           " " the-entity
+                           " %s)")
+                      license-template-uri))
+        _ (debug "goal: " goal)
+        translator (make-translator triplestore
+                                    repo-name
+                                    (:language loaded-theories)
+                                    markos-namespaces)
+        profile (load-profile project legal-profile-id)
+        loaded-theories' (extend-theory loaded-theories profile)
+        triplestore-generator (triplestore/generate-arguments-from-triplestore
+                               triplestore
+                               repo-name
+                               markos-namespaces)
+        generators (list
+                    triplestore-generator
+                    (theory/generate-arguments-from-theory loaded-theories'))]
+    (filter-software-entities goal the-entity use-property-uris sw-entity-uris generators profile)))
+
+

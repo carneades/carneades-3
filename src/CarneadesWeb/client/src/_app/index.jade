@@ -7,36 +7,51 @@ html(lang='en')
     meta(http-equiv='X-UA-Compatible',content='IE=edge')
     link(rel='stylesheet',href='css/layout.css',media='screen')
     link(href='http://fonts.googleapis.com/css?family=Open+Sans',rel='stylesheet',type='text/css')
+    link(href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css",rel="stylesheet")
+
 
   body(ng-controller='AppCtrl')
     div(ui-view='css')
     header#top(ng-controller='HeaderCtrl')
-      div#mobheader
-        .container
-          .row
-            .col-md-1
-              .section#mobnav
-                div.navbar-default
-                  button.navbar-toggle(type='button',ng-init='navCollapsed = true',ng-click='navCollapsed = !navCollapsed')
-                    span.sr-only Toggle navigation
-                    span.icon-bar
-                    span.icon-bar
-                    span.icon-bar
-            .col-md-11
-              .section#mobbc
-                breadcrumb(states='navigatedStates',style='style')
-          .row#mobnavdetails.collapse.navbar-collapse(ng-class="!navCollapsed && 'in'", ng-click='navCollapsed = true')
-            div(ui-view='mobsubnav',ng-cloak='')
-      div#global
+      .my-fluid-container#mobheader
+        .row.border-bottom
+          .col-md-1
+            .section#mobnav(ng-show='isSubNavDisplayed')
+              button.navbar-toggle(type='button',ng-init='navCollapsed = true',ng-click='navCollapsed = !navCollapsed; navBcCollapsed = true')
+                span.sr-only Toggle navigation
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+            .section#mobnav(ng-show='!isSubNavDisplayed')
+              button.navbar-toggle.disabled(type='button')
+                span.sr-only Toggle navigation
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+          .col-md-11
+            .section#mobbc
+                .row.mob-bc-head
+                  ul
+                    li.bc-default-a
+                      a(ng-click='openView(bcTop.name, top.params)',tooltip='{{bcTop.tooltip}}',tooltip-append-to-body='true',tooltip-placement='bottom')
+                        {{bcTop.label}}
+                    li
+                      a
+                        i.fa.fa-chevron-down.font-inc-130(,ng-init='navBcCollapsed = true',ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
+        .row.collapse#mobnavdetails(collapse='navCollapsed',ui-view='mobsubnav',ng-cloak='')
+        .row.collapse#mobbcnavdetails(collapse='navBcCollapsed',ng-cloak='')
+          ul
+            li(ng-repeat='navigatedState in subNavStatesReversed')
+              a(ng-click='openView(navigatedState.name, navigatedState.params)')
+                {{navigatedState.label}}
+      div#global.my-fluid-container
         div(ui-view='banner',ng-cloak='')
         div.navbar.subnav-navbar
-          .my-fluid-container
-            breadcrumb(states='navigatedStates',style='style')
-        div(ui-view='subnav',ng-cloak='')
+          breadcrumb(states='navigatedStates',style='style')
+        div#subnav.row(ui-view='subnav',ng-cloak='')
 
-    div
-      div(ui-view='content',style='margin-bottom: 4em;min-height:400px;',ng-cloak='')
+    div(ui-view='content',style='margin-bottom: 4em;',ng-cloak='')
 
-    div(ui-view='footer',ng-cloak='')
+    div(ui-view='footer', class='navbar-fixed-bottom',ng-cloak='')
 
     script(src='require.js',data-main='main.min.js')

@@ -175,7 +175,7 @@
                library-graph   (-> (make-argument-graph)
                                    (enter-arguments [A1, A2, A3])
                                    (accept [snores, professor]))]
-           (expect  (in? (evaluate aspic-grounded library-graph)
+           (expect  (out? (evaluate aspic-grounded library-graph)
                          (literal-atom access-denied))
                     => true)))
 

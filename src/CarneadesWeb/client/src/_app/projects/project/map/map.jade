@@ -1,5 +1,4 @@
-.container.map
+.my-fluid-container.map
   .row
-    .col-md-9
-      div.scroll(bn-map-click='handleClick( $event )',bn-map-mouseover='handleMouseover( $event )',bn-map-mouseout='handleMouseout( $event )')
-        map(ng-model='svg')
+    .col-md-12.scroll(bn-map-click='handleClick( $event )',bn-map-mouseout='handleMouseout( $event )',bn-map-mouseover='handleMouseover( $event )')
+      map(ng-model='svg')

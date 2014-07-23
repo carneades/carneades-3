@@ -5,12 +5,12 @@
 
 (ns ^{:doc "Import from XML to argument graphs using the Carneades
   Argument Format (CAF)."}
-  carneades.xml.caf.import
+  carneades.serialization.caf.import
   (:require [clojure.data.xml :as x]
             [clojure.java.io :as io]
             [clojure.data.zip.xml :refer [attr text xml->]]
             [clojure.zip :as z]
-            [carneades.xml.validation :refer [create-validation-fn]]
+            [carneades.serialization.xml.validation :refer [create-validation-fn]]
             [taoensso.timbre :as timbre :refer [debug info spy]]
             [carneades.engine.utils :refer [unserialize-atom]]
             [carneades.engine.statement :as st]
@@ -93,7 +93,7 @@
   [stmts arg]
   (let [metadata (first (map import-metadata (xml-> arg :metadata)))
         conclusionid (import-conclusion (first (xml-> arg :conclusion)))
-        conclusion (spy (find-statement conclusionid stmts))
+        conclusion (find-statement conclusionid stmts)
         premises (map (partial import-premise stmts) (xml-> arg :premises :premise))
         exceptions (map (partial import-premise stmts) (xml-> arg :exceptions :exception))
         attrs (:attrs (z/node arg))]
@@ -137,4 +137,4 @@
            (import-caf (x/parse-str input))))
        (import x))))
 
-;; tests in carneades.xml.caf.import-test
+;; tests in carneades.serialization.caf.import-test

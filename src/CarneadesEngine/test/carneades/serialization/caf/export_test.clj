@@ -1,4 +1,4 @@
-(ns carneades.xml.caf.export-test
+(ns carneades.serialization.caf.export-test
   (:require [midje.sweet :refer :all]
             [carneades.engine.aspic :refer [aspic-grounded]]
             [carneades.engine.statement :as s]
@@ -6,12 +6,11 @@
             [carneades.engine.argument-graph :as ag]
             [carneades.engine.argument-evaluation :refer [evaluate]]
             [taoensso.timbre :as timbre :refer [debug info spy]]
-            [carneades.xml.caf.export :as caf]
-            [carneades.xml.validation :refer [create-validation-fn]]
+            [carneades.serialization.caf.export :as caf]
+            [carneades.serialization.xml.validation :refer [create-validation-fn]] 
             [clojure.java.io :as io]
             [clojure.data.zip.xml :refer [attr text xml->]]
-            [clojure.zip :as z]
-            [clojure.xml :as xml]))
+            [clojure.zip :as z] [clojure.xml :as xml]))
 
 (fact "The exported XML is conform to the schema."
       (let [wears-ring (s/make-statement :text {:en "Fred wears a ring."}

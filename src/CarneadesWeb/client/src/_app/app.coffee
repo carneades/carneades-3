@@ -19,7 +19,6 @@ define [
   "common/directives/page-navigation/page-navigation",
   "templates/app",
   "angular-translate",
-  "angular-animate",
   "angular-translate-loader-static-files",
   "common/directives/markdown/markdown",
   "common/directives/loader/loader",
@@ -29,7 +28,6 @@ define [
     "ui.bootstrap",
     'ui.utils'
     "ui.bootsrap.breadcrumb",
-    "ngAnimate",
     "directives.pagenav",
     "directives.loaders",
     "ui.router",

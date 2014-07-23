@@ -3,7 +3,8 @@
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-(ns carneades.engine.dublin-core)
+(ns carneades.engine.dublin-core
+  (:require [clojure.string :as s]))
 
 ; type language = :en | :de | :nl | :fr ...
 
@@ -14,47 +15,47 @@
 ; is represented as a map from a keyword for some language (:en, :de, etc.) to
 ; a description in this language.
 
-(defrecord Metadata
-  [key              ; string or nil, the user-defined citation key
-   contributor      ; string or nil
-   coverage         ; string or nil
-   creator          ; string or nil
-   date             ; string or nil
-   description      ; (language -> string) map or nil
-   format           ; string or nil
-   identifier       ; string or nil
-   language         ; string or nil
-   publisher        ; string or nil
-   relation         ; string or nil
-   rights           ; string or nil
-   source           ; string or nil
-   subject          ; string or nil
-   title            ; string or nil
-   type])           ; string or nil
+(defn- clean
+  "remove keys from the map with nil or empty string values"
+  [m]
+  (into {} 
+        (remove (fn [e] (let [v (second e)]
+                          (or (nil? v)
+                              (and (string? v)
+                                   (s/blank? v)))))
+                m)))
 
-(defn map->metadata [m]
-  (merge
-    (Metadata.
-      nil   ; key
-      nil   ; contributor
-      nil   ; coverage
-      nil   ; creator
-      nil   ; date
-      nil   ; description
-      nil   ; format
-      nil   ; identifier
-      nil   ; language
-      nil   ; publisher
-      nil   ; relation
-      nil   ; rights
-      nil   ; source
-      nil   ; subject
-      nil   ; title
-      nil)  ; type
-    m))
+(defn map->metadata 
+  [m]
+  (select-keys 
+   m 
+   [:key 
+    :contributor 
+    :coverage 
+    :creator 
+    :date 
+    :description 
+    :format 
+    :identifier
+    :language
+    :publisher
+    :relation
+    :rights
+    :source
+    :subject
+    :title
+    :type]))
 
 (defn make-metadata
   [& values]
-  (map->metadata (apply hash-map values)))
+  (clean (map->metadata (apply hash-map values))))
 
-(defn metadata? [x] (instance? Metadata x))
+;; (defn metadata? [x] (instance? Map x))
+
+(defn make-metadata-map
+  "(Seq Metadata) -> (Map Object Metadata)
+   Creates a map from (:key m) to m, for each metadata 
+   value, m, in the sequence s"
+  [s]
+  (zipmap (map :key s) s))
+            

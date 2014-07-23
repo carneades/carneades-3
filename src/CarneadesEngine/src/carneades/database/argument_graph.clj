@@ -22,7 +22,8 @@
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.string :as s]
             [clojure.walk :as w]
-            [carneades.engine.uuid :as uuid]))
+            [carneades.engine.uuid :as uuid]
+            [taoensso.timbre :as timbre :refer [debug info spy]]))
 
 (declare create-metadata)
 
@@ -194,7 +195,6 @@
   "Inserts a metadata structure into a database.
    Returns the id of the record in the database."
   [metadata]
-  {:pre [(metadata? metadata)]}
   (let [str-id (if (:description metadata)
                  (create-translation (:description metadata)))]
     (first (vals (jdbc/insert-record
@@ -289,7 +289,6 @@
   "Creates and inserts a statement record in the database for the atom of the given
    literal. Returns the id of the new statement record."
   [literal]
-  {:pre [(literal? literal)]}
   (cond (sliteral? literal)
         (let [id (if (uuid/urn-symbol? (literal-atom literal))
                    (str (literal-atom literal))
@@ -400,14 +399,13 @@
    statement for the literal is first created and its id is
    returned."
   [literal]
-  {:pre [(literal? literal)]}
-  (if (uuid/urn-symbol? literal)
-    (str literal)
-    (or (and (statement? literal)
-             (statement-created? literal)
+  (cond (uuid/urn-symbol? literal)
+        (str literal)
+
+        (and (statement-created? literal)
              (:id literal))
         (first (statements-for-atom (literal-atom literal)))
-        (create-statement literal))))
+        :else (create-statement literal)))
 
 (defn update-statement
   "string map -> boolean
@@ -479,7 +477,6 @@
    Creates a statement for the literal of the premise if one
    does not already exist in the database."
   [premise & [argid]]
-  {:pre [(premise? premise)]}
   (let [stmt-id (get-statement (:statement premise))
         ;; we dissoc :pro or :con which are not in the Premise record
         ;; but are added from read-premise!
@@ -553,7 +550,6 @@
   "Creates a one-step argument and inserts it into a database.  Returns
    the id of the new argument."
   [arg]
-  {:pre [(argument? arg)]}
   (let [arg-id (str (:id arg)),
         scheme-id (str (serialize-atom (:scheme arg)))
         conclusion-id (get-statement (:conclusion arg)),

@@ -10,7 +10,7 @@
             [carneades.engine.theory :as scheme]
             [carneades.database.db :as db]
             [carneades.database.argument-graph :as ag-db]
-            [carneades.project.admin :as project]
+            [carneades.project.fs :as project]
             [carneades.engine.policy :as policy]
             [carneades.engine.argument-graph :as ag]
             [carneades.engine.theory.translation :as ttr]

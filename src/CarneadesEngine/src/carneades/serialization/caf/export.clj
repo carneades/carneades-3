@@ -4,7 +4,7 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns ^{:doc "Export from argument graphs to XML using the Carneades Argument Format (CAF)."}
-  carneades.xml.caf.export
+  carneades.serialization.caf.export
   (:require [clojure.string :as s]
             [clojure.data.xml :refer :all]
             [carneades.engine.utils :refer [serialize-atom]]
@@ -38,7 +38,7 @@
 (defn- metadata
   "Build an element from the header. Return nil if the header has no values."
   [header]
-  (let [header (remove-blank-values header)]
+  (let [header (-> header remove-nils-map remove-blank-values)]
     (when-not (empty? header)
       (if (:description header)
         (let [desc (:description header)]
@@ -120,4 +120,3 @@
                        (references (vals (:references g))))))
   
 
-;; tests in carneades.xml.caf.export-test

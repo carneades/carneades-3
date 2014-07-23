@@ -6,7 +6,7 @@
              [carneades.engine.theory :as t]
              [carneades.engine.argument :as a]
              [carneades.owl.import :as owl]
-             [carneades.project.admin :as project]))
+             [carneades.project.fs :as project]))
 
 (def oss-licensing-theory
   (project/load-theory "markos" "oss_licensing_theory"))
@@ -61,7 +61,7 @@ project to be used in an interactive dialog with the user"})
       :header (dc/make-metadata :description {:en "The opinion of the user on the the Free Software
        Foundation claim that linking creates derivative works."})
       :conclusion '(copyright:derivedFrom ?W1 ?W2)
-      :premises [(a/pm '(soft:linkedLibrary-mock ?W1 ?W2))
+      :premises [(a/pm '(linked ?W1 ?W2))
                  (a/pm '(userAgreesFsfTheory))])
 
      (t/make-scheme
@@ -71,5 +71,5 @@ project to be used in an interactive dialog with the user"})
       :header (dc/make-metadata :description {:en "The opinion of the user on the the Free Software
        Foundation claim that linking creates derivative works."})
       :conclusion '(copyright:derivedFrom ?W1 ?W2)
-      :premises [(a/pm '(soft:linkedLibrary-mock ?W1 ?W2))
+      :premises [(a/pm '(linked ?W1 ?W2))
                  (a/pm '(not (userAgreesFsfTheory)))])])]))

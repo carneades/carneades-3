@@ -80,12 +80,21 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   )
 
   .controller 'HeaderCtrl', ($breadcrumb, $scope, $location, $state, $stateParams) ->
+    $scope.openView = (name, params) ->
+      $state.go name, params
+
     updateNavigatedStates = () ->
       $breadcrumb.updateNavigatedStates $state, $stateParams
       # In order to update the list passed to ng-repeat properly
       $scope.navigatedStates = angular.copy $breadcrumb.getNavigatedStates $state
 
+      $scope.bcTop = $scope.navigatedStates[$scope.navigatedStates.length - 1]
+      $scope.subNavStatesReversed = $scope.navigatedStates.slice(0, $scope.navigatedStates.length-1).reverse()
+      $scope.navBcCollapsed = true
+
     $scope.$on '$stateChangeSuccess', ->
+      $scope.navCollapsed = true
+      $scope.isSubNavDisplayed = $state.$current.self.data.commands.length > 0
       updateNavigatedStates()
 
     undefined
@@ -135,8 +144,3 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
         update()
 
       update()
-
-  .directive 'bnLogDomCreation', () ->
-    restrict: 'A'
-    link: ($scope, element, attributes) ->
-      console.log "Link Executed:", $scope.state.name, $scope.state

@@ -4,22 +4,78 @@
   margin-bottom: 0;
 }
 
+.font-inc-130 {
+  font-size: 130%;
+}
+
+.mob-bc-head {
+  float:left;
+  background-color: $breadcrumbs-border;
+  ul {
+    @include inline-list;
+    > li {
+      > a {
+        color: $breadcrumbs-link-color;
+        display: block;
+        float: left;
+        position: relative;
+        line-height: $breadcrumbs-height;
+        padding: 0 1em 0 1.5em;
+        text-decoration: none;
+        background: $breadcrumbs-border;
+        &:hover {
+            color: $breadcrumbs-link-hover-color;
+            cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
 .navbar-default {
   background:$body-bg;
 }
 
-#mobnavdetails {
-  width: 200px;
-  padding: 20px;
-  background: none repeat scroll 0% 0% $breadcrumbs-border;
-  top: 33px;
-  left: 0px;
-  position: absolute;
-  z-index: $zindex-tooltip - 1;
+#mobheader .border-bottom {
+    border-bottom: 1px solid $breadcrumbs-link-color !important;
 }
 
-#mobheader {
-    border-bottom: 1px solid $breadcrumbs-link-color !important;
+#mobbcnavdetails {
+  > ul {
+    padding: 5px 0px 5px 79px !important;
+    list-style:none;
+  }
+}
+
+#mobnavdetails {
+  font-size:88%;
+  padding: 0.5em 1.5em 1.5em 1.5em !important;
+  background: none repeat scroll 0% 0% $breadcrumbs-border;
+
+  .navbar-default {
+    background: none repeat scroll 0% 0% $breadcrumbs-border;
+  }
+
+  .nav-pills {
+    > li {
+      float: none;
+      border-bottom: 1px solid $breadcrumbs-link-hover-color;
+    }
+  }
+
+  .nav {
+    > li {
+      > a {
+        &:active, &:hover {
+          background: none repeat scroll 0% 0% $breadcrumbs-border;
+        }
+        &:hover {
+          cursor: pointer;
+          color: $breadcrumbs-link-hover-color;
+        }
+      }
+    }
+  }
 }
 
 @media (max-width: $grid-float-breakpoint - 1) {
@@ -28,9 +84,13 @@
     background-color: $breadcrumbs-border;
     margin: 0 0 0 -10px !important;
     .navbar-toggle {
+      z-index:100;
       float: left;
       border-width: 0;
+      border-radius: 0;
       margin: 0 10px 0 0 !important;
+      border-right: 1px solid #428BCA !important;
+      padding: 9px 15px 9px 10px !important;
       > .icon-bar {
         background-color: $breadcrumbs-link-color;
       }
@@ -38,6 +98,11 @@
         background-color: $breadcrumbs-border;
       }
     }
+    .disabled {
+        cursor: default;
+        .icon-bar {background-color: #A8AEB4;}
+    }
+
 
     #mobbc {
       margin:1px 0 0 0 !important;

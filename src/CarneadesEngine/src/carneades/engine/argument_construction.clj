@@ -351,8 +351,8 @@
   (if (or (zero? (count (:open-goals state1)))
        (<= max-goals 0))
     (do
-      (prn "EMPTY GOALS")
-      (prn "EXHAUSTED")
+      (debug "empty goals:" (zero? (count (:open-goals state1))))
+      (debug "exhausted:" (<= max-goals 0))
       state1)
     (let [id (first (:open-goals state1))]
       (if (not id)
@@ -361,6 +361,7 @@
           ;; (spy (count res))
           ;; (spy (count (:goals res)))
           ;; (spy (count (:open-goals res)))
+          ;; (debug (:open-goals res))
           ;; (when (< max-goals 270)
           ;;   (debug "result")
           ;;   (spy res))
