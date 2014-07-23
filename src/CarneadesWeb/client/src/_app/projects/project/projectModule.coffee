@@ -11,7 +11,7 @@ define [
   './statement/statementModule',
   './argument/argumentModule',
   './theory/theoryModule',
-  '../common/directives/metadata-editor'
+  '../../common/directives/metadata-editor/metadata-editor'
 ], (angular) ->
   "use strict"
   angular.module 'project.module', [
