@@ -79,5 +79,9 @@
 
     "projects.argument.value.unacceptable": "Unacceptable",
     "projects.argument.value.acceptable": "Acceptable",
-    "projects.argument.value.unclear": "Unclear"
+    "projects.argument.value.unclear": "Unclear",
+
+    "projects.newag": "New argument graph"
+
+
 }

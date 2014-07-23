@@ -10,7 +10,8 @@ define [
   './map/mapModule',
   './statement/statementModule',
   './argument/argumentModule',
-  './theory/theoryModule'
+  './theory/theoryModule',
+  '../common/directives/metadata-editor'
 ], (angular) ->
   "use strict"
   angular.module 'project.module', [

@@ -33,7 +33,7 @@ define [
     ,
       name: "home.projects.project.create"
       url: '/create'
-      label: "Create database"
+      label: "Create argument graph"
       data:
         commands: []
       views:
