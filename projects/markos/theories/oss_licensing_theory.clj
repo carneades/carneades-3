@@ -81,8 +81,8 @@ project."})
                                                    :negative "%s is not a Software Release."
                                                    :question "")})
           (t/make-concept :symbol 'http://www.markosproject.eu/ontologies/licenses#CopyrightLicenseTemplate
-                          :forms {:en (t/make-form :positive "%s is a license template."
-                                                   :negative "%s is not a license template."
+                          :forms {:en (t/make-form :positive "%s is a license."
+                                                   :negative "%s is not a license."
                                                    :question "")})
           (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#compatibleWith
                           :forms {:en (t/make-form :positive "%s is compatible with %s."
