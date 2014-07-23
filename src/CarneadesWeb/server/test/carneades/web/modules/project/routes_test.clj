@@ -10,7 +10,8 @@
             [carneades.engine.argument :as a]
             [carneades.project.fs :as project]
             [carneades.admin.project :as p]
-            [carneades.web.system :as system]))
+            [carneades.web.system :as system]
+            [carneades.engine.dublin-core :as m]))
 
 (def base-url "/carneades/api")
 (def user "root")
@@ -390,3 +391,24 @@
               response (get-request
                         (str "/projects/" project "/main/arguments/" id))]
           (:status response) => 404)))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "New argument graphs can be created."
+        (let [project (:project-name @state)
+              g {:name "mydb" :header (m/make-metadata :title "New argument")}
+              response (post-request
+                        (str "/projects/" project "?entity=ag")
+                        g)
+              id (:id (parse (:body response)))
+              stmt (s/make-statement :text {:en "Fred wears a ring."}
+                                     :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+              response (post-request
+                        (str "/projects/" project "/mydb/statements/")
+                        stmt)
+              stmtid (:id (parse (:body response)))
+              response (get-request
+                        (str "/projects/" project "/mydb/statements/" stmtid))]
+          id => "mydb"
+          (:status response) => 200)))

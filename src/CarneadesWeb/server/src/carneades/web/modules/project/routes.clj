@@ -160,15 +160,21 @@
   :delete! (fn [_]
             (delete-statement pid db id)))
 
-(defresource project-resource [id]
+(defresource project-resource [pid entity content]
   :available-media-types ["application/json"]
   :available-charsets ["utf-8"]
-  :allowed-methods [:get]
+  :allowed-methods [:get :post]
   :exists? (fn [_]
              (session-put-language nil)
-             (when-let [p (get-project :id id :lang (get-lang))]
+             (when-let [p (get-project :id pid :lang (get-lang))]
                {::entry p}))
-  :handle-ok ::entry)
+  :handle-ok ::entry
+  :post! (fn [_]
+           (debug "post! project-resource")
+           (when (= entity "ag")
+             {::id (post-ag pid (:name content) (:header content))}))
+  :handle-created (fn [ctx]
+                    {:id (::id ctx)}))
 
 ;; (defresource download-project-resource [id]
 ;;   :available-media-types ["application/zip"]
@@ -269,57 +275,59 @@
 
 (defroutes carneades-projects-api-routes
   (ANY "/" [] (list-project-resource))
-  ;; (ANY "/upload" [file] (upload-project-resource file))
-
+  
   (context "/:pid" [pid]
-           (ANY "/" [] (project-resource pid))
-           ;; (ANY "/download" [] (download-project-resource pid))
+    (ANY "/" req (project-resource pid
+                                   (-> req :params :entity)
+                                   (:body req)))
+    ;; (ANY "/upload" [file] (upload-project-resource file))
+    ;; (ANY "/download" [] (download-project-resource pid))
 
-           (context "/theme" []
-             (ANY "/css/:did" [did] (theme-css-resource pid did))
-                    (ANY "/html/:did" [did] (theme-html-resource pid did))
-                    (ANY "/png/:did" [did] (theme-png-resource pid did)))
+    (context "/theme" []
+      (ANY "/css/:did" [did] (theme-css-resource pid did))
+      (ANY "/html/:did" [did] (theme-html-resource pid did))
+      (ANY "/png/:did" [did] (theme-png-resource pid did)))
 
-           (context "/theories" []
-                    (ANY "/" [] (list-theories-resource pid))
-                    (ANY "/:tpid/:tid" {params :params} (theories-resource params)))
+    (context "/theories" []
+      (ANY "/" [] (list-theories-resource pid))
+      (ANY "/:tpid/:tid" {params :params} (theories-resource params)))
 
-           (context "/legalprofiles" []
-             (ANY "/" req (legal-profiles-resources pid (:body req)))
-             (ANY "/:id" req (legal-profiles-resource pid
-                                                      (-> req :params :id)
-                                                      (:body req))))
+    (context "/legalprofiles" []
+      (ANY "/" req (legal-profiles-resources pid (:body req)))
+      (ANY "/:id" req (legal-profiles-resource pid
+                                               (-> req :params :id)
+                                               (:body req))))
 
-           (context "/:db" [db]
-                    (context "/metadata" []
-                      (ANY "/references" [] (list-reference-resource pid db))
-                             (ANY "/" [k] (list-metadata-resource pid db k))
-                             (ANY "/:mid" [mid] (metadata-resource pid db mid)))
+    (context "/:db" [db]
+      (context "/metadata" []
+        (ANY "/references" [] (list-reference-resource pid db))
+        (ANY "/" [k] (list-metadata-resource pid db k))
+        (ANY "/:mid" [mid] (metadata-resource pid db mid)))
 
-                    (context "/outline" []
-                             (ANY "/" [] (list-outline-resource pid db))
-                             (ANY "/issues" [] (list-issue-resource pid db)))
+      (context "/outline" []
+        (ANY "/" [] (list-outline-resource pid db))
+        (ANY "/issues" [] (list-issue-resource pid db)))
 
-                    (context "/statements" []
-                      (ANY "/" req (statements-resource pid db (:body req)))
-                      (ANY "/:sid" req (statement-resource pid
-                                                           db
-                                                           (-> req :params :sid)
-                                                           (-> req :params :context)
-                                                           (:body req))))
+      (context "/statements" []
+        (ANY "/" req (statements-resource pid db (:body req)))
+        (ANY "/:sid" req (statement-resource pid
+                                             db
+                                             (-> req :params :sid)
+                                             (-> req :params :context)
+                                             (:body req))))
 
-                    (context "/arguments" []
-                      (ANY "/" req (arguments-resource pid db (:body req)))
-                      (ANY "/:aid" req (argument-resource pid
-                                                          db
-                                                          (-> req :params :aid)
-                                                          (-> req :params :context)
-                                                          (:body req))))
-                    
-                    (context "/nodes" []
-                      (ANY "/" [] (list-node-resource pid db))
-                             (ANY "/:nid" [nid] (node-resource pid db nid)))
+      (context "/arguments" []
+        (ANY "/" req (arguments-resource pid db (:body req)))
+        (ANY "/:aid" req (argument-resource pid
+                                            db
+                                            (-> req :params :aid)
+                                            (-> req :params :context)
+                                            (:body req))))
+      
+      (context "/nodes" []
+        (ANY "/" [] (list-node-resource pid db))
+        (ANY "/:nid" [nid] (node-resource pid db nid)))
 
-                    (context "/map" []
-                      (ANY "/" [] (map-resource pid db))))))
+      (context "/map" []
+        (ANY "/" [] (map-resource pid db))))))
 

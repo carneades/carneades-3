@@ -39,6 +39,11 @@
   [id]
   (get-project-properties id))
 
+(defn post-ag
+  [pid name metadata]
+  (ag-db/create-argument-database pid name "root" "pw1" metadata)
+  name)
+
 (defn get-statement
   [project db id]
   (let [dbconn (db/make-connection project db "guest" "")]

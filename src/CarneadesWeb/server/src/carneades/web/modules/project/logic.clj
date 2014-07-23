@@ -107,6 +107,10 @@
   [& {:keys [lang]}]
   (map (partial augment-project lang) (s/get-projects)))
 
+(defn post-ag
+  [pid name metadata]
+  (s/post-ag pid name metadata))
+
 (defn get-outline
   [[project db id :as params]
    & {:keys [lang] :or {lang :en k nil}}]
