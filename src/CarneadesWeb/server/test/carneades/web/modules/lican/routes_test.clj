@@ -19,7 +19,7 @@
            (body (encode content))
            (content-type "application/json"))))
 
-(fact "It is not possible to use a GPL library from an Apache software."
+(fact "It is possible to use a GPL library from a GPL software."
       (let [content {"legalprofile" ""
                      "licensetemplateuri" "http://www.markosproject.eu/ontologies/oss-licenses#GPL-2.0"
                      "usepropertyuris" ["http://www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity"]
@@ -28,6 +28,16 @@
             res (post-request "/lican/findsoftwareentitieswithcompatiblelicenses" content)
             body-content (parse (:body res))]
         body-content => '("http://markosproject.eu/kb/Library/549")))
+
+(fact "It is not possible to use a GPL library from an Apache software."
+      (let [content {"legalprofile" ""
+                     "licensetemplateuri" "http://www.markosproject.eu/ontologies/oss-licenses#Apache-2.0"
+                     "usepropertyuris" ["http://www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity"]
+                     "swentityuris" ["http://markosproject.eu/kb/Library/549"]
+                     }
+            res (post-request "/lican/findsoftwareentitieswithcompatiblelicenses" content)
+            body-content (parse (:body res))]
+        body-content => ()))
 
 (fact "The onlinetour is compatible with the GPL 3.0"
       (let [content {"legalprofile" ""
