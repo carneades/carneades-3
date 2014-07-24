@@ -19,7 +19,7 @@
         carneades.engine.statement
         carneades.engine.argument
         carneades.engine.utils)
-  (:require [clojure.java.jdbc :as jdbc]
+  (:require [clojure.java.jdbc.deprecated :as jdbc]
             [clojure.string :as s]
             [clojure.walk :as w]
             [carneades.engine.uuid :as uuid]

@@ -5,7 +5,7 @@
 
 (defproject carneades/carneades-engine "2.0.3"
   :min-lein-version "2.0.0"
-  :dependencies [[org.clojure/clojure "1.5.1"]
+  :dependencies [[org.clojure/clojure "1.6.0"]
 
                  [edu.ucdenver.ccp/kr-core "1.4.16"]
                  [edu.ucdenver.ccp/kr-sesame-core "1.4.16"]
@@ -15,14 +15,13 @@
 
                  [org.clojure/data.xml "0.0.7"]
                  [org.clojure/data.zip "0.1.1"]
-                 ;; [org.clojars.pallix/clojure.prxml "1.3.0"]
                  [cheshire "5.2.0"]
 
                  [org.clojure/math.combinatorics "0.0.2"]
                  [com.h2database/h2 "1.3.170"]
-                 [org.clojure/java.jdbc "0.3.0-beta1"]
-                 [lobos "1.0.0-beta1"]
-                 [korma "0.3.0-RC5"]
+                 [org.clojure/java.jdbc "0.3.3"]
+                 [lobos "1.0.0-beta2"]
+                 [korma "0.3.2"]
 
                  [org.clojure/tools.trace "0.7.1"]
 

@@ -6,7 +6,7 @@
 (defproject carneades/carneades-web "1.0.0-SNAPSHOT"
   :description "The REST and Web parts of the Carneades system."
   :url "http://carneades.github.io"
-  :dependencies [[org.clojure/clojure "1.5.1"]
+  :dependencies [[org.clojure/clojure "1.6.0"]
                  [lib-noir "0.5.6"]
                  [compojure "1.1.5"]
                  [ring-server "0.2.8"]
