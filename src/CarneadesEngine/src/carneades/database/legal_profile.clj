@@ -6,12 +6,11 @@
 (ns ^{:doc "Database management of the legal profiles."}
   carneades.database.legal-profile
   (:require [carneades.engine.utils :refer [unserialize-atom serialize-atom]]
+            [clojure.java.jdbc :as jdbc]
             [carneades.database.db :as db]
-            [lobos.core :refer [create]]
-            [lobos.schema :as schema :refer [table default varchar integer]]
-            [lobos.connectivity :refer [with-connection]]
             [korma.core :refer :all :exclude [table]]
             [korma.db :refer :all :exclude [create-db with-db] :as k]
+            [sqlingvo.core :as s]
             [taoensso.timbre :as timbre :refer [debug info spy]]))
 
 (def db-name "legal-profiles")
@@ -31,10 +30,11 @@
                  :source
                  :subject
                  :title
-                 :type))
+                 :type
+                 ))
 
 (defentity profiles
-  (entity-fields :id :default)
+  (entity-fields :id :default :metadatum)
   (has-one metadata))
 
 (defentity rules
@@ -46,36 +46,44 @@
   [project user password]
   (let [conn (db/make-connection project db-name user password
                                  :create true)]
-    (with-connection conn
-      (transaction
-       (create (table :metadata
-                      (integer :id :auto-inc :primary-key :unique)
-                      (varchar :key '(MAX) :unique)
-                      (varchar :contributor '(MAX))
-                      (varchar :coverage '(MAX))
-                      (varchar :creator '(MAX))
-                      (varchar :date '(MAX))
-                      ;; (:description)
-                      (varchar :format '(MAX))    
-                      (varchar :identifier '(MAX))
-                      (varchar :language '(MAX))
-                      (varchar :publisher '(MAX))
-                      (varchar :relation '(MAX))
-                      (varchar :rights '(MAX))
-                      (varchar :source '(MAX))
-                      (varchar :subject '(MAX))
-                      (varchar :title '(MAX))
-                      (varchar :type '(MAX))))
-       (create (table :profiles
-                      (integer :id :auto-inc :primary-key :unique)
-                      (schema/boolean :default (default false))
-                      (integer :metadatum [:refer :metadata :id :on-delete :set-null])))
-       (create (table :rules
-                      (integer :id :auto-inc :primary-key :unique)
-                      (varchar :ruleid 255)
-                      ;; TRUE, FALSE or UNKNOWN that is in, out, undecided
-                      (schema/boolean :value)
-                      (integer :profile [:refer :profiles :id :on-delete :set-null] :not-null)))))))
+    (jdbc/with-db-transaction [conn conn]
+      (jdbc/execute!
+       conn
+       (s/sql (s/create-table
+               :metadata
+               (s/column :id :serial :primary-key? true)
+               (s/column :key :varchar :unique? true)
+               (s/column :contributor :varchar)
+               (s/column :coverage :varchar)
+               (s/column :creator :varchar)               
+               (s/column :date :varchar)
+               (s/column :format :varchar)
+               (s/column :identifier :varchar)
+               (s/column :publisher :varchar)
+               (s/column :language :varchar)
+               (s/column :relation :varchar)
+               (s/column :rights :varchar)
+               (s/column :source :varchar)
+               (s/column :subject :varchar)
+               (s/column :title :varchar)
+               (s/column :type :varchar))))
+
+      (jdbc/execute!
+       conn
+       (s/sql (s/create-table
+               :profiles
+               (s/column :id :serial :primary-key? true)
+               (s/column :default :boolean :default 'false)
+               (s/column :metadatum :integer :not-null? true :references :metadata/id))))
+
+      (jdbc/execute!
+       conn
+       (s/sql (s/create-table
+               :rules
+               (s/column :id :serial :primary-key? true)
+               (s/column :ruleid :varchar)
+               (s/column :value :boolean) ;; TRUE, FALSE or UNKNOWN that is in, out, undecided
+               (s/column :profile :integer :not-null? true :references :profiles/id)))))))
 
 (defmacro with-db
   [project user password & body]
@@ -222,8 +230,9 @@
       profile)))
 
 (defn create-profile+
-   "Create a profile with its associated rules and metadata in the database."
+  "Create a profile with its associated rules and metadata in the database."
   [profile+]
+  (spy profile+)
   (transaction
    (let [metadatumid (create-metadatum (:metadata profile+))
          profile' (pack-profile+ profile+ metadatumid)
@@ -237,12 +246,12 @@
   [id]
   (transaction
    (when-let [profile (read-profile id)]
-     (-> profile
+     (-> (spy profile)
          (assoc
              :rules (map unpack-rule
                          (select rules
                                  (where {:profile [= id]})))
-             :metadata (read-metadatum (:metadatum profile)))
+             :metadata (spy (read-metadatum (:metadatum profile))))
          (dissoc :metadatum)))))
 
 (defn read-profiles+

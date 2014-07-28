@@ -20,9 +20,10 @@
                  [org.clojure/math.combinatorics "0.0.2"]
                  [com.h2database/h2 "1.3.170"]
                  [org.clojure/java.jdbc "0.3.3"]
-                 [lobos "1.0.0-beta2"]
-                 [korma "0.3.2"]
-
+                 ;; [org.clojars.pallix/lobos "1.0.0-beta2-fix4"]
+                 [korma "0.3.0"]
+                 [sqlingvo "0.6.1"]
+                 
                  [org.clojure/tools.trace "0.7.1"]
 
                  [lacij "0.9.0"]
