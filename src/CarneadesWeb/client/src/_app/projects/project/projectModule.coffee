@@ -11,7 +11,7 @@ define [
   './statement/statementModule',
   './argument/argumentModule',
   './theory/theoryModule',
-  '../../common/directives/metadata-editor/metadata-editor'
+  './ag/agModule'
 ], (angular) ->
   "use strict"
   angular.module 'project.module', [
@@ -20,5 +20,6 @@ define [
     'map.module',
     'statement.module',
     'argument.module',
-    'theory.module'
+    'theory.module',
+    'ag.module'
   ]

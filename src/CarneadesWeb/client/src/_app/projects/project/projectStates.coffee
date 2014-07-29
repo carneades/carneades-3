@@ -30,15 +30,6 @@ define [
           resolve:
             project: ($stateParams, ProjectLoader) ->
               new ProjectLoader($stateParams)
-    ,
-      name: "home.projects.project.create"
-      url: '/create'
-      label: "Create argument graph"
-      data:
-        commands: []
-      views:
-        "content@":
-          templateUrl: 'projects/project/create.jade'
     ]
 
     angular.forEach states, (state) ->
