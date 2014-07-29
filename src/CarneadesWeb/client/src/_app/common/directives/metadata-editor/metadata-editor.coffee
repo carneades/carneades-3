@@ -3,15 +3,19 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Display an image representing the value of the evaluation
 define [
-  'angular'
+  'angular',
+  'angular-translate'
 ], (angular) ->
-  angular.module("directives.metadataEditor", [])
+  angular.module("directives.metadataEditor", ['pascalprecht.translate'])
 
   .directive("metadataEditor", ->
-    templateUrl: "common/directives/metadata-editor/metadata-editor.jade"
     restrict: "E"
+    templateUrl: "common/directives/metadata-editor/metadata-editor.jade"
     scope:
-      value: '='
+      model: '='
+    controller: ($scope, $translate) ->
+      console.log 'metadata controller'
+      console.log $scope.model
+      $scope.languages = ['en', 'de']
   )

@@ -24,6 +24,7 @@ define [
         views:
           "content@":
             templateUrl: 'projects/project/ag/create.jade'
+            controller: 'CreateAgCtrl'
       }]
 
     angular.forEach states, (state) ->

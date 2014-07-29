@@ -1,1 +1,7 @@
-h2 metadata Editor directive!
+div
+  h2 metadata Editor directive!
+  tabset
+    tab(ng-repeat="lang in languages", heading='{{lang | uppercase}}')
+      textarea(class="form-control", id="description_{{lang}}", name="description_{{lang}}")
+        {{model.description[lang]}}
+  
