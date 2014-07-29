@@ -81,7 +81,8 @@
     "projects.argument.value.acceptable": "Acceptable",
     "projects.argument.value.unclear": "Unclear",
 
-    "projects.newag": "New argument graph"
-
+    "projects.newag": "New argument graph",
+    "projects.description": "Description"
+    
 
 }

@@ -17,5 +17,5 @@ define [
     controller: ($scope, $translate) ->
       console.log 'metadata controller'
       console.log $scope.model
-      $scope.languages = ['en', 'de']
+      $scope.languages = ['en', 'de', 'fr', 'it', 'sp', 'nl']
   )
