@@ -16,11 +16,10 @@ define [
     $scope.ag =
       name: "",
       header:
-        description: {},
+        description: {en: "", de: "", fr: "", it: "", sp: "", nl: ""},
         title: ""
 
     $scope.onSave = ->
-      console.log $scope.ag
       ag.save $stateParams, $scope.ag
   
   )
