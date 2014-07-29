@@ -1,11 +1,11 @@
 div.metadata-editor
-  .title
-    .span.title_header
+  div(class="form-group")
+    label.title_header
       {{'projects.metadata.title' | translate}}
     input(name="title" placeholder="type title here" class="form-control input-md" type="text", ng-model="model.title")
 
-  .description
-    .span.description_header
+  div(class="form-group")
+    label.description_header
       {{'projects.metadata.description' | translate}}
     tabset
       tab(ng-repeat="lang in languages", heading='{{lang | uppercase}}')

@@ -4,9 +4,10 @@
       .section#home
         .page-header
           h1 {{'projects.newag' | translate}}
-          .span.name_header
-            {{'projects.newag.name' | translate}}
-          input(name="name" placeholder="type the name here, without spaces and special characters" class="form-control input-md" type="text", ng-model="ag.name", required)
+          div(class="form-group")
+            label.name_header
+              {{'projects.newag.name' | translate}}
+            input(name="name" placeholder="type the name here, without spaces and special characters" class="form-control input-md" type="text", ng-model="ag.name", required)
           metadata-editor(model='ag.header')
           div(class="col-md-8 form-group")
             button(id="save", name="save", class="btn btn-success", ng-click="onSave()")
