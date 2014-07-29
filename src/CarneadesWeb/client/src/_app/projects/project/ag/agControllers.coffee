@@ -13,5 +13,5 @@ define [
 
   .controller('CreateAgCtrl', ($scope, $translate) ->
     console.log 'ag ctrl'
-    $scope.ag = {header: {description: {en: "English MD", de: "Deutsch MD"}}}
+    $scope.ag = {header: {description: {en: "English MD", de: "Deutsch MD"}, title: "Title!"}}
   )

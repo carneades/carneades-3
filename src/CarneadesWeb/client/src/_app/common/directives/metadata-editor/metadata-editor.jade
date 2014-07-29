@@ -1,8 +1,14 @@
 div.metadata-editor
-  span.description
-    {{'projects.description' | translate}}
-  tabset
-    tab(ng-repeat="lang in languages", heading='{{lang | uppercase}}')
-      textarea(class="form-control", id="description_{{lang}}", name="description_{{lang}}")
-        {{model.description[lang]}}
+  .title
+    .span.title_header
+      {{'projects.metadata.title' | translate}}
+    input(name="title" placeholder="type title here" class="form-control input-md" type="text", ng-model="model.title")
+
+  .description
+    .span.description_header
+      {{'projects.metadata.description' | translate}}
+    tabset
+      tab(ng-repeat="lang in languages", heading='{{lang | uppercase}}')
+        textarea(class="form-control", id="description_{{lang}}", name="description_{{lang}}")
+          {{model.description[lang]}}
   
