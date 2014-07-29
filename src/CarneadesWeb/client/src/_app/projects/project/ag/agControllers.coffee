@@ -11,8 +11,8 @@ define [
     'pascalprecht.translate'
   ])
 
-  .controller('CreateAgCtrl', ($scope, $translate) ->
-    console.log 'ag ctrl'
+  .controller('CreateAgCtrl', ($scope, $stateParams, ag) ->
+    
     $scope.ag =
       name: "",
       header:
@@ -21,5 +21,6 @@ define [
 
     $scope.onSave = ->
       console.log $scope.ag
+      ag.save $stateParams, $scope.ag
   
   )

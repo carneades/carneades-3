@@ -7,10 +7,12 @@ define [
   'angular',
   'angular-translate',
    './agControllers',
-   '../../../common/directives/metadata-editor/metadata-editor'
+   '../../../common/directives/metadata-editor/metadata-editor',
+   '../../../common/resources/ag'   
 ], (angular) ->
   angular.module('ag.states', [
     'ag.controllers',
+    'resources.ag',
     'directives.metadataEditor'
   ])
 
@@ -25,6 +27,8 @@ define [
           "content@":
             templateUrl: 'projects/project/ag/create.jade'
             controller: 'CreateAgCtrl'
+            resolve:
+              ag: 'Ag'
       }]
 
     angular.forEach states, (state) ->
