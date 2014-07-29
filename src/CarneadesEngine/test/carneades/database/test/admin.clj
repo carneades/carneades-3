@@ -8,7 +8,7 @@
   (:require [carneades.database.case :as case]
             [carneades.database.db :as db]
             [carneades.engine.utils :as utils]
-            [clojure.java.jdbc :as jdbc]
+            [clojure.java.jdbc.deprecated :as jdbc]
             [clojure.java.io :as io]
             [carneades.project.fs :as project]
             [midje.sweet :refer :all])

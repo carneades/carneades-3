@@ -161,7 +161,7 @@ Do nothing if v is not a variable."
   "Converts the IRI to make itcompatible with the Clojure OWL library.
 The IRI is returned with its last slash doubled."
   (if (symbol? sym)
-    (symbol (s/replace (str sym) #"(.+)://(.*)/(.*)" "$1://$2//$3"))
+    (symbol (s/replace (str sym) #"(.+)://(.*)/(.*)" "$1:///$2/$3"))
     sym))
 
 (defn iris->owllib-iris
@@ -290,7 +290,7 @@ argument if is the case."
 
 (defn sparql-query
   [kbconn sexp namespaces]
-  (let [query (sexp->sparqlquery sexp)
+  (let [query (spy (sexp->sparqlquery sexp))
         bindings (binding [sparql/*select-limit* select-limit]
                    (sparql/query (:kb kbconn) query))
         bindings (map sparqlbindings->bindings bindings)

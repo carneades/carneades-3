@@ -7,7 +7,7 @@
              [carneades.engine.argument :as a]
              [carneades.owl.import :as owl]
              [carneades.project.fs :as project]
-             [clojure.tools.logging :refer [error]]))
+             [taoensso.timbre :as timbre :refer [debug error spy]]))
 
 (def oss-licensing-ontology
   (try
