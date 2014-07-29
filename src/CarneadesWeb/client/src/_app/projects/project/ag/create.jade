@@ -8,4 +8,10 @@
             {{'projects.newag.name' | translate}}
           input(name="name" placeholder="type the name here, without spaces and special characters" class="form-control input-md" type="text", ng-model="ag.name", required)
           metadata-editor(model='ag.header')
+          div(class="col-md-8 form-group")
+            button(id="save", name="save", class="btn btn-success", ng-click="onSave()")
+              {{'projects.save' | translate}}
+            button(id="cancel", name="cancel", class="btn btn-danger")
+              {{'projects.cancel' | translate}}
+        
             

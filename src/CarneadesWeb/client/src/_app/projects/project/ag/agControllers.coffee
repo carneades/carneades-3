@@ -18,5 +18,8 @@ define [
       header:
         description: {},
         title: ""
+
+    $scope.onSave = ->
+      console.log $scope.ag
   
   )
