@@ -3,5 +3,9 @@
     .col-md-12(role='main')
       .section#home
         .page-header
-          h1{{'projects.newag' | translate}}
+          h1 {{'projects.newag' | translate}}
+          .span.name_header
+            {{'projects.newag.name' | translate}}
+          input(name="name" placeholder="type the name here, without spaces and special characters" class="form-control input-md" type="text", ng-model="ag.name", required)
           metadata-editor(model='ag.header')
+            

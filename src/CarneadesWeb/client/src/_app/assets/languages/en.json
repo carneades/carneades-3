@@ -82,7 +82,9 @@
     "projects.argument.value.unclear": "Unclear",
 
     "projects.newag": "New argument graph",
-    "projects.metadata.title": "Title",
-    "projects.metadata.description": "Description"    
+    "projects.newag.name": "Name",
 
+    "projects.metadata.title": "Title",
+    "projects.metadata.description": "Description"
+    
 }
