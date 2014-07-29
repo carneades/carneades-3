@@ -20,6 +20,10 @@ define [
         title: ""
 
     $scope.onSave = ->
-      ag.save $stateParams, $scope.ag
-  
+      ag.save($stateParams, $scope.ag).$promise.then(
+        (v) ->
+          console.log 'success', v
+        (e) ->
+          console.log 'error', e
+      )  
   )
