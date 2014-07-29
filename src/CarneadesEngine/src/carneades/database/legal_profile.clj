@@ -258,7 +258,7 @@
   "Read a profile with its associated rules and metadata in the database."
   []
   (transaction
-   (map #(read-profile+ (:id %)) (select profiles (fields :id)))))
+   (doall (map #(read-profile+ (:id %)) (spy (select profiles (fields :id)))))))
 
 (defn update-profile+
   "Update a profile with its associated rules and metadata in the database."
