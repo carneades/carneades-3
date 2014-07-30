@@ -11,7 +11,7 @@ define [
     'pascalprecht.translate'
   ])
 
-  .controller('CreateAgCtrl', ($scope, $stateParams, ag) ->
+  .controller('CreateAgCtrl', ($scope, $state, $stateParams, ag) ->
     
     $scope.ag =
       name: "",
@@ -22,7 +22,7 @@ define [
     $scope.onSave = ->
       ag.save($stateParams, $scope.ag).$promise.then(
         (v) ->
-          console.log 'success', v
+          $state.transitionTo 'home.projects.project.outline', {pid: $stateParams.pid, db: $scope.ag.name}
         (e) ->
           console.log 'error', e
       )  
