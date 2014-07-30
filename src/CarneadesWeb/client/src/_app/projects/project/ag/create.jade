@@ -4,11 +4,11 @@
       .section#home
         .page-header
           h1 {{'projects.newag' | translate}}
-          form(name="form")
+          form(name="form", novalidate)
             div(class="form-group")
               label.name_header
                 {{'projects.newag.name' | translate}}
-              input(name="name" placeholder="type the name here, without spaces and special characters" class="form-control input-md" type="text", ng-model="ag.name", required)
+              input(name="name" placeholder="type the name here, without spaces and special characters" class="form-control input-md" type="text", ng-model="ag.name", ng-pattern="/^([a-zA-Z]+)$/", required)
             metadata-editor(model='ag.header')
             div(class="col-md-8 form-group")
               button(id="save", name="save", class="btn btn-success", ng-click="onSave()", ng-disabled="form.$invalid")
