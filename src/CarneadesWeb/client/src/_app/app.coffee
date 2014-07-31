@@ -20,9 +20,14 @@ define [
   "templates/app",
   "angular-translate",
   "angular-translate-loader-static-files",
+  "common/directives/resize",
+  "common/directives/svg-include",
   "common/directives/markdown/markdown",
   "common/directives/loader/loader",
-  'showdown'
+  'showdown',
+  'jquery',
+  'jquery-mousewheel',
+  'perfect-scrollbar'
 ], (angular) ->
   angular.module("app", [
     "ui.bootstrap",
@@ -30,6 +35,8 @@ define [
     "ui.bootsrap.breadcrumb",
     "directives.pagenav",
     "directives.loaders",
+    "directives.resize",
+    "directives.svg.include",
     "ui.router",
     "css.injector",
     "app.states",
@@ -39,7 +46,7 @@ define [
     "lican.module",
     "admin.module",
     "pascalprecht.translate",
-    'markdown',
+    'markdown'
   ])
 
   .run(($rootScope, $state, $stateParams) ->
