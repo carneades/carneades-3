@@ -6,8 +6,16 @@
           h1 {{title}}
           form(name="form", novalidate)
             metadata-editor(model='statement.header')
+            div(class="form-group")
+              label
+                {{'projects.main_issues' | translate}}
+              div
+                radio-buttons(model='statement.main', options="['true', 'false']")
+            span
+              {{statement.main}}
             div(class="col-md-8 form-group")
               button(id="save", name="save", class="btn btn-success", ng-click="onSave()", ng-disabled="form.$invalid")
                 {{'projects.save' | translate}}
               button(id="cancel", name="cancel", class="btn btn-danger")
                 {{'projects.cancel' | translate}}
+                

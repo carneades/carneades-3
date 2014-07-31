@@ -91,7 +91,10 @@
     "projects.metadata.description": "Description",
 
     "projects.newstatement": "Create statement",
-    "projects.editstatement": "Edit statement"
+    "projects.editstatement": "Edit statement",
+
+    "projects.true": "true",
+    "projects.false": "false"
 
     
 }

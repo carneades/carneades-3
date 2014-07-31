@@ -6,11 +6,13 @@ define [
   'angular',
   'angular-translate',
   '../../../common/directives/properties/properties',
-  '../../../common/directives/metadata/metadata'
+  '../../../common/directives/metadata/metadata',
+  '../../../common/directives/radio-buttons/radio-buttons'
 ], (angular) ->
   angular.module('statement.controllers', [
     'directives.properties',
     'directives.metadata',
+    'directives.radioButtons',
     'pascalprecht.translate'
   ])
 
@@ -47,7 +49,7 @@ define [
     $scope.title = $translate.instant 'projects.editstatement'
     $scope.statement = statementedit.get($stateParams)
 
-    $scope.onSave = ->
+    $scope.onSave = () ->
       console.log 'onSave'
 
   )
