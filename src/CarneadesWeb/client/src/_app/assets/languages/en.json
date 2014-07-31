@@ -88,6 +88,9 @@
     "projects.newag.name": "Name",
 
     "projects.metadata.title": "Title",
-    "projects.metadata.description": "Description"
+    "projects.metadata.description": "Description",
+
+    "projects.newstatement": "Create statement"
+
     
 }

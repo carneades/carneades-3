@@ -42,3 +42,7 @@ define [
 
     undefined
   )
+  .controller('StatementEditCtrl', ($scope, $translate) ->
+    console.log 'StatementEditCtrl'
+    $scope.title = $translate.instant 'projects.newstatement'
+  )

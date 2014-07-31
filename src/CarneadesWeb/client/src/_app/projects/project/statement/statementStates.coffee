@@ -13,23 +13,35 @@ define [
   ])
 
   .config ($stateProvider) ->
-    states = [
+    states = [{
       name: 'home.projects.project.statement'
       label: 'Statement'
       url: '/:db/statements/:sid'
       data:
         commands: ['home.projects.project.map','home.projects.project.outline']
-      views: {
-        'content@': {
+      views: 
+        'content@':
           templateUrl: 'projects/project/statement/view.jade'
           controller: 'StatementCtrl'
-          resolve: {
+          resolve:
             statement: (StatementLoader, $stateParams) ->
               new StatementLoader($stateParams)
             project: (ProjectLoader, $stateParams) ->
               new ProjectLoader($stateParams)
-          }
-        }
+      },
+      {
+      name: 'home.projects.project.statement.edit'
+      label: 'Edit statement'
+      url: '/edit'
+      data:
+        commands: ['home.projects.project.map','home.projects.project.outline']
+      views:
+        'content@':
+          templateUrl: 'projects/project/statement/edit.jade'
+          controller: 'StatementEditCtrl'
+          resolve:
+            statement: (StatementLoader, $stateParams) ->
+              new StatementLoader($stateParams)
       }
     ]
 
