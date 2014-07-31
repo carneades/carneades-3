@@ -40,8 +40,7 @@ define [
           templateUrl: 'projects/project/statement/edit.jade'
           controller: 'StatementEditCtrl'
           resolve:
-            statement: (StatementLoader, $stateParams) ->
-              new StatementLoader($stateParams)
+            statementedit: 'StatementEdit'
       }
     ]
 

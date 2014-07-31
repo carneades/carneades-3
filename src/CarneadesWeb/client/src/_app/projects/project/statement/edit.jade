@@ -1,0 +1,13 @@
+.container.db-creator
+  .row
+    .col-md-12(role='main')
+      .section#home
+        .page-header
+          h1 {{title}}
+          form(name="form", novalidate)
+            metadata-editor(model='statement.header')
+            div(class="col-md-8 form-group")
+              button(id="save", name="save", class="btn btn-success", ng-click="onSave()", ng-disabled="form.$invalid")
+                {{'projects.save' | translate}}
+              button(id="cancel", name="cancel", class="btn btn-danger")
+                {{'projects.cancel' | translate}}

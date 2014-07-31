@@ -90,7 +90,8 @@
     "projects.metadata.title": "Title",
     "projects.metadata.description": "Description",
 
-    "projects.newstatement": "Create statement"
+    "projects.newstatement": "Create statement",
+    "projects.newstatement": "Edit statement"
 
     
 }

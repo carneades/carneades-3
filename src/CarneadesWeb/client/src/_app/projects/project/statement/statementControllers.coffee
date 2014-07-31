@@ -42,7 +42,12 @@ define [
 
     undefined
   )
-  .controller('StatementEditCtrl', ($scope, $translate) ->
-    console.log 'StatementEditCtrl'
-    $scope.title = $translate.instant 'projects.newstatement'
+  .controller('StatementEditCtrl', ($scope, $translate, $stateParams, statementedit) ->
+    
+    $scope.title = $translate.instant 'projects.editstatement'
+    $scope.statement = statementedit.get($stateParams)
+
+    $scope.onSave = ->
+      console.log 'onSave'
+
   )

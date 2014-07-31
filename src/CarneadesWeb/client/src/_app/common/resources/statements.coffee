@@ -12,6 +12,12 @@ define ["angular", "angular-resource"], (angular) ->
       db: "@db"
       sid: "@sid"
 
+  services.factory "StatementEdit", ($resource, $location) ->
+    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/statements/:sid?context=edit",
+      pid: "@pid"
+      db: "@db"
+      sid: "@sid"
+
   services.factory "MultiStatementLoader", (Statement, $q) ->
     ->
       delay = $q.defer()
@@ -28,7 +34,7 @@ define ["angular", "angular-resource"], (angular) ->
       Statement.get params, ((statement) ->
         delay.resolve statement
       ), ->
-        delay.reject "Unable to fetch argument!"
+        delay.reject "Unable to fetch Statement!"
 
       delay.promise
 
