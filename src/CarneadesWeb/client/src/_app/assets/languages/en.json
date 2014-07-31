@@ -91,7 +91,7 @@
     "projects.metadata.description": "Description",
 
     "projects.newstatement": "Create statement",
-    "projects.newstatement": "Edit statement"
+    "projects.editstatement": "Edit statement"
 
     
 }
