@@ -13,7 +13,8 @@ define [
     'directives.properties',
     'directives.metadata',
     'directives.radioButtons',
-    'pascalprecht.translate'
+    'pascalprecht.translate',
+    
   ])
 
   .controller('StatementCtrl', ($scope, $translate, statement, project) ->
@@ -50,6 +51,6 @@ define [
     $scope.statement = statementedit.get($stateParams)
 
     $scope.onSave = () ->
-      console.log 'onSave'
+      statementedit.update($stateParams, $scope.statement)
 
   )

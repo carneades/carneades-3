@@ -60,7 +60,7 @@
   [project db id update]
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
-      (ag-db/update-statement id update))))
+      (spy (ag-db/update-statement id update)))))
 
 (defn post-statement
   [project db statement]

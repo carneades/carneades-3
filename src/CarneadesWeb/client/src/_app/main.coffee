@@ -40,5 +40,6 @@ require.config
     'requirejs-domready': './libs/requirejs-domready'
     'showdown': './libs/showdown/showdown'
     'spinjs': './libs/spin'
+    'angular-capitalize-filter': './libs/angular-capitalize-filter'
 
   deps: ["./bootstrap"]
