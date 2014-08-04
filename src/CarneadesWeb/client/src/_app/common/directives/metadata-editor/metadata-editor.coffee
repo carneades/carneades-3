@@ -15,5 +15,10 @@ define [
     scope:
       model: '='
     controller: ($scope, $translate) ->
-      $scope.languages = ['en', 'de', 'fr', 'it', 'sp', 'nl']
+      $scope.languages = [['en', 'En'],
+        ['de', 'De'],
+        ['fr', 'Fr'],
+        ['it', 'It'],
+        ['sp', 'Sp'],
+        ['nl', 'Nl']]
   )

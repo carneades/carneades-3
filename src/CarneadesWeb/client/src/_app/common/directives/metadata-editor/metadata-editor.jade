@@ -8,7 +8,7 @@ div.metadata-editor
     label.description_header
       {{'projects.metadata.description' | translate}}
     tabset
-      tab(ng-repeat="lang in languages", heading='{{lang | uppercase}}')
-        textarea(class="form-control", id="description_{{lang}}", name="description_{{lang}}", ng-model="model.description[lang]", rows="10")
+      tab(ng-repeat="v in languages", heading='{{v[1]}}')
+        textarea(class="form-control", id="description_{{v[0]}}", name="description_{{v[0]}}", ng-model="model.description[v[0]]", rows="10")
           {{model.description[lang]}}
   
