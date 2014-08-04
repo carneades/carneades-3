@@ -147,7 +147,8 @@ module.exports = (grunt) ->
           'angular-bootstrap.js': 'angular-bootstrap/ui-bootstrap-tpls.js'
           'requirejs-domready.js': 'requirejs-domready/domReady.js'
           'showdown': 'showdown/src'
-          'spin.js': 'spin.js/spin.js'
+          'spin.js': 'spin.js/spin.js',
+          'angular-capitalize-filter.js': 'angular-capitalize-filter/capitalize.js'
 
     jade:
       compile:

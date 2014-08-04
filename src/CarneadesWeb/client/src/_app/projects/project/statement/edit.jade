@@ -8,7 +8,7 @@
             metadata-editor(model='statement.header')
             div(class="form-group")
               label
-                {{'projects.main_issues' | translate}}
+                {{'projects.main_issues' | translate | capitalize:'first'}}
               div
                 radio-buttons(model='statement.main')
             div(class="col-md-8 form-group")

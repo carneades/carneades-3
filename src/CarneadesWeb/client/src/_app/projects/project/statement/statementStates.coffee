@@ -4,12 +4,14 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 define [
   'angular',
+  'angular-capitalize-filter',
   './statementControllers',
   '../../../common/resources/statements'
 ], (angular) ->
   angular.module('statement.states', [
     'statement.controllers',
-    'resources.statements'
+    'resources.statements',
+    'angular-capitalize-filter'
   ])
 
   .config ($stateProvider) ->
