@@ -7,13 +7,18 @@ define [
   'angular',
   'angular-translate'
 ], (angular) ->
-  angular.module("directives.metadataEditor", ['pascalprecht.translate'])
+  angular.module("directives.multilangTextarea", ['pascalprecht.translate'])
 
-  .directive("metadataEditor", ->
+  .directive("multilangTextarea", ->
     restrict: "E"
-    templateUrl: "common/directives/metadata-editor/metadata-editor.jade"
+    templateUrl: "common/directives/multilang-textarea/multilang-textarea.jade"
     scope:
       model: '='
     controller: ($scope, $translate) ->
-      $scope.languages = ['en', 'de', 'fr', 'it', 'sp', 'nl']
+      $scope.languages = [['en', 'En'],
+        ['de', 'De'],
+        ['fr', 'Fr'],
+        ['it', 'It'],
+        ['sp', 'Sp'],
+        ['nl', 'Nl']]
   )

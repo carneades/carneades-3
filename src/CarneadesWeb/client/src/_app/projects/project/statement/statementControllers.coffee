@@ -7,14 +7,15 @@ define [
   'angular-translate',
   '../../../common/directives/properties/properties',
   '../../../common/directives/metadata/metadata',
-  '../../../common/directives/radio-buttons/radio-buttons'
+  '../../../common/directives/radio-buttons/radio-buttons',
+  '../../../common/directives/multilang-textarea/multilang-textarea',
 ], (angular) ->
   angular.module('statement.controllers', [
+    'pascalprecht.translate',
     'directives.properties',
     'directives.metadata',
     'directives.radioButtons',
-    'pascalprecht.translate',
-    
+    'directives.multilangTextarea'    
   ])
 
   .controller('StatementCtrl', ($scope, $translate, statement, project) ->

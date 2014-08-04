@@ -11,6 +11,10 @@
                 {{'projects.main_issues' | translate | capitalize:'first'}}
               div
                 radio-buttons(model='statement.main')
+            div(class="form-group")
+              label
+                {{'projects.text' | translate | capitalize:'first'}}
+              multilang-textarea(model='statement.text')
             div(class="col-md-8 form-group")
               button(id="save", name="save", class="btn btn-success", ng-click="onSave()", ng-disabled="form.$invalid")
                 {{'projects.save' | translate}}

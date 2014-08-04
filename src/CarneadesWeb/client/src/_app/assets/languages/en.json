@@ -94,7 +94,9 @@
     "projects.editstatement": "Edit statement",
 
     "projects.true": "true",
-    "projects.false": "false"
+    "projects.false": "false",
+
+    "projects.text": "text"
 
     
 }
