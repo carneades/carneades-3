@@ -75,7 +75,7 @@
           ["foreign key(description) references translation(id)"])
 
         (jdbc/create-table
-          :statement
+         :statement
           [:id "varchar primary key not null"] ; a URN in the UUID namespace
           [:weight "double default null"]
           [:value "double default null"]
@@ -414,7 +414,7 @@
    the update was successful."
   [id m]
   {:pre [(map? m)]}
-  (let [m (dissoc m :positive)
+  (let [m (dissoc m :positive :premise-of :pro :con)
         existing-header-id (if (:header m)
                              (jdbc/with-query-results
                                res ["SELECT header FROM statement WHERE id=?" id]

@@ -316,7 +316,7 @@
 
 (defn get-edit-statement
   [project db id lang]
-  (let [stmt (s/get-statement project db id)]
+  (let [stmt (spy (s/get-statement project db id))]
     (into {} stmt)
     ;; (augment-statement stmt project db lang true)
     ))
