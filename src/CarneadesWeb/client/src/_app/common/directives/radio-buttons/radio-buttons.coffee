@@ -13,8 +13,7 @@ define [
     templateUrl: "common/directives/radio-buttons/radio-buttons.jade"
     scope:
       model: '='
-      options: '='
     controller: ($scope) ->
-      $scope.activate = (option) ->
-        $scope.model = option
+      $scope.activate = (val) ->
+        $scope.model = val
   )
