@@ -53,7 +53,7 @@ define [
       header: {description: {en: "", fr: "", it: "", sp: "", nl: ""}}
       
     $scope.standards = [
-            { name: ($translate.instant 'projects.pe'), value: "pe" },
+            { name: ($translate.instant 'projects.pe'), value: 'pe'},
             { name: ($translate.instant 'projects.dv'), value: 'dv'},
             { name: ($translate.instant 'projects.cce'), value: 'cce'},
             { name: ($translate.instant 'projects.brd'), value: 'brd'}
@@ -68,7 +68,7 @@ define [
     $scope.title = $translate.instant 'projects.editstatement'
     $scope.statement = statementedit.get($stateParams)
     $scope.standards = [
-            { name: ($translate.instant 'projects.pe'), value: "pe" },
+            { name: ($translate.instant 'projects.pe'), value: 'pe'},
             { name: ($translate.instant 'projects.dv'), value: 'dv'},
             { name: ($translate.instant 'projects.cce'), value: 'cce'},
             { name: ($translate.instant 'projects.brd'), value: 'brd'}
