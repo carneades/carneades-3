@@ -46,6 +46,23 @@ define [
 
     undefined
   )
+  .controller('StatementCreateCtrl', ($scope, $translate, $stateParams, statementcreate) ->
+    $scope.title = $translate.instant 'projects.createstatement'
+    $scope.statement =
+      text: {en: "", fr: "", it: "", sp: "", nl: ""}
+      header: {description: {en: "", fr: "", it: "", sp: "", nl: ""}}
+      
+    $scope.standards = [
+            { name: ($translate.instant 'projects.pe'), value: "pe" },
+            { name: ($translate.instant 'projects.dv'), value: 'dv'},
+            { name: ($translate.instant 'projects.cce'), value: 'cce'},
+            { name: ($translate.instant 'projects.brd'), value: 'brd'}
+          ]
+
+    $scope.onSave = () ->
+      console.log 'on save', $scope.statement
+      statementcreate.save($stateParams, $scope.statement)
+  )
   .controller('StatementEditCtrl', ($scope, $translate, $stateParams, statementedit) ->
     
     $scope.title = $translate.instant 'projects.editstatement'

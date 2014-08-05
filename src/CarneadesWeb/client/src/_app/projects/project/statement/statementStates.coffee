@@ -15,7 +15,21 @@ define [
   ])
 
   .config ($stateProvider) ->
-    states = [{
+    states = [
+      {
+      name: 'home.projects.project.createstatement'
+      label: 'Create statement'
+      url: '/:db/statements/create'
+      data:
+        commands: ['home.projects.project.map','home.projects.project.outline']
+      views:
+        'content@':
+          templateUrl: 'projects/project/statement/edit.jade'
+          controller: 'StatementCreateCtrl'
+          resolve:
+            statementcreate: 'StatementCreate'
+      },
+      {
       name: 'home.projects.project.statement'
       label: 'Statement'
       url: '/:db/statements/:sid'

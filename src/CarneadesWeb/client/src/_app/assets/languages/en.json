@@ -90,9 +90,9 @@
     "projects.metadata.title": "Title",
     "projects.metadata.description": "Description",
 
-    "projects.newstatement": "Create statement",
+    "projects.createstatement": "Create statement",
     "projects.editstatement": "Edit statement",
-
+    
     "projects.true": "true",
     "projects.false": "false",
 

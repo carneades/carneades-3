@@ -17,6 +17,11 @@ define ["angular", "angular-resource"], (angular) ->
     {pid: "@pid", db: "@db", sid: "@sid"},
     {update: {method: 'PUT'}}
 
+  services.factory "StatementCreate", ($resource, $location) ->
+    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/statements/",
+    {pid: "@pid", db: "@db"}
+
+
   services.factory "MultiStatementLoader", (Statement, $q) ->
     ->
       delay = $q.defer()
