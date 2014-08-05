@@ -36,9 +36,9 @@ html(lang='en')
                     li.bc-default-a
                       a(ng-click='openView(bcTop.name, top.params)',tooltip='{{bcTop.tooltip}}',tooltip-append-to-body='true',tooltip-placement='bottom')
                         {{bcTop.label}}
-                    li
+                    li(ng-show='hasHistory')
                       a
-                        i.fa.fa-chevron-down.font-inc-130(,ng-init='navBcCollapsed = true',ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
+                        i.fa.fa-chevron-down.font-inc-130(ng-init='navBcCollapsed = true',ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
         .row.collapse#mobnavdetails(collapse='navCollapsed',ui-view='mobsubnav',ng-cloak='')
         .row.collapse#mobbcnavdetails(collapse='navBcCollapsed',ng-cloak='')
           ul
@@ -53,6 +53,6 @@ html(lang='en')
 
     div(ui-view='content',ng-cloak='')
 
-    div(ui-view='footer', class='navbar-fixed-bottom',ng-cloak='')
+    div(ui-view='footer',class='navbar-fixed-bottom',ng-cloak='')
 
     script(src='require.js',data-main='main.min.js')

@@ -38,30 +38,34 @@ define [
       )
 
     .directive('map', ($parse, $compile) ->
-      restrict: 'A'
-      replace: true
-      template: '<div style="margin:4px auto;height:{{ resizeHeightWithOffset(193) }}px;width:{{ resizeWidthWithOffset() }}px;white-space:pre-line;overflow:hidden;position:relative;"><svg-include ng-model="svg"></svg-include></div>'
-      link: (scope, element, attrs) ->
-        psOptions = [
-          'wheelSpeed', 'wheelPropagation', 'minScrollbarLength',
-          'useBothWheelAxes', 'useKeyboard', 'suppressScrollX',
-          'suppressScrollY', 'scrollXMarginOffset','scrollYMarginOffset',
-          'includePadding'
-        ]
+      html = []
+      html.push '<div style="'
+      html.push 'margin:4px auto;height:{{ resizeHeightWithOffset(193) }}px;'
+      html.push 'width:{{ resizeWidthWithOffset() }}px;'
+      html.push 'white-space:pre-line;overflow:hidden;position:relative;">'
+      html.push '<svg-include ng-model="svg"></svg-include></div>'
+      return {
+        restrict: 'A'
+        replace: true
+        template: html.join ''
+        link: (scope, element, attrs) ->
+          psOptions = [
+            'wheelSpeed', 'wheelPropagation', 'minScrollbarLength',
+            'useBothWheelAxes', 'useKeyboard', 'suppressScrollX',
+            'suppressScrollY', 'scrollXMarginOffset','scrollYMarginOffset',
+            'includePadding'
+          ]
 
-        options = {}
-        for opt in psOptions
-          do (opt) -> if attrs[opt]? then options[opt] = $parse(attrs[opt])()
+          options = {}
+          for opt in psOptions
+            do (opt) -> if attrs[opt]? then options[opt] = $parse(attrs[opt])()
 
-        if attrs.refreshOnChange
-          scope.$watchCollection attrs.refreshOnChange, () ->
-            scope.$evalAsync () ->
-              element.perfectScrollbar 'update'
-
-        element.bind '$destroy', () ->
-          element.perfectScrollbar 'destroy'
-
-        element.perfectScrollbar options
+          if attrs.refreshOnChange
+            scope.$watchCollection attrs.refreshOnChange, () ->
+              scope.$evalAsync () -> element.perfectScrollbar 'update'
+          element.bind '$destroy', () -> element.perfectScrollbar 'destroy'
+          element.perfectScrollbar options
+      }
     )
 
     .controller('MapCtrl', ($scope, map) ->

@@ -13,7 +13,7 @@ define [
     "ui.router.state"
   ])
 
-  .provider("$breadcrumb", () ->
+  .factory('$navigationStates', () ->
     class DS
       constructor: (@length) ->
         @data = new Array @length
@@ -36,7 +36,7 @@ define [
         @ptr = if @ptr is 0 or @ptr is -1 then @ptr = @length else @ptr - 1
         return s
       peek: () -> return @data[@ptr]
-      asArray: ->
+      asArray: () ->
         arr = []
         i = 0
         p = @ptr
@@ -45,30 +45,26 @@ define [
           p = if p is 0 or p is -1 then p = @length else p - 1
           i = i + 1
         return arr.reverse()
+      isEmpty: () -> return @ptr is -1
 
+    $navigationStates = (datastructure, size) ->
+      if datastructure is 'LimitedStack' then return new LimitedStack(size)
+      else throw new Error("Datastructure '#{datastructure}' not supported!")
+
+    return $navigationStates
+  )
+
+  .factory('breadcrumbService', ($navigationStates, $state, $stateParams) ->
     options = {}
-    _navigationStates = new LimitedStack(6)
-    position = 0
+    navigationStates = $navigationStates('LimitedStack', 6)
 
-    setIndexOfItemClicked = (value) ->
-      position = value
-
-    getIndexOfItemClicked = () ->
-      return position
-
-    resetIndexOfItemClicked = () ->
-      position = 0
-
-    ##########################################################
-
-    render = (states, $state) ->
+    _render = (states) ->
       index = 0
       isActiveSet = false
       isActiveIndex = -1
 
-      fnIsActive = (s) ->
+      _fnSetIsActive = (s) ->
         s.isActive = ($state.$current.name is s.name)
-
         if s.isActive
           if isActiveSet
             states[isActiveIndex].isActive = false
@@ -78,39 +74,26 @@ define [
 
         return s
 
-      fnIsLast = (s, index) ->
+      _fnSetIsLast = (s, index) ->
         s.isLast = (index == states.length)
         return s
 
-      return (fnIsActive(fnIsLast(s,++index)) for s in states)
+      return (_fnSetIsActive(_fnSetIsLast(s,++index)) for s in states)
 
-    ##########################################################
-    buildState = ($state, $stateParams) ->
-      label: $state.get($state.$current.name).label
-      name: $state.$current.name
-      params: angular.copy $stateParams
-      tooltip: $state.$current.tooltip
+    _build = () ->
+      return {
+        label: $state.get($state.$current.name).label
+        name: $state.$current.name
+        params: angular.copy $stateParams
+        tooltip: $state.$current.tooltip
+      }
 
-    ##########################################################
-    ##########################################################
-    updateNavigatedStates = ($state, $stateParams) ->
-      _navigationStates.push buildState $state, $stateParams
+    @isEmpty = () -> return navigationStates.isEmpty()
+    @updateStates = () -> navigationStates.push _build $state, $stateParams
+    @getStates = () -> return navigationStates.asArray()
+    @getRenderedStates = () -> return _render $breadcrumb.getStates(), $state
 
-    getNavigatedStates = () ->
-      return _navigationStates.asArray()
-
-    $get: () ->
-      getIndexOfItemClicked: () ->
-        return getIndexOfItemClicked()
-
-      setIndexOfItemClicked: (value) ->
-        setIndexOfItemClicked value
-
-      updateNavigatedStates: ($state, $stateParams) ->
-        updateNavigatedStates($state, $stateParams)
-
-      getNavigatedStates: ($state) ->
-        return render getNavigatedStates(), $state
+    return @
   )
 
   .directive('breadcrumb', () ->
@@ -120,31 +103,12 @@ define [
       style: '='
     replace: true
     templateUrl: 'common/directives/breadcrumb/breadcrumb.jade'
-    #template: '<div class="row breadcrumbs"><breadcrumb-entries><breadcrumb-entry ng-repeat="s in states" state="s" bc-open="setCommandView($index)" index="$index" style="style"></breadcrumb-entry></breadcrumb-entries></div>'
     controller: ($scope, $state) ->
-      getIndexOfActiveState = () ->
-        index = 0
-        idx = 0
-        angular.forEach $scope.states, (s) ->
-          if s.isActive then index = idx
-          idx++
-        return index
+      _index = -1
+      $scope.setCommandView = (index) -> _index = index
+      $scope.getActiveCommandView = () -> return _index
 
-      _index = getIndexOfActiveState()
-
-      getIndexByName = (states, name) ->
-        index = 0
-        idx = 0
-        angular.forEach states, (s) ->
-          if name == s.name then index = idx
-          idx++
-        return index
-
-      $scope.setCommandView = (index) ->
-        _index = index
-
-      $scope.getActiveCommandView = () ->
-        return _index
+      return @
   )
 
   .directive('breadcrumbEntries', () ->
@@ -152,7 +116,6 @@ define [
     replace: true
     transclude: true
     templateUrl: 'common/directives/breadcrumb/breadcrumb-entries.jade'
-    #template: '<ul ng-transclude></ul>'
   )
 
   .directive('breadcrumbEntry', () ->
@@ -164,24 +127,22 @@ define [
       index: '='
       style: '='
     templateUrl: 'common/directives/breadcrumb/breadcrumb-entry.jade'
-    #template: '<li class="bc-default-a"><a bn-log-dom-creation="bn-log-dom-creation" ng-click="openView(state.name, state.params)" tooltip="{{state.tooltip}}" tooltip-append-to-body="true" tooltip-placement="bottom">{{state.label}}</a></li>'
-    controller: ($scope, $element, $attrs, $state, $breadcrumb) ->
-      $scope.openView = (name, params) ->
-        $state.go name, params
-    link: (scope, element, attrs) ->
-      if scope.style is 'markos'
-        scope.cssClass = 'bc-level-simple'
-      else
-        i = scope.index + 1
-        index = i % 7
-        scope.cssClass = if index > 0 then "bc-level-" + index
+    controller: ($scope, $state) ->
+      $scope.openView = (name, params) -> $state.go name, params
+      @getCssLevel = (style) ->
+        cssClass = 'bc-level-simple'
+        if style isnt 'markos'
+          index = ($scope.index + 1) % 7
+          cssClass = if index > 0 then "bc-level-" + index
 
+        return cssClass
+
+      return @
+    link: (scope, element, attrs, ctrl) ->
       if scope.state.isActive
         element.addClass "active"
       else if scope.state.isLast
         element.addClass "last"
       else
-        element.addClass scope.cssClass
-
-      #else angular.element(element).addClass "bcMinPanel"
+        element.addClass ctrl.getCssLevel()
   )
