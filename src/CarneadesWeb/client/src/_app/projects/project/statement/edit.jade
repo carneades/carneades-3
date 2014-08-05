@@ -20,6 +20,11 @@
                 {{'projects.standard' | translate | capitalize:'first'}}
               br
               select(ng-model='statement.standard', ng-options="standard.value as standard.name for standard in standards")
+            div(class="form-group")
+              label
+                {{'projects.weight' | translate | capitalize:'first'}}
+              br
+              input(type="number", ng-model="statement.weight", min="0", max="1")
             div(class="col-md-8 form-group")
               button(id="save", name="save", class="btn btn-success", ng-click="onSave()", ng-disabled="form.$invalid")
                 {{'projects.save' | translate}}
