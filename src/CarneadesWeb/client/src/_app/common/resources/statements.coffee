@@ -12,6 +12,12 @@ define ["angular", "angular-resource"], (angular) ->
       db: "@db"
       sid: "@sid"
 
+  services.factory "Statements", ($resource, $location) ->
+    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/statements/",
+      pid: "@pid"
+      db: "@db",
+      'query':  {method:'GET', isArray:true}
+
   services.factory "StatementEdit", ($resource, $location) ->
     $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/statements/:sid?context=edit",
     {pid: "@pid", db: "@db", sid: "@sid"},

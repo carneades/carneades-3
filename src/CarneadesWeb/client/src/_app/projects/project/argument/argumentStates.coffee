@@ -8,6 +8,7 @@ define [
   'angular-translate',
   './argumentControllers',
   '../../../common/resources/arguments',
+  '../../../common/resources/statements',
   '../../../common/resources/projects',   
   '../../../common/resources/theory',
   '../../../common/directives/evaluation-indicator/evaluation-indicator',
@@ -15,7 +16,8 @@ define [
 ], (angular) ->
   angular.module('argument.states', [
     'argument.controllers',
-    'resources.arguments',    
+    'resources.arguments',
+    'resources.statements',    
     'resources.theories',
     'directives.evaluationIndicator',
     'services.projectInfo'
@@ -38,6 +40,7 @@ define [
             project: (ProjectLoader, $stateParams) ->
               new ProjectLoader($stateParams)
             projectInfo: 'projectInfo'
+            statements: 'Statements'            
       },
       {
       name: "home.projects.project.argument"

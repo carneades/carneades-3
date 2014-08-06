@@ -26,6 +26,11 @@
                 {{'projects.scheme' | translate | capitalize:'first'}}
               br
               select(ng-model='schemeId', ng-options="scheme.id as scheme.header.title for scheme in theory.schemes")
+            div(class="form-group")
+              label
+                {{'projects.conclusion' | translate | capitalize:'first'}}
+              br
+              input(type="text", ng-model="argument.conclusion" typeahead="statement as statement.text for statement in statements | filter:{text:$viewValue}", class="form-control")
             div(class="col-md-8 form-group")
               button(id="save", name="save", class="btn btn-success", ng-click="onSave()", ng-disabled="form.$invalid")
                 {{'projects.save' | translate}}

@@ -46,8 +46,10 @@ define [
       else if not argument.strict and not argument.pro
         $translate.instant 'projects.nonstrict_con_conclusion'
   )
-  .controller('ArgumentCreateCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo) ->
+  .controller('ArgumentCreateCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements) ->
     $scope.title = $translate.instant 'projects.createargument'
+    $scope.statements = statements.query $stateParams
+    
     $scope.argument =
       pro: true
       strict: false
