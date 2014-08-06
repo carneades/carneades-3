@@ -46,7 +46,7 @@ define [
       else if not argument.strict and not argument.pro
         $translate.instant 'projects.nonstrict_con_conclusion'
   )
-  .controller('ArgumentCreateCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements) ->
+  .controller('ArgumentCreateCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements, argumentcreate) ->
     $scope.title = $translate.instant 'projects.createargument'
     $scope.statements = statements.query $stateParams
     
@@ -54,11 +54,17 @@ define [
       pro: true
       strict: false
 
-    $stateParams.tpid = projectInfo.getSchemesProject(project)
-    $stateParams.tid = projectInfo.getSchemesName(project)
-
-    $scope.theory = theory.get $stateParams
+    $scope.theory = theory.get {
+      pid: $stateParams.pid,
+      db: $stateParams.db,
+      tpid: projectInfo.getSchemesProject(project),
+      tid: projectInfo.getSchemesName(project)
+    }
 
     $scope.$watch 'schemeId', (newVal) ->
       $scope.argument.scheme = "(#{newVal})"
+
+    $scope.onSave = ->
+      console.log 'argument', $scope.argument
+      argumentcreate.save $stateParams, $scope.argument
   )

@@ -7,13 +7,18 @@ define [
   "angular-resource"
 ], (angular) ->
   "use strict"
-  services = angular.module("resources.arguments", ["ngResource"])
+  services = angular.module('resources.arguments', ['ngResource'])
+
   services.factory "Argument", ($resource, $location) ->
     $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/arguments/:aid",
       pid: "@pid"
       db: "@db"
       aid: "@aid"
 
+  services.factory 'ArgumentCreate', ($resource, $location) ->
+    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/arguments/",
+      pid: "@pid"
+      db: "@db"
 
   services.factory "MultiArgumentLoader", (Argument, $q) ->
     ->

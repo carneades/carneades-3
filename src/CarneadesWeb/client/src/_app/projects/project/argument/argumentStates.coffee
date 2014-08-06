@@ -40,7 +40,9 @@ define [
             project: (ProjectLoader, $stateParams) ->
               new ProjectLoader($stateParams)
             projectInfo: 'projectInfo'
-            statements: 'Statements'            
+            statements: 'Statements'
+            argumentcreate: 'ArgumentCreate'
+
       },
       {
       name: "home.projects.project.argument"
