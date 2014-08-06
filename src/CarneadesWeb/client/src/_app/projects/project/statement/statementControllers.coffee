@@ -51,6 +51,8 @@ define [
     $scope.statement =
       text: {en: "", fr: "", it: "", sp: "", nl: ""}
       header: {description: {en: "", fr: "", it: "", sp: "", nl: ""}}
+      main: false
+      standard: 'pe'
       
     $scope.standards = [
             { name: ($translate.instant 'projects.pe'), value: 'pe'},
