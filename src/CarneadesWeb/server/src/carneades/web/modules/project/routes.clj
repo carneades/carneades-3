@@ -100,8 +100,12 @@
   :available-charsets["utf-8"]
   :exists? (fn [_]
              (session-put-language nil)
-             (when-let [arg (get-argument [pid db id] :lang (get-lang))]
-               {::entry arg}))
+             (condp = context
+               "edit" (when-let [arg (get-edit-argument pid db id (get-lang))]
+                        {::entry arg})
+               ;; else
+               (when-let [arg (get-argument [pid db id] :lang (get-lang))]
+                 {::entry arg})))
   :handle-ok ::entry
   :put! (fn [_]
           (put-argument pid db id update))

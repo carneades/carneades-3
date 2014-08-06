@@ -264,7 +264,11 @@
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (when-let [arg (s/get-argument project db id)]
-   (augment-argument arg  project db lang)))
+    (augment-argument arg  project db lang)))
+
+(defn get-edit-argument
+  [project db id lang]
+  (into {} (s/get-argument project db id)))
 
 (defn get-arguments
   [project db lang]
@@ -316,10 +320,7 @@
 
 (defn get-edit-statement
   [project db id lang]
-  (let [stmt (spy (s/get-statement project db id))]
-    (into {} stmt)
-    ;; (augment-statement stmt project db lang true)
-    ))
+  (into {} (s/get-statement project db id)))
 
 (defn put-statement
   [project db id update]
