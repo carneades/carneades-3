@@ -23,9 +23,9 @@
               input(type="number", ng-model="argument.weight", min="0", max="1")
             div(class="form-group")
               label
-                {{'projects.standard' | translate | capitalize:'first'}}
+                {{'projects.scheme' | translate | capitalize:'first'}}
               br
-              select(ng-model='argument.scheme', ng-options="standard.value as standard.name for standard in standards")
+              select(ng-model='schemeId', ng-options="scheme.id as scheme.header.title for scheme in theory.schemes")
             div(class="col-md-8 form-group")
               button(id="save", name="save", class="btn btn-success", ng-click="onSave()", ng-disabled="form.$invalid")
                 {{'projects.save' | translate}}

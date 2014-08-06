@@ -52,10 +52,11 @@ define [
       pro: true
       strict: false
 
-    console.log 'project', project
-    console.log 'tpid', projectInfo.getSchemesProject(project)
-    console.log 'tid', projectInfo.getSchemesName(project)
     $stateParams.tpid = projectInfo.getSchemesProject(project)
     $stateParams.tid = projectInfo.getSchemesName(project)
-    console.log 'theory=', theory.get $stateParams
+
+    $scope.theory = theory.get $stateParams
+
+    $scope.$watch 'schemeId', (newVal) ->
+      $scope.argument.scheme = "(#{newVal})"
   )
