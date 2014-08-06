@@ -12,10 +12,11 @@ define [
   ])
 
   .controller('TheoryCtrl', ($scope, $stateParams, $q, scroll, theory, project) ->
+
     $scope.viewLoading = true
     $scope.stateParams = $stateParams
-    $scope.lang = theory.lang
-    $scope.section = theory
+    $scope.section = theory.get $stateParams
+    $scope.lang = $scope.section.lang
     $scope.project = project
 
     if $stateParams.scrollTo?
