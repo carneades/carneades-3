@@ -1,0 +1,33 @@
+.container.db-creator
+  .row
+    .col-md-12(role='main')
+      .section#home
+        .page-header
+          h1 {{title}}
+          form(name="form", novalidate)
+            metadata-editor(model='statement.header')
+            div(class="form-group")
+              label
+                {{'projects.pro' | translate | capitalize:'first'}}
+              div
+                radio-buttons(model='argument.pro')
+            div(class="form-group")
+              label
+                {{'projects.strict' | translate | capitalize:'first'}}
+              div
+                radio-buttons(model='argument.strict')
+            div(class="form-group")
+              label
+                {{'projects.weight' | translate | capitalize:'first'}}
+              br
+              input(type="number", ng-model="argument.weight", min="0", max="1")
+            div(class="form-group")
+              label
+                {{'projects.standard' | translate | capitalize:'first'}}
+              br
+              select(ng-model='argument.scheme', ng-options="standard.value as standard.name for standard in standards")
+            div(class="col-md-8 form-group")
+              button(id="save", name="save", class="btn btn-success", ng-click="onSave()", ng-disabled="form.$invalid")
+                {{'projects.save' | translate}}
+              button(id="cancel", name="cancel", class="btn btn-danger")
+                {{'projects.cancel' | translate}}

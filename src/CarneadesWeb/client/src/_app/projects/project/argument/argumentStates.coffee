@@ -18,7 +18,24 @@ define [
   ])
 
   .config ($stateProvider) ->
-    states = [{
+    states = [
+      {
+      name: "home.projects.project.createargument"
+      label: "Argument"
+      url: "/:db/arguments/create"
+      data:
+        commands: ['home.projects.project.map','home.projects.project.outline']
+      views:
+        "content@":
+          templateUrl: "projects/project/argument/edit.jade"
+          controller: "ArgumentCreateCtrl"
+          # resolve:
+          #   argument: (ArgumentLoader, $stateParams) ->
+          #     new ArgumentLoader($stateParams)
+          #   project: (ProjectLoader, $stateParams) ->
+          #     new ProjectLoader($stateParams)
+      },
+      {
       name: "home.projects.project.argument"
       label: "Argument"
       url: "/:db/arguments/:aid"

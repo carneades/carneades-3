@@ -5,10 +5,14 @@
 
 define [
   'angular',
-  'angular-translate'
+  'angular-capitalize-filter',
+  'angular-translate',
+  '../../../common/directives/metadata/metadata',
 ], (angular) ->
   angular.module('argument.controllers', [
-    'pascalprecht.translate'
+    'pascalprecht.translate',    
+    'directives.metadata',    
+    'angular-capitalize-filter'
   ])
 
   .controller('ArgumentCtrl', ($scope, argument, project, $translate) ->
@@ -41,4 +45,10 @@ define [
         $translate.instant 'projects.nonstrict_pro_conclusion'
       else if not argument.strict and not argument.pro
         $translate.instant 'projects.nonstrict_con_conclusion'
+  )
+  .controller('ArgumentCreateCtrl', ($scope, $translate) ->
+    $scope.title = $translate.instant 'projects.createargument'
+    $scope.argument =
+      pro: true
+      strict: false
   )

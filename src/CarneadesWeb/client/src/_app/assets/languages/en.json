@@ -92,11 +92,16 @@
 
     "projects.createstatement": "Create statement",
     "projects.editstatement": "Edit statement",
+
+    "projects.createargument": "Create argument",
+    "projects.editargument": "Edit argument",
     
     "projects.true": "true",
     "projects.false": "false",
 
-    "projects.text": "text"
+    "projects.text": "text",
+    "projects.pro": "Pro"
+    
 
     
 }
