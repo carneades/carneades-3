@@ -88,8 +88,8 @@
           ["foreign key(header) references metadata(id)"])
 
         (jdbc/create-table
-          :argument
-          [:id "varchar primary key not null"] ; a URN in the UUID namespace
+         :argument
+         [:id "varchar primary key not null"] ; a URN in the UUID namespace
           [:conclusion "varchar not null"]     ; URN of the conclusion
           [:strict "boolean default false"]
           [:weight "double default 0.50"]
@@ -112,7 +112,7 @@
           ["foreign key(statement) references statement(id)"])
 
         (jdbc/create-table
-          :namespace
+         :namespace
           [:prefix "varchar primary key not null"]
           [:uri    "varchar not null"])
 

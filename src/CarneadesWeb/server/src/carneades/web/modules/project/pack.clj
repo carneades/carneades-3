@@ -11,7 +11,8 @@
         carneades.engine.argument
         carneades.database.db)
   (:require [clojure.string :as str]
-            [carneades.database.argument-graph :as ag]))
+            [carneades.database.argument-graph :as ag]
+            [carneades.engine.uuid :as uuid]))
 
 (defn pack-statement
   [stmt]
@@ -52,6 +53,7 @@
 
 (defn unpack-argument [arg]
   (assoc arg
+    :id (or (:id arg) (uuid/make-urn-symbol))
     :scheme (when (:scheme arg) (symbol (:scheme arg)))
     :conclusion (unpack-statement (:conclusion arg))
     :premises (map (fn [p]

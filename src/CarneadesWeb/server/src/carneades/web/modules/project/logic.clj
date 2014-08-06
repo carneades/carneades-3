@@ -280,6 +280,7 @@
 
 (defn post-argument
   [project db arg]
+  (debug "post-argument")
   (s/post-argument project db arg))
 
 (defn delete-argument
