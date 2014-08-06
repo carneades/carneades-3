@@ -53,7 +53,7 @@
 
 (defn unpack-argument [arg]
   (assoc arg
-    :id (or (:id arg) (uuid/make-urn-symbol))
+    :id (or (:id arg) (uuid/make-urn))
     :scheme (when (:scheme arg) (symbol (:scheme arg)))
     :conclusion (unpack-statement (:conclusion arg))
     :premises (map (fn [p]

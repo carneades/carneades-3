@@ -108,7 +108,7 @@
   [project db arg]
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
-      (ag-db/create-argument (spy (p/unpack-argument arg))))))
+      (ag-db/create-argument (p/unpack-argument arg)))))
 
 (defn delete-argument
   [project db id]
