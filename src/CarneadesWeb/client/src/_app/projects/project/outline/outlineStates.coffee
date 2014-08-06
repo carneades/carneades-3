@@ -34,7 +34,9 @@ define [
             controller: ($scope, $stateParams, scroll, project, tproject, references) ->
               $scope.project = project
               $scope.project.title = project.title
-              $scope.scrollTo = scroll.scrollTo
+              console.log 'scroll', scroll
+              $scope.scrollTo = () ->
+                console.log 'TEST'
 
               getSchemesProject = (project) ->
                 schemes = project.schemes

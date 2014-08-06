@@ -14,16 +14,13 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
     return @
   )
 
-  .controller('AppCtrl', ($scope, $element, $attrs, $stateParams, themeService) ->
+  .controller('AppCtrl', ($scope, $stateParams, themeService) ->
     setTheme = (pid) ->
       $scope.style = if pid is 'markos' then 'simple' else 'emacs'
       themeService.setTheme $scope, pid
 
     $scope.$on '$stateChangeSuccess', ->
       setTheme $stateParams.pid
-
-    $scope.$on '$viewContentLoaded', ->
-      console.log 'LOADED'
 
     setTheme()
 
