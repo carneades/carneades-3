@@ -7,7 +7,7 @@ define [
   'angular',
   'angular-capitalize-filter',
   'angular-translate',
-  '../../../common/directives/metadata/metadata',
+  '../../../common/directives/metadata/metadata'
 ], (angular) ->
   angular.module('argument.controllers', [
     'pascalprecht.translate',    
@@ -46,9 +46,16 @@ define [
       else if not argument.strict and not argument.pro
         $translate.instant 'projects.nonstrict_con_conclusion'
   )
-  .controller('ArgumentCreateCtrl', ($scope, $translate) ->
+  .controller('ArgumentCreateCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo) ->
     $scope.title = $translate.instant 'projects.createargument'
     $scope.argument =
       pro: true
       strict: false
+
+    console.log 'project', project
+    console.log 'tpid', projectInfo.getSchemesProject(project)
+    console.log 'tid', projectInfo.getSchemesName(project)
+    $stateParams.tpid = projectInfo.getSchemesProject(project)
+    $stateParams.tid = projectInfo.getSchemesName(project)
+    console.log 'theory=', theory.get $stateParams
   )

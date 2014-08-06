@@ -6,15 +6,19 @@
 define [
   'angular',
   'angular-translate',
-   './argumentControllers',
-   '../../../common/resources/arguments',
-   '../../../common/resources/projects',
-   '../../../common/directives/evaluation-indicator/evaluation-indicator'
+  './argumentControllers',
+  '../../../common/resources/arguments',
+  '../../../common/resources/projects',   
+  '../../../common/resources/theory',
+  '../../../common/directives/evaluation-indicator/evaluation-indicator',
+  '../../../common/services/projectInfo'
 ], (angular) ->
   angular.module('argument.states', [
     'argument.controllers',
-    'resources.arguments',
-    'directives.evaluationIndicator'
+    'resources.arguments',    
+    'resources.theories',
+    'directives.evaluationIndicator',
+    'services.projectInfo'
   ])
 
   .config ($stateProvider) ->
@@ -29,11 +33,11 @@ define [
         "content@":
           templateUrl: "projects/project/argument/edit.jade"
           controller: "ArgumentCreateCtrl"
-          # resolve:
-          #   argument: (ArgumentLoader, $stateParams) ->
-          #     new ArgumentLoader($stateParams)
-          #   project: (ProjectLoader, $stateParams) ->
-          #     new ProjectLoader($stateParams)
+          resolve:
+            theory: 'Theory'
+            project: (ProjectLoader, $stateParams) ->
+              new ProjectLoader($stateParams)
+            projectInfo: 'projectInfo'
       },
       {
       name: "home.projects.project.argument"
