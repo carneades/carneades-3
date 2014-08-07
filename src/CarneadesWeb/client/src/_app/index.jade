@@ -6,6 +6,7 @@ html(lang='en')
     meta(name='viewport',content='width=device-width, initial-scale=1.0')
     meta(http-equiv='X-UA-Compatible',content='IE=edge')
     link(rel='stylesheet',href='css/layout.css',media='screen')
+    link(rel='stylesheet',href='css/perfect-scrollbar.css',media='screen')
     link(href='http://fonts.googleapis.com/css?family=Open+Sans',rel='stylesheet',type='text/css')
     link(href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css",rel="stylesheet")
 
@@ -35,9 +36,9 @@ html(lang='en')
                     li.bc-default-a
                       a(ng-click='openView(bcTop.name, top.params)',tooltip='{{bcTop.tooltip}}',tooltip-append-to-body='true',tooltip-placement='bottom')
                         {{bcTop.label}}
-                    li
+                    li(ng-show='hasHistory')
                       a
-                        i.fa.fa-chevron-down.font-inc-130(,ng-init='navBcCollapsed = true',ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
+                        i.fa.fa-chevron-down.font-inc-130(ng-init='navBcCollapsed = true',ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
         .row.collapse#mobnavdetails(collapse='navCollapsed',ui-view='mobsubnav',ng-cloak='')
         .row.collapse#mobbcnavdetails(collapse='navBcCollapsed',ng-cloak='')
           ul
@@ -50,8 +51,8 @@ html(lang='en')
           breadcrumb(states='navigatedStates',style='style')
         div#subnav.row(ui-view='subnav',ng-cloak='')
 
-    div(ui-view='content',style='margin-bottom: 4em;',ng-cloak='')
+    div(ui-view='content',ng-cloak='')
 
-    div(ui-view='footer', class='navbar-fixed-bottom',ng-cloak='')
+    div(ui-view='footer',class='navbar-fixed-bottom',ng-cloak='')
 
     script(src='require.js',data-main='main.min.js')

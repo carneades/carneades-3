@@ -22,11 +22,11 @@ define [
         commands: ['home.projects','home.about','home.privacy','home.help','home.admin','home.signin']
       views:
         "css@":
-          template: '<css-inject theme="$stateParams.pid"></css-inject>'
+          template: '<css-inject></css-inject>'
         "banner@":
-          template: '<project-banner theme="$stateParams.pid"></project-banner>'
+          template: '<project-banner></project-banner>'
         "footer@":
-          template: '<project-footer theme="$stateParams.pid"></project-footer>'
+          template: '<project-footer></project-footer>'
         "content@":
           templateUrl: 'home.jade'
         "subnav@":
@@ -40,8 +40,6 @@ define [
       label: "About"
       parent: 'home'
       url: "about"
-      data:
-        commands: []
       views:
         "content@":
           template: "<h1>About</h1>"
@@ -49,8 +47,6 @@ define [
       name: "home.privacy"
       label: "Privacy"
       url: "privacy"
-      data:
-        commands: []
       views:
         "content@":
           template: "<h1>Privacy</h1>"
@@ -58,8 +54,6 @@ define [
       name: "home.help"
       label: "Help"
       url: "help"
-      data:
-        commands: []
       views:
         "content@":
           template: "<h1>Help</h1>"
@@ -67,8 +61,6 @@ define [
       name: "home.admin"
       label: "Admin"
       url: "admin"
-      data:
-        commands: []
       views:
         "content@":
           template: "<h1>Admin</h1>"
@@ -76,8 +68,6 @@ define [
       name: "home.signin"
       label: "Sign in"
       url: "signin"
-      data:
-        commands: []
       views:
         "content@":
           template: "<h1>Sign in</h1>"
