@@ -1,5 +1,9 @@
 ul
-  a(ui-sref='home.projects.project.argument({pid: $stateParams.pid, db: $stateParams.db, aid: node.id})')
-    markdown(ng-model='node.text',strip='true',extensions='carneades')
+  div.breadcrumb(style="font-size:100%;")
+    span.project-root(style="display:inline-block;font-weight:normal;")
+      a(ui-sref='home.projects.project.argument({pid: $stateParams.pid, db: $stateParams.db, aid: node.id})')
+        markdown(ng-model='node.text',strip='true',extensions='carneades')
+    span.seperator &nbsp;/&nbsp;
+    span.fa.fa-plus-square-o.project-new(tooltip="Create a new statement below this argument" tooltip-append-to-body="true" tooltip-placement="bottom", ng-click="openStatementEditor()")
 
   li(ng-repeat='node in node.children',ng-include="'projects/project/outline/outline-statement.jade'")

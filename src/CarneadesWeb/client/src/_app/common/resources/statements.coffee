@@ -29,7 +29,7 @@ define ["angular", "angular-resource"], (angular) ->
 
 
   services.factory "MultiStatementLoader", (Statement, $q) ->
-    ->
+    return () ->
       delay = $q.defer()
       Statement.query ((statement) ->
         delay.resolve statement
@@ -39,7 +39,7 @@ define ["angular", "angular-resource"], (angular) ->
       delay.promise
 
   services.factory "StatementLoader", (Statement, $q) ->
-    (params) ->
+    return (params) ->
       delay = $q.defer()
       Statement.get params, ((statement) ->
         delay.resolve statement
