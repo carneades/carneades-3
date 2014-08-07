@@ -9,9 +9,9 @@ define [
   'angular-translate',
   '../../../common/directives/metadata/metadata'
 ], (angular) ->
-  angular.module('argument.controllers', [
-    'pascalprecht.translate',    
-    'directives.metadata',    
+  angular.module('arguments.controllers', [
+    'pascalprecht.translate',
+    'directives.metadata',
     'angular-capitalize-filter'
   ])
 
@@ -49,7 +49,7 @@ define [
   .controller('ArgumentCreateCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements, argumentcreate) ->
     $scope.title = $translate.instant 'projects.createargument'
     $scope.statements = statements.query $stateParams
-    
+
     $scope.argument =
       pro: true
       strict: false

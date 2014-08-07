@@ -6,18 +6,18 @@
 define [
   'angular',
   'angular-translate',
-  './argumentControllers',
+  './argumentsControllers',
   '../../../common/resources/arguments',
   '../../../common/resources/statements',
-  '../../../common/resources/projects',   
+  '../../../common/resources/projects',
   '../../../common/resources/theory',
   '../../../common/directives/evaluation-indicator/evaluation-indicator',
   '../../../common/services/projectInfo'
 ], (angular) ->
-  angular.module('argument.states', [
-    'argument.controllers',
+  angular.module('arguments.states', [
+    'arguments.controllers',
     'resources.arguments',
-    'resources.statements',    
+    'resources.statements',
     'resources.theories',
     'directives.evaluationIndicator',
     'services.projectInfo'
@@ -26,43 +26,47 @@ define [
   .config ($stateProvider) ->
     states = [
       {
-      name: "home.projects.project.createargument"
+        name: "home.projects.project.arguments"
+        abstract: true
+        url: "/:db/arguments"
+        resolve:
+          project: (ProjectLoader, $stateParams) ->
+            return new ProjectLoader($stateParams)
+      },
+      {
+      name: "home.projects.project.arguments.new"
       label: "Argument"
-      url: "/:db/arguments/create"
+      url: "/new"
       data:
         commands: ['home.projects.project.map','home.projects.project.outline']
       views:
         "content@":
-          templateUrl: "projects/project/argument/edit.jade"
-          controller: "ArgumentCreateCtrl"
+          templateUrl: "projects/project/arguments/edit.jade"
+          controller: "ArgumentNewCtrl"
           resolve:
             theory: 'Theory'
-            project: (ProjectLoader, $stateParams) ->
-              new ProjectLoader($stateParams)
             projectInfo: 'projectInfo'
             statements: 'Statements'
             argumentcreate: 'ArgumentCreate'
 
       },
       {
-      name: "home.projects.project.argument"
+      name: "home.projects.project.arguments.argument"
       label: "Argument"
-      url: "/:db/arguments/:aid"
+      url: "/:aid"
       data:
         commands: ['home.projects.project.map','home.projects.project.outline']
       views:
         "content@":
-          templateUrl: "projects/project/argument/view.jade"
+          templateUrl: "projects/project/arguments/view.jade"
           controller: "ArgumentCtrl"
           resolve:
             argument: (ArgumentLoader, $stateParams) ->
               new ArgumentLoader($stateParams)
-            project: (ProjectLoader, $stateParams) ->
-              new ProjectLoader($stateParams)
       }
     ,
       {
-      name: "home.projects.project.argument.edit"
+      name: "home.projects.project.arguments.argument.edit"
       url: "/edit"
       data:
         commands: []
@@ -70,7 +74,7 @@ define [
         "nav@":
           template: "<bc-navigation></bc-navigation>"
         "content@":
-          templateUrl: "projects/project/argument/edit.jade"
+          templateUrl: "projects/project/arguments/edit.jade"
           controller: "ArgumentEditCtrl"
       }
     ]

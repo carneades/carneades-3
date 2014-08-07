@@ -5,12 +5,11 @@
 
 define [
   'angular',
-  'angular-translate',
-  './statementStates',
-  './statementControllers'
+  './argumentsStates',
+  './argumentsControllers'
 ], (angular) ->
   "use strict"
-  angular.module 'statement.module', [
-    'statement.controllers',
-    'statement.states'
+  angular.module 'arguments.module', [
+    'arguments.controllers',
+    'arguments.states'
   ]

@@ -10,12 +10,12 @@ define [
   '../../../common/directives/radio-buttons/radio-buttons',
   '../../../common/directives/multilang-textarea/multilang-textarea',
 ], (angular) ->
-  angular.module('statement.controllers', [
+  angular.module('statements.controllers', [
     'pascalprecht.translate',
     'directives.properties',
     'directives.metadata',
     'directives.radioButtons',
-    'directives.multilangTextarea'    
+    'directives.multilangTextarea'
   ])
 
   .controller('StatementCtrl', ($scope, $translate, statement, project) ->
@@ -53,7 +53,7 @@ define [
       header: {description: {en: "", fr: "", it: "", sp: "", nl: ""}}
       main: false
       standard: 'pe'
-      
+
     $scope.standards = [
             { name: ($translate.instant 'projects.pe'), value: 'pe'},
             { name: ($translate.instant 'projects.dv'), value: 'dv'},
@@ -66,7 +66,7 @@ define [
       statementcreate.save($stateParams, $scope.statement)
   )
   .controller('StatementEditCtrl', ($scope, $translate, $stateParams, statementedit) ->
-    
+
     $scope.title = $translate.instant 'projects.editstatement'
     $scope.statement = statementedit.get($stateParams)
     $scope.standards = [
@@ -75,7 +75,7 @@ define [
             { name: ($translate.instant 'projects.cce'), value: 'cce'},
             { name: ($translate.instant 'projects.brd'), value: 'brd'}
           ]
-      
+
     $scope.onSave = () ->
       console.log 'statement', $scope.statement
       statementedit.update($stateParams, $scope.statement)

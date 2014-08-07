@@ -15,13 +15,13 @@
             {{p.role}}.
           span(ng-show="!p.positive")
             span {{'projects.negative_premise' | translate}}
-          a(ui-sref='home.projects.project.statement({pid: pid, db: db, sid: p.id})')
+          a(ui-sref='home.projects.project.statements.statement({pid: pid, db: db, sid: p.id})')
             {{p.text}}
 
     div
       .conclusion-indication
         {{conclusion_text}}
-      a.conclusion-text(ui-sref='home.projects.project.statement({pid: pid, db: db, sid: argument.conclusion.id})')
+      a.conclusion-text(ui-sref='home.projects.project.statements.statement({pid: pid, db: db, sid: argument.conclusion.id})')
         {{argument.conclusion.text}}
 
     br

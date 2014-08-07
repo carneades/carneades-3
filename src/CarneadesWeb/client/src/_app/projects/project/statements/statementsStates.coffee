@@ -5,11 +5,11 @@
 define [
   'angular',
   'angular-capitalize-filter',
-  './statementControllers',
+  './statementsControllers',
   '../../../common/resources/statements'
 ], (angular) ->
-  angular.module('statement.states', [
-    'statement.controllers',
+  angular.module('statements.states', [
+    'statements.controllers',
     'resources.statements',
     'angular-capitalize-filter'
   ])
@@ -17,43 +17,48 @@ define [
   .config ($stateProvider) ->
     states = [
       {
-      name: 'home.projects.project.createstatement'
+        name: 'home.projects.project.statements'
+        abstract: true
+        url: '/:db/statements'
+        resolve:
+          statement: (StatementLoader, $stateParams) ->
+            new StatementLoader($stateParams)
+          project: (ProjectLoader, $stateParams) ->
+            new ProjectLoader($stateParams)
+      },
+      {
+      name: 'home.projects.project.statements.new'
       label: 'Create statement'
-      url: '/:db/statements/create'
+      url: '/create'
       data:
         commands: ['home.projects.project.map','home.projects.project.outline']
       views:
         'content@':
-          templateUrl: 'projects/project/statement/edit.jade'
+          templateUrl: 'projects/project/statements/edit.jade'
           controller: 'StatementCreateCtrl'
           resolve:
             statementcreate: 'StatementCreate'
       },
       {
-      name: 'home.projects.project.statement'
+      name: 'home.projects.project.statements.statement'
       label: 'Statement'
-      url: '/:db/statements/:sid'
+      url: '/:sid'
       data:
         commands: ['home.projects.project.map','home.projects.project.outline']
-      views: 
+      views:
         'content@':
-          templateUrl: 'projects/project/statement/view.jade'
+          templateUrl: 'projects/project/statements/view.jade'
           controller: 'StatementCtrl'
-          resolve:
-            statement: (StatementLoader, $stateParams) ->
-              new StatementLoader($stateParams)
-            project: (ProjectLoader, $stateParams) ->
-              new ProjectLoader($stateParams)
       },
       {
-      name: 'home.projects.project.statement.edit'
+      name: 'home.projects.project.statements.statement.edit'
       label: 'Edit statement'
       url: '/edit'
       data:
         commands: ['home.projects.project.map','home.projects.project.outline']
       views:
         'content@':
-          templateUrl: 'projects/project/statement/edit.jade'
+          templateUrl: 'projects/project/statements/edit.jade'
           controller: 'StatementEditCtrl'
           resolve:
             statementedit: 'StatementEdit'

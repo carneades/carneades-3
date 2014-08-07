@@ -31,10 +31,15 @@ define [
         views:
           "content@":
             templateUrl: 'projects/project/outline/outline-main.jade'
-            controller: ($scope, $stateParams, scroll, project, tproject, references) ->
+            controller: ($scope, $state, $stateParams, scroll, project, tproject, references) ->
               $scope.project = project
               $scope.project.title = project.title
               $scope.scrollTo = scroll.scrollTo
+              $scope.openArgumentEditor = (aid) ->
+                $state.transitionTo 'home.projects.project.arguments.new', {aid: aid}
+
+              $scope.openStatementEditor = (sid) ->
+                $state.transitionTo 'home.projects.project.statements.new', {sid: sid}
 
               getSchemesProject = (project) ->
                 schemes = project.schemes

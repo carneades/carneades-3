@@ -8,8 +8,8 @@ define [
   './projectStates',
   './outline/outlineModule',
   './map/mapModule',
-  './statement/statementModule',
-  './argument/argumentModule',
+  './statements/statementsModule',
+  './arguments/argumentsModule',
   './theory/theoryModule'
 ], (angular) ->
   "use strict"
@@ -17,7 +17,7 @@ define [
     'project.states',
     'outline.module',
     'map.module',
-    'statement.module',
-    'argument.module',
+    'statements.module',
+    'arguments.module',
     'theory.module'
   ]
