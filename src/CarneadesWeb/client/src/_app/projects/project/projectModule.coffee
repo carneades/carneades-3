@@ -10,8 +10,7 @@ define [
   './map/mapModule',
   './statement/statementModule',
   './argument/argumentModule',
-  './theory/theoryModule',
-  './ag/agModule'
+  './theory/theoryModule'
 ], (angular) ->
   "use strict"
   angular.module 'project.module', [
@@ -20,6 +19,5 @@ define [
     'map.module',
     'statement.module',
     'argument.module',
-    'theory.module',
-    'ag.module'
+    'theory.module'
   ]

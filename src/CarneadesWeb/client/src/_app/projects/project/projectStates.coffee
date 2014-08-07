@@ -5,10 +5,16 @@
 
 define [
   'angular',
-  '../../common/resources/projects'
+  'angular-translate'
+  '../../common/resources/projects',
+  '../../common/directives/metadata-editor/metadata-editor',
+  '../../common/resources/ag'
 ], (angular) ->
   angular.module('project.states', [
-    'resources.projects'
+    'resources.projects',
+    'resources.ag',
+    'directives.metadataEditor',
+    'pascalprecht.translate'
   ])
 
   .config ($stateProvider) ->
@@ -21,15 +27,40 @@ define [
       views:
         "content@":
           templateUrl: 'projects/project/project.jade'
-          controller: ($scope, project) ->
+          controller: ($scope, $state, $stateParams, project) ->
             $scope.project = project
             $scope.$stateParams.mid = 1
             $scope.$stateParams.db = 'main'
             $scope.$stateParams.nid = 1
             $scope.$state.$current.self.tooltip = project.title
+            $scope.open = () ->
+              $state.transitionTo 'home.projects.project.create', {pid: $stateParams.pid}
           resolve:
             project: ($stateParams, ProjectLoader) ->
-              new ProjectLoader($stateParams)
+              return new ProjectLoader($stateParams)
+    ,
+      name: 'home.projects.project.create'
+      url: '/create'
+      label: "Create argument graph"
+      views:
+        "content@":
+          templateUrl: 'projects/project/newArgGraph.jade'
+          controller: ($scope, $state, $stateParams, ag) ->
+            $scope.ag =
+              name: "",
+              header:
+                description: {en: "", de: "", fr: "", it: "", sp: "", nl: ""},
+                title: ""
+
+            $scope.onSave = () ->
+              ag.save($stateParams, $scope.ag).$promise.then(
+                (v) ->
+                  $state.transitionTo 'home.projects.project.outline', {pid: $stateParams.pid, db: $scope.ag.name}
+                (e) ->
+                  console.log 'error', e
+              )
+          resolve:
+            ag: 'Ag'
     ]
 
     angular.forEach states, (state) ->

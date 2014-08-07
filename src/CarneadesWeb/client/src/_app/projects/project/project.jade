@@ -2,6 +2,8 @@
   .row
     .col-md-9(role='main')
       .section#overview
-        .page-header
-          h1 {{project.title}}
+        .page-header.breadcrumb
+          span.project-root {{project.title}}
+          span.seperator &nbsp;/&nbsp;
+          span.fa.fa-plus-square-o.project-new(tooltip="Create a new argument graph within this project" tooltip-append-to-body="true" tooltip-placement="right", ng-click="open()")
         markdown(strip='true', ng-model='project.description')

@@ -203,3 +203,25 @@
   }
 }
 }
+
+.breadcrumb {
+  padding: 0;
+  background-color: #fff;
+  border-radius: 0;
+  font-size: 160%;
+
+  .project-root {
+    font-weight: bold;
+  }
+
+  .seperator {
+    color: $navbar-bg;
+  }
+
+  .project-new {
+    font-size: 80%;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

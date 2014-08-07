@@ -18,8 +18,6 @@ define [
       name: 'home.projects'
       label: 'Projects'
       url: 'projects'
-      data:
-        commands: []
       views:
         "content@":
           templateUrl: 'projects/list.jade'
