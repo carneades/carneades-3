@@ -279,7 +279,7 @@
 
 (defroutes carneades-projects-api-routes
   (ANY "/" [] (list-project-resource))
-  
+
   (context "/:pid" [pid]
     (ANY "/" req (project-resource pid
                                    (-> req :params :entity)
@@ -327,11 +327,10 @@
                                             (-> req :params :aid)
                                             (-> req :params :context)
                                             (:body req))))
-      
+
       (context "/nodes" []
         (ANY "/" [] (list-node-resource pid db))
         (ANY "/:nid" [nid] (node-resource pid db nid)))
 
       (context "/map" []
         (ANY "/" [] (map-resource pid db))))))
-

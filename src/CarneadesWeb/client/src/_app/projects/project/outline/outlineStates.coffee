@@ -35,11 +35,11 @@ define [
               $scope.project = project
               $scope.project.title = project.title
               $scope.scrollTo = scroll.scrollTo
-              $scope.openArgumentEditor = (aid) ->
-                $state.transitionTo 'home.projects.project.arguments.new', {aid: aid}
+              $scope.openArgumentEditor = (sid) ->
+                $state.transitionTo 'home.projects.project.arguments.new', {sid: sid}
 
-              $scope.openStatementEditor = (sid) ->
-                $state.transitionTo 'home.projects.project.statements.new', {sid: sid}
+              $scope.openStatementEditor = (aid) ->
+                $state.transitionTo 'home.projects.project.statements.new', {aid: aid}
 
               getSchemesProject = (project) ->
                 schemes = project.schemes

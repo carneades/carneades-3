@@ -21,10 +21,8 @@ define [
         abstract: true
         url: '/:db/statements'
         resolve:
-          statement: (StatementLoader, $stateParams) ->
-            new StatementLoader($stateParams)
           project: (ProjectLoader, $stateParams) ->
-            new ProjectLoader($stateParams)
+            return new ProjectLoader $stateParams
       },
       {
       name: 'home.projects.project.statements.new'
@@ -49,6 +47,9 @@ define [
         'content@':
           templateUrl: 'projects/project/statements/view.jade'
           controller: 'StatementCtrl'
+          resolve:
+            statement: (StatementLoader, $stateParams) ->
+              return new StatementLoader $stateParams
       },
       {
       name: 'home.projects.project.statements.statement.edit'

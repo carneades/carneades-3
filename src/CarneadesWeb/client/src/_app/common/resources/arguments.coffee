@@ -10,15 +10,17 @@ define [
   services = angular.module('resources.arguments', ['ngResource'])
 
   services.factory "Argument", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/arguments/:aid",
+    url = []
+    url.push $location.protocol()
+    url.push "://"
+    url.push $location.host()
+    url.push ":"
+    url.push $location.port()
+    url.push "/carneades/api/projects/:pid/:db/arguments/:aid"
+    $resource url.join '',
       pid: "@pid"
       db: "@db"
       aid: "@aid"
-
-  services.factory 'ArgumentCreate', ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/arguments/",
-      pid: "@pid"
-      db: "@db"
 
   services.factory "MultiArgumentLoader", (Argument, $q) ->
     ->
@@ -39,5 +41,5 @@ define [
         delay.reject "Unable to fetch argument!"
 
       delay.promise
-
+ 
   services

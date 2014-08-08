@@ -42,11 +42,13 @@ define [
       views:
         "content@":
           templateUrl: "projects/project/arguments/edit.jade"
-          controller: "ArgumentNewCtrl"
+          controller: ($scope, statements) ->
+            undefined
           resolve:
             theory: 'Theory'
             projectInfo: 'projectInfo'
-            statements: 'Statements'
+            statements: (MultiStatementLoader) ->
+              return new MultiStatementLoader()
             argumentcreate: 'ArgumentCreate'
 
       },
