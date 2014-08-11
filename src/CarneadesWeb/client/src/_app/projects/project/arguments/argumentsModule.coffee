@@ -6,10 +6,10 @@
 define [
   'angular',
   './argumentsStates',
-  './argumentsControllers'
+  './argument/argumentModule'
 ], (angular) ->
   "use strict"
   angular.module 'arguments.module', [
-    'arguments.controllers',
-    'arguments.states'
+    'arguments.states',
+    'argument.module'
   ]

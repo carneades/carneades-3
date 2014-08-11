@@ -3,20 +3,28 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-define ["angular", "angular-resource"], (angular) ->
+define [
+  "angular",
+  "angular-resource",
+  '../services/app'
+  ], (angular) ->
   "use strict"
-  services = angular.module("resources.map", ["ngResource"])
-  services.factory "Map", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/map",
-      pid: "@pid"
-      db: "@db"
-    ,
-      get:
-        method: "GET"
-        isArray: false
+  return angular.module("resources.map", [
+    "ngResource", 'app.helper'
 
-  services.factory "MapLoader", (Map, $q) ->
-    (params) ->
+  ])
+
+  .factory "Map", (urlService) ->
+    url = "/projects/:pid/:db/map"
+    params = pid: "@pid", db: "@db"
+    methods = get:
+      method: "GET"
+      isArray: false
+
+    return urlService.$resource url, params, methods
+
+  .factory "MapLoader", (Map, $q) ->
+    return (params) ->
       delay = $q.defer()
       Map.get params, ((args) ->
         delay.resolve args

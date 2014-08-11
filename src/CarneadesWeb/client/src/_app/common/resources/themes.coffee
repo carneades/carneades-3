@@ -4,15 +4,22 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-resource"], (angular) ->
+define [
+  "angular",
+  "angular-resource",
+  '../services/app'
+  ], (angular) ->
   "use strict"
-  services = angular.module("resources.themes", ["ngResource"])
-  services.factory "Theme", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/theme/:did",
-      pid: "@pid"
-      did: "@did"
+  return angular.module("resources.themes", [
+    "ngResource", 'app.helper'
+  ])
 
-  services.factory "ThemeLoader", (Theme, $q) ->
+  .factory "Theme", (urlService) ->
+    url = "/projects/:pid/theme/:did"
+    params = pid: "@pid", did: "@did"
+    return urlService.$resource url, params
+    
+  .factory "ThemeLoader", (Theme, $q) ->
     (params) ->
       delay = $q.defer()
       Theme.get params, ((theme) ->
@@ -21,5 +28,3 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch theme"
 
       delay.promise
-
-  services

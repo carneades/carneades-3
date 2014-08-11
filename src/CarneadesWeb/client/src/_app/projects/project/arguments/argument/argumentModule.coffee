@@ -5,11 +5,9 @@
 
 define [
   'angular',
-  './statementsStates',
-  './statement/statementModule'
+  './argumentStates'
 ], (angular) ->
   "use strict"
-  angular.module 'statements.module', [
-    'statements.states',
-    'statement.module'
+  angular.module 'argument.module', [
+    'argument.states'
   ]

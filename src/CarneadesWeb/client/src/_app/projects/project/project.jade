@@ -5,5 +5,5 @@
         .page-header.breadcrumb
           span.project-root {{project.title}}
           span.seperator &nbsp;/&nbsp;
-          span.fa.fa-plus-square-o.project-new(tooltip="Create a new argument graph within this project" tooltip-append-to-body="true" tooltip-placement="right", ng-click="open()")
+          span.fa.fa-plus-square-o.project-new(tooltip="Create a new argument graph within this project" tooltip-append-to-body="true" tooltip-placement="right", ng-click="newArgumentGraph()")
         markdown(strip='true', ng-model='project.description')

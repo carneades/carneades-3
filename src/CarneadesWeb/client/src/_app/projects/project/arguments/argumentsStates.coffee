@@ -7,16 +7,13 @@ define [
   'angular',
   'angular-translate',
   './argumentsControllers',
-  '../../../common/resources/arguments',
   '../../../common/resources/statements',
-  '../../../common/resources/projects',
   '../../../common/resources/theory',
-  '../../../common/directives/evaluation-indicator/evaluation-indicator',
+  '../../../common/directives/evaluation-indicator/evaluation-indicator'
   '../../../common/services/projectInfo'
 ], (angular) ->
   angular.module('arguments.states', [
     'arguments.controllers',
-    'resources.arguments',
     'resources.statements',
     'resources.theories',
     'directives.evaluationIndicator',
@@ -25,15 +22,13 @@ define [
 
   .config ($stateProvider) ->
     states = [
-      {
-        name: "home.projects.project.arguments"
-        abstract: true
-        url: "/:db/arguments"
-        resolve:
-          project: (ProjectLoader, $stateParams) ->
-            return new ProjectLoader($stateParams)
-      },
-      {
+      name: "home.projects.project.arguments"
+      abstract: true
+      url: "/:db/arguments"
+      resolve:
+        project: (ProjectLoader, $stateParams) ->
+          return new ProjectLoader $stateParams
+    ,
       name: "home.projects.project.arguments.new"
       label: "Argument"
       url: "/new"
@@ -41,44 +36,13 @@ define [
         commands: ['home.projects.project.map','home.projects.project.outline']
       views:
         "content@":
-          templateUrl: "projects/project/arguments/edit.jade"
-          controller: ($scope, statements) ->
-            undefined
+          templateUrl: "projects/project/arguments/argument/edit.jade"
+          controller: 'ArgumentNewCtrl'
           resolve:
             theory: 'Theory'
             projectInfo: 'projectInfo'
             statements: (MultiStatementLoader) ->
               return new MultiStatementLoader()
-            argumentcreate: 'ArgumentCreate'
-
-      },
-      {
-      name: "home.projects.project.arguments.argument"
-      label: "Argument"
-      url: "/:aid"
-      data:
-        commands: ['home.projects.project.map','home.projects.project.outline']
-      views:
-        "content@":
-          templateUrl: "projects/project/arguments/view.jade"
-          controller: "ArgumentCtrl"
-          resolve:
-            argument: (ArgumentLoader, $stateParams) ->
-              new ArgumentLoader($stateParams)
-      }
-    ,
-      {
-      name: "home.projects.project.arguments.argument.edit"
-      url: "/edit"
-      data:
-        commands: []
-      views:
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
-        "content@":
-          templateUrl: "projects/project/arguments/edit.jade"
-          controller: "ArgumentEditCtrl"
-      }
     ]
 
     angular.forEach states, (state) ->

@@ -4,15 +4,22 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-resource"], (angular) ->
+define [
+  "angular",
+  "angular-resource",
+  '../services/app'
+  ], (angular) ->
   "use strict"
-  services = angular.module("resources.outline.issues", ["ngResource"])
-  services.factory "Issue", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/outline/issues",
-      pid: "@pid"
-      db: "@db"
+  return angular.module("resources.outline.issues", [
+    "ngResource", 'app.helper'
+  ])
 
-  services.factory "MultiIssueLoader", (Issue, $q) ->
+  .factory "Issue", (urlService) ->
+    url = '/projects/:pid/:db/outline/issues'
+    params = pid: "@pid", db: "@db"
+    return urlService.$resource url, params
+    
+  .factory "MultiIssueLoader", (Issue, $q) ->
     (params) ->
       delay = $q.defer()
       Issue.query params, ((issue) ->
@@ -21,5 +28,3 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch issue"
 
       delay.promise
-
-  return services

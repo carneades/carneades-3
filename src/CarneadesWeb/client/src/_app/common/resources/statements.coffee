@@ -3,21 +3,24 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-define ["angular", "angular-resource"], (angular) ->
+define [
+  "angular",
+  "angular-resource",
+  '../services/app'
+  ], (angular) ->
   "use strict"
-  services = angular.module("resources.statements", ["ngResource"])
-  services.factory "Statement", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/statements/:sid",
-      pid: "@pid"
-      db: "@db"
-      sid: "@sid"
+  return angular.module("resources.statements", [
+    "ngResource", 'app.helper'
+  ])
 
-  services.factory "StatementEdit", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/statements/:sid?context=edit",
-    {pid: "@pid", db: "@db", sid: "@sid"},
-    {update: {method: 'PUT'}}
+  .factory "Statement", (urlService) ->
+    url = '/projects/:pid/:db/statements/:sid'
+    params = pid: "@pid", db: "@db", sid: "@sid"
+    methods = update:
+      method: 'PUT'
+    return urlService.$resource url, params, methods
 
-  services.factory "MultiStatementLoader", (Statement, $q) ->
+  .factory "MultiStatementLoader", (Statement, $q) ->
     return () ->
       delay = $q.defer()
       Statement.query ((statement) ->
@@ -27,7 +30,7 @@ define ["angular", "angular-resource"], (angular) ->
 
       delay.promise
 
-  services.factory "StatementLoader", (Statement, $q) ->
+  .factory "StatementLoader", (Statement, $q) ->
     return (params) ->
       delay = $q.defer()
       Statement.get params, ((statement) ->
@@ -36,5 +39,3 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch Statement!"
 
       delay.promise
-
-  services

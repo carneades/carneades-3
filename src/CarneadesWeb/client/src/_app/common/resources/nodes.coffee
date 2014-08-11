@@ -4,18 +4,23 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-resource"], (angular) ->
+define [
+  "angular",
+  "angular-resource",
+  '../services/app'
+  ], (angular) ->
   "use strict"
-  services = angular.module("resources.nodes", ["ngResource"])
-  services.factory "Node", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/nodes/:nid",
-      pid: "@pid"
-      db: "@db"
-      nid: "@nid"
+  return angular.module("resources.nodes", [
+    'ngResource', 'app.helper'
+  ])
 
+  .factory "Node", (urlService) ->
+    url = '/projects/:pid/:db/nodes/:nid'
+    params = pid: "@pid", db: "@db", nid: "@nid"
+    return urlService.$resource url, params
 
-  services.factory "MultiNodeLoader", (Node, $q) ->
-    ->
+  .factory "MultiNodeLoader", (Node, $q) ->
+    return () ->
       delay = $q.defer()
       Node.query ((nodes) ->
         delay.resolve nodes
@@ -24,8 +29,8 @@ define ["angular", "angular-resource"], (angular) ->
 
       delay.promise
 
-  services.factory "NodeLoader", (Node, $q) ->
-    (params) ->
+  .factory "NodeLoader", (Node, $q) ->
+    return (params) ->
       delay = $q.defer()
       Node.get params, ((node) ->
         delay.resolve node
@@ -33,5 +38,3 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch argument!"
 
       delay.promise
-
-  services

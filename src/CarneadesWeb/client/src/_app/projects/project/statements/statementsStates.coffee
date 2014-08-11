@@ -16,54 +16,22 @@ define [
 
   .config ($stateProvider) ->
     states = [
-      {
-        name: 'home.projects.project.statements'
-        abstract: true
-        url: '/:db/statements'
-        resolve:
-          project: (ProjectLoader, $stateParams) ->
-            return new ProjectLoader $stateParams
-      },
-      {
+      name: 'home.projects.project.statements'
+      abstract: true
+      url: '/:db/statements'
+      resolve:
+        project: (ProjectLoader, $stateParams) ->
+          return new ProjectLoader $stateParams
+    ,
       name: 'home.projects.project.statements.new'
       label: 'Create statement'
-      url: '/create'
+      url: '/new'
       data:
         commands: ['home.projects.project.map','home.projects.project.outline']
       views:
         'content@':
           templateUrl: 'projects/project/statements/edit.jade'
-          controller: 'StatementCreateCtrl'
-          resolve:
-            statementcreate: 'StatementCreate'
-      },
-      {
-      name: 'home.projects.project.statements.statement'
-      label: 'Statement'
-      url: '/:sid'
-      data:
-        commands: ['home.projects.project.map','home.projects.project.outline']
-      views:
-        'content@':
-          templateUrl: 'projects/project/statements/view.jade'
-          controller: 'StatementCtrl'
-          resolve:
-            statement: (StatementLoader, $stateParams) ->
-              return new StatementLoader $stateParams
-      },
-      {
-      name: 'home.projects.project.statements.statement.edit'
-      label: 'Edit statement'
-      url: '/edit'
-      data:
-        commands: ['home.projects.project.map','home.projects.project.outline']
-      views:
-        'content@':
-          templateUrl: 'projects/project/statements/edit.jade'
-          controller: 'StatementEditCtrl'
-          resolve:
-            statementedit: 'StatementEdit'
-      }
+          controller: 'StatementNewCtrl'
     ]
 
     angular.forEach states, (state) ->

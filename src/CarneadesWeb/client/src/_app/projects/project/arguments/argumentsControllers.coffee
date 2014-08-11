@@ -15,38 +15,7 @@ define [
     'angular-capitalize-filter'
   ])
 
-  .controller('ArgumentCtrl', ($scope, argument, project, $translate) ->
-    $scope.argument = argument
-    $scope.argument.valueText =
-      if $scope.argument.value <= 0.25
-        $translate.instant 'projects.argument.value.unacceptable'
-      else if $scope.argument.value >= 0.75
-        $translate.instant 'projects.argument.value.acceptable'
-      else
-        $translate.instant 'projects.argument.value.unclear'
-
-    $scope.pid = $scope.$stateParams.pid
-    $scope.db = $scope.$stateParams.db
-
-    $scope.headerIsEmpty = (v for k,v of argument.header when v?).length == 0
-
-    $scope.project = project
-    if argument.scheme
-      $scope.$state.$current.self.tooltip = argument.scheme.header.title
-    else
-      $scope.$state.$current.self.tooltip = argument.id
-
-    $scope.conclusion_text =
-      if argument.strict and argument.pro
-        $translate.instant 'projects.strict_pro_conclusion'
-      else if argument.strict and not argument.pro
-        $translate.instant 'projects.strict_con_conclusion'
-      else if not argument.strict and argument.pro
-        $translate.instant 'projects.nonstrict_pro_conclusion'
-      else if not argument.strict and not argument.pro
-        $translate.instant 'projects.nonstrict_con_conclusion'
-  )
-  .controller('ArgumentCreateCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements, argumentcreate) ->
+  .controller('ArgumentNewCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements, argumentcreate) ->
     $scope.title = $translate.instant 'projects.createargument'
     $scope.statements = statements.query $stateParams
 
@@ -66,5 +35,5 @@ define [
 
     $scope.onSave = ->
       console.log 'argument', $scope.argument
-      argumentcreate.save $stateParams, $scope.argument
+      #argumentcreate.save $stateParams, $scope.argument
   )

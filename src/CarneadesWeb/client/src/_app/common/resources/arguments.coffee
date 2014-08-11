@@ -4,26 +4,21 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 define [
   "angular",
-  "angular-resource"
+  "angular-resource",
+  '../services/app'
 ], (angular) ->
   "use strict"
-  services = angular.module('resources.arguments', ['ngResource'])
+  return angular.module('resources.arguments', [
+    'ngResource', 'app.helper'
+  ])
 
-  services.factory "Argument", ($resource, $location) ->
-    url = []
-    url.push $location.protocol()
-    url.push "://"
-    url.push $location.host()
-    url.push ":"
-    url.push $location.port()
-    url.push "/carneades/api/projects/:pid/:db/arguments/:aid"
-    $resource url.join '',
-      pid: "@pid"
-      db: "@db"
-      aid: "@aid"
-
-  services.factory "MultiArgumentLoader", (Argument, $q) ->
-    ->
+  .factory "Argument", (urlService) ->
+    url = '/projects/:pid/:db/arguments/:aid'
+    params = pid: "@pid", db: "@db", aid: "@aid"
+    return urlService.$resource url, params
+    
+  .factory "MultiArgumentLoader", (Argument, $q) ->
+    return () ->
       delay = $q.defer()
       Argument.query ((args) ->
         delay.resolve args
@@ -32,8 +27,8 @@ define [
 
       delay.promise
 
-  services.factory "ArgumentLoader", (Argument, $q) ->
-    (params) ->
+  .factory "ArgumentLoader", (Argument, $q) ->
+    return (params) ->
       delay = $q.defer()
       Argument.get params, ((arg) ->
         delay.resolve arg
@@ -41,5 +36,3 @@ define [
         delay.reject "Unable to fetch argument!"
 
       delay.promise
- 
-  services

@@ -3,11 +3,16 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-define ["angular", "angular-resource"], (angular) ->
-  services = angular.module('resources.theories', ['ngResource'])
+define [
+  "angular",
+  "angular-resource",
+  '../services/app'
+  ], (angular) ->
+  return angular.module('resources.theories', [
+    'ngResource', 'app.helper'
+  ])
 
-  services.factory 'Theory', ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/theories/:tpid/:tid?translate=t",
-      pid: '@pid',
-      tpid: '@tpid',
-      tid: '@tid'
+  .factory 'Theory', (urlService) ->
+    url = "/projects/:pid/theories/:tpid/:tid?translate=t"
+    params = pid: '@pid', tpid: '@tpid', tid: '@tid'
+    return urlService.$resource url, params

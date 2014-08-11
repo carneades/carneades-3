@@ -4,17 +4,23 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-resource"], (angular) ->
+define [
+  "angular",
+  "angular-resource",
+  '../services/app'
+  ], (angular) ->
   "use strict"
-  services = angular.module("resources.metadata", ["ngResource"])
-  services.factory "Metadata", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/metadata/:mid",
-      pid: "@pid"
-      db: "@db"
-      mid: "@mid"
+  return angular.module("resources.metadata", [
+    "ngResource", 'app.helper'
+  ])
 
-  services.factory "MultiMetadataLoader", (Metadata, $q) ->
-    (params) ->
+  .factory "Metadata", ($resource, $location) ->
+    url = '/projects/:pid/:db/metadata/:mid'
+    params = pid: "@pid", db: "@db", mid: "@mid"
+    return urlService.$resource url, params
+
+  .factory "MultiMetadataLoader", (Metadata, $q) ->
+    return (params) ->
       delay = $q.defer()
       Metadata.query params, ((metadata) ->
         delay.resolve metadata
@@ -23,8 +29,8 @@ define ["angular", "angular-resource"], (angular) ->
 
       delay.promise
 
-  services.factory "MetadataLoader", (Metadata, $q) ->
-    (params) ->
+  .factory "MetadataLoader", (Metadata, $q) ->
+    return (params) ->
       delay = $q.defer()
       Metadata.get params, ((metadata) ->
         delay.resolve metadata
@@ -32,5 +38,3 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch metadata"
 
       delay.promise
-
-  services

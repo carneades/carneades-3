@@ -4,15 +4,26 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-resource"], (angular) ->
+define [
+  "angular",
+  "angular-resource",
+  '../services/app'
+  ], (angular) ->
   "use strict"
-  services = angular.module("resources.projects", ["ngResource"])
-  services.factory "Project", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid",
-      pid: "@pid"
+  return angular.module("resources.projects", [
+    'ngResource', 'app.helper'
+  ])
 
-  services.factory "MultiProjectLoader", (Project, $q) ->
-    ->
+  .factory "Project", (urlService) ->
+    url = '/projects/:pid'
+    methods = 'saveAg':
+      method: "POST"
+      params:
+        entity: 'ag'
+    return urlService.$resource url, pid: '@pid', methods
+
+  .factory "MultiProjectLoader", (Project, $q) ->
+    return () ->
       delay = $q.defer()
       Project.query ((project) ->
         delay.resolve project
@@ -21,8 +32,8 @@ define ["angular", "angular-resource"], (angular) ->
 
       delay.promise
 
-  services.factory "ProjectLoader", (Project, $q) ->
-    (params) ->
+  .factory "ProjectLoader", (Project, $q) ->
+    return (params) ->
       delay = $q.defer()
       Project.get params, ((project) ->
         delay.resolve project
@@ -30,5 +41,3 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch project " + params.id
 
       delay.promise
-
-  services
