@@ -67,6 +67,7 @@
 
 (defresource entry-findsoftwareentitieswithcompatiblelicenses
   [params]
+  :available-media-types ["application/json"]
   :allowed-methods [:post]
   :available-charsets ["utf-8"]
   :handle-created (fn [ctx]
@@ -78,6 +79,7 @@
 
 (defresource entry-findcompatiblelicenses
   [params]
+  :available-media-types ["application/json"]
   :allowed-methods [:post]
   :available-charsets ["utf-8"]
   :handle-created (fn [ctx]

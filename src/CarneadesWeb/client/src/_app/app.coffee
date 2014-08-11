@@ -20,9 +20,14 @@ define [
   "templates/app",
   "angular-translate",
   "angular-translate-loader-static-files",
+  "common/directives/resize",
+  "common/directives/svg-include",
   "common/directives/markdown/markdown",
   "common/directives/loader/loader",
-  'showdown'
+  'showdown',
+  'jquery',
+  'jquery-mousewheel',
+  'perfect-scrollbar'
 ], (angular) ->
   angular.module("app", [
     "ui.bootstrap",
@@ -30,6 +35,8 @@ define [
     "ui.bootsrap.breadcrumb",
     "directives.pagenav",
     "directives.loaders",
+    "directives.resize",
+    "directives.svg.include",
     "ui.router",
     "css.injector",
     "app.states",
@@ -39,7 +46,7 @@ define [
     "lican.module",
     "admin.module",
     "pascalprecht.translate",
-    'markdown',
+    'markdown'
   ])
 
   .run(($rootScope, $state, $stateParams) ->
@@ -61,12 +68,13 @@ define [
         type: "lang"
         regex: "\\[@([^\\,]+)[^\\]]*\\]"
         replace: (match, citation_key) ->
-          "<a href='/carneades/#/projects/pid/db/outline?scrollTo=#{citation_key}'>#{match}</a>";
+          return "<a href='/carneades/#/projects/%PID%/%DB%/outline?scrollTo=#{citation_key}'>#{match}</a>"
+
       ,
         type: "output"
         filter: (source) ->
           source.replace /file:\/\/(\w+)\/(\w+)/g, (match, project, document) ->
-            "carneadesws/documents/#{project}/#{document}"
+            return "carneadesws/documents/#{project}/#{document}"
       ]
 
     if typeof window.Showdown isnt
@@ -75,9 +83,7 @@ define [
     window.Showdown.extensions
       window.Showdown.extensions.carneades = carneades
 
-    markdownConverterProvider.config(
-      extensions: ['carneades']
-    )
+    markdownConverterProvider.config(extensions: ['carneades'])
 
     $translateProvider.useStaticFilesLoader(
       prefix: '/carneades/languages/',

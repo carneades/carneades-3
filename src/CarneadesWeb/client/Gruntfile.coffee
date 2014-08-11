@@ -146,6 +146,8 @@ module.exports = (grunt) ->
           'angular-translate-loader-static-files.js': 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
           'angular-bootstrap.js': 'angular-bootstrap/ui-bootstrap-tpls.js'
           'requirejs-domready.js': 'requirejs-domready/domReady.js'
+          'angular-perfect-scrollbar': ['angular-perfect-scrollbar/src/angular-perfect-scrollbar.js', 'angular-perfect-scrollbar/dependencies/perfect-scrollbar.js', 'angular-perfect-scrollbar/dependencies/perfect-scrollbar.css', 'angular-perfect-scrollbar/dependencies/jquery.mousewheel.js']
+          'jquery.js': 'jquery/dist/jquery.min.js'
           'showdown': 'showdown/src'
           'spin.js': 'spin.js/spin.js',
           'angular-capitalize-filter.js': 'angular-capitalize-filter/capitalize.js'
@@ -159,6 +161,13 @@ module.exports = (grunt) ->
           '<%= dist.base %>/index.html': '<%= src.base %>/index.jade'
 
     copy:
+      perfect_scrollbar:
+        files: [
+          src: ["perfect-scrollbar.css"]
+          dest: "<%= dist.base %>/css"
+          cwd: '<%= gen.base %>/libs/angular-perfect-scrollbar'
+          expand: true
+        ]
       index:
         files: [
           src: ["index.html"]

@@ -33,32 +33,39 @@ define [
         scopeExpression = attrs.bnMapMouseout
         invoker = $parse scopeExpression
         $document.on("mouseout", ( event ) ->
-
-          #  element = event.relatedTarget
-          #  e = angular.element(element)
-
-          #  if e[0]
-          #    if e[0].nodeName
-          #      if e[0].nodeName is 'tspan' or
-          #      e[0].nodeName is 'rect'
-          #        return
           scope.$apply(-> invoker(scope, { $event: event } ) )
           )
       )
 
-    .directive('map', ($compile) ->
-      restrict: 'E'
-      replace: true
-      require: "?ngModel"
-      link: (scope, element, attrs, model) ->
-        render = ->
-          val = model.$modelValue
-          if (val)
-            element.append val
-            $compile(val)(scope)
+    .directive('map', ($parse, $compile) ->
+      html = []
+      html.push '<div style="'
+      html.push 'margin:4px auto;height:{{ resizeHeightWithOffset(193) }}px;'
+      html.push 'width:{{ resizeWidthWithOffset() }}px;'
+      html.push 'white-space:pre-line;overflow:hidden;position:relative;">'
+      html.push '<svg-include ng-model="svg"></svg-include></div>'
+      return {
+        restrict: 'A'
+        replace: true
+        template: html.join ''
+        link: (scope, element, attrs) ->
+          psOptions = [
+            'wheelSpeed', 'wheelPropagation', 'minScrollbarLength',
+            'useBothWheelAxes', 'useKeyboard', 'suppressScrollX',
+            'suppressScrollY', 'scrollXMarginOffset','scrollYMarginOffset',
+            'includePadding'
+          ]
 
-        if attrs['ngModel']
-          scope.$watch(attrs['ngModel'], render)
+          options = {}
+          for opt in psOptions
+            do (opt) -> if attrs[opt]? then options[opt] = $parse(attrs[opt])()
+
+          if attrs.refreshOnChange
+            scope.$watchCollection attrs.refreshOnChange, () ->
+              scope.$evalAsync () -> element.perfectScrollbar 'update'
+          element.bind '$destroy', () -> element.perfectScrollbar 'destroy'
+          element.perfectScrollbar options
+      }
     )
 
     .controller('MapCtrl', ($scope, map) ->
@@ -86,7 +93,7 @@ define [
 
       $scope.handleMouseover = (event) ->
         arrRelatedTargets = ['svg', 'rect', 'tspan', 'text', 'circle']
-        target = event.target.localName
+        target = event.target?.localName
         relatedTarget = event.relatedTarget?.localName
         if (target is 'tspan' and relatedTarget in arrRelatedTargets) or
         (target is 'text' and relatedTarget in ['rect', 'tspan']) or
@@ -101,7 +108,7 @@ define [
             e.parent().find('rect').css 'stroke', 'rgb(230,1,0)'
           else if event.target.localName is 'tspan'
             e.parent().parent().find('rect').css 'stroke', 'rgb(230,1,0)'
-        
+
         return undefined
 
       $scope.handleMouseout = (event) ->
@@ -116,9 +123,9 @@ define [
               angular.element(element).parent().parent().find('rect').css 'stroke', 'rgb(0,0,0)'
           else
             if (event.relatedTarget is null) or
-            (event.target.localName is 'tspan' and event.relatedTarget?.localName is 'tspan') or
-            (event.target.localName is 'rect' or event.originalTarget.localName is 'rect')or
-            (event.target.localName is 'tspan' or event.originalTarget.localName is 'tspan')
+            (event.target?.localName is 'tspan' and event.relatedTarget?.localName is 'tspan') or
+            (event.target?.localName is 'rect' or event.originalTarget?.localName is 'rect')or
+            (event.target?.localName is 'tspan' or event.originalTarget?.localName is 'tspan')
               angular.element(element).parent().parent().find('rect').css 'stroke', 'rgb(0,0,0)'
 
         return undefined

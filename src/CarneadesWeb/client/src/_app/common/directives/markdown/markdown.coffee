@@ -14,7 +14,7 @@ define [
     }
   )
 
-  .directive('markdown', ($sanitize, markdownConverter) ->
+  .directive('markdown', ($sanitize, $stateParams, markdownConverter) ->
     return {
       restrict: 'E'
       require: '?ngModel'
@@ -41,6 +41,8 @@ define [
             val = val.replace(/^[ /t]+/g, '').replace(/\n[ /t]+/g, '\n')
 
           html = $sanitize markdownConverter.makeHtml val
+          html = html.replace /%DB%/, $stateParams.db
+          html = html.replace /%PID%/, $stateParams.pid
           element.html html
 
           if callPrettyPrint then prettyPrint()

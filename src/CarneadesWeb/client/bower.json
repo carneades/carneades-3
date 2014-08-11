@@ -17,7 +17,11 @@
     "angular-translate": "~2.2.0",
     "angular-translate-loader-static-files": "~2.2.0",
     "angular-sanitize": "~1.2.18",
-    "spin.js": "~2.0.1",
-    "angular-capitalize-filter": "~2.0.0"
+      "spin.js":"~2.0.1",
+    "angular-capitalize-filter": "~2.0.0",
+    "angular-perfect-scrollbar":"0.1.4",
+    "svg.js":"1.0.0-rc.9",
+    "svg.import.js":"",
+    "svg.parser.js":""
   }
 }
