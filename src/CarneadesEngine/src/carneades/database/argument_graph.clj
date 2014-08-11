@@ -681,7 +681,8 @@
    succeeds."
   [id m]
   {:pre [(string? id) (map? m)]}
-  (let [header-id1 (if (:header m)
+  (let [m (dissoc m :dependents :rebuttals :exceptions :undercutters)
+        header-id1 (if (:header m)
                     (or (jdbc/with-query-results
                           res1 ["SELECT header FROM argument WHERE id=?" id]
                           (:header (first res1)))

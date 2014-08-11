@@ -97,4 +97,8 @@ define [
     $scope.addPremise = ->
       console.log 'addPremise'
       $scope.argument.premises.push({role: "", implicit: false, positive: true})
+
+    $scope.onSave = ->
+      console.log 'argument', $scope.argument
+      argumentedit.update $stateParams, $scope.argument
   )
