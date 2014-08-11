@@ -269,7 +269,9 @@
 (defn get-edit-argument
   [project db id lang]
   (let [arg (spy (s/get-argument project db id))
-        arg (update-in arg [:conclusion :text] #(get % lang))]
+        arg (update-in arg [:conclusion :text] #(get % lang))
+        arg (update-in arg [:premises] #(map (fn [p] (update-in p [:statement :text] (fn [s] (get s lang)))
+                                               ) %))]
    (into {} arg)))
 
 (defn get-arguments

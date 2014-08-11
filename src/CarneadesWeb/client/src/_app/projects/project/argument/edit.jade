@@ -37,7 +37,7 @@
               div(class='form-group', ng-repeat="p in argument.premises")
                 label
                   {{'projects.premise' | translate | capitalize:'first'}}
-                premise-editor(model='p')
+                premise-editor(model='p', statements='statements')
               br
               button(ng-click='addPremise()')
                 {{'projects.addpremise' | translate}}            

@@ -103,7 +103,11 @@
     "projects.pro": "Pro",
 
     "projects.addpremise": "Add premise",
-    "projects.premise": "premise"
+    "projects.premise": "premise",
+
+    "projects.positive": "positive",
+    "projects.implicit": "implicit",
+    "projects.role": "role"
 
     
 }

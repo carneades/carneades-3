@@ -5,15 +5,18 @@
 
 define [
   'angular',
-  'angular-translate'
+  'angular-translate',
+  '../../../common/directives/radio-buttons/radio-buttons',
 ], (angular) ->
-  angular.module("directives.premiseEditor", ['pascalprecht.translate'])
+  angular.module("directives.premiseEditor", ['pascalprecht.translate',
+    'directives.radioButtons'])
 
   .directive("premiseEditor", ->
     restrict: "E"
     templateUrl: "common/directives/premise-editor/premise-editor.jade"
     scope:
-      model: '='
+      model: '=',
+      statements: '='
     controller: ($scope, $translate) ->
-      
+
   )

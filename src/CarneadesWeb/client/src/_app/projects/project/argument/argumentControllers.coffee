@@ -77,7 +77,11 @@ define [
   .controller('ArgumentEditCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements, argumentedit) ->
     $scope.title = $translate.instant 'projects.editargument'
     $scope.statements = statements.query $stateParams
-    $scope.argument = argumentedit.get($stateParams)
+    $scope.argument = argumentedit.get $stateParams, ->
+      $scope.schemeId = if $scope.argument.scheme? and $scope.argument.scheme != "" and $scope.argument.scheme[0] == '('
+        $scope.argument.scheme.slice 1, -1
+      else
+        undefined
     
     $scope.theory = theory.get {
       pid: $stateParams.pid,
@@ -86,9 +90,11 @@ define [
       tid: projectInfo.getSchemesName(project)
     }
 
+
     $scope.$watch 'schemeId', (newVal) ->
       $scope.argument.scheme = "(#{newVal})"
 
     $scope.addPremise = ->
       console.log 'addPremise'
+      $scope.argument.premises.push({role: "", implicit: false, positive: true})
   )
