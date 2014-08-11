@@ -20,6 +20,12 @@ define [
       pid: "@pid"
       db: "@db"
 
+  services.factory "ArgumentEdit", ($resource, $location) ->
+    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/arguments/:aid?context=edit",
+    {pid: "@pid", db: "@db", aid: "@aid"},
+    {update: {method: 'PUT'}}
+
+
   services.factory "MultiArgumentLoader", (Argument, $q) ->
     ->
       delay = $q.defer()

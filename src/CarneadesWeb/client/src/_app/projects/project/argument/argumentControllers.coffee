@@ -7,12 +7,14 @@ define [
   'angular',
   'angular-capitalize-filter',
   'angular-translate',
-  '../../../common/directives/metadata/metadata'
+  '../../../common/directives/metadata/metadata',
+  '../../../common/directives/premise-editor/premise-editor'
 ], (angular) ->
   angular.module('argument.controllers', [
-    'pascalprecht.translate',    
-    'directives.metadata',    
-    'angular-capitalize-filter'
+    'pascalprecht.translate',
+    'angular-capitalize-filter',
+    'directives.metadata',
+    'directives.premiseEditor'
   ])
 
   .controller('ArgumentCtrl', ($scope, argument, project, $translate) ->
@@ -67,4 +69,26 @@ define [
     $scope.onSave = ->
       console.log 'argument', $scope.argument
       argumentcreate.save $stateParams, $scope.argument
+
+    $scope.addPremise = ->
+      console.log 'addPremise'
+      
+  )
+  .controller('ArgumentEditCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements, argumentedit) ->
+    $scope.title = $translate.instant 'projects.editargument'
+    $scope.statements = statements.query $stateParams
+    $scope.argument = argumentedit.get($stateParams)
+    
+    $scope.theory = theory.get {
+      pid: $stateParams.pid,
+      db: $stateParams.db,
+      tpid: projectInfo.getSchemesProject(project),
+      tid: projectInfo.getSchemesName(project)
+    }
+
+    $scope.$watch 'schemeId', (newVal) ->
+      $scope.argument.scheme = "(#{newVal})"
+
+    $scope.addPremise = ->
+      console.log 'addPremise'
   )

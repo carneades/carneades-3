@@ -72,6 +72,14 @@ define [
         "content@":
           templateUrl: "projects/project/argument/edit.jade"
           controller: "ArgumentEditCtrl"
+          resolve:
+            theory: 'Theory'
+            project: (ProjectLoader, $stateParams) ->
+              new ProjectLoader($stateParams)
+            projectInfo: 'projectInfo'
+            statements: 'Statements'
+            argumentedit: 'ArgumentEdit'
+
       }
     ]
 

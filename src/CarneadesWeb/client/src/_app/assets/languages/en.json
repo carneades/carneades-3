@@ -100,8 +100,10 @@
     "projects.false": "false",
 
     "projects.text": "text",
-    "projects.pro": "Pro"
-    
+    "projects.pro": "Pro",
+
+    "projects.addpremise": "Add premise",
+    "projects.premise": "premise"
 
     
 }
