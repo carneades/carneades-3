@@ -10,7 +10,6 @@
     "angular-bootstrap": "~0.11.0",
     "angular-ui-utils": "~0.1.1",
     "angular-resource": "~1.3.0",
-    "hallo": "~1.0.4",
     "jquery": "2.0.2",
     "jquery-ui": "1.10.3",
     "showdown": "~0.3.1",

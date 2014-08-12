@@ -149,7 +149,7 @@ module.exports = (grunt) ->
           'showdown': 'showdown/src'
           'spin.js': 'spin.js/spin.js',
           'angular-capitalize-filter.js': 'angular-capitalize-filter/capitalize.js',
-          'hallo.js': 'hallo/dist/hallo.js',
+          'hallo.js': '../libs/hallo.js',
           'jquery.js': 'jquery/jquery.min.js',
           'jquery-ui.js': 'jquery-ui/ui/jquery-ui.js',
           'jquery-htmlclean.js': 'jquery-htmlclean/jquery.htmlClean.js',
