@@ -91,9 +91,6 @@ define [
     }
 
     $scope.$watch 'schemeId', (newVal) ->
-      if newVal == undefined
-        return
-        
       $scope.argument.scheme = "(#{newVal})"
       scheme = if $scope.theory.schemes?
         ($scope.theory.schemes.filter (s) ->
