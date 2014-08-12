@@ -110,6 +110,7 @@ define [
 
     $scope.deletePremise = (p) ->
       console.log 'deleting premise', p
+      $scope.argument.premises = (q for q in $scope.argument.premises when p.role != q.role)
 
     $scope.onSave = ->
       console.log 'argument', $scope.argument
