@@ -90,9 +90,19 @@ define [
       tid: projectInfo.getSchemesName(project)
     }
 
-
     $scope.$watch 'schemeId', (newVal) ->
       $scope.argument.scheme = "(#{newVal})"
+      scheme = if $scope.theory.schemes?
+        ($scope.theory.schemes.filter (s) ->
+          s.id == newVal)[0]
+      else
+        undefined
+
+      if scheme?
+        premises = ({role: p.role, positive: true, implicit: false} for p in scheme.premises)
+        $scope.argument.premises = premises
+
+      $scope.currentScheme = scheme
 
     $scope.addPremise = ->
       console.log 'addPremise'

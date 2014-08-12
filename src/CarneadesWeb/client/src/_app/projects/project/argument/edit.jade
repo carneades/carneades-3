@@ -26,6 +26,7 @@
                 {{'projects.scheme' | translate | capitalize:'first'}}
               br
               select(ng-model='schemeId', ng-options="scheme.id as scheme.header.title for scheme in theory.schemes", required)
+              metadata(model='currentScheme.header', skipped="['title']")
             div(class="form-group")
               label
                 {{'projects.conclusion' | translate | capitalize:'first'}}
