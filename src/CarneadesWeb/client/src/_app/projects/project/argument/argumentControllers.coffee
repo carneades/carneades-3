@@ -106,8 +106,9 @@ define [
 
         i = 0
         for p in premises
-          if $scope.argument.premises[i]?
-            p.statement =  $scope.argument.premises[i].statement
+          premise = $scope.argument.premises[i]
+          if premise?
+            p.statement = premise.statement
           i++
           
         $scope.argument.premises = premises
