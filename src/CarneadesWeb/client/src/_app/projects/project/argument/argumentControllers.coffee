@@ -91,6 +91,9 @@ define [
     }
 
     $scope.$watch 'schemeId', (newVal) ->
+      if newVal == undefined
+        return
+        
       $scope.argument.scheme = "(#{newVal})"
       scheme = if $scope.theory.schemes?
         ($scope.theory.schemes.filter (s) ->
@@ -100,6 +103,13 @@ define [
 
       if scheme?
         premises = ({role: p.role, positive: true, implicit: false} for p in scheme.premises)
+
+        i = 0
+        for p in premises
+          if $scope.argument.premises[i]?
+            p.statement =  $scope.argument.premises[i].statement
+          i++
+          
         $scope.argument.premises = premises
 
       $scope.currentScheme = scheme
