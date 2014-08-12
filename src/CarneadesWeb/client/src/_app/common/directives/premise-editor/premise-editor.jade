@@ -19,3 +19,6 @@ div
       {{'projects.statement' | translate | capitalize:'first'}}
     br
     input(type="text", ng-model="model.statement" typeahead="statement as statement.text for statement in statements | filter:{text:$viewValue}", class="form-control", required)
+  div(class='form-group')
+    button(class='btn btn-danger', ng-click='onDeletePremise()')
+      {{'projects.delete' | translate | capitalize:'first'}}

@@ -16,7 +16,10 @@ define [
     templateUrl: "common/directives/premise-editor/premise-editor.jade"
     scope:
       model: '=',
-      statements: '='
+      statements: '=',
+      onDelete: '&'
     controller: ($scope, $translate) ->
-
+      $scope.onDeletePremise = ->
+        console.log 'onDeletePremise'
+        $scope.onDelete()
   )

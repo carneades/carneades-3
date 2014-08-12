@@ -107,7 +107,9 @@
 
     "projects.positive": "positive",
     "projects.implicit": "implicit",
-    "projects.role": "role" 
+    "projects.role": "role" ,
+
+    "projects.delete": "delete"
 
     
 }

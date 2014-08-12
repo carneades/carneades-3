@@ -108,7 +108,12 @@ define [
       console.log 'addPremise'
       $scope.argument.premises.push({role: "", implicit: false, positive: true})
 
+    $scope.deletePremise = (p) ->
+      console.log 'deleting premise', p
+
     $scope.onSave = ->
       console.log 'argument', $scope.argument
       argumentedit.update $stateParams, $scope.argument
+
+    
   )
