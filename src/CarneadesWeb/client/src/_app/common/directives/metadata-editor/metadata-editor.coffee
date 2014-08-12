@@ -7,7 +7,9 @@ define [
   'angular',
   'angular-translate'
 ], (angular) ->
-  angular.module("directives.metadataEditor", ['pascalprecht.translate'])
+  return angular.module("directives.metadataEditor", [
+    'pascalprecht.translate'
+  ])
 
   .directive("metadataEditor", ->
     restrict: "E"

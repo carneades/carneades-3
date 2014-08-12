@@ -7,6 +7,7 @@
 require.config
   shim:
     "angular":
+      deps: ['jquery', 'jquery-ui', 'jquery-htmlclean', 'rangy-core', 'hallo']
       exports: "angular"
 
     "angular-ui-router":
@@ -27,6 +28,17 @@ require.config
     "angular-ui-bootstrap":
       deps: ["angular"]
 
+    "jquery":
+      exports: "$q"
+
+    "jquery-ui":
+      deps: ['jquery']
+
+    "jquery-htmlclean":
+      deps: ['jquery']
+
+    "hallo":
+      deps: ["jquery", "jquery-ui", "jquery-htmlclean", "rangy-core"]
   paths:
     "angular": "./libs/angular"
     'angular-sanitize': './libs/angular-sanitize'
@@ -41,5 +53,10 @@ require.config
     'showdown': './libs/showdown/showdown'
     'spinjs': './libs/spin'
     'angular-capitalize-filter': './libs/angular-capitalize-filter'
+    'jquery': './libs/jquery'
+    'jquery-ui': './libs/jquery-ui'
+    'jquery-htmlclean': './libs/jquery-htmlclean'
+    'rangy-core': './libs/rangy-core'
+    'hallo': './libs/hallo'
 
   deps: ["./bootstrap"]

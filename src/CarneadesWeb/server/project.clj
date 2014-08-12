@@ -6,7 +6,8 @@
 (defproject carneades/carneades-web "1.0.0-SNAPSHOT"
   :description "The REST and Web parts of the Carneades system."
   :url "http://carneades.github.io"
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[cider/cider-nrepl "0.8.0-SNAPSHOT"]
+                 [org.clojure/clojure "1.6.0"]
                  [lib-noir "0.5.6"]
                  [compojure "1.1.5"]
                  [ring-server "0.2.8"]
@@ -14,7 +15,7 @@
                  [ring/ring-json "0.3.1"]
                  [clabango "0.5"]
                  [ring-mock "0.1.5"]
-                 
+
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [com.taoensso/timbre "3.1.6"]
 
@@ -34,7 +35,7 @@
                  [sandbar/sandbar "0.4.0-SNAPSHOT"]
 
                  [dire "0.4.3"] ;; uses logging 2.6.3
-                 
+
                  [midje "1.5.1"]]
 
   :plugins [[lein-ring "0.8.10"]

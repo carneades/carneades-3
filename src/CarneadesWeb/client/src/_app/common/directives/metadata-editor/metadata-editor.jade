@@ -1,14 +1,12 @@
 div.metadata-editor
-  div(class="form-group")
-    label.title_header
-      {{'projects.metadata.title' | translate}}
-    input(name="title" placeholder="type title here" class="form-control input-md" type="text", ng-model="model.title")
+  div.form-group
+    label.title_header {{'projects.metadata.title' | translate}}
+    input.form-control.input-md(name="title",placeholder="type title here",type="text",ng-model="model.title")
 
-  div(class="form-group")
-    label.description_header
-      {{'projects.metadata.description' | translate}}
+  div.form-group
+    label.description_header {{'projects.metadata.description' | translate}}
     tabset
       tab(ng-repeat="v in languages", heading='{{v[1]}}')
-        textarea(class="form-control", id="description_{{v[0]}}", name="description_{{v[0]}}", ng-model="model.description[v[0]]", rows="10")
-          {{model.description[lang]}}
+        // textarea.form-control(id="description_{{v[0]}}", name="description_{{v[0]}}", ng-model="model.description[v[0]]", rows="10") {{model.description[lang]}}
+        div(style='height:200px;width:100%;',hallo="{toolbar:'halloToolbarFixed',plugins:{'halloformat':{'bold':true},'halloheadings':{},'halloreundo':{},'hallolists':{},'halloindicator':{}}}",ng-model='model.description[v[0]]',name='description_{{v[0]}}',id='description_{{v[0]}}') {{model.description[lang]}}
   

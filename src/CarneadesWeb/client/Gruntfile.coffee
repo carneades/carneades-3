@@ -1,4 +1,4 @@
-#global module, require
+1#global module, require
 
 ##########################
 # Carneades config
@@ -148,8 +148,12 @@ module.exports = (grunt) ->
           'requirejs-domready.js': 'requirejs-domready/domReady.js'
           'showdown': 'showdown/src'
           'spin.js': 'spin.js/spin.js',
-          'angular-capitalize-filter.js': 'angular-capitalize-filter/capitalize.js'
-
+          'angular-capitalize-filter.js': 'angular-capitalize-filter/capitalize.js',
+          'hallo.js': 'hallo/dist/hallo.js',
+          'jquery.js': 'jquery/jquery.min.js',
+          'jquery-ui.js': 'jquery-ui/ui/jquery-ui.js',
+          'jquery-htmlclean.js': 'jquery-htmlclean/jquery.htmlClean.js',
+          'rangy-core.js': 'rangy/rangy-core.js'
     jade:
       compile:
         options:

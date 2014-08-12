@@ -33,8 +33,7 @@ html(lang='en')
                 .row.mob-bc-head
                   ul
                     li.bc-default-a
-                      a(ng-click='openView(bcTop.name, top.params)',tooltip='{{bcTop.tooltip}}',tooltip-append-to-body='true',tooltip-placement='bottom')
-                        {{bcTop.label}}
+                      a(ng-click='openView(bcTop.name, top.params)',tooltip='{{bcTop.tooltip}}',tooltip-append-to-body='true',tooltip-placement='bottom') {{bcTop.label}}
                     li
                       a
                         i.fa.fa-chevron-down.font-inc-130(,ng-init='navBcCollapsed = true',ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
@@ -42,8 +41,7 @@ html(lang='en')
         .row.collapse#mobbcnavdetails(collapse='navBcCollapsed',ng-cloak='')
           ul
             li(ng-repeat='navigatedState in subNavStatesReversed')
-              a(ng-click='openView(navigatedState.name, navigatedState.params)')
-                {{navigatedState.label}}
+              a(ng-click='openView(navigatedState.name, navigatedState.params)') {{navigatedState.label}}
       div#global.my-fluid-container
         div(ui-view='banner',ng-cloak='')
         div.navbar.subnav-navbar

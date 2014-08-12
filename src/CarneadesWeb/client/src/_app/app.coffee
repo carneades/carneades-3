@@ -22,7 +22,9 @@ define [
   "angular-translate-loader-static-files",
   "common/directives/markdown/markdown",
   "common/directives/loader/loader",
-  'showdown'
+  'showdown',
+  'hallo',
+  'common/directives/base-editor/hallo'
 ], (angular) ->
   angular.module("app", [
     "ui.bootstrap",
@@ -40,6 +42,7 @@ define [
     "admin.module",
     "pascalprecht.translate",
     'markdown',
+    'directives.editor'
   ])
 
   .run(($rootScope, $state, $stateParams) ->
