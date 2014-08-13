@@ -25,7 +25,7 @@
               label
                 {{'projects.scheme' | translate | capitalize:'first'}}
               br
-              select(ng-model='schemeId', ng-options="scheme.id as scheme.header.title for scheme in theory.schemes", required)
+              select(ng-model='schemeId', ng-options="scheme.id as scheme.header.title for scheme in theory.schemes")
               metadata(model='currentScheme.header', skipped="['title']")
             div(class="form-group")
               label
@@ -38,9 +38,9 @@
               div(class='form-group', ng-repeat="p in argument.premises")
                 label
                   {{'projects.premise' | translate | capitalize:'first'}}
-                premise-editor(model='p', statements='statements', on-delete="deletePremise(p)")
+                premise-editor(model='p', statements='statements', on-delete="deletePremise(scope, p)")
               br
-              button(ng-click='addPremise()')
+              button(ng-click='addPremise(scope)')
                 {{'projects.addpremise' | translate}}            
             div(class="col-md-8 form-group")
               button(id="save", name="save", class="btn btn-success", ng-click="onSave()", ng-disabled="form.$invalid")

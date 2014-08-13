@@ -21,9 +21,9 @@ define [
     return urlService.$resource url, params, methods
 
   .factory "MultiStatementLoader", (Statement, $q) ->
-    return () ->
+    return (params) ->
       delay = $q.defer()
-      Statement.query ((statement) ->
+      Statement.query params, ((statement) ->
         delay.resolve statement
       ), ->
         delay.reject "Unable to fetch nodes"

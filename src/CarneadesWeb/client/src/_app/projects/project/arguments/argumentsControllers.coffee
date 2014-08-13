@@ -14,7 +14,7 @@ define [
     'angular-capitalize-filter'
   ])
 
-  .controller('ArgumentNewCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements, argumentcreate) ->
+  .controller('ArgumentNewCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements) ->
     $scope.title = $translate.instant 'projects.createargument'
     $scope.statements = statements.query $stateParams
 

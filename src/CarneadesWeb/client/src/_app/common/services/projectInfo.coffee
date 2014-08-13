@@ -8,7 +8,7 @@ define ['angular'], (angular) ->
   () ->
     # schemes can be written with an absolute path like project/scheme
     # or with a relative path like scheme.
-  
+
     getSchemesProject: (project) ->
       schemes = project.schemes
       res = schemes.split '/'
@@ -17,4 +17,3 @@ define ['angular'], (angular) ->
     getSchemesName: (project) ->
       res = project.schemes.split '/'
       if res.length is 1 then res[0] else res[1]
-  
