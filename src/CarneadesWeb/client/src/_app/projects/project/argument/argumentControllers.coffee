@@ -24,24 +24,32 @@ define [
       undefined    
 
   onSchemeChange = (scope, newVal) ->
-      scope.argument.scheme = "(#{newVal})"
-      scope.currentScheme = if scope.theory.schemes?
-        (scope.theory.schemes.filter (s) ->
-          s.id == newVal)[0]
-      else
-        undefined
+    console.log 'scope', scope
+    console.log 'newVal', newVal
+    if scope.theory.schemes?
+      console.log 'filter', (scope.theory.schemes.filter (s) ->
+        s.id == newVal)
+        
+    scope.argument.scheme = "(#{newVal})"
+    scope.currentScheme = if scope.theory.schemes?
+      (scope.theory.schemes.filter (s) ->
+        s.id == newVal)[0]
+    else
+      undefined
 
-      if scope.currentScheme?
-        premises = ({role: p.role, positive: true, implicit: false} for p in scope.currentScheme.premises)
-        # set up the role of the premises but try keeping the statements
-        i = 0
-        for p in premises
-          premise = scope.argument.premises[i]
-          if premise?
-            p.statement = premise.statement
-          i++
+    if scope.currentScheme?
+      premises = ({role: p.role, positive: true, implicit: false} for p in scope.currentScheme.premises)
+      # set up the role of the premises but try keeping the statements
+      i = 0
+      for p in premises
+        premise = if scope.argument.premises? and scope.argument.premises[i]?
+          scope.argument.premises[i]
           
-        scope.argument.premises = premises
+        if premise?
+          p.statement = premise.statement
+        i++
+
+      scope.argument.premises = premises
     
   
   angular.module('argument.controllers', [
