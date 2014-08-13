@@ -24,11 +24,6 @@ define [
       undefined    
 
   onSchemeChange = (scope, newVal) ->
-    console.log 'scope', scope
-    console.log 'newVal', newVal
-    if scope.theory.schemes?
-      console.log 'filter', (scope.theory.schemes.filter (s) ->
-        s.id == newVal)
         
     scope.argument.scheme = "(#{newVal})"
     scope.currentScheme = if scope.theory.schemes?
