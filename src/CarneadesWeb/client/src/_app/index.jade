@@ -33,8 +33,7 @@ html(lang='en')
                 .row.mob-bc-head
                   ul
                     li.bc-default-a
-                      a(ng-click='openView(bcTop.name, top.params)',tooltip='{{bcTop.tooltip}}',tooltip-append-to-body='true',tooltip-placement='bottom')
-                        {{bcTop.label}}
+                      a(ng-click='openView(bcTop.name, top.params)',tooltip='{{bcTop.tooltip}}',tooltip-append-to-body='true',tooltip-placement='bottom') {{bcTop.label}}
                     li(ng-show='hasHistory')
                       a
                         i.fa.fa-chevron-down.font-inc-130(ng-init='navBcCollapsed = true',ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
@@ -49,8 +48,8 @@ html(lang='en')
           breadcrumb(states='navigatedStates',style='style')
         div#subnav.row(ui-view='subnav',ng-cloak='')
 
-    div(ui-view='content',ng-cloak='')
+    div(ui-view='content')
 
-    div(ui-view='footer',class='navbar-fixed-bottom',ng-cloak='')
+    div.navbar-fixed-bottom(ui-view='footer',ng-cloak='')
 
     script(src='require.js',data-main='main.min.js')
