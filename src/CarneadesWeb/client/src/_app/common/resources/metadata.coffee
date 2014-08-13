@@ -14,9 +14,13 @@ define [
     "ngResource", 'app.helper'
   ])
 
-  .factory "Metadata", ($resource, $location) ->
+  .factory "Metadata", (urlService) ->
     url = '/projects/:pid/:db/metadata/:mid'
-    params = pid: "@pid", db: "@db", mid: "@mid"
+    params = {
+      pid: "@pid"
+      db: "@db"
+      mid: "@mid"
+    }
     return urlService.$resource url, params
 
   .factory "MultiMetadataLoader", (Metadata, $q) ->

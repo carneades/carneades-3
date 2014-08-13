@@ -4,6 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 define [
   'angular',
+  '../../../common/resources/projects',
   '../../../common/resources/metadata',
   '../../../common/resources/references',
   '../../../common/resources/outline',
@@ -11,6 +12,7 @@ define [
   '../../../common/services/scroll'
 ], (angular) ->
   angular.module('outline.states', [
+    'resources.projects',
     'resources.metadata',
     'resources.metadata.references',
     'resources.outline',
@@ -31,15 +33,15 @@ define [
         views:
           "content@":
             templateUrl: 'projects/project/outline/outline-main.jade'
-            controller: ($scope, $state, $stateParams, scroll, project, tproject, references) ->
+            controller: ($scope, $state, $stateParams, project, tproject, scroll, references) ->
               $scope.project = project
               $scope.project.title = project.title
               $scope.scrollTo = scroll.scrollTo
               $scope.openArgumentEditor = (sid) ->
-                $state.transitionTo 'home.projects.project.arguments.new', {sid: sid}
+                $state.transitionTo 'home.projects.project.arguments.new', sid: sid
 
               $scope.openStatementEditor = (aid) ->
-                $state.transitionTo 'home.projects.project.statements.new', {aid: aid}
+                $state.transitionTo 'home.projects.project.statements.new', aid: aid
 
               getSchemesProject = (project) ->
                 schemes = project.schemes
@@ -51,8 +53,8 @@ define [
                 res = schemes.split '/'
                 if res.length == 1 then res[0] else res[1]
 
-              $scope.$stateParams.tpid = getSchemesProject(tproject)
-              $scope.$stateParams.tid = getSchemesName(tproject)
+              $scope.$stateParams.tpid = getSchemesProject tproject
+              $scope.$stateParams.tid = getSchemesName tproject
 
               $scope.hasReferences = not emptyReferences references
               if $stateParams.scrollTo?
@@ -60,14 +62,14 @@ define [
 
             resolve:
               tproject: (ProjectLoader, $stateParams) ->
-                new ProjectLoader($stateParams)
-              project: ($stateParams, MetadataLoader) ->
+                return new ProjectLoader $stateParams
+              project: (MetadataLoader, $stateParams) ->
                 $stateParams.mid = 1
-                new MetadataLoader($stateParams)
+                return new MetadataLoader $stateParams
               scroll: 'scroll'
               references: ($stateParams, MultiReferenceLoader) ->
                 $stateParams.mid = undefined
-                return new MultiReferenceLoader($stateParams)
+                return new MultiReferenceLoader $stateParams
 
           "issues@home.projects.project.outline":
             templateUrl: 'projects/project/outline/issues.jade'
@@ -85,7 +87,7 @@ define [
             resolve:
               references: ($stateParams, MultiReferenceLoader) ->
                 $stateParams.mid = undefined
-                return new MultiReferenceLoader($stateParams)
+                return new MultiReferenceLoader $stateParams
 
           "outline@home.projects.project.outline":
             templateUrl: 'projects/project/outline/outline.jade'
@@ -93,7 +95,7 @@ define [
               $scope.outline = outline
             resolve:
               outline: ($stateParams, MultiOutlineLoader) ->
-                return new MultiOutlineLoader($stateParams)
+                return new MultiOutlineLoader $stateParams
       }
     ]
 

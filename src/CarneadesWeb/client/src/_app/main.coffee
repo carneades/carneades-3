@@ -39,8 +39,16 @@ require.config
 
     "hallo":
       deps: ["jquery", "jquery-ui", "jquery-htmlclean", "rangy-core"]
+
+    "perfect-scrollbar":
+      deps: ["jquery", "jquery-mousewheel"]
+
+    "jquery-mousewheel":
+      deps: ["jquery"]
+
   paths:
     "angular": "./libs/angular"
+    'angular-perfect-scrollbar': './libs/angular-perfect-scrollbar/angular-perfect-scrollbar'
     'angular-sanitize': './libs/angular-sanitize'
     'angular-ui-router': './libs/angular-ui-router'
     'angular-ui-utils': './libs/angular-ui-utils'
@@ -49,6 +57,8 @@ require.config
     'angular-translate': './libs/angular-translate'
     'angular-translate-loader-static-files': './libs/angular-translate-loader-static-files'
     'angular-bootstrap': './libs/angular-bootstrap'
+    'jquery-mousewheel': './libs/angular-perfect-scrollbar/jquery.mousewheel'
+    'perfect-scrollbar': './libs/angular-perfect-scrollbar/perfect-scrollbar'
     'requirejs-domready': './libs/requirejs-domready'
     'showdown': './libs/showdown/showdown'
     'spinjs': './libs/spin'

@@ -4,3 +4,4 @@ pom.xml
 *.h2*
 *.jar
 *.war
+/src/CarneadesWeb/client/npm-debug.log

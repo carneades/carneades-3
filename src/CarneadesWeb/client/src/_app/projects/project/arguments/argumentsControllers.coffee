@@ -7,7 +7,6 @@ define [
   'angular',
   'angular-capitalize-filter',
   'angular-translate',
-  '../../../common/directives/metadata/metadata'
 ], (angular) ->
   angular.module('arguments.controllers', [
     'pascalprecht.translate',

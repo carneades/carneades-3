@@ -6,13 +6,12 @@
 define [
   'angular',
   'angular-capitalize-filter',
-  'angular-translate',
-  '../../../../common/directives/metadata/metadata'
+  'angular-translate'
 ], (angular) ->
   angular.module('argument.controllers', [
     'pascalprecht.translate',
-    'directives.metadata',
-    'angular-capitalize-filter'
+    'angular-capitalize-filter',
+    'directives.metadata'
   ])
 
   .controller('ArgumentViewCtrl', ($scope, argument, project, $translate) ->
@@ -47,6 +46,54 @@ define [
         $translate.instant 'projects.nonstrict_con_conclusion'
   )
 
-  .controller('ArgumentEditCtrl', ($scope) ->
-    return @
+  .controller('ArgumentEditCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements, argumentedit) ->
+    $scope.title = $translate.instant 'projects.editargument'
+    $scope.statements = statements.query $stateParams
+    $scope.argument = argumentedit.get $stateParams, ->
+      $scope.schemeId = if $scope.argument.scheme? and $scope.argument.scheme != "" and $scope.argument.scheme[0] == '('
+        $scope.argument.scheme.slice 1, -1
+      else
+        undefined
+
+    $scope.theory = theory.get {
+      pid: $stateParams.pid,
+      db: $stateParams.db,
+      tpid: projectInfo.getSchemesProject(project),
+      tid: projectInfo.getSchemesName(project)
+    }
+
+    $scope.$watch 'schemeId', (newVal) ->
+      $scope.argument.scheme = "(#{newVal})"
+      scheme = if $scope.theory.schemes?
+        ($scope.theory.schemes.filter (s) ->
+          s.id == newVal)[0]
+      else
+        undefined
+
+      if scheme?
+        premises = ({role: p.role, positive: true, implicit: false} for p in scheme.premises)
+
+        i = 0
+        for p in premises
+          premise = $scope.argument.premises[i]
+          if premise?
+            p.statement = premise.statement
+          i++
+
+        $scope.argument.premises = premises
+
+      $scope.currentScheme = scheme
+
+    $scope.addPremise = ->
+      console.log 'addPremise'
+      $scope.argument.premises.push({role: "", implicit: false, positive: true})
+
+    $scope.deletePremise = (p) ->
+      console.log 'deleting premise', p
+      $scope.argument.premises = (q for q in $scope.argument.premises when p.role != q.role)
+
+    $scope.onSave = ->
+      console.log 'argument', $scope.argument
+      argumentedit.update $stateParams, $scope.argument
+
   )

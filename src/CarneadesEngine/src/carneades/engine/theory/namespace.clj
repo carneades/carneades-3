@@ -12,7 +12,8 @@
             [clojure.pprint :refer [pprint]]
             [carneades.engine.theory.zip :as tz]
             [carneades.engine.statement :as st]
-            [carneades.engine.argument :as a])
+            [carneades.engine.argument :as a]
+            [taoensso.timbre :as timbre :refer [debug warn info spy]])
   (:refer-clojure :exclude [name namespace]))
 
 (defn uri?
@@ -50,7 +51,9 @@
                                n (name atom)
                                iri (namespaces ns)]
                            (if (and (nil? iri) (not= ns ""))
-                             (throw (ex-info (str "Missing namespace '" ns "'") {}))
+                             (do
+                               (warn (str "Missing namespace '" ns "' ? " {:atom atom :type (type atom)}))
+                               atom)
                              (symbol (str iri n)))))
         :else
         (doall (map #(to-absolute-atom % namespaces) atom))))

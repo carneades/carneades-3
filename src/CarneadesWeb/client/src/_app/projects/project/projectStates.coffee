@@ -12,7 +12,7 @@ define [
 ], (angular) ->
   angular.module('project.states', [
     'project.controllers',
-    'resources.projects'
+    'resources.projects',
     'directives.metadataEditor',
     'pascalprecht.translate'
   ])

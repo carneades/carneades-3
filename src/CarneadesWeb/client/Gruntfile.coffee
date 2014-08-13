@@ -138,6 +138,7 @@ module.exports = (grunt) ->
           destPrefix: '<%= gen.base %>/libs'
         files:
           'angular.js': 'angular/angular.js'
+          'angular-capitalize-filter.js': 'angular-capitalize-filter/capitalize.js',
           'angular-sanitize.js': 'angular-sanitize/angular-sanitize.js'
           'angular-ui-router.js': 'angular-ui-router/release/angular-ui-router.js'
           'angular-ui-utils.js': 'angular-ui-utils/ui-utils.js'
@@ -146,9 +147,9 @@ module.exports = (grunt) ->
           'angular-translate-loader-static-files.js': 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
           'angular-bootstrap.js': 'angular-bootstrap/ui-bootstrap-tpls.js'
           'requirejs-domready.js': 'requirejs-domready/domReady.js'
+          'angular-perfect-scrollbar': ['angular-perfect-scrollbar/src/angular-perfect-scrollbar.js', 'angular-perfect-scrollbar/dependencies/perfect-scrollbar.js', 'angular-perfect-scrollbar/dependencies/perfect-scrollbar.css', 'angular-perfect-scrollbar/dependencies/jquery.mousewheel.js']
           'showdown': 'showdown/src'
           'spin.js': 'spin.js/spin.js',
-          'angular-capitalize-filter.js': 'angular-capitalize-filter/capitalize.js',
           'hallo.js': '../libs/hallo.js',
           'jquery.js': 'jquery/jquery.min.js',
           'jquery-ui.js': 'jquery-ui/ui/jquery-ui.js',
@@ -163,6 +164,13 @@ module.exports = (grunt) ->
           '<%= dist.base %>/index.html': '<%= src.base %>/index.jade'
 
     copy:
+      perfect_scrollbar:
+        files: [
+          src: ["perfect-scrollbar.css"]
+          dest: "<%= dist.base %>/css"
+          cwd: '<%= gen.base %>/libs/angular-perfect-scrollbar'
+          expand: true
+        ]
       index:
         files: [
           src: ["index.html"]

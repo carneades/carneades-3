@@ -16,7 +16,7 @@ define [
     url = '/projects/:pid/:db/arguments/:aid'
     params = pid: "@pid", db: "@db", aid: "@aid"
     return urlService.$resource url, params
-    
+
   .factory "MultiArgumentLoader", (Argument, $q) ->
     return () ->
       delay = $q.defer()

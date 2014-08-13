@@ -7,19 +7,24 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
   "use strict"
   angular.module('app.controllers', ['services.i18nNotifications', 'services.httpRequestTracker', 'resources.themes'])
 
-  .controller('AppCtrl', ($scope, $element, $attrs, $stateParams) ->
-    setTheme = () ->
-      if $stateParams.pid is 'markos'
-        $scope.style = 'simple'
-      else
-        $scope.style = 'emacs'
+  .service('themeService', () ->
+    @setTheme = (scope, theme, fallback = 'default') ->
+      scope.theme = theme || fallback
+
+    return @
+  )
+
+  .controller('AppCtrl', ($scope, $stateParams, themeService) ->
+    setTheme = (pid) ->
+      $scope.style = if pid is 'markos' then 'simple' else 'emacs'
+      themeService.setTheme $scope, pid
 
     $scope.$on '$stateChangeSuccess', ->
-      setTheme()
+      setTheme $stateParams.pid
 
     setTheme()
 
-    undefined
+    return @
   )
 
   .controller('MobSubnavController', ($scope, $state) ->
@@ -27,23 +32,18 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
       builder = (params...) ->
         create = (label, state, clazz) ->
           return {label: label, state: state, clazz: clazz}
-        command = ($state,state) ->
-          return create $state.get(state).label, state, undefined
 
         createCommands = ($state,states...) ->
           commands = []
           for state in states
-            commands.push command($state, state)
-
+            label = $state.get(state).label
+            commands.push create label, state, undefined
           return commands
-
-        return ($state) ->
-          return createCommands($state, params...)
+        return ($state) -> return createCommands($state, params...)
 
       $scope.commands = builder($state.current.data.commands...) $state
 
-    $scope.$on '$stateChangeSuccess', ->
-      update()
+    $scope.$on '$stateChangeSuccess', -> update()
 
     update()
   )
@@ -53,40 +53,36 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
       builder = (params...) ->
         create = (label, state, clazz) ->
           return {label: label, state: state, clazz: clazz}
-        command = ($state,state) ->
-          return create $state.get(state).label, state, undefined
-        divider = () ->
-          return create '', undefined, 'divider'
 
         createCommands = ($state,states...) ->
           commands = []
           for state in states
-            commands.push command($state, state)
-            commands.push divider()
+            label = $state.get(state).label
+            commands.push create label, state, undefined
+            commands.push create '', undefined, 'divider'
 
           # since last item is a divider we must get rid off it
           if commands.length > 0 then commands.pop()
           return commands
 
-        return ($state) ->
-          return createCommands($state, params...)
+        return ($state) -> return createCommands($state, params...)
 
       $scope.commands = builder($state.current.data.commands...) $state
 
-    $scope.$on '$stateChangeSuccess', ->
-      update()
+    $scope.$on '$stateChangeSuccess', -> update()
 
     update()
+
+    return @
   )
 
-  .controller 'HeaderCtrl', ($breadcrumb, $scope, $location, $state, $stateParams) ->
-    $scope.openView = (name, params) ->
-      $state.go name, params
-
-    updateNavigatedStates = () ->
-      $breadcrumb.updateNavigatedStates $state, $stateParams
+  .controller 'HeaderCtrl', ($scope, $location, $state, breadcrumbService) ->
+    $scope.openView = (name, params) -> $state.go name, params
+    $scope.hasHistory = false
+    updateBreadcrumb = () ->
+      breadcrumbService.updateStates()
       # In order to update the list passed to ng-repeat properly
-      $scope.navigatedStates = angular.copy $breadcrumb.getNavigatedStates $state
+      $scope.navigatedStates = angular.copy breadcrumbService.getStates()
 
       $scope.bcTop = $scope.navigatedStates[$scope.navigatedStates.length - 1]
       $scope.subNavStatesReversed = $scope.navigatedStates.slice(0, $scope.navigatedStates.length-1).reverse()
@@ -94,53 +90,35 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
 
     $scope.$on '$stateChangeSuccess', ->
       $scope.navCollapsed = true
-      $scope.isSubNavDisplayed = $state.$current.self.data.commands.length > 0
-      updateNavigatedStates()
+      $scope.hasHistory = breadcrumbService.isEmpty()
+      $scope.isSubNavDisplayed = $state.$current.self.data? and $state.$current.self.data.commands.length > 0
+      updateBreadcrumb()
 
-    undefined
+    return @
 
-  .directive 'cssInject', ($compile, $stateParams) ->
+  .directive 'cssInject', () ->
     restrict: 'E'
     replace: true
-    require: '?theme'
     template: '<link rel="stylesheet" ng-href="api/projects/{{theme}}/theme/css/{{theme}}.css" media="screen"/>'
     scope:
       theme: '=?'
-    controller: ($scope) ->
-      update = () ->
-        $scope.theme = $scope.theme || 'default'
+    controller: ($scope, themeService) ->
+      $scope.$watch 'theme', () -> themeService.setTheme $scope, $scope.theme
 
-      $scope.$watch 'theme', () ->
-        update()
-
-      update()
-
-  .directive 'projectBanner', ($compile) ->
+  .directive 'projectBanner', () ->
     restrict: 'E'
     replace: 'true'
-    scope:
-      theme: '=?'
     template: '<div ng-include="\'api/projects/\' + theme + \'/theme/html/banner.tpl\'"></div>'
-    controller: ($scope) ->
-      update = () ->
-        $scope.theme = $scope.theme || 'default'
-
-      $scope.$watch 'theme', () ->
-        update()
-
-      update()
-
-  .directive 'projectFooter', ($compile) ->
-    restrict: 'E'
-    replace: 'true'
     scope:
       theme: '=?'
+    controller: ($scope, themeService) ->
+      $scope.$watch 'theme', () -> themeService.setTheme $scope, $scope.theme
+
+  .directive 'projectFooter', () ->
+    restrict: 'E'
+    replace: 'true'
     template: '<div ng-include="\'api/projects/\' + theme + \'/theme/html/footer.tpl\'"></div>'
-    controller: ($scope) ->
-      update = () ->
-        $scope.theme = $scope.theme || 'default'
-
-      $scope.$watch 'theme', () ->
-        update()
-
-      update()
+    scope:
+      theme: '=?'
+    controller: ($scope, themeService) ->
+      $scope.$watch 'theme', () -> themeService.setTheme $scope, $scope.theme

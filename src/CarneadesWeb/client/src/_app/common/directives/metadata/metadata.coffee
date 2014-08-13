@@ -24,5 +24,5 @@ define [
         "projects.#{k}"
 
       $scope.isHidden = (k, v) ->
-        (not v?) or ($scope.skipped? and $scope.skipped.indexOf k != -1)
+        (not v?) or ($scope.skipped? and ($scope.skipped.indexOf k) != -1)
   )
