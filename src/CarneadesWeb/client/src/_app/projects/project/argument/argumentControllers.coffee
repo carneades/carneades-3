@@ -10,6 +10,40 @@ define [
   '../../../common/directives/metadata/metadata',
   '../../../common/directives/premise-editor/premise-editor'
 ], (angular) ->
+
+  addPremise = (scope) ->
+    scope.argument.premises.push({role: "", implicit: false, positive: true})
+
+  deletePremise = (scope, p) ->
+    scope.argument.premises = (q for q in scope.argument.premises when p.role != q.role)
+
+  onArgumentRetrieve = (scope) ->
+    scope.schemeId = if scope.argument.scheme? and scope.argument.scheme != "" and scope.argument.scheme[0] == '('
+      scope.argument.scheme.slice 1, -1
+    else
+      undefined    
+
+  onSchemeChange = (scope, newVal) ->
+      scope.argument.scheme = "(#{newVal})"
+      scope.currentScheme = if scope.theory.schemes?
+        (scope.theory.schemes.filter (s) ->
+          s.id == newVal)[0]
+      else
+        undefined
+
+      if scope.currentScheme?
+        premises = ({role: p.role, positive: true, implicit: false} for p in scope.currentScheme.premises)
+        # set up the role of the premises but try keeping the statements
+        i = 0
+        for p in premises
+          premise = scope.argument.premises[i]
+          if premise?
+            p.statement = premise.statement
+          i++
+          
+        scope.argument.premises = premises
+    
+  
   angular.module('argument.controllers', [
     'pascalprecht.translate',
     'angular-capitalize-filter',
@@ -67,21 +101,23 @@ define [
       $scope.argument.scheme = "(#{newVal})"
 
     $scope.onSave = ->
-      console.log 'argument', $scope.argument
       argumentcreate.save $stateParams, $scope.argument
 
-    $scope.addPremise = ->
-      console.log 'addPremise'
+    $scope.$watch 'schemeId', (newVal) ->
+      onSchemeChange $scope, newVal
+      
+    $scope.scope = $scope
+    
+    $scope.addPremise = addPremise
+
+    $scope.deletePremise = deletePremise
       
   )
   .controller('ArgumentEditCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements, argumentedit) ->
     $scope.title = $translate.instant 'projects.editargument'
     $scope.statements = statements.query $stateParams
     $scope.argument = argumentedit.get $stateParams, ->
-      $scope.schemeId = if $scope.argument.scheme? and $scope.argument.scheme != "" and $scope.argument.scheme[0] == '('
-        $scope.argument.scheme.slice 1, -1
-      else
-        undefined
+      onArgumentRetrieve $scope
     
     $scope.theory = theory.get {
       pid: $stateParams.pid,
@@ -91,38 +127,16 @@ define [
     }
 
     $scope.$watch 'schemeId', (newVal) ->
-      $scope.argument.scheme = "(#{newVal})"
-      scheme = if $scope.theory.schemes?
-        ($scope.theory.schemes.filter (s) ->
-          s.id == newVal)[0]
-      else
-        undefined
+      onSchemeChange $scope, newVal
+      
+    $scope.scope = $scope
+    
+    $scope.addPremise = addPremise
 
-      if scheme?
-        premises = ({role: p.role, positive: true, implicit: false} for p in scheme.premises)
-
-        i = 0
-        for p in premises
-          premise = $scope.argument.premises[i]
-          if premise?
-            p.statement = premise.statement
-          i++
-          
-        $scope.argument.premises = premises
-
-      $scope.currentScheme = scheme
-
-    $scope.addPremise = ->
-      console.log 'addPremise'
-      $scope.argument.premises.push({role: "", implicit: false, positive: true})
-
-    $scope.deletePremise = (p) ->
-      console.log 'deleting premise', p
-      $scope.argument.premises = (q for q in $scope.argument.premises when p.role != q.role)
+    $scope.deletePremise = deletePremise
 
     $scope.onSave = ->
       console.log 'argument', $scope.argument
       argumentedit.update $stateParams, $scope.argument
-
     
   )
