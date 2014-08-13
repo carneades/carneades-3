@@ -92,6 +92,7 @@ define [
     $scope.argument =
       pro: true
       strict: false
+      premises: []
 
     $scope.theory = theory.get {
       pid: $stateParams.pid,
