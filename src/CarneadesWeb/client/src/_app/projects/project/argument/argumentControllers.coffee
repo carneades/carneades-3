@@ -24,8 +24,11 @@ define [
       undefined    
 
   onSchemeChange = (scope, newVal) ->
-        
+    if newVal == undefined
+      return
+      
     scope.argument.scheme = "(#{newVal})"
+    
     scope.currentScheme = if scope.theory.schemes?
       (scope.theory.schemes.filter (s) ->
         s.id == newVal)[0]
@@ -93,6 +96,7 @@ define [
       pro: true
       strict: false
       premises: []
+      scheme: ""
 
     $scope.theory = theory.get {
       pid: $stateParams.pid,
@@ -100,9 +104,6 @@ define [
       tpid: projectInfo.getSchemesProject(project),
       tid: projectInfo.getSchemesName(project)
     }
-
-    $scope.$watch 'schemeId', (newVal) ->
-      $scope.argument.scheme = "(#{newVal})"
 
     $scope.onSave = ->
       argumentcreate.save $stateParams, $scope.argument
