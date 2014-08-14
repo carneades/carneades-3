@@ -20,9 +20,9 @@ define [
     return urlService.$resource url, params
 
   .factory "MultiNodeLoader", (Node, $q) ->
-    return () ->
+    return (params) ->
       delay = $q.defer()
-      Node.query ((nodes) ->
+      Node.query {}, params, ((nodes) ->
         delay.resolve nodes
       ), ->
         delay.reject "Unable to fetch nodes"

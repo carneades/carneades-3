@@ -18,11 +18,11 @@ define [
     url = '/projects/:pid/:db/outline/issues'
     params = pid: "@pid", db: "@db"
     return urlService.$resource url, params
-    
+
   .factory "MultiIssueLoader", (Issue, $q) ->
     (params) ->
       delay = $q.defer()
-      Issue.query params, ((issue) ->
+      Issue.query {}, params, ((issue) ->
         delay.resolve issue
       ), ->
         delay.reject "Unable to fetch issue"

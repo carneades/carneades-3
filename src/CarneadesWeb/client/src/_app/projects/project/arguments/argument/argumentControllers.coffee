@@ -86,39 +86,6 @@ define [
         $translate.instant 'projects.nonstrict_con_conclusion'
   )
 
-  .controller('ArgumentCreateCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements, argumentcreate) ->
-    $scope.title = $translate.instant 'projects.createargument'
-    $scope.statements = statements.query $stateParams
-
-    $scope.argument =
-      pro: true
-      strict: false
-      premises: []
-      scheme: ""
-
-    $scope.theory = theory.get {
-      pid: $stateParams.pid,
-      db: $stateParams.db,
-      tpid: projectInfo.getSchemesProject(project),
-      tid: projectInfo.getSchemesName(project)
-    }
-
-    $scope.onSave = ->
-      argumentcreate.save $stateParams, $scope.argument
-
-    $scope.$watch 'schemeId', (newVal) ->
-      onSchemeChange $scope, newVal
-
-    $scope.scope = $scope
-
-    console.log 'scope', $scope
-
-    $scope.addPremise = addPremise
-
-    $scope.deletePremise = deletePremise
-
-  )
-
   .controller('ArgumentEditCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements) ->
     $scope.title = $translate.instant 'projects.editargument'
     $scope.statements = statements.query $stateParams

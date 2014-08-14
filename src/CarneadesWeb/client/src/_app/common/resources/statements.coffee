@@ -16,18 +16,18 @@ define [
   .factory "Statement", (urlService) ->
     url = '/projects/:pid/:db/statements/:sid'
     params = pid: "@pid", db: "@db", sid: "@sid"
-    methods = update:
-      method: 'PUT'
+    methods =
+      'update':
+        method: 'PUT'
     return urlService.$resource url, params, methods
 
   .factory "MultiStatementLoader", (Statement, $q) ->
     return (params) ->
       delay = $q.defer()
-      Statement.query params, ((statement) ->
-        delay.resolve statement
+      Statement.query {}, params, ((statements) ->
+        delay.resolve statements
       ), ->
-        delay.reject "Unable to fetch nodes"
-
+        delay.reject "Unable to fetch statements"
       delay.promise
 
   .factory "StatementLoader", (Statement, $q) ->
@@ -36,6 +36,6 @@ define [
       Statement.get params, ((statement) ->
         delay.resolve statement
       ), ->
-        delay.reject "Unable to fetch Statement!"
+        delay.reject "Unable to fetch statement!"
 
       delay.promise

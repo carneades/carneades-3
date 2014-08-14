@@ -14,20 +14,19 @@ define [
     'angular-capitalize-filter'
   ])
 
-  .controller('ArgumentNewCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements) ->
+  .controller('ArgumentNewCtrl', ($scope, $stateParams, $translate, statements) ->
+    $scope.statements = statements
     $scope.title = $translate.instant 'projects.createargument'
-    $scope.statements = statements.query $stateParams
-
     $scope.argument =
       pro: true
       strict: false
 
-    $scope.theory = theory.get {
-      pid: $stateParams.pid,
-      db: $stateParams.db,
-      tpid: projectInfo.getSchemesProject(project),
-      tid: projectInfo.getSchemesName(project)
-    }
+    # $scope.theory = theory.get {
+    #   pid: $stateParams.pid,
+    #   db: $stateParams.db,
+    #   tpid: projectInfo.getSchemesProject(project),
+    #   tid: projectInfo.getSchemesName(project)
+    # }
 
     $scope.$watch 'schemeId', (newVal) ->
       $scope.argument.scheme = "(#{newVal})"

@@ -18,7 +18,7 @@ define [
     url = "/projects/:pid/theme/:did"
     params = pid: "@pid", did: "@did"
     return urlService.$resource url, params
-    
+
   .factory "ThemeLoader", (Theme, $q) ->
     (params) ->
       delay = $q.defer()

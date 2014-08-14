@@ -18,9 +18,9 @@ define [
     return urlService.$resource url, params
 
   .factory "MultiArgumentLoader", (Argument, $q) ->
-    return () ->
+    return (params) ->
       delay = $q.defer()
-      Argument.query ((args) ->
+      Argument.query {}, params, ((args) ->
         delay.resolve args
       ), ->
         delay.reject "Unable to fetch nodes"

@@ -39,10 +39,10 @@ define [
           templateUrl: "projects/project/arguments/argument/edit.jade"
           controller: 'ArgumentNewCtrl'
           resolve:
-            theory: 'Theory'
-            projectInfo: 'projectInfo'
-            statements: (MultiStatementLoader) ->
-              return new MultiStatementLoader()
+            #theory: 'Theory'
+            #projectInfo: 'projectInfo'
+            statements: (MultiStatementLoader, $stateParams) ->
+              return new MultiStatementLoader($stateParams)
     ]
 
     angular.forEach states, (state) ->

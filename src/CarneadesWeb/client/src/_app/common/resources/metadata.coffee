@@ -16,17 +16,13 @@ define [
 
   .factory "Metadata", (urlService) ->
     url = '/projects/:pid/:db/metadata/:mid'
-    params = {
-      pid: "@pid"
-      db: "@db"
-      mid: "@mid"
-    }
+    params = pid: "@pid", db: "@db", mid: "@mid"
     return urlService.$resource url, params
 
   .factory "MultiMetadataLoader", (Metadata, $q) ->
     return (params) ->
       delay = $q.defer()
-      Metadata.query params, ((metadata) ->
+      Metadata.query {}, params, ((metadata) ->
         delay.resolve metadata
       ), ->
         delay.reject "Unable to fetch arguments"

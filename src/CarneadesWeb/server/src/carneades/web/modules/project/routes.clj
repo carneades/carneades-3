@@ -92,7 +92,8 @@
   :post! (fn [_]
            {::id (post-argument pid db argument)})
   :handle-created (fn [ctx]
-                    {:id (::id ctx)}))
+                    {:id (::id ctx)})
+)
 
 (defresource argument-resource [pid db id context update]
   :available-media-types ["application/json"]
@@ -137,8 +138,7 @@
   :exists? (fn [_]
              (session-put-language nil)
              (let [lang (keyword (session-get :language))]
-               (when-let [stmts (get-statements pid db (keyword lang))]
-                 {::entry stmts})))
+               {::entry (get-statements pid db (keyword lang))}))
   :handle-ok ::entry
   :post! (fn [_]
            {::id (post-statement pid db statement)})
@@ -314,11 +314,12 @@
 
       (context "/statements" []
         (ANY "/" req (statements-resource pid db (:body req)))
-        (ANY "/:sid" req (statement-resource pid
-                                             db
-                                             (-> req :params :sid)
-                                             (-> req :params :context)
-                                             (:body req))))
+        ;; (ANY "/:sid" req (statement-resource pid
+        ;;                                      db
+        ;;                                      (-> req :params :sid)
+        ;;                                      (-> req :params :context)
+        ;;                                      (:body req)))
+        )
 
       (context "/arguments" []
         (ANY "/" req (arguments-resource pid db (:body req)))

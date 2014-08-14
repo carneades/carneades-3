@@ -23,9 +23,9 @@ define [
     return urlService.$resource url, pid: '@pid', methods
 
   .factory "MultiProjectLoader", (Project, $q) ->
-    return () ->
+    return (params) ->
       delay = $q.defer()
-      Project.query ((project) ->
+      Project.query {}, params, ((project) ->
         delay.resolve project
       ), ->
         delay.reject "Unable to fetch projects"

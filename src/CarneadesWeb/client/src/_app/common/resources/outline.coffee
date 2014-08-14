@@ -20,9 +20,9 @@ define [
     return urlService.$resource url, params
 
   .factory "MultiOutlineLoader", (Outline, $q) ->
-    (params) ->
+    return (params) ->
       delay = $q.defer()
-      Outline.query params, ((outline) ->
+      Outline.query {}, params, ((outline) ->
         delay.resolve outline
       ), ->
         delay.reject "Unable to fetch outline"

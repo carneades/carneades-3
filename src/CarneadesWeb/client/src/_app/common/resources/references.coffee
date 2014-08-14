@@ -21,7 +21,7 @@ define [
   .factory "MultiReferenceLoader", (Reference, $q) ->
     return (params) ->
       delay = $q.defer()
-      Reference.query params, ((reference) ->
+      Reference.query {}, params, ((reference) ->
         delay.resolve reference
       ), ->
         delay.reject "Unable to fetch reference"
