@@ -29,7 +29,8 @@ define [
   'common/directives/base-editor/hallo'
   'jquery',
   'jquery-mousewheel',
-  'perfect-scrollbar'
+  'perfect-scrollbar',
+  'angular-capitalize-filter'
 ], (angular) ->
   angular.module("app", [
     "ui.bootstrap",
@@ -49,7 +50,8 @@ define [
     "admin.module",
     "pascalprecht.translate",
     'markdown',
-    'directives.editor'
+    'directives.editor',
+    'angular-capitalize-filter'
   ])
 
   .run(($rootScope, $state, $stateParams) ->

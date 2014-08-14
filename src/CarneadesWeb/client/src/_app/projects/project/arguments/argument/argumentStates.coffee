@@ -9,11 +9,13 @@ define [
   './argumentControllers',
   '../../../../common/resources/arguments',
   '../../../../common/directives/evaluation-indicator/evaluation-indicator',
+  '../../../../common/services/projectInfo'
 ], (angular) ->
   angular.module('argument.states', [
     'argument.controllers',
     'resources.arguments',
-    'directives.evaluationIndicator'
+    'directives.evaluationIndicator',
+    'services.projectInfo'
   ])
 
   .config ($stateProvider) ->
@@ -41,6 +43,15 @@ define [
         "content@":
           templateUrl: "projects/project/arguments/argument/edit.jade"
           controller: "ArgumentEditCtrl"
+          resolve:
+            argument: (ArgumentLoader, $stateParams) ->
+              return new ArgumentLoader $stateParams
+            project: (ProjectLoader, $stateParams) ->
+              return new ProjectLoader $stateParams
+            statements: (MultiStatementLoader, $stateParams) ->
+              return new MultiStatementLoader $stateParams
+            theory: 'Theory'
+            projectInfo: 'projectInfo'
     ]
 
     angular.forEach states, (state) ->

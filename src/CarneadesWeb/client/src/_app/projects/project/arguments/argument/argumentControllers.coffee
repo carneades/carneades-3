@@ -105,26 +105,29 @@ define [
 
     return @
 
-  .controller 'ArgumentEditCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements) ->
+  .controller 'ArgumentEditCtrl', ($scope, $q, $stateParams, $translate, project,
+    statements, argument, theory, projectInfo) ->
+
     $scope.title = $translate.instant 'projects.editargument'
-    $scope.statements = statements.query $stateParams
-    $scope.argument = argumentedit.get $stateParams, ->
+    $scope.statements = statements
+    $scope.argument = argument
+    $q.all([argument]).then (data) ->
       onArgumentRetrieve $scope
-    $scope.theory = theory.get {
-      pid: $stateParams.pid,
-      db: $stateParams.db,
-      tpid: projectInfo.getSchemesProject(project),
-      tid: projectInfo.getSchemesName(project)
-    }
+
+    $scope.theory = theory.get
+      pid: $stateParams.pid
+      db: $stateParams.db
+      tpid: projectInfo.getSchemesProject project
+      tid: projectInfo.getSchemesName project
 
     $scope.$watch 'schemeId', (newVal) ->
       onSchemeChange $scope, newVal
 
-    $scope.scope = $scope
+    $scope.addPremise = () ->
+      addPremise $scope
 
-    $scope.addPremise = addPremise
-
-    $scope.deletePremise = deletePremise
+    $scope.deletePremise = (p) ->
+      deletePremise $scope, p
 
     $scope.onSave = () ->
       console.log 'argument', $scope.argument

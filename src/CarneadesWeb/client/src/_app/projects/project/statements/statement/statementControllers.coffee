@@ -61,18 +61,26 @@ define [
 
     return @
 
-  .controller 'StatementEditCtrl', ($scope, $translate, $stateParams, statement) ->
-    $scope.title = $translate.instant 'projects.editstatement'
-    $scope.statement = statement
-    $scope.standards = [
-            { name: ($translate.instant 'projects.pe'), value: 'pe'},
-            { name: ($translate.instant 'projects.dv'), value: 'dv'},
-            { name: ($translate.instant 'projects.cce'), value: 'cce'},
-            { name: ($translate.instant 'projects.brd'), value: 'brd'}
-          ]
+  .controller 'StatementEditCtrl', ($scope, $translate, $stateParams,
+    statement, project) ->
+    vals = ['pe', 'dv', 'cce', 'brd']
+    standards = []
+    _fill = (arr, vals) ->
+      for val in vals
+        arr.push
+          name: ($translate.instant 'projects.' + val)
+          value: val
+      return arr
 
-    $scope.onSave = () ->
+    _onSave = () ->
       console.log 'statement', $scope.statement
       #statementedit.update $stateParams, statement
+
+    $scope = extend $scope,
+      standards: _fill standards, vals
+      title: $translate.instant 'projects.editstatement'
+      statement: statement
+      project: project
+      onSave: _onSave
 
     return @

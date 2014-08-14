@@ -4,13 +4,15 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 define [
   'angular',
-  './statementControllers',
-  '../../../../common/resources/statements'
+  'angular-capitalize-filter',
+  '../../../../common/resources/statements',
+  '../../../../common/resources/projects',
+  './statementControllers'
 ], (angular) ->
   angular.module('statement.states', [
     'statement.controllers',
     'resources.statements',
-    'angular-capitalize-filter'
+    'resources.projects'
   ])
 
   .config ($stateProvider) ->
@@ -37,6 +39,11 @@ define [
         'content@':
           templateUrl: 'projects/project/statements/statement/edit.jade'
           controller: 'StatementEditCtrl'
+          resolve:
+            project: (ProjectLoader, $stateParams) ->
+              return new ProjectLoader $stateParams
+            statement: (StatementLoader, $stateParams) ->
+              return new StatementLoader $stateParams
     ]
 
     angular.forEach states, (state) ->

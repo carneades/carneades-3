@@ -22,6 +22,9 @@ require.config
     "angular-translate":
       deps: ["angular"]
 
+    "angular-capitalize-filter":
+      deps: ["angular"]
+
     "angular-translate-loader-static-files":
       deps: ["angular-translate"]
 
@@ -55,6 +58,7 @@ require.config
     'angular-resource': './libs/angular-resource'
     'angular-markdown': './libs/angular-markdown'
     'angular-translate': './libs/angular-translate'
+    'angular-capitalize-filter': './libs/angular-capitalize-filter'
     'angular-translate-loader-static-files': './libs/angular-translate-loader-static-files'
     'angular-bootstrap': './libs/angular-bootstrap'
     'jquery-mousewheel': './libs/angular-perfect-scrollbar/jquery.mousewheel'
@@ -62,7 +66,6 @@ require.config
     'requirejs-domready': './libs/requirejs-domready'
     'showdown': './libs/showdown/showdown'
     'spinjs': './libs/spin'
-    'angular-capitalize-filter': './libs/angular-capitalize-filter'
     'jquery': './libs/jquery'
     'jquery-ui': './libs/jquery-ui'
     'jquery-htmlclean': './libs/jquery-htmlclean'
