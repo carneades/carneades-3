@@ -314,12 +314,11 @@
 
       (context "/statements" []
         (ANY "/" req (statements-resource pid db (:body req)))
-        ;; (ANY "/:sid" req (statement-resource pid
-        ;;                                      db
-        ;;                                      (-> req :params :sid)
-        ;;                                      (-> req :params :context)
-        ;;                                      (:body req)))
-        )
+        (ANY "/:sid" req (statement-resource pid
+                                             db
+                                             (-> req :params :sid)
+                                             (-> req :params :context)
+                                             (:body req))))
 
       (context "/arguments" []
         (ANY "/" req (arguments-resource pid db (:body req)))

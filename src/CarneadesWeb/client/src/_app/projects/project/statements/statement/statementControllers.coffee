@@ -18,7 +18,7 @@ define [
     'directives.multilangTextarea'
   ])
 
-  .controller('StatementViewCtrl', ($scope, $translate, statement, project) ->
+  .controller('StatementViewCtrl', ($scope, $state, $stateParams, $translate, statement, project) ->
     $scope.statement = statement
     $scope.project = project
     $scope.pid = $scope.$stateParams.pid
@@ -42,6 +42,9 @@ define [
 
     tooltip = [statement.text.substring(0, 100), '...'].join ''
     $scope.$state.$current.self.tooltip = tooltip
+
+    $scope.edit = () ->
+      $state.transitionTo 'home.projects.project.statements.statement.edit', $stateParams
 
     return @
   )

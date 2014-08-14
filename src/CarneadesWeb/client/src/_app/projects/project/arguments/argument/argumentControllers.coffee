@@ -54,7 +54,7 @@ define [
     'directives.metadata'
   ])
 
-  .controller('ArgumentViewCtrl', ($scope, argument, project, $translate) ->
+  .controller('ArgumentViewCtrl', ($scope, $state, $stateParams, argument, project, $translate) ->
     $scope.argument = argument
     $scope.argument.valueText =
       if $scope.argument.value <= 0.25
@@ -84,6 +84,9 @@ define [
         $translate.instant 'projects.nonstrict_pro_conclusion'
       else if not argument.strict and not argument.pro
         $translate.instant 'projects.nonstrict_con_conclusion'
+
+    $scope.edit = () ->
+      $state.transitionTo 'home.projects.project.arguments.argument.edit', $stateParams
   )
 
   .controller('ArgumentEditCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements) ->

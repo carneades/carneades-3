@@ -13,7 +13,7 @@ define [
   angular.module('argument.states', [
     'argument.controllers',
     'resources.arguments',
-    'directives.evaluationIndicator',
+    'directives.evaluationIndicator'
   ])
 
   .config ($stateProvider) ->
@@ -28,8 +28,10 @@ define [
           templateUrl: "projects/project/arguments/argument/view.jade"
           controller: "ArgumentViewCtrl"
           resolve:
+            project: (ProjectLoader, $stateParams) ->
+              return new ProjectLoader $stateParams
             argument: (ArgumentLoader, $stateParams) ->
-              new ArgumentLoader($stateParams)
+              return new ArgumentLoader $stateParams
     ,
       name: "home.projects.project.arguments.argument.edit"
       url: "/edit"
