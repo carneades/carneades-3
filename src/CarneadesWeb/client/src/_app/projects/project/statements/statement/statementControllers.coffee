@@ -10,7 +10,12 @@ define [
   '../../../../common/directives/radio-buttons/radio-buttons',
   '../../../../common/directives/multilang-textarea/multilang-textarea',
 ], (angular) ->
-  angular.module('statement.controllers', [
+  extend = (object, properties) ->
+    for key, val of properties
+      object[key] = val
+    object
+
+  return angular.module('statement.controllers', [
     'pascalprecht.translate',
     'directives.properties',
     'directives.metadata',
@@ -18,38 +23,45 @@ define [
     'directives.multilangTextarea'
   ])
 
-  .controller('StatementViewCtrl', ($scope, $state, $stateParams, $translate, statement, project) ->
-    $scope.statement = statement
-    $scope.project = project
-    $scope.pid = $scope.$stateParams.pid
-    $scope.db = $scope.$stateParams.db
+  .controller 'StatementViewCtrl', ($scope, $state, $stateParams, $translate, statement, project) ->
+    _getValueText = ({value}) ->
+      key = 'projects.statement.value.uncertain'
+      if value <= 0.25
+        key = 'projects.statement.value.false'
+      else if value >= 0.75
+        key = 'projects.statement.value.true'
 
-    $scope.statement.valueText =
-      if $scope.statement.value <= 0.25
-        $translate.instant 'projects.statement.value.false'
-      else if $scope.statement.value >= 0.75
-        $translate.instant 'projects.statement.value.true'
-      else
-        $translate.instant 'projects.statement.value.uncertain'
+      return $translate.instant key
 
-    $scope.headerIsEmpty = (v for k,v of statement.header when v?).length == 0
+    _getTooltip = ({text}) ->
+      return  [text.substring(0, 100), '...'].join ''
 
-    $scope.argumentName = (arg, idx) ->
-        return if arg.scheme? and arg.scheme isnt ''
-          arg.scheme.header.title
-        else
-          ($translate.instant "projects.argument") + " ##{idx+1}"
+    _isHeaderEmpty = ({header}) ->
+      return (v for k,v of header when v?).length == 0
 
-    tooltip = [statement.text.substring(0, 100), '...'].join ''
-    $scope.$state.$current.self.tooltip = tooltip
+    _getArgumentName = ({scheme}, idx) ->
+      return if scheme?
+        scheme.header.title
+      else ($translate.instant 'projects.argument') + " ##{idx+1}"
 
-    $scope.edit = () ->
-      $state.transitionTo 'home.projects.project.statements.statement.edit', $stateParams
+    _edit = () ->
+      url = 'home.projects.project.statements.statement.edit'
+      $state.transitionTo url, $stateParams
+
+
+    statement.valueText = _getValueText statement
+    $scope = extend $scope,
+      statement: statement
+      project: project
+      headerIsEmpty: _isHeaderEmpty statement
+      argumentName: _getArgumentName
+      edit: _edit
+
+    $state.$current.self.tooltip = _getTooltip statement
 
     return @
-  )
 
-  .controller('StatementEditCtrl', ($scope, $translate, $stateParams, statement) ->
+  .controller 'StatementEditCtrl', ($scope, $translate, $stateParams, statement) ->
     $scope.title = $translate.instant 'projects.editstatement'
     $scope.statement = statement
     $scope.standards = [
@@ -64,4 +76,3 @@ define [
       #statementedit.update $stateParams, statement
 
     return @
-  )

@@ -8,6 +8,10 @@ define [
   'angular-capitalize-filter',
   'angular-translate'
 ], (angular) ->
+  extend = (object, properties) ->
+    for key, val of properties
+      object[key] = val
+    object
 
   addPremise = (scope) ->
     scope.argument.premises.push({role: "", implicit: false, positive: true})
@@ -54,42 +58,54 @@ define [
     'directives.metadata'
   ])
 
-  .controller('ArgumentViewCtrl', ($scope, $state, $stateParams, argument, project, $translate) ->
-    $scope.argument = argument
-    $scope.argument.valueText =
-      if $scope.argument.value <= 0.25
-        $translate.instant 'projects.argument.value.unacceptable'
-      else if $scope.argument.value >= 0.75
-        $translate.instant 'projects.argument.value.acceptable'
-      else
-        $translate.instant 'projects.argument.value.unclear'
+  .controller 'ArgumentViewCtrl', ($scope, $state, $stateParams, $translate,
+    argument, project) ->
+    _getValueText = ({value}) ->
+      key = 'projects.argument.value.unclear'
+      if value <= 0.25
+        key = 'projects.argument.value.unacceptable'
+      else if value >= 0.75
+        key = 'projects.argument.value.acceptable'
 
-    $scope.pid = $scope.$stateParams.pid
-    $scope.db = $scope.$stateParams.db
+      return $translate.instant key
 
-    $scope.headerIsEmpty = (v for k,v of argument.header when v?).length == 0
+    _getConclusionText = ({strict, pro}) ->
+      _getStrict = (value) ->
+        strict_pro = 'projects.strict_pro_conclusion'
+        strict_con = 'projects.strict_con_conclusion'
+        return if value then strict_pro else strict_con
 
-    $scope.project = project
-    if argument.scheme
-      $scope.$state.$current.self.tooltip = argument.scheme.header.title
-    else
-      $scope.$state.$current.self.tooltip = argument.id
+      _getNonStrict = (value) ->
+        nonstrict_pro = 'projects.nonstrict_pro_conclusion'
+        nonstrict_con = 'projects.nonstrict_con_conclusion'
+        return if value then  nonstrict_pro else nonstrict_con
 
-    $scope.conclusion_text =
-      if argument.strict and argument.pro
-        $translate.instant 'projects.strict_pro_conclusion'
-      else if argument.strict and not argument.pro
-        $translate.instant 'projects.strict_con_conclusion'
-      else if not argument.strict and argument.pro
-        $translate.instant 'projects.nonstrict_pro_conclusion'
-      else if not argument.strict and not argument.pro
-        $translate.instant 'projects.nonstrict_con_conclusion'
+      key = if strict then _getStrict pro else _getNonStrict pro
+      return $translate.instant key
 
-    $scope.edit = () ->
-      $state.transitionTo 'home.projects.project.arguments.argument.edit', $stateParams
-  )
+    _isHeaderEmpty = ({header}) ->
+      return (v for k,v of header when v?).length == 0
 
-  .controller('ArgumentEditCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements) ->
+    _getTooltip = ({scheme, id}) ->
+      return if scheme then scheme.header.title else id
+
+    _edit = () ->
+      url = 'home.projects.project.arguments.argument.edit'
+      $state.transitionTo url, $stateParams
+
+    argument.valueText = _getValueText argument
+    $scope = extend $scope,
+      argument: argument
+      conclusion_text: _getConclusionText argument
+      headerIsEmpty: _isHeaderEmpty argument
+      project: project
+      edit: _edit
+
+    $state.$current.self.tooltip = _getTooltip argument
+
+    return @
+
+  .controller 'ArgumentEditCtrl', ($scope, $stateParams, $translate, project, theory, projectInfo, statements) ->
     $scope.title = $translate.instant 'projects.editargument'
     $scope.statements = statements.query $stateParams
     $scope.argument = argumentedit.get $stateParams, ->
@@ -113,4 +129,5 @@ define [
     $scope.onSave = () ->
       console.log 'argument', $scope.argument
       #argumentedit.update $stateParams, $scope.argument
-  )
+
+    return @
