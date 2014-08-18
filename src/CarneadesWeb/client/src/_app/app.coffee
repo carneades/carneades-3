@@ -24,6 +24,7 @@ define [
   "common/directives/svg-include",
   "common/directives/markdown/markdown",
   "common/directives/loader/loader",
+  'common/directives/navigation/buttons'
   'showdown',
   'hallo',
   'common/directives/base-editor/hallo'
@@ -51,7 +52,8 @@ define [
     "pascalprecht.translate",
     'markdown',
     'directives.editor',
-    'angular-capitalize-filter'
+    'angular-capitalize-filter',
+    'carneades.ui.buttons'
   ])
 
   .run(($rootScope, $state, $stateParams) ->

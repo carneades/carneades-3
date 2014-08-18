@@ -6,9 +6,6 @@
         span(ng-switch='', on='typeOfDisplay(k[0], model[k[0]])')
           span(ng-switch-when='formalizedScheme')
             a(ui-sref='home.projects.project.theory({tpid: schemesProject, tid: schemesName, scrollTo: model[k[0]].id})') {{model[k[0]].header.title}}
-          span(ng-switch-when='unformalizedScheme')
-            {{model[k[0]].header.title}}
-          span(ng-switch-when='standard')
-            {{standardName(model[k[0]])}}
-          span(ng-switch-default='')
-            {{model[k[0]]}}
+          span(ng-switch-when='unformalizedScheme') {{model[k[0]].header.title}}
+          span(ng-switch-when='standard') {{standardName(model[k[0]])}}
+          span(ng-switch-default='') {{model[k[0]]}}

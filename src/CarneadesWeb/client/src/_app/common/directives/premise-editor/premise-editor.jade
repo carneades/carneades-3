@@ -1,24 +1,19 @@
 div
   div(class='form-group')
-    label
-      {{'projects.positive' | translate | capitalize:'first'}}
+    label {{'projects.positive' | translate | capitalize:'first'}}
     br
     radio-buttons(model='model.positive')
   div(class='form-group')
-    label
-      {{'projects.implicit' | translate | capitalize:'first'}}
+    label {{'projects.implicit' | translate | capitalize:'first'}}
     br
     radio-buttons(model='model.implicit')
   div(class='form-group')
-    label
-      {{'projects.role' | translate | capitalize:'first'}}
+    label {{'projects.role' | translate | capitalize:'first'}}
     br
     input(type='text', ng-model='model.role')
   div(class='form-group')
-    label
-      {{'projects.statement' | translate | capitalize:'first'}}
+    label {{'projects.statement' | translate | capitalize:'first'}}
     br
     input(type="text", ng-model="model.statement" typeahead="statement as statement.text for statement in statements | filter:{text:$viewValue}", class="form-control", required)
   div(class='form-group')
-    button(class='btn btn-danger', ng-click='onDeletePremise()')
-      {{'projects.delete' | translate | capitalize:'first'}}
+    button(class='btn btn-danger', ng-click='onDeletePremise()') {{'projects.delete' | translate | capitalize:'first'}}

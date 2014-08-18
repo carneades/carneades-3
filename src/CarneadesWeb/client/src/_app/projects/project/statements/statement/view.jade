@@ -19,34 +19,29 @@
           .span.argument-indication {{'projects.statement.pro_arguments' | translate}}
           ul(ng-repeat='arg in statement.pro')
             li
-              a(ui-sref='home.projects.project.arguments.argument({pid: $stateParams.pid, db: $stateParams.db, aid: arg.id})')
-                {{argumentName(arg, $index)}}
+              a(ui-sref='home.projects.project.arguments.argument({pid: $stateParams.pid, db: $stateParams.db, aid: arg.id})') {{argumentName(arg, $index)}}
               ul(ng-repeat='p in arg.premises')
                 li
                   span(ng-show="!p.positive")
                     span {{'projects.negative_premise' | translate}}
-                  a(ui-sref='home.projects.project.statements.statement({pid: $stateParams.pid, db: $stateParams.db, sid: p.id})')
-                    {{p.text}}
+                  a(ui-sref='home.projects.project.statements.statement({pid: $stateParams.pid, db: $stateParams.db, sid: p.id})') {{p.text}}
   
         .section.con-arguments#con(ng-hide="statement.con.length == 0")
           .span.argument-indication {{projects.statement.con_arguments | translate}}
           ul(ng-repeat='arg in statement.con')
             li
-              a(ui-sref='home.projects.project.arguments.argument({pid: $stateParams.pid, db: $stateParams.db, aid: arg.id})')
-                {{argumentName(arg, $index)}}
+              a(ui-sref='home.projects.project.arguments.argument({pid: $stateParams.pid, db: $stateParams.db, aid: arg.id})') {{argumentName(arg, $index)}}
               ul(ng-repeat='p in arg.premises')
                 li
                   span(ng-show="!p.positive")
                     span{{'projects.negative_premise' | translate}}
-                  a(ui-sref='home.projects.project.statements.statement({pid: $stateParams.pid, db: $stateParams.db, sid: p.id})')
-                    {{p.text}}
+                  a(ui-sref='home.projects.project.statements.statement({pid: $stateParams.pid, db: $stateParams.db, sid: p.id})') {{p.text}}
   
         .section.premises-of#premises(ng-hide="statement['premise-of'].length == 0")
           .span.premise-of-indication {{'projects.statement.premise_of' | translate}}
           ul(ng-repeat="arg in statement['premise-of']")
             li
-              a(ui-sref='home.projects.project.arguments.argument({pid: $stateParams.pid, db: $stateParams.db, aid: arg.id})')
-                {{argumentName(arg, $index)}}
+              a(ui-sref='home.projects.project.arguments.argument({pid: $stateParams.pid, db: $stateParams.db, aid: arg.id})') {{argumentName(arg, $index)}}
   
         .section#properties
           properties(keys="[['valueText', 'projects.value'],['standard', 'projects.standard'],['weight', 'projects.weight'],['main', 'projects.main_issues'],['atom', 'projects.atom'],['id', 'projects.id']]",model="statement")

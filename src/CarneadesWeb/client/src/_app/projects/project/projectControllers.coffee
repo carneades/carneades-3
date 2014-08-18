@@ -32,12 +32,11 @@ define [
       pid = $stateParams.pid
       p = Project.get {}, pid: pid
       params = pid: pid, db: $scope.ag.name
-      p.$saveAg($scope.ag).then(
-        (v) ->
-          $state.transitionTo 'home.projects.project.outline', params
-        (e) ->
-          console.log 'error', e
-      )
+      p.name = $scope.ag.name
+      p.header = $scope.header
+      p.$saveAg()
+      #$state.transitionTo 'home.projects.project.outline', params
+
       #ag.save($stateParams, $scope.ag).$promise.then(
       #  (v) ->
       #    $state.transitionTo 'home.projects.project.outline', {pid: $stateParams.pid, db: $scope.ag.name}

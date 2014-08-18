@@ -3,7 +3,7 @@
     .col-md-9(role='main')
       .section#overview
         .page-header.breadcrumb
-          span.project-root {{project.title}}
+          span.project-root.highlight {{project.title}}
           span.seperator &nbsp;/&nbsp;
           span.fa.fa-plus-square-o.project-new(tooltip="Create a new argument graph within this project" tooltip-append-to-body="true" tooltip-placement="right", ng-click="newArgumentGraph()")
         markdown(strip='true', ng-model='project.description')

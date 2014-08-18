@@ -138,7 +138,7 @@ module.exports = (grunt) ->
           destPrefix: '<%= gen.base %>/libs'
         files:
           'angular.js': 'angular/angular.js'
-          'angular-capitalize-filter.js': 'angular-capitalize-filter/capitalize.js',
+          'angular-capitalize-filter.js': 'angular-capitalize-filter/capitalize.js'
           'angular-sanitize.js': 'angular-sanitize/angular-sanitize.js'
           'angular-ui-router.js': 'angular-ui-router/release/angular-ui-router.js'
           'angular-ui-utils.js': 'angular-ui-utils/ui-utils.js'
@@ -149,11 +149,11 @@ module.exports = (grunt) ->
           'requirejs-domready.js': 'requirejs-domready/domReady.js'
           'angular-perfect-scrollbar': ['angular-perfect-scrollbar/src/angular-perfect-scrollbar.js', 'angular-perfect-scrollbar/dependencies/perfect-scrollbar.js', 'angular-perfect-scrollbar/dependencies/perfect-scrollbar.css', 'angular-perfect-scrollbar/dependencies/jquery.mousewheel.js']
           'showdown': 'showdown/src'
-          'spin.js': 'spin.js/spin.js',
-          'hallo.js': '../libs/hallo.js',
-          'jquery.js': 'jquery/jquery.min.js',
-          'jquery-ui.js': 'jquery-ui/ui/jquery-ui.js',
-          'jquery-htmlclean.js': 'jquery-htmlclean/jquery.htmlClean.js',
+          'spin.js': 'spin.js/spin.js'
+          'hallo.js': '../libs/hallo.js'
+          'jquery.js': 'jquery/jquery.min.js'
+          'jquery-ui.js': 'jquery-ui/ui/jquery-ui.js'
+          'jquery-htmlclean.js': 'jquery-htmlclean/jquery.htmlClean.js'
           'rangy-core.js': 'rangy/rangy-core.js'
     jade:
       compile:

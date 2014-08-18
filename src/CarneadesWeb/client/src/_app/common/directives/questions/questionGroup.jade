@@ -1,6 +1,5 @@
 .question-groups
-  span.category
-    {{group[0].category_name}}
+  span.category {{group[0].category_name}}
   div(ng-repeat='question in group')
     p Hint: {{question.hint}}
     span(ng-switch='question.grounded')

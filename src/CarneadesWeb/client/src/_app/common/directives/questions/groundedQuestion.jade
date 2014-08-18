@@ -1,5 +1,4 @@
-div
-  {{question.text}}
+div {{question.text}}
   span(ng-repeat='answer in question.answers')
-    input.radiobutton.inputfield.required(name='input-{{question.id}}',ng-disabled='question.answered',ng-model='question.input',required='',type='radio',value='{{question.formalanswers[$index]}}')
-    {{answer}}
+    input.radiobutton.inputfield.required(name='input-{{question.id}}',ng-disabled='question.answered',ng-model='question.input',required='',type='radio',value='{{question.formalanswers[$index]}}') 
+    span {{answer}}
