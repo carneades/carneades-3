@@ -39,7 +39,8 @@
                  [midje "1.5.1"]]
 
   :plugins [[lein-ring "0.8.10"]
-            [lein-midje "3.0.0"]]
+            [lein-midje "3.0.0"]
+            [lein-exec "0.3.4"]]
 
   :ring {:handler carneades.web.handler/war-handler
          :init carneades.web.handler/init

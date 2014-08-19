@@ -1,14 +1,33 @@
 ======================
-CarneadesWeb
-======================
+# CarneadesWeb
 
-# Requirements
+> Web application front-end for argument mapping and evaluation application.
+
+## Features
+- Feature 1
+- Feature 2
+
+## Installation
+Install script
+
+## Usage
+
+### Linux users
+```
+./scripts
+```
+### Windows users
+
+
+## Build it on your own
+
+### Requirements
 
 - Ruby >=1.9 (2.x recommended)
-- npm (http://nodejs.org/)
+- Node package manager (npm) provided by [node.js](http://nodejs.org/)
 
-# Installation
 
+### Instructions
 As root:
 
 ```

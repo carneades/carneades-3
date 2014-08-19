@@ -17,7 +17,7 @@ build_webclient () {
     cd $SCRIPTPATH/../client
     npm install
     bower install
-    grunt build    
+    grunt build
     cd -
 }
 
