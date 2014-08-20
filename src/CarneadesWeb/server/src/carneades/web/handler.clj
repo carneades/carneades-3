@@ -34,6 +34,10 @@
   (route/resources "/" {:root "public/carneades"})
   (route/not-found "Not Found"))
 
+;; (defroutes tomcat-app-routes
+;;   (route/resources "/" {:root "public"})
+;;   (route/not-found "Not Found"))
+
 (def logger-config
   {:appenders {:rotor {:min-level :info
                        :enabled? true

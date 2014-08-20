@@ -36,3 +36,11 @@
            (context "/session" [] carneades-session-api-routes)
            (context "/projects" [] carneades-projects-api-routes)
            (context "/lican" [] carneades-lican-api-routes)))
+
+;; (defroutes tomcat-carneades-web-routes
+;;   (GET "/" [] (resp/resource-response "index.html" {:root "public/carneades"}))
+;;   ;; (context "/carneadesws" [] carneades-rest-routes)
+;;   (context "/carneades/api" []
+;;            (context "/session" [] carneades-session-api-routes)
+;;            (context "/projects" [] carneades-projects-api-routes)
+;;            (context "/lican" [] carneades-lican-api-routes)))

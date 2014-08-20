@@ -70,7 +70,7 @@ function self_install {
   echo "Downloading Carneades to $CARNEADES_JAR now..."
   mkdir -p "$(dirname "$CARNEADES_JAR")"
   #CARNEADES_URL="https://github.com/carneades/carneades/releases/download/$CARNEADES_VERSION/carneades-$CARNEADES_VERSION-standalone.jar"
-  CARNEADES_URL="https://github.com/carneades/carneades/releases/download/test/hello_world.sh"
+  CARNEADES_URL="https://github.com/carneades/carneades/releases/download/editor-dev-jar/carneades.jar"
   $HTTP_CLIENT "$CARNEADES_JAR.pending" "$CARNEADES_URL"
   if [ $? == 0 ]; then
       # TODO: checksum
@@ -112,8 +112,8 @@ if $cygwin; then
     export CARNEADES_HOME=`cygpath -w "$CARNEADES_HOME"`
 fi
 
-CARNEADES_JAR="$CARNEADES_HOME/self-installs/carneades-$CARNEADES_VERSION-standalone.jar"
-
+#CARNEADES_JAR="$CARNEADES_HOME/self-installs/carneades-$CARNEADES_VERSION-standalone.jar"
+CARNEADES_JAR="$CARNEADES_HOME/self-installs/carneades.jar"
 # normalize $0 on certain BSDs
 if [ "$(dirname "$0")" = "." ]; then
     SCRIPT="$(which $(basename "$0"))"
@@ -208,7 +208,7 @@ if [ "$1" = "self-install" ]; then
         exit 1
     fi
     echo "Manual self-install is deprecated; it will run automatically when necessary."
-    #self_install
+    self_install
 elif [ "$1" = "upgrade" ] || [ "$1" = "downgrade" ]; then
     if [ "$CARNEADES_DIR" != "" ]; then
         echo "The upgrade task is not meant to be run from a checkout."
@@ -266,4 +266,6 @@ else
     if [ $DEBUG ]; then
         echo "Carneades's classpath: $CLASSPATH"
     fi
+
+    java -jar "$CARNEADES_JAR"
 fi
