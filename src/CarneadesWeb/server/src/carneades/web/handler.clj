@@ -34,9 +34,9 @@
   (route/resources "/" {:root "public/carneades"})
   (route/not-found "Not Found"))
 
-;; (defroutes tomcat-app-routes
-;;   (route/resources "/" {:root "public"})
-;;   (route/not-found "Not Found"))
+(defroutes jar-app-routes
+  (route/resources "/" {:root "public"})
+  (route/not-found "Not Found"))
 
 (def logger-config
   {:appenders {:rotor {:min-level :info
@@ -110,3 +110,15 @@
              (wrap-file "../client/dist")))
 
 (def war-handler (middleware/war-handler app))
+
+
+(def jar-all-routes [jar-carneades-web-routes jar-app-routes])
+
+(def jar-app (-> (apply routes jar-all-routes)
+                 (session/wrap-stateful-session)
+                 (wrap-keyword-params)
+                 (wrap-json-body {:keywords? true})
+                 (wrap-params)
+                 (wrap-multipart-params)))
+
+(def jar-handler (middleware/jar-handler jar-app))
