@@ -41,37 +41,30 @@ the degree to which they share your views</li>
 <li>  obtaining clear explanations, using argument graphs, of the
 different effects of alternative policies in particular cases</li>
 </ul><h1>
-<a name="introducing-the-carneades-web-app" class="anchor" href="#introducing-the-carneades-web-app"><span class="octicon octicon-link"></span></a>Introducing the Carneades Web App</h1>
+<a name="the-carneades-web-app" class="anchor" href="#the-carneades-web-app"><span class="octicon octicon-link"></span></a>The Carneades Web App</h1>
 
-<p>The latest version of Carneades is a Web application with a three-tiered
+<p>Carneades is now a Web application with a three-tiered
 architecture consisting of a relational database backend layer, an
-application logic layer and a graphical user interface layer. (The
-previous version of Carneades, a desktop application called the
+application logic layer and a graphical user interface layer. (An earlier version of Carneades, a desktop application called the
 <a href="https://www.wuala.com/tfgordon/Public/Carneades/Releases/carneades-editor-1.0.2.jar">Carneades
 Editor</a>,
 is still available.</p>
 
-<p>New Features:</p>
+<p>Features:</p>
 
 <ul>
-<li>  Now a multiuser Web application, with a three-tier architecture,
+<li>  Multi-user Web application, with a three-tier architecture,
 including a relational database backend.</li>
 <li>  Zero configuration and zero administration, with a built-in database
 engine and web server.</li>
 <li>  Can be used locally by a single user, without an Internet
 connection.</li>
-<li>  New argument evaluator, based on ASPIC+ and Dung abstract
-argumentation frameworks. Cyclic argument graphs are now handled.</li>
-<li>  Argument maps are now represented for the Web using Structured
-Vector Graphics (SVG)</li>
-<li>  New XML format for exporting and interchanging argument graphs,
-called the Carneades Argument Format (CAF).</li>
-<li>  New rule language, based on Lisp s-expressions, for representing
-policies and argumentation schemes.</li>
-</ul><p>CAF and the new rule language replace the use in Carneades of the Legal
-Knowledge Interchange Format (LKIF) from the ESTRELLA project.</p>
-
-<p>Carneades is open source software licensed using the
+<li>  Automatic argument evaluation, based on ASPIC+ and Dung abstract
+argumentation frameworks. Cyclic argument graphs are handled.</li>
+<li>  Argument maps are represented using Structured Vector Graphics (SVG)</li>
+<li>  Exporting and interchanging argument graphs, in a variety of formats, including our own Carneades Argument Format (CAF) and the Argument Interchange Format (AIF) of the University of Dundee.</li>
+<li>  A rule language for representing argumentation schemes and theories ("knowledge bases") to be used for constructing and reconstructing arguments.</li>
+</ul><p>Carneades is open source software licensed using the
 <a href="http://opensource.org/licenses/MPL-2.0">MPL-2.0</a> license. Note:
 Previous versions of Carneades were licensed under <a href="http://ec.europa.eu/idabc/en/document/7774.html">European Union
 Public License</a> (EUPL
@@ -82,7 +75,7 @@ v1.1).</p>
 
 <p>A <a href="https://github.com/carneades/carneades/blob/master/doc/manual/out/">draft user
 manual</a>
-is available in various formats (PDF, HTML, ePub).</p>
+is available in various formats (PDF, HTML, ePub). <em>Note: This user manual is currently out of date.</em></p>
 
 <p>For programmers, online documentation of the <a href="http://carneades.github.com/doc/api">Carneades
 APIs</a> is also available.</p>
@@ -133,6 +126,38 @@ server on a Mac by double clicking on the jar file, you can shutdown
 the server by quitting the "routes_selfexe" application in the
 usual way, with Command-Q.</li>
 </ol><h1>
+<a name="team" class="anchor" href="#team"><span class="octicon octicon-link"></span></a>Team</h1>
+
+<h2>
+<a name="fraunhofer-fokus" class="anchor" href="#fraunhofer-fokus"><span class="octicon octicon-link"></span></a>Fraunhofer FOKUS</h2>
+
+<ul>
+<li>Pierre Allix</li>
+<li>Stefan Ballnat (2008-2011)</li>
+<li>Tom Gordon</li>
+<li>Sebastian Kaiser</li>
+<li>Martin Löhe</li>
+</ul><h2>
+<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h2>
+
+<ul>
+<li>Trevor Bench-Capon, Department of Computer Science, University of Liverpool</li>
+<li>Marcello Ceci, University of Bologna</li>
+<li>Matthias Grabmair, Intelligent Systems Program, University of Pittsburgh</li>
+<li>Henry Prakken, Intelligent Systems Group, Utrecht University</li>
+<li>Doug Walton, University of Windsor, Canada</li>
+<li>Adam Wyner, Department of Computer Science, University of Liverpool</li>
+</ul><h1>
+<a name="contact" class="anchor" href="#contact"><span class="octicon octicon-link"></span></a>Contact</h1>
+
+<p>Prof. Dr. Thomas F. Gordon 
+Fraunhofer FOKUS<br>
+Kaiserin-Augusta-Allee 31 
+10589 Berlin, Germany 
++49 (0)30 3463 7219 
+thomas.gordon(at)fokus.fraunhofer.de</p>
+
+<h1>
 <a name="acknowledgements" class="anchor" href="#acknowledgements"><span class="octicon octicon-link"></span></a>Acknowledgements</h1>
 
 <p>Development of Carneades has been (or is being) funded in part by a
@@ -155,36 +180,7 @@ and 2012-2017, with Douglas Walton</li>
 </li>
 <li>  <a href="http://www.eagle-learning.eu/">EAGLE</a>
 </li>
-</ul><h1>
-<a name="team" class="anchor" href="#team"><span class="octicon octicon-link"></span></a>Team</h1>
-
-<h2>
-<a name="fraunhofer-fokus" class="anchor" href="#fraunhofer-fokus"><span class="octicon octicon-link"></span></a>Fraunhofer FOKUS</h2>
-
-<ul>
-<li>Pierre Allix</li>
-<li>Tom Gordon</li>
-<li>Sebastian Kaiser</li>
-</ul><h2>
-<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h2>
-
-<ul>
-<li>Stefan Ballnat</li>
-<li>Trevor Bench-Capon, Department of Computer Science, University of Liverpool</li>
-<li>Marcello Ceci, University of Bologna</li>
-<li>Matthias Grabmair, Intelligent Systems Program, University of Pittsburgh</li>
-<li>Henry Prakken, Intelligent Systems Group, Utrecht University</li>
-<li>Doug Walton, University of Windsor, Canada</li>
-<li>Adam Wyner, Department of Computer Science, University of Liverpool</li>
-</ul><h1>
-<a name="contact" class="anchor" href="#contact"><span class="octicon octicon-link"></span></a>Contact</h1>
-
-<p>Prof. Dr. Thomas F. Gordon 
-Fraunhofer FOKUS<br>
-Kaiserin-Augusta-Allee 31 
-10589 Berlin, Germany 
-+49 (0)30 3463 7219 
-thomas.gordon(at)fokus.fraunhofer.de</p>
+</ul>
         </section>
 
         <aside id="sidebar">
