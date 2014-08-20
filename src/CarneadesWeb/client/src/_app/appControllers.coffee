@@ -41,8 +41,10 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
           return commands
         return ($state) -> return createCommands($state, params...)
 
-      $scope.commands = builder($state.current.data.commands...) $state
-
+      commands = []
+      if $state.current.data?.commands
+        _commands = builder($state.current.data.commands...) $state
+      $scope.commands = _commands
     $scope.$on '$stateChangeSuccess', -> update()
 
     update()
@@ -67,7 +69,10 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
 
         return ($state) -> return createCommands($state, params...)
 
-      $scope.commands = builder($state.current.data.commands...) $state
+      commands = []
+      if $state.current.data?.commands
+        _commands = builder($state.current.data.commands...) $state
+      $scope.commands = _commands
 
     $scope.$on '$stateChangeSuccess', -> update()
 

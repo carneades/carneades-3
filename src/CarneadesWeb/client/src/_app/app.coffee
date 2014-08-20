@@ -101,7 +101,7 @@ define [
     # $translateProvider.useLocalStorage()
 
     $urlRouterProvider.otherwise "/"
-
+    $urlRouterProvider.when '', '/projects'
     # disable autoscrolling on ui-views
     $uiViewScrollProvider.useAnchorScroll()
   )

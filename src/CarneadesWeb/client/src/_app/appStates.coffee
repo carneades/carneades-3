@@ -18,8 +18,11 @@ define [
       name: "home"
       label: "Carneades"
       url: "/"
-      data:
-        commands: ['home.projects','home.about','home.privacy','home.help','home.admin','home.signin']
+      # data:
+      #   commands: [
+      #     'home.projects','home.about','home.privacy','home.help','home.admin'
+      #     ,'home.signin'
+      #   ]
       views:
         "css@":
           template: '<css-inject></css-inject>'

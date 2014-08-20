@@ -12,7 +12,8 @@
             [ring.server.standalone :refer [serve]]
             [noir.util.middleware :as middleware]
             [carneades.web.routes :refer [carneades-web-routes
-                                          tomcat-carneades-web-routes]]
+                                          tomcat-carneades-web-routes
+                                          jar-carneades-web-routes]]
             [compojure.route :as route :refer [files resources not-found]]
             [sandbar.stateful-session :as session]
             ;; [carneades.web.service :as service]
@@ -121,4 +122,4 @@
                  (wrap-params)
                  (wrap-multipart-params)))
 
-(def jar-handler (middleware/jar-handler jar-app))
+(def jar-handler (middleware/war-handler jar-app))
