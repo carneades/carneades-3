@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>Pages on Carneades </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
+    <link>http://carneades.github.io/carneades/page/index.xml/</link>
+    <language>en-us</language>
+    
+    
+    <updated>Thu, 04 Sep 2014 19:45:55 CEST</updated>
+    
+    <item>
+      <title>Acknowledgements</title>
+      <link>http://carneades.github.io/carneades/page/acknowledgements/</link>
+      <pubDate>Thu, 04 Sep 2014 19:45:55 CEST</pubDate>
+      
+      <guid>http://carneades.github.io/carneades/page/acknowledgements/</guid>
+      <description>&lt;p&gt;Development of Carneades has been (or is being) funded in part by a
+number of projects:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Canadian Social Science and Humanties Research Council, 2007-2009
+and 2012-2017, with Douglas Walton&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.estrellaproject.org/index.php&#34;&gt;ESTRELLA&lt;/a&gt;
+(IST-2004-027655)&lt;/li&gt;
+&lt;li&gt;Google Summer of Code, 2008&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.policy-impact.eu&#34;&gt;IMPACT&lt;/a&gt; (IST-2009-247228)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://cordis.europa.eu/documents/documentlibrary/101903861EN6.pdf&#34;&gt;QUALIPSO&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.eu-spocs.eu/&#34;&gt;SPOCS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.markosproject.eu&#34;&gt;MARKOS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://policycompass.eu/the-project/&#34;&gt;Policy Compass&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.eagle-learning.eu/&#34;&gt;EAGLE&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Publications</title>
+      <link>http://carneades.github.io/carneades/page/publications/</link>
+      <pubDate>Thu, 04 Sep 2014 14:47:29 CEST</pubDate>
+      
+      <guid>http://carneades.github.io/carneades/page/publications/</guid>
+      <description>&lt;p&gt;The publications about Carneades below are in reverse chronological order. Carneades is an evolving system; older papers describe earlier versions.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Walton, D. N.; Tindale, C. W. &amp;amp; Gordon, T. F. (2014), &amp;lsquo;Applying Recent Argumentation Methods to Some Ancient Examples of Plausible Reasoning&amp;rsquo;, Argumentation 28(1), 85 –119. (Doi: 10.1007/s10503-013-9306-y.)&lt;/li&gt;
+&lt;li&gt;Gordon, T. F. (2013). Structured Consultation with Argument Graphs. In K. Atkinson, H. Prakken &amp;amp; A. Wyner (ed.), From Knowledge Representation to Argumentation in AI, Law and Policy Making (pp. 115–134). College Publications.&lt;/li&gt;
+&lt;li&gt;Gordon, T. F. (2013), Introducing the Carneades Web Application, in &amp;lsquo;Proceedings of the Fourteenth International Conference on Artificial Intelligence and Law (ICAIL 2013)&amp;rsquo;, ACM Press, pp. 243–244.&lt;/li&gt;
+&lt;li&gt;Ceci, M., and Gordon, T. F. Browsing case-law: An application of the Carneades argumentation system. In Proceedings of the RuleML2012@ECAI Challenge, H. Aït-Kaci, Y.-J. Hu, G. J. Nalepa, M. Palmirani, and D. Roman, Eds., vol. 874 (2012), pp. 79–95.&lt;/li&gt;
+&lt;li&gt;Gordon, T. F. The Carneades web service. In Computational Models of Argument – Proceedings of COMMA 2012 (Amsterdam, 2012), B. Verheij, S. Szeider, and S. Woltran, Eds., IOS Press, pp. 517–518.&lt;/li&gt;
+&lt;li&gt;Bex, F., Gordon, T., Lawrence, J., and Reed, C. Interchanging arguments between Carneades and AIF. In Computational Models of Argument – Proceedings of COMMA 2012 (2012), B. Verheij, S. Szeider, and S. Woltran, Eds., pp. 390–397.&lt;/li&gt;
+&lt;li&gt;Walton, D. and Gordon, T. F. (2012). The Carneades model of argument invention. Pragmatics &amp;amp; Cognition, 20(1):1–31.&lt;/li&gt;
+&lt;li&gt;Gordon, T. F., and Walton, D. A Carneades Reconstruction of Popov v Hayashi. Artificial Intelligence and Law 20, 1 (2012), 37–56. doi:10.1007/s10506-012-9120-0&lt;/li&gt;
+&lt;li&gt;Gordon, Thomas F. 2011. The Policy Modeling Tool of the IMPACT Argumentation Toolbox. In Proceedings of the Jurix Workshop on Modelling Policy-Making (MPM 2011), 29-38.&lt;/li&gt;
+&lt;li&gt;Gordon, T.F. Combining Rules and Ontologies with Carneades. Proceedings of the 5th International RuleML2011@BRF Challenge, CEUR Workshop Proceedings (2011), 103-110.&lt;/li&gt;
+&lt;li&gt;Gordon, T.F. Analyzing Open Source License Compatibility Issues with Carneades. Proceedings of the Thirteenth International Conference on Artificial Intelligence and Law (ICAIL-2011), ACM Press (2011), 50-55.&lt;/li&gt;
+&lt;li&gt;Gordon, T. F., &amp;amp; Walton, D. (2011). A Formal Model of Legal Proof Standards and Burdens. In F. van Emeren, B. Garssen, J. A. Blair, &amp;amp; G. R. Mitchell (Eds.), 7th Conference on Argumentation of the International Society for the Study of Argumentation (ISSA 2010) (pp. 644-655). Amsterdam: Sic Sac.&lt;/li&gt;
+&lt;li&gt;Gordon, T.F. Report on a Prototype Decision Support System for OSS License Compatibility Issues. Qualipso (IST- FP6-IP-034763), Deliverable A1.D2.1.3, 2010.&lt;/li&gt;
+&lt;li&gt;Gordon, T.F. An Overview of the Carneades Argumentation Support System. In C.W. Tindale and C. Reed, Dialectics, Dialogue and Argumentation. An Examination of Douglas Walton&amp;rsquo;s Theories of Reasoning. College Publications, 2010, 145-156.&lt;/li&gt;
+&lt;li&gt;Brewka, G. and Gordon, T.F. Carneades and Abstract Dialectical Frameworks: A Reconstruction. Computational Models of Argument – Proceedings of COMMA 2010, IOS Press (2010), 3–12.&lt;/li&gt;
+&lt;li&gt;Ballnat, S. and Gordon, T.F. Goal Selection in Argumentation Processes — A Formal Model of Abduction in Argument Evaluation Structures. Computational Models of Argument – Proceedings of COMMA 2010, IOS Press (2010), 51–62.&lt;/li&gt;
+&lt;li&gt;Grabmair, M., Gordon, T.F., and Walton, D. Probabilistic Semantics for the Carneades Argument Model Using Bayesian Belief Networks. Computational Models of Argument – Proceedings of COMMA 2010, IOS Press (2010), 255–266.&lt;/li&gt;
+&lt;li&gt;Walton, D., and Gordon, T. F. Jumping to a conclusion: Fallacies and standards of proof. Informal Logic 29, 2 (2009), 215–243.&lt;/li&gt;
+&lt;li&gt;Bench-Capon, T., and Gordon, T. F. Isomorphism and argumentation. In Proceedings of the 12th International Conference on Artificial Intelligence and Law (ICAIL 2009) (New York, NY, USA, 2009), C. D. Hafner, Ed., ACM Press.&lt;/li&gt;
+&lt;li&gt;Gordon, T. F., and Walton, D. Legal reasoning with argumentation schemes. In 12th International Conference on Artificial Intelligence and Law (ICAIL 2009) (New York, NY, USA, 2009), C. D. Hafner, Ed., ACM Press.&lt;/li&gt;
+&lt;li&gt;Gordon, T. F., and Walton, D. Proof burdens and standards. In Argumentation in Artificial Intelligence, I. Rahwan and G. Simari, Eds. Springer-Verlag, Berlin, Germany, 2009, 239-260.&lt;/li&gt;
+&lt;li&gt;Gordon, T. F. Hybrid reasoning with argumentation schemes. In Proceedings of the 8th Workshop on Computational Models of Natural Argument (CMNA 08) (July 2008).&lt;/li&gt;
+&lt;li&gt;Gordon, T. F. Visualizing Carneades argument graphs. Law, Probability and Risk 6, 1-4 (2007), 109–117.&lt;/li&gt;
+&lt;li&gt;Gordon, T. F. Constructing arguments with a computational model of an argumentation scheme for legal rules. In Proceedings of the Eleventh International Conference on Artificial Intelligence and Law (2007), pp. 117-121.&lt;/li&gt;
+&lt;li&gt;Gordon, T. F., Prakken, H., and Walton, D. The Carneades model of argument and burden of proof. Artificial Intelligence 171, 10-11 (2007), 875–896.&lt;/li&gt;
+&lt;li&gt;Gordon, T. F., and Walton, D. Pierson vs. Post revisted — a reconstruction using the Carneades Argumentation Framework. In Proceedings of the First International Conference on Computational Models of Argument (COMMA 06) (Liverpool, 2006), P. E. Dunne and T. Bench-Capon, Eds., IOS Press.&lt;/li&gt;
+&lt;li&gt;Gordon, T. F., and Walton, D. The Carneades argumentation framework — using presumptions and exceptions to model critical questions. In Proceedings of the First International Conference on Computational Models of Argument (COMMA 06) (Liverpool, September 2006), P. E. Dunne, Ed.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Contact</title>
+      <link>http://carneades.github.io/carneades/page/contact/</link>
+      <pubDate>Thu, 04 Sep 2014 14:47:22 CEST</pubDate>
+      
+      <guid>http://carneades.github.io/carneades/page/contact/</guid>
+      <description>&lt;p&gt;Prof. Thomas F. Gordon&lt;br /&gt;
+Fraunhofer FOKUS&lt;br /&gt;
+Kaiserin-Augusta-Allee 31&lt;br /&gt;
+10589 Berlin, Germany&lt;br /&gt;
+tel: +49 (0)30 3463 7219&lt;br /&gt;
+email: thomas.gordon(at)fokus.fraunhofer.de&lt;br /&gt;
+web: &lt;a href=&#34;http://www.tfgordon.de&#34;&gt;http://www.tfgordon.de&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Team</title>
+      <link>http://carneades.github.io/carneades/page/team/</link>
+      <pubDate>Thu, 04 Sep 2014 14:40:04 CEST</pubDate>
+      
+      <guid>http://carneades.github.io/carneades/page/team/</guid>
+      <description>
+
+&lt;h1 id=&#34;toc_0&#34;&gt;Current Members&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Pierre Allix&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.tfgordon.de&#34;&gt;Tom Gordon&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Sebastian Kaiser&lt;/li&gt;
+&lt;li&gt;Martin Löhe&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;toc_1&#34;&gt;Previous Members&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Stefan Ballnat (2008-2011)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;toc_2&#34;&gt;Contributors&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://cgi.csc.liv.ac.uk/~katie/&#34;&gt;Katie Atkinson&lt;/a&gt;, Department of Computer Sciene, University of Liverpool&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://cgi.csc.liv.ac.uk/~tbc/&#34;&gt;Trevor Bench-Capon&lt;/a&gt;, Department of Computer Science, University of Liverpool&lt;/li&gt;
+&lt;li&gt;Marcello Ceci, Governance, Risk and Compliance Technology Centre, University College Cork&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.plainreasoning.com/&#34;&gt;Matthias Grabmair&lt;/a&gt;, Intelligent Systems Program, University of Pittsburgh&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.staff.science.uu.nl/~prakk101/&#34;&gt;Henry Prakken&lt;/a&gt;, Intelligent Systems Group, Utrecht University&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.dougwalton.ca/&#34;&gt;Douglas Walton&lt;/a&gt;, University of Windsor, Canada&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://wyner.info/LanguageLogicLawSoftware/&#34;&gt;Adam Wyner&lt;/a&gt;, Department of Computing Science, University of Aberdeen&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>Posts on Carneades </title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
+    <link>http://carneades.github.io/carneades/post/index.xml/</link>
+    <language>en-us</language>
+    
+    
+    <updated>Wed, 03 Sep 2014 17:56:13 CEST</updated>
+    
+    <item>
+      <title>New Carneades Web Site and Blog using Hugo</title>
+      <link>http://carneades.github.io/carneades/post/first/</link>
+      <pubDate>Wed, 03 Sep 2014 17:56:13 CEST</pubDate>
+      
+      <guid>http://carneades.github.io/carneades/post/first/</guid>
+      <description>&lt;p&gt;The Carneades Web site is now generated using the &lt;a href=&#34;http://hugo.spf13.com/&#34;&gt;Hugo Website
+Engine&lt;/a&gt; and hosted on GitHub.  Hugo provides a
+nice way to maintain a blog. We will use this feature to make
+announcements about the Carneades system.  The blog is available in
+the Atom syndication format &lt;a href=&#34;/post/index.xml&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
