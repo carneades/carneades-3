@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title> </title>
-    <link>http://carneades.github.io/carneades/post/index.xml/</link>
+    <link>http://localhost:35846/carneades/post/index.xml/</link>
     <language>en-us</language>
     <author>Tom Gordon</author>
     <rights>(C) 2014</rights>
@@ -12,10 +12,10 @@
       
         <item>
           <title>New Carneades Website</title>
-          <link>http://carneades.github.io/carneades/2014/09/03/New-Carneades-Website/</link>
+          <link>http://localhost:35846/carneades/2014/09/03/New-Carneades-Website/</link>
           <pubDate>Wed, 03 Sep 2014 17:56:13 CEST</pubDate>
           <author>Tom Gordon</author>
-          <guid>http://carneades.github.io/carneades/2014/09/03/New-Carneades-Website/</guid>
+          <guid>http://localhost:35846/carneades/2014/09/03/New-Carneades-Website/</guid>
           <description>&lt;p&gt;Welcome to the new website for the
 &lt;a href=&#34;/Carneades&#34;&gt;Carneades argumentation system&lt;/a&gt;.  The website is now
 generated using the &lt;a href=&#34;http://hugo.spf13.com/&#34;&gt;Hugo Website Engine&lt;/a&gt; and
