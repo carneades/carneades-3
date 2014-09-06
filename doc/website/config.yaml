@@ -1,9 +1,0 @@
----
-baseurl: "http://carneades.github.io/carneades/"
-languageCode: "en-us"
-title: "Carneades"
-params:
-  github: "https://github.com/carneades/carneades"
-  copyright: "Copyright © 2014 by Thomas F. Gordon"
-  description: "The Carneades Argumentation System"
-...

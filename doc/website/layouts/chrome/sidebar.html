@@ -1,0 +1,27 @@
+<!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item {{ if eq .Url "/" }} active {{ end }}" href="/">Home</a>
+    <a class="sidebar-nav-item {{ if eq .Url "post" }} active {{ end }}" href="/post">Posts</a>
+
+    {{ $thisperma := .Permalink }}
+    {{ range .Site.Recent.ByWeight }}
+      {{ if isset .Params "sidebar" }}
+        <a class="sidebar-nav-item {{ if eq .Permalink $thisperma }} active {{ end }}" href="{{ .Permalink }}">{{ .Title }}</a>
+      {{ end }}
+    {{ end }}
+
+    <a class="sidebar-nav-item" href="{{ .Site.Params.Github.Url }}">GitHub</a>
+  </nav>
+
+  <div class="sidebar-item">
+    <p><a href="/post/index.xml"><img src="/assets/feed-icon-14x14.png" alt="news feed"/></a></p>
+    <p>Design by <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.</p>
+    <p>&copy; {{ .Site.LastChange.Year }}. All rights reserved.</p>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+{{ template "chrome/default_head.html" . }}
+
+<div class="post">
+  <h1 class="post-title">{{ .Title }}</h1>
+  <ul id="list">
+      {{ range .Data.Pages }}
+        {{ .Render "li"}}
+      {{ end }}
+  </ul>
+</div>
+
+{{ template "chrome/default_foot.html" . }}
