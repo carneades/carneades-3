@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>The Carneades Argumentation System by carneades</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>The Carneades Argumentation System</h1>
+        <h2>An integrated set of tools for argument (re)construction, evaluation, mapping and interchange</h2>
+        <a href="https://github.com/carneades/carneades" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <p>The Carneades argumentation system provides web-based, collaborative
+software tools for:</p>
+
+<ul>
+<li>  summarizing the arguments of a debate in an <strong>argument graph</strong>
+</li>
+<li>  visualizing, browsing and navigating argument graphs</li>
+<li>  critically evaluating arguments</li>
+<li>  forming opinions, participating in polls and ranking stakeholders by
+the degree to which they share your views</li>
+<li>  obtaining clear explanations, using argument graphs, of the
+different effects of alternative policies in particular cases</li>
+</ul><h1>
+<a name="the-carneades-web-app" class="anchor" href="#the-carneades-web-app"><span class="octicon octicon-link"></span></a>The Carneades Web App</h1>
+
+<p>Carneades is a multi-user Web application with a three-tiered
+architecture consisting of a relational database backend layer, an
+application logic layer and a graphical user interface layer. (An earlier version of Carneades, a single-user desktop application called the
+<a href="https://github.com/carneades/carneades/releases/download/v1.0.2/carneades-editor-1.0.2.jar">Carneades
+Editor</a>,
+is still available.)</p>
+
+<p>Features:</p>
+
+<ul>
+<li>  Multi-user Web application, with a three-tier architecture,
+including a relational database backend.</li>
+<li>  Zero configuration and zero administration, with a built-in database
+engine and web server.</li>
+<li>  Can be used locally by a single user, without an Internet
+connection.</li>
+<li>  Automatic argument evaluation, based on ASPIC+ and Dung abstract
+argumentation frameworks. Cyclic argument graphs are handled.</li>
+<li>  Argument maps are represented using Structured Vector Graphics (SVG)</li>
+<li>  Exporting and interchanging argument graphs, in a variety of formats, including our own Carneades Argument Format (CAF) and the Argument Interchange Format (AIF) of the University of Dundee.</li>
+<li>  A rule language for representing argumentation schemes and theories ("knowledge bases") to be used for constructing and reconstructing arguments.</li>
+</ul><p>Carneades is open source software licensed using the <a href="http://ec.europa.eu/idabc/en/document/7774.html">European Union
+Public License</a> (EUPL
+v1.1). Note: Subsequent releases of Carneades will use another open source license, the <a href="http://opensource.org/licenses/MPL-2.0">MPL-2.0</a> license. </p>
+
+<h1>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h1>
+
+<p>A <a href="https://github.com/carneades/carneades/blob/master/doc/manual/out/">draft user
+manual</a>
+is available in various formats (PDF, HTML, ePub).
+For programmers, online documentation of the <a href="http://carneades.github.com/doc/api">Carneades
+APIs</a> is also available.</p>
+
+<h1>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h1>
+
+<p>Prerequisites:</p>
+
+<ul>
+<li>  Version 7 or better of a <a href="https://www.java.com/en/">Java Runtime Environment (JRE)</a>.</li>
+<li>  A recent version of a standards-compliant Web Browser (e.g. Firefox,
+Chrome, Safari).</li>
+</ul><p>To download, install and run the Carneades Web Application</p>
+
+<ol>
+<li> Download the latest <a href="https://github.com/carneades/carneades/releases/download/final-impact-review-rc0/carneades-impact-2013.zip">release</a>
+of the Carneades web application, named <code>carneades-impact-2013.zip</code>. <em>Warning: this is not the zip file shown at the top of this page.  That zip file contains the source files.</em>
+</li>
+<li> Unzip the <code>carneades-impact-2013.zip</code> file.</li>
+<li> Change to the <code>carneades-impact-2013</code> directory.</li>
+<li>
+<p>Double click on the <code>carneades-webapp.jar</code> file or execute the
+following command line:\
+ <code>$ java -jar carneades-webapp.jar</code></p>
+
+<p><strong>Warning:</strong> Microsoft Windows users may need to take extra steps to
+configure Java and the Carneades application. See <a href="http://answers.microsoft.com/en-us/windows/forum/windows_7-windows_programs/since-updating-to-windows-7-i-am-unable-to-run-any/b4b2c2fb-8634-4d26-bf76-a27cb7e6cbff">this
+explanation</a>
+from Microsoft.</p>
+</li>
+<li><p>The server will be start and open the home page of the Carneades
+client in your web browser.</p></li>
+<li> If the home page fails to open, enter this URL into the address bar
+of your web browser:\
+ <code>http://localhost:8080/carneades/#/home</code>
+</li>
+<li> A list of projects should be shown. To get started, click on the
+link for the "Copyright in the Knowledge Economy" project and follow
+the instructions.</li>
+<li> To shutdown the server you may need to end the Java task using your
+task manager, depending on your operating system. If you started the
+server from the command line, you can kill the process with
+Control-C on Unix machines, including Macs. If you started the
+server on a Mac by double clicking on the jar file, you can shutdown
+the server by quitting the "routes_selfexe" application in the
+usual way, with Command-Q.</li>
+</ol><h1>
+<a name="team" class="anchor" href="#team"><span class="octicon octicon-link"></span></a>Team</h1>
+
+<h2>
+<a name="fraunhofer-fokus" class="anchor" href="#fraunhofer-fokus"><span class="octicon octicon-link"></span></a>Fraunhofer FOKUS</h2>
+
+<ul>
+<li>Pierre Allix</li>
+<li>Stefan Ballnat (2008-2011)</li>
+<li>Tom Gordon</li>
+<li>Sebastian Kaiser</li>
+<li>Martin Löhe</li>
+</ul><h2>
+<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h2>
+
+<ul>
+<li>Trevor Bench-Capon, Department of Computer Science, University of Liverpool</li>
+<li>Marcello Ceci, University of Bologna</li>
+<li>Matthias Grabmair, Intelligent Systems Program, University of Pittsburgh</li>
+<li>Henry Prakken, Intelligent Systems Group, Utrecht University</li>
+<li>Doug Walton, University of Windsor, Canada</li>
+<li>Adam Wyner, Department of Computer Science, University of Liverpool</li>
+</ul><h1>
+<a name="contact" class="anchor" href="#contact"><span class="octicon octicon-link"></span></a>Contact</h1>
+
+<p>Prof. Dr. Thomas F. Gordon<br>
+Fraunhofer FOKUS<br>
+Kaiserin-Augusta-Allee 31<br>
+10589 Berlin, Germany<br>
++49 (0)30 3463 7219<br>
+thomas.gordon(at)fokus.fraunhofer.de</p>
+
+<h1>
+<a name="publications" class="anchor" href="#publications"><span class="octicon octicon-link"></span></a>Publications</h1>
+
+<p>For further information, see Tom Gordon's <a href="http://www.tfgordon.de/publications">list of publications</a>.</p>
+
+<h1>
+<a name="acknowledgements" class="anchor" href="#acknowledgements"><span class="octicon octicon-link"></span></a>Acknowledgements</h1>
+
+<p>Development of Carneades has been (or is being) funded in part by a
+number of projects:</p>
+
+<ul>
+<li>  Canadian Social Science and Humanties Research Council, 2007-2009
+and 2012-2017, with Douglas Walton</li>
+<li>  <a href="http://www.estrellaproject.org/index.php">ESTRELLA</a>
+(IST-2004-027655)</li>
+<li>  Google Summer of Code, 2008</li>
+<li>  <a href="http://www.policy-impact.eu">IMPACT</a> (IST-2009-247228)</li>
+<li>  <a href="http://cordis.europa.eu/documents/documentlibrary/101903861EN6.pdf">QUALIPSO</a>
+</li>
+<li>  <a href="http://www.eu-spocs.eu/">SPOCS</a>
+</li>
+<li>  <a href="http://www.markosproject.eu">MARKOS</a>
+</li>
+<li>  <a href="http://policycompass.eu/the-project/">Policy Compass</a>
+</li>
+<li>  <a href="http://www.eagle-learning.eu/">EAGLE</a>
+</li>
+</ul>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/carneades/carneades/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/carneades/carneades/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/carneades/carneades"></a> is maintained by <a href="https://github.com/carneades">carneades</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
