@@ -4,3 +4,5 @@ pom.xml
 *.h2*
 *.jar
 *.war
+*.lein*
+*.log
