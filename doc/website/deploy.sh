@@ -5,6 +5,10 @@ echo -e "Deploying updates to Github..."
 # Build the project. 
 hugo
 
+# Change to the toplevel directory of the working Github tree
+
+cd ../..
+ 
 # Add changes to git.
 git add -A
 
