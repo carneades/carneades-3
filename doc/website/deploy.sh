@@ -21,7 +21,7 @@ git commit -m "$msg"
 
 # Push source and build repos.
 git push origin master
-git subtree push --prefix=/doc/website/public git@github.com:carneades/carneades.git gh-pages
+git subtree push --prefix=doc/website/public git@github.com:carneades/carneades.git gh-pages
 
 
 
