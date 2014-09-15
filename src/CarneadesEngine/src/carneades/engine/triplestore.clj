@@ -290,7 +290,7 @@ argument if is the case."
 
 (defn sparql-query
   [kbconn sexp namespaces]
-  (let [query (spy (sexp->sparqlquery sexp))
+  (let [query (sexp->sparqlquery sexp)
         bindings (binding [sparql/*select-limit* select-limit]
                    (sparql/query (:kb kbconn) query))
         bindings (map sparqlbindings->bindings bindings)
@@ -299,10 +299,10 @@ argument if is the case."
         bindings (map #(to-absolute-bindings % namespaces) bindings)]
     ;; (prn "[triplestore] absolute bindings size= " (count bindings))
     ;; (pprint bindings)
-    (debug "SPARQL:")
-    (debug 
-     (binding [kb/*kb* (:kb kbconn)]
-       (sparql/sparql-query-body query)))
+    ;; (debug "SPARQL:")
+    ;; (debug 
+    ;;  (binding [kb/*kb* (:kb kbconn)]
+    ;;    (sparql/sparql-query-body query)))
     bindings))
 
 (defn responses-from-query
