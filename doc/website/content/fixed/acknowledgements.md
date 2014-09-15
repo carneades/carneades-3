@@ -4,6 +4,8 @@
   "weight": 5
 }
 
+Carneades is being developed at [Fraunhofer FOKUS](http://www.fokus.fraunhofer.de)  in Berlin.
+
 Development of Carneades has been (or is being) funded in part by a
 number of projects:
 
