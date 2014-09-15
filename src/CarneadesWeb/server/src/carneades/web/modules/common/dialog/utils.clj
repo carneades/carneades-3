@@ -30,7 +30,7 @@
         (println line)))))
 
 (defn store-ag
-  "Stores ag into a LKIF and returnsy the dbname"
+  "Stores ag into a DB and returns the dbname"
   [project ag]
  (let [dbname (str "db-" (make-uuid))
         ;; TODO: changes the pass
