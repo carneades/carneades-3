@@ -7,7 +7,7 @@ Welcome to the new website for the
 [Carneades argumentation system](/Carneades).  The website is now
 generated using the [Hugo Website Engine](http://hugo.spf13.com/) and
 hosted on GitHub.  Hugo provides a nice, simple way to maintain a blog. We
-will use this feature to make announcements about the Carneades.  The
+will use this feature to make announcements.  The
 blog is also available in the Atom syndication format
 [here](/post/index.xml).
 

@@ -48,8 +48,11 @@ Prerequisites:
 
 To download, install and run the Carneades Web Application
 
-1.  Download the latest [release](https://github.com/carneades/carneades/releases/download/final-impact-review-rc0/carneades-impact-2013.zip)
-    of the Carneades web application, named `carneades-impact-2013.zip`. *Warning: this is not the zip file shown at the top of this page.  That zip file contains the source files.*
+1.  Download the latest
+    [release](https://github.com/carneades/carneades/releases/download/final-impact-review-rc0/carneades-impact-2013.zip)
+    of the Carneades web application, named
+    `carneades-impact-2013.zip`. 
+    files.*
 2.  Unzip the `carneades-impact-2013.zip` file.
 3.  Change to the `carneades-impact-2013` directory.
 4.  Double click on the `carneades-webapp.jar` file or execute the
@@ -64,8 +67,7 @@ To download, install and run the Carneades Web Application
 5.  The server will be start and open the home page of the Carneades
     client in your web browser.
 6.  If the home page fails to open, enter this URL into the address bar
-    of your web browser:\
-     `http://localhost:8080/carneades/#/home`
+    of your web browser:  `http://localhost:8080/carneades/#/home`
 7.  A list of projects should be shown. To get started, click on the
     link for the "Copyright in the Knowledge Economy" project and follow
     the instructions.

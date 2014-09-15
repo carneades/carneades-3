@@ -4,6 +4,8 @@
   "weight": 2
 }
 
+Carneades is being developed at [Fraunhofer FOKUS](http://www.fokus.fraunhofer.de)  in Berlin.
+
 # Current Members
 
 - Pierre Allix
