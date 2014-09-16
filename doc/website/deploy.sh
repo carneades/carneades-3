@@ -5,12 +5,12 @@ echo -e "Deploying updates to Github..."
 # Build the project. 
 hugo
 
+# Add changes to git.
+git add -A .
+
 # Change to the toplevel directory of the working Github tree
 
 cd ../..
- 
-# Add changes to git.
-git add -A
 
 # Commit changes.
 msg="rebuilding site `date`"
