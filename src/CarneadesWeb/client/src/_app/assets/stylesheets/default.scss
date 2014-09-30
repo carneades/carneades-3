@@ -7,7 +7,7 @@
 
 // Reset
 @import "projects/vendor/bootstrap/normalize";
-@import "projects/vendor/bootstrap/print";
+//@import "projects/vendor/bootstrap/print";
 
 // Core CSS
 @import "projects/vendor/bootstrap/scaffolding";
@@ -27,18 +27,18 @@
 @import "projects/vendor/bootstrap/navs";
 @import "projects/vendor/bootstrap/navbar";
 @import "projects/vendor/bootstrap/breadcrumbs";
-@import "projects/vendor/bootstrap/pagination";
-@import "projects/vendor/bootstrap/pager";
+//@import "projects/vendor/bootstrap/pagination";
+//@import "projects/vendor/bootstrap/pager";
 @import "projects/vendor/bootstrap/labels";
-@import "projects/vendor/bootstrap/badges";
-@import "projects/vendor/bootstrap/jumbotron";
-@import "projects/vendor/bootstrap/thumbnails";
+//@import "projects/vendor/bootstrap/badges";
+//@import "projects/vendor/bootstrap/jumbotron";
+//@import "projects/vendor/bootstrap/thumbnails";
 @import "projects/vendor/bootstrap/alerts";
-@import "projects/vendor/bootstrap/progress-bars";
-@import "projects/vendor/bootstrap/media";
+//@import "projects/vendor/bootstrap/progress-bars";
+//@import "projects/vendor/bootstrap/media";
 @import "projects/vendor/bootstrap/list-group";
 @import "projects/vendor/bootstrap/panels";
-@import "projects/vendor/bootstrap/wells";
+//@import "projects/vendor/bootstrap/wells";
 @import "projects/vendor/bootstrap/close";
 
 // Components w/ JavaScript
@@ -55,6 +55,11 @@
 //@import "projects/partials/breadcrumbs";
 @import "projects/partials/breadcrumbs-simple";
 @import "projects/partials/navigation";
+@import "projects/partials/hallo";
+@import "projects/partials/jquery-ui";
 @import "projects/partials/misc";
 @import "projects/default/outline";
+@import "projects/partials/buttons";
+@import "projects/default/base";
+@import "projects/partials/editor";;
 //@import "projects/partials/theory";

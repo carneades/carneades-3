@@ -8,6 +8,6 @@ define [
   './projectsStates'
 ], (angular) ->
   angular.module 'projects.module', [
-    'projects.states',
+    'projects.states'
     'project.module'
   ]

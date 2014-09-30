@@ -38,16 +38,17 @@ define [
       )
 
     .directive('map', ($parse, $compile) ->
-      html = []
-      html.push '<div style="'
-      html.push 'margin:4px auto;height:{{ resizeHeightWithOffset(193) }}px;'
-      html.push 'width:{{ resizeWidthWithOffset() }}px;'
-      html.push 'white-space:pre-line;overflow:hidden;position:relative;">'
-      html.push '<svg-include ng-model="svg"></svg-include></div>'
+      html = [
+        '<div style="',
+        'margin:4px auto;height:{{ resizeHeightWithOffset(193) }}px;',
+        'width:{{ resizeWidthWithOffset() }}px;',
+        'white-space:pre-line;overflow:hidden;position:relative;">',
+        '<svg-include ng-model="svg"></svg-include></div>'
+      ].join ''
       return {
         restrict: 'A'
         replace: true
-        template: html.join ''
+        template: html
         link: (scope, element, attrs) ->
           psOptions = [
             'wheelSpeed', 'wheelPropagation', 'minScrollbarLength',
@@ -68,26 +69,28 @@ define [
       }
     )
 
-    .controller('MapCtrl', ($scope, map) ->
+    .controller 'MapCtrl', ($scope, $stateParams, $q, map) ->
+      $scope.viewLoading = true
       $scope.handleClick = (event) ->
         element = event.target
         if element.farthestViewportElement?.localName is 'svg'
-
           nid = angular.element(element).parent().attr('id')
           if nid
             # rect (statement) or circle (argument)
             if nid[0] == 's'
-              $scope.$stateParams.sid = nid.substr(2)
-              $scope.$state.transitionTo("home.projects.project.statement", $scope.$stateParams)
+              $stateParams.sid = nid.substr(2)
+              url = 'home.projects.project.statements.statement'
+              $scope.$state.transitionTo url, $stateParams
             else if nid[0] != 'e'
-              $scope.$stateParams.aid = nid.substr(2)
-              $scope.$state.transitionTo("home.projects.project.argument", $scope.$stateParams)
-
+              $stateParams.aid = nid.substr(2)
+              url = 'home.projects.project.arguments.argument'
+              $scope.$state.transitionTo url, $stateParams
           else
             nid = angular.element(element).parent().parent()
             if nid.attr('id')
-              $scope.$stateParams.sid = nid.attr('id').substr(2)
-              $scope.$state.transitionTo("home.projects.project.statement", $scope.$stateParams)
+              $stateParams.sid = nid.attr('id').substr(2)
+              url = 'home.projects.project.statements.statement'
+              $scope.$state.transitionTo url, $stateParams
 
         return undefined
 
@@ -131,4 +134,8 @@ define [
         return undefined
 
       $scope.svg = map
-    )
+
+      $q.all([map]).then (data) ->
+        $scope.viewLoading = false
+
+      return @

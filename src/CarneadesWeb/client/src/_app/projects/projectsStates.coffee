@@ -16,10 +16,8 @@ define [
   .config ($stateProvider) ->
     states = [
       name: 'home.projects'
-      label: 'Projects'
+      label: 'state.home.projects.label'
       url: 'projects'
-      data:
-        commands: []
       views:
         "content@":
           templateUrl: 'projects/list.jade'

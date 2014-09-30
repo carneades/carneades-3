@@ -10,15 +10,26 @@ define [
     "ui.router.state"
   ])
 
-  .directive('pageNavigation', () ->
-    restrict: 'EA'
+  .directive 'pageNavigation', () ->
+    restrict: 'E'
     replace: true
     transclude: true
     templateUrl: 'common/directives/page-navigation/page-navigation.jade'
-  )
 
-  .directive('pageNavigationItem', () ->
-    restrict: 'EA'
+  .directive 'pageNavigationFull', () ->
+    restrict: 'E'
+    replace: true
+    transclude: true
+    templateUrl: 'common/directives/page-navigation/page-navigation-full.jade'
+
+  .directive 'pageNavigationSmOffset2', () ->
+    restrict: 'E'
+    replace: true
+    transclude: true
+    templateUrl: 'common/directives/page-navigation/page-navigation-sm-offset-2.jade'
+
+  .directive 'pageNavigationItem', () ->
+    restrict: 'E'
     replace: true
     templateUrl: 'common/directives/page-navigation/page-navigation-item.jade'
     scope:
@@ -26,4 +37,3 @@ define [
     controller: ($scope, $element, $attrs, $state, $stateParams) ->
       $scope.navOpen = (name) ->
         $state.go name, $stateParams
-  )

@@ -154,43 +154,41 @@
 
 @media (min-width: $grid-float-breakpoint) {
 #subnav {
+  padding: 15px 0 0 0 !important;
   background:$body-bg;
   z-index: 100;
-  font-size: 90%;
-  a { color: $link-color; }
+  font-size: 18px;
+  line-height: 1;
+
+  .page-nav-divider {
+    border-bottom: 1px solid #EEE !important;
+    padding-bottom: 3px;
+  }
+
+  li {
+    display: inline-block;
+  }
 
   .nav {
-    float: right;
-    .nav-pills {
-      > li {
-        > a {
-          border-radius: 0;
-          cursor: pointer;
-          &:hover { text-decoration: underline; }
-        }
-      }
-    }
+    a {
+      display: block;
+      margin-right: 30px;
+      height: 75px;
+      padding: 30px 15px;
+      line-height: 1;
+      color: inherit;
 
-    > li {
-      > a {
-        padding: 5px 10px;
+      &:hover {
         cursor: pointer;
-        &:hover,
-        &:focus {
-          border-bottom-color: $breadcrumbs-bg;
-          background-color: $body-bg;
-          text-decoration: underline;
-        }
+        background-color:$body-bg;
+        -webkit-transition:background-color 300ms linear;
+        -moz-transition:background-color 300ms linear;
+        -o-transition:background-color 300ms linear;
+        -ms-transition:background-color 300ms linear;
+        transition:background-color 300ms linear;
+        border-bottom:4px solid $link-color;
       }
-
-      &.divider {
-        > a {
-          padding: 5px 0;
-          &:hover,
-          &:focus { border: 0; }
-          &:after { content: '|'; }
-        }
-      }
+      //color: $link-color;
     }
   }
 
@@ -201,4 +199,30 @@
     background:$breadcrumbs-bg;
   }
 }
+}
+
+.breadcrumb {
+  padding: 0;
+  background-color: #fff;
+  border-radius: 0;
+  font-size: 160%;
+
+  .project-root {
+    font-weight: bold;
+  }
+
+  .seperator {
+    color: $navbar-bg;
+  }
+
+  .project-new {
+    font-size: 80%;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+#commands {
+    margin: 0px 0px 20px !important;
 }

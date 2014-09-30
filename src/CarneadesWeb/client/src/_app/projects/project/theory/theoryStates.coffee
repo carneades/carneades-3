@@ -5,16 +5,18 @@
 define [
   'angular',
   './theoryControllers',
-  '../../../common/resources/projects'
+  '../../../common/resources/projects',
+  '../../../common/resources/theory'
 ], (angular) ->
   angular.module('theory.states', [
-    'theory.controllers'
+    'theory.controllers',
+    'resources.theories'
   ])
 
   .config ($stateProvider) ->
     states = [{
       name: "home.projects.project.theory"
-      label: "Theory"
+      label: "state.home.projects.project.theory"
       url: "/theories/:tpid/:tid?scrollTo"
       data:
         commands: []
@@ -23,14 +25,8 @@ define [
           controller: 'TheoryCtrl'
           templateUrl: 'projects/project/theory/theory.jade'
           resolve:
-            theory: ($http, $stateParams, $location) ->
-              $http(
-                method: 'GET'
-                url: $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/#{$stateParams.pid}/theories/#{$stateParams.tpid}/#{$stateParams.tid}?translate=t"
-              ).then (data) -> data.data
-
+            theory: 'Theory'
             scroll: 'scroll'
-
             project: (ProjectLoader, $stateParams) ->
               new ProjectLoader($stateParams)
 

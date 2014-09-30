@@ -213,8 +213,7 @@
                               literal
                               (second literal)),
         (or (statement? literal) (map? literal))
-        (or (:atom literal)
-            (:id literal))))
+        (or (:atom literal) (:id literal))))
 
 ;; it's really unexpected to get a literal when given a sliteral
 ;; maybe we should change the API?

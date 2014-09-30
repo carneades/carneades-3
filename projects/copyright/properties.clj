@@ -22,12 +22,12 @@ dissemination.” [@GreenPaper, p. 3].
 ## Tools
 
 
-- Arguments
+- [Arguments](#/projects/copyright/main/outline)
   :  View outlines and maps of the arguments put forward in the comments on the green paper.
-- Guided Tour
+- [Guided Tour]()
   :  Take part in a guided tour of the arguments, forming your own opinion of the issues, and find
 authors of comments who share your opinions.
-- Policies
+- [Policies]()
   :  View the proposed policies and see how they would work in the cases that interest you.
 "}
 

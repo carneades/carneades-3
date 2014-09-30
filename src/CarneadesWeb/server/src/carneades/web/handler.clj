@@ -12,7 +12,8 @@
             [ring.server.standalone :refer [serve]]
             [noir.util.middleware :as middleware]
             [carneades.web.routes :refer [carneades-web-routes
-                                          tomcat-carneades-web-routes]]
+                                          tomcat-carneades-web-routes
+                                          jar-carneades-web-routes]]
             [compojure.route :as route :refer [files resources not-found]]
             [sandbar.stateful-session :as session]
             ;; [carneades.web.service :as service]
@@ -32,6 +33,10 @@
 
 (defroutes tomcat-app-routes
   (route/resources "/" {:root "public/carneades"})
+  (route/not-found "Not Found"))
+
+(defroutes jar-app-routes
+  (route/resources "/" {:root "public"})
   (route/not-found "Not Found"))
 
 (def logger-config
@@ -106,3 +111,15 @@
              (wrap-file "../client/dist")))
 
 (def war-handler (middleware/war-handler app))
+
+
+(def jar-all-routes [jar-carneades-web-routes jar-app-routes])
+
+(def jar-app (-> (apply routes jar-all-routes)
+                 (session/wrap-stateful-session)
+                 (wrap-keyword-params)
+                 (wrap-json-body {:keywords? true})
+                 (wrap-params)
+                 (wrap-multipart-params)))
+
+(def jar-handler (middleware/war-handler jar-app))

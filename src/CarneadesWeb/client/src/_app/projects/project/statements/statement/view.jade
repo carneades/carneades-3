@@ -1,0 +1,84 @@
+.container.statement.view
+  .row
+    .col-sm-11
+      .row
+        .col-sm-offset-2.col-sm-10
+          .section
+            .page-header
+              h1(
+                evaluation-indicator,
+                value='statement.value',
+                size='32x32',
+                position='before') {{'projects.statement' | translate}}
+
+      form.form-horizontal
+        form-group
+          button.btn.btn-default.btn-small(
+            type='button',
+            tooltip="{{tooltipEdit}}",
+            tooltip-append-to-body="true",
+            tooltip-placement="right",
+            ng-click="edit()")
+            i.fa.fa-edit: span edit
+
+          button.btn.btn-default.btn-small(
+            type='button',
+            ng-click='openArgumentEditor()',
+            tooltip="{{tooltipNew}}",
+            tooltip-append-to-body="true",
+            tooltip-placement="top")
+            i.fa.fa-plus-square-o: span new argument
+            
+        form-group
+          tabset
+            tab(
+              heading='Model',
+              select='showModel()')
+            tab(
+              heading='Metadata',
+              select='showMetadata()',
+              ng-show='isMapInitialized(statement.header)')
+
+        div(ng-show='tabModel')
+          form-group(label-key='projects.statement.formalization')
+            .form-control-static
+              markdown.statement-text(strip='true',ng-model='statement.text')
+
+            .form-control-static#pro(ng-hide="statement.pro.length == 0")
+              .span.argument-indication {{'projects.statement.pro_arguments' | translate}}
+                ul(ng-repeat='arg in statement.pro')
+                  li
+                    a(ng-click='openArgument(arg.id)') {{argumentName(arg, $index)}}
+                    ul(ng-repeat='p in arg.premises')
+                      li
+                        span(ng-show="!p.positive")
+                          span {{'projects.negative_premise' | translate}}
+                        a(ng-click='openStatement(p.id)') {{p.text}}
+                           
+            .form-control-static#con(ng-hide="statement.con.length == 0")
+              .span.argument-indication {{projects.statement.con_arguments | translate}}
+                ul(ng-repeat='arg in statement.con')
+                  li
+                    a(ng-click='openArgument(arg.id)') {{argumentName(arg, $index)}}
+                    ul(ng-repeat='p in arg.premises')
+                      li
+                        span(ng-show="!p.positive")
+                          span{{'projects.negative_premise' | translate}}
+                      a(ng-click='openStatement(p.id)') {{p.text}}
+
+            .form-control-static#premises(ng-hide="statement['premise-of'].length == 0")
+              .span.premise-of-indication {{'projects.statement.premise_of' | translate}}
+              ul(ng-repeat="arg in statement['premise-of']")
+                li
+                  a(ng-click='openArgument(arg.id)') {{argumentName(arg, $index)}}
+                      
+          form-group(label-key='projects.statement.properties')
+            properties(keys="[['valueText', 'projects.value'],['standard', 'projects.standard'],['weight', 'projects.weight'],['main', 'projects.main_issues'],['atom', 'projects.atom'],['id', 'projects.id']]",model="statement")
+
+        div(ng-show='tabMetadata')
+          form-group(ng-repeat="(k,v) in statement.header",label-key='projects.{{k}}',ng-show="v != null && k != 'description'")
+            .form-control-static
+              markdown(extensions='carneades',ng-model='v')
+          form-group(label-key='projects.description',ng-show="statement.header.description != null")
+            .form-control-static
+              markdown(extensions='carneades',ng-model='statement.header.description')

@@ -1,4 +1,9 @@
-.container(my-loading-spinner='viewLoading')
+.container.statement.view(my-loading-spinner='viewLoading')
   .row
-    div(ng-include="'projects/project/theory/theory-toc.jade'")
-    div(ng-include="'projects/project/theory/theory-section.jade'")
+    .col-sm-11
+      .row
+        .col-sm-offset-2.col-sm-10
+           div(ng-include="'projects/project/theory/theory-toc.jade'")
+      form.form-horizontal
+        form-group
+          .form-control-static.theory-section(ng-include="'projects/project/theory/theory-section.jade'")

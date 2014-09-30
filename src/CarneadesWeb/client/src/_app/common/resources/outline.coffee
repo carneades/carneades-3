@@ -4,22 +4,27 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-resource"], (angular) ->
+define [
+  "angular",
+  "angular-resource",
+  '../services/app'
+  ], (angular) ->
   "use strict"
-  services = angular.module("resources.outline", ["ngResource"])
-  services.factory "Outline", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/outline",
-      pid: "@pid"
-      db: "@db"
+  return angular.module("resources.outline", [
+    "ngResource", "app.helper"
+  ])
 
-  services.factory "MultiOutlineLoader", (Outline, $q) ->
-    (params) ->
+  .factory "Outline", (urlService) ->
+    url = '/projects/:pid/:db/outline'
+    params = pid: '@pid', db: '@db'
+    return urlService.$resource url, params
+
+  .factory "MultiOutlineLoader", (Outline, $q) ->
+    return (params) ->
       delay = $q.defer()
-      Outline.query params, ((outline) ->
+      Outline.query {}, params, ((outline) ->
         delay.resolve outline
       ), ->
         delay.reject "Unable to fetch outline"
 
       delay.promise
-
-  return services

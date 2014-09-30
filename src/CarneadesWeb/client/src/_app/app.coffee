@@ -5,10 +5,12 @@
 
 #global define
 define [
+  'require',
   "angular",
   "angular-bootstrap",
   "angular-ui-router",
   "angular-ui-utils",
+  "angular-ui-slider",
   "projects/projectsModule",
   "lican/licanModule",
   "admin/adminModule",
@@ -24,15 +26,25 @@ define [
   "common/directives/svg-include",
   "common/directives/markdown/markdown",
   "common/directives/loader/loader",
+  'common/directives/editor/editor',
   'showdown',
+  'hallo',
+  'to-markdown',
   'jquery',
-  'jquery-mousewheel',
-  'perfect-scrollbar'
-], (angular) ->
+  'angular-capitalize-filter',
+  'codemirror',
+  'codemirror-clj',
+  'codemirror-addon/edit/matchbrackets',
+  'codemirror-addon/edit/closebrackets',
+  'angular-ui-codemirror'
+], (require, angular) ->
+  window.CodeMirror = require 'codemirror'
   angular.module("app", [
     "ui.bootstrap",
-    'ui.utils'
-    "ui.bootsrap.breadcrumb",
+    'ui.utils',
+    'ui.codemirror',
+    "ui.carneades.breadcrumb",
+    "ui.slider",
     "directives.pagenav",
     "directives.loaders",
     "directives.resize",
@@ -46,7 +58,9 @@ define [
     "lican.module",
     "admin.module",
     "pascalprecht.translate",
-    'markdown'
+    'markdown',
+    'ui.editor',
+    'angular-capitalize-filter'
   ])
 
   .run(($rootScope, $state, $stateParams) ->
@@ -69,7 +83,6 @@ define [
         regex: "\\[@([^\\,]+)[^\\]]*\\]"
         replace: (match, citation_key) ->
           return "<a href='/carneades/#/projects/%PID%/%DB%/outline?scrollTo=#{citation_key}'>#{match}</a>"
-
       ,
         type: "output"
         filter: (source) ->
@@ -94,7 +107,7 @@ define [
     # $translateProvider.useLocalStorage()
 
     $urlRouterProvider.otherwise "/"
-
+    $urlRouterProvider.when '', '/projects'
     # disable autoscrolling on ui-views
     $uiViewScrollProvider.useAnchorScroll()
   )

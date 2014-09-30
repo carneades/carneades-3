@@ -17,7 +17,7 @@ define [
     states = [
       {
         name: 'lican'
-        label: 'License Analyser Introduction'
+        label: 'state.lican.label'
         url: '/lican?entity&legalprofile&debug'
         views:
           "css@":
@@ -35,7 +35,7 @@ define [
       },
       {
         name: 'lican.questions'
-        label: 'License Analyser Questions'
+        label: 'state.lican.questions.label'
         url: '/questions'
         views:
           "content@":
@@ -47,7 +47,7 @@ define [
       },
       {
         name: 'lican_demo'
-        label: 'License Analyser Questions (Demo)'
+        label: 'state.lican.demo.label'
         url: '/lican/demo'
         views:
           "content@":

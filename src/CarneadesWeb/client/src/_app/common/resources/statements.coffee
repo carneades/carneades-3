@@ -3,33 +3,43 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-define ["angular", "angular-resource"], (angular) ->
+define [
+  "angular",
+  "angular-resource",
+  '../services/app'
+  ], (angular) ->
   "use strict"
-  services = angular.module("resources.statements", ["ngResource"])
-  services.factory "Statement", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/statements/:sid",
-      pid: "@pid"
-      db: "@db"
-      sid: "@sid"
+  return angular.module("resources.statements", [
+    "ngResource", 'app.helper'
+  ])
 
-  services.factory "MultiStatementLoader", (Statement, $q) ->
-    ->
+  .factory "Statement", (urlService) ->
+    url = '/projects/:pid/:db/statements/:sid'
+    params = pid: "@pid", db: "@db", sid: "@sid"
+    methods =
+      'getRaw':
+        method: 'GET'
+        params:
+          context: 'edit'
+      'update':
+        method: 'PUT'
+    return urlService.$resource url, params, methods
+
+  .factory "MultiStatementLoader", (Statement, $q) ->
+    return (params) ->
       delay = $q.defer()
-      Statement.query ((statement) ->
-        delay.resolve statement
+      Statement.query {}, params, ((statements) ->
+        delay.resolve statements
       ), ->
-        delay.reject "Unable to fetch nodes"
-
+        delay.reject "Unable to fetch statements"
       delay.promise
 
-  services.factory "StatementLoader", (Statement, $q) ->
-    (params) ->
+  .factory "StatementLoader", (Statement, $q) ->
+    return (params) ->
       delay = $q.defer()
       Statement.get params, ((statement) ->
         delay.resolve statement
       ), ->
-        delay.reject "Unable to fetch argument!"
+        delay.reject "Unable to fetch statement!"
 
       delay.promise
-
-  services

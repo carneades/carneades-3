@@ -15,7 +15,14 @@
  :repo-name "markos_test_15_04_2014"
  :description
  {:en
-  "The [MARKOS project](http://www.markosproject.eu/) is aimed to realize the prototype of a service and an interactive application providing an integrated view on the Open Source projects available the on web, focusing on functional, structural and licenses aspects of software code"}
+  "The [MARKOS project](http://www.markosproject.eu/) is aimed to realize the prototype of a service and an interactive application providing an integrated view on the Open Source projects available the on web, focusing on functional, structural and licenses aspects of software code.
+
+## Tools
+
+
+- [Arguments](#/projects/markos/main/outline)
+  :  View outlines and maps of the arguments put forward in the comments on the green paper.
+"}
  :namespaces
  {"" "http://markosproject.eu/"
   "top" "http://www.markosproject.eu/ontologies/top#"

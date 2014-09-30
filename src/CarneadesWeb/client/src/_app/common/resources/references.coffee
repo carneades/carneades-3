@@ -4,21 +4,26 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-resource"], (angular) ->
-  services = angular.module("resources.metadata.references", ["ngResource"])
-  services.factory "Reference", ($resource, $location) ->
-    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/metadata/references",
-      pid: "@pid"
-      db: "@db"
+define [
+  "angular",
+  "angular-resource",
+  '../services/app'
+  ], (angular) ->
+  angular.module("resources.metadata.references", [
+    "ngResource", "app.helper"
+  ])
 
-  services.factory "MultiReferenceLoader", (Reference, $q) ->
-    (params) ->
+  .factory "Reference", (urlService) ->
+    url = '/projects/:pid/:db/metadata/references'
+    params = pid: '@pid', db: '@db'
+    return urlService.$resource url, params
+
+  .factory "MultiReferenceLoader", (Reference, $q) ->
+    return (params) ->
       delay = $q.defer()
-      Reference.query params, ((reference) ->
+      Reference.query {}, params, ((reference) ->
         delay.resolve reference
       ), ->
         delay.reject "Unable to fetch reference"
 
       delay.promise
-
-  return services

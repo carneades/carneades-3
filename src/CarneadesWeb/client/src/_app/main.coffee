@@ -6,15 +6,15 @@
 #global require, document
 require.config
   shim:
-    "jquery":
-      exports: "$q"
-
     "angular":
-      deps: ["jquery"]
+      deps: ['jquery', 'jquery-ui', 'jquery-htmlclean', 'rangy-core', 'hallo']
       exports: "angular"
 
     "angular-ui-router":
       deps: ["angular"]
+
+    "angular-ui-slider":
+      deps: ["angular", "jquery", "jquery-ui"]
 
     "angular-resource":
       deps: ["angular"]
@@ -25,16 +25,31 @@ require.config
     "angular-translate":
       deps: ["angular"]
 
+    "angular-touch":
+      deps: ["angular"]
+
+    "angular-capitalize-filter":
+      deps: ["angular"]
+
     "angular-translate-loader-static-files":
       deps: ["angular-translate"]
 
     "angular-ui-bootstrap":
       deps: ["angular"]
 
-    "perfect-scrollbar":
-      deps: ["jquery", "jquery-mousewheel"]
+    "jquery":
+      exports: "$q"
 
-    "jquery-mousewheel":
+    "jquery-ui":
+      deps: ['jquery']
+
+    "jquery-htmlclean":
+      deps: ['jquery']
+
+    "hallo":
+      deps: ["jquery", "jquery-ui", "jquery-htmlclean", "rangy-core"]
+
+    "perfect-scrollbar":
       deps: ["jquery"]
 
   paths:
@@ -43,16 +58,27 @@ require.config
     'angular-sanitize': './libs/angular-sanitize'
     'angular-ui-router': './libs/angular-ui-router'
     'angular-ui-utils': './libs/angular-ui-utils'
+    'angular-ui-slider': './libs/angular-ui-slider'
+    'angular-touch': './libs/angular-touch'
     'angular-resource': './libs/angular-resource'
     'angular-markdown': './libs/angular-markdown'
     'angular-translate': './libs/angular-translate'
+    'angular-ui-codemirror': './libs/angular-ui-codemirror'
+    'angular-capitalize-filter': './libs/angular-capitalize-filter'
     'angular-translate-loader-static-files': './libs/angular-translate-loader-static-files'
     'angular-bootstrap': './libs/angular-bootstrap'
-    'jquery': './libs/jquery'
-    'jquery-mousewheel': './libs/angular-perfect-scrollbar/jquery.mousewheel'
     'perfect-scrollbar': './libs/angular-perfect-scrollbar/perfect-scrollbar'
     'requirejs-domready': './libs/requirejs-domready'
     'showdown': './libs/showdown/showdown'
     'spinjs': './libs/spin'
+    'jquery': './libs/jquery'
+    'jquery-ui': './libs/jquery-ui'
+    'jquery-htmlclean': './libs/jquery-htmlclean'
+    'rangy-core': './libs/rangy-core'
+    'hallo': './libs/hallo'
+    'to-markdown': './libs/to-markdown'
+    'codemirror': './libs/codemirror/lib/codemirror'
+    'codemirror-clj': './libs/codemirror/mode/clojure/clojure'
+    'codemirror-addon': './libs/codemirror/addon'
 
   deps: ["./bootstrap"]

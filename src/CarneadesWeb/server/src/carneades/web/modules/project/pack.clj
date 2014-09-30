@@ -11,7 +11,8 @@
         carneades.engine.argument
         carneades.database.db)
   (:require [clojure.string :as str]
-            [carneades.database.argument-graph :as ag]))
+            [carneades.database.argument-graph :as ag]
+            [carneades.engine.uuid :as uuid]))
 
 (defn pack-statement
   [stmt]
@@ -32,7 +33,7 @@
                                        (empty? (:atom s)))
                                  nil
                                  (unserialize-atom (:atom s)))]
-                   (assoc (map->statement (dissoc s :atom))
+                   (assoc (map->statement (dissoc s :atom :premise-of))
                      :standard (keyword (:standard s))
                      :atom atomval
                      :header (map->metadata (:header s))))
@@ -52,15 +53,16 @@
 
 (defn unpack-argument [arg]
   (assoc arg
-         :scheme (when (:scheme arg) (symbol (:scheme arg)))
-         :conclusion (unpack-statement (:conclusion arg))
-         :premises (map (fn [p]
-                          (map->premise (assoc p :statement (unpack-statement (:statement p)))))
-                        (:premises arg))
-         :exceptions (map (fn [p]
-                          (map->premise (assoc p :statement (unpack-statement (:statement p)))))
-                          (:exceptions arg))
-         :header (map->metadata (:header arg))))
+    :id (or (:id arg) (uuid/make-urn))
+    :scheme (when (:scheme arg) (symbol (:scheme arg)))
+    :conclusion (unpack-statement (:conclusion arg))
+    :premises (map (fn [p]
+                     (map->premise (assoc p :statement (unpack-statement (:statement p)))))
+                   (:premises arg))
+    :exceptions (map (fn [p]
+                       (map->premise (assoc p :statement (unpack-statement (:statement p)))))
+                     (:exceptions arg))
+    :header (map->metadata (:header arg))))
 
 (defn unpack-arg-attrs
   [attrs]

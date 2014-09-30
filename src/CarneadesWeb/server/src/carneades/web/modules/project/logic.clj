@@ -114,7 +114,6 @@
 (defn get-outline
   [[project db id :as params]
    & {:keys [lang] :or {lang :en k nil}}]
-  (info "calling outline")
   (->> (make-outline project db :lang lang)
        (#(if-not (nil? id) (get-sub-outline % id) %))))
 
@@ -264,7 +263,15 @@
   {:pre [(not (nil? project))
          (not (nil? db))]}
   (when-let [arg (s/get-argument project db id)]
-   (augment-argument arg  project db lang)))
+    (augment-argument arg  project db lang)))
+
+(defn get-edit-argument
+  [project db id lang]
+  (let [arg (spy (s/get-argument project db id))
+        arg  (update-in arg [:conclusion :text] #(get % lang))
+        arg (update-in arg [:premises] #(map (fn [p] (update-in p [:statement :text] (fn [s] (get s lang)))
+                                               ) %))]
+   (into {} arg)))
 
 (defn get-arguments
   [project db lang]
@@ -276,6 +283,7 @@
 
 (defn post-argument
   [project db arg]
+  (debug "post-argument")
   (s/post-argument project db arg))
 
 (defn delete-argument
@@ -316,11 +324,11 @@
 
 (defn get-edit-statement
   [project db id lang]
-  (let [stmt (s/get-statement project db id)]
-    (augment-statement stmt project db lang true)))
+  (into {} (s/get-statement project db id)))
 
 (defn put-statement
   [project db id update]
+  (info "tttttt")
   (s/put-statement project db id update))
 
 (defn delete-statement
@@ -329,6 +337,8 @@
 
 (defn post-statement
   [project db statement]
+  (info "db " db)
+  (info "statement " statement)
   (s/post-statement project db statement))
 
 (defn get-nodes

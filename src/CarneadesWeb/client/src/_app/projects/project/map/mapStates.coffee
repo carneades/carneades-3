@@ -12,7 +12,7 @@ define [
   .config(($stateProvider) ->
     states = [
       name: "home.projects.project.map"
-      label: "Map"
+      label: "state.home.projects.project.map.label"
       url: "/:db/map"
       data:
         commands: ['home.projects.project.outline','home.projects.project.theory']
@@ -31,6 +31,13 @@ define [
                 method: 'GET'
                 url: "#{p}://#{h}:#{po}/carneades/api/projects/#{pid}/#{db}/map"
               ).then (data) -> data.data
+        "subnav@":
+          template: '<page-navigation-full><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-full>'
+          controller: 'SubnavController'
+        "mobsubnav@":
+          template: '<page-navigation-full><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-full>'
+          controller: 'MobSubnavController'
+
     ]
 
     angular.forEach states, (state) -> $stateProvider.state state

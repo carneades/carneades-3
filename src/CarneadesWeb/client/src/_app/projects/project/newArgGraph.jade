@@ -1,0 +1,52 @@
+.container.argument-graph-editor
+  .row
+    .col-sm-11
+      .row
+        .col-sm-offset-2.col-sm-10
+          .section
+            .page-header
+              h1 {{'projects.newag' | translate}}
+
+      form.form-horizontal(name="form", novalidate)
+        form-group(label-key='projects.newag.name')
+          input.form-control.input-md(
+            name="name",
+            placeholder="{{placeholderName}}",
+            type="text",
+            ng-model="ag.name",
+            ng-pattern="/^([a-zA-Z]+)$/",
+            required)
+            
+        form-group(label-key='projects.metadata.title')
+          input.form-control.input-md(
+            name="title",
+            placeholder="{{placeholderTitle}}",
+            type="text",
+            ng-model="ag.header.title")
+
+        form-group(label-key='projects.metadata.description')
+          multilang-hallo-editor(
+            ng-model='ag.header.description', 
+            languages='languages', 
+            name='text')
+            
+        form-group-no-label
+          button.btn.btn-default.btn-xs(
+            type='button',
+            ng-click='onSave()',
+            tooltip="{{tooltipSave}}",
+            tooltip-append-to-body="true",
+            tooltip-placement="top",
+            ng-disabled="form.$invalid")
+            i.fa.fa-floppy-o: span {{'projects.save' | translate}}
+
+          button.btn.btn-default.btn-xs(
+            type='button',
+            ng-click='onCancel()',
+            tooltip="{{tooltipCancel}}",
+            tooltip-append-to-body="true",
+            tooltip-placement="top")
+            i.fa.fa-times: span {{'projects.cancel' | translate}}
+
+        
+            

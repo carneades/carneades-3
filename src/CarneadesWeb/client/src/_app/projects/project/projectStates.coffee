@@ -5,31 +5,70 @@
 
 define [
   'angular',
+  'angular-translate',
+  './projectControllers',
   '../../common/resources/projects'
 ], (angular) ->
   angular.module('project.states', [
+    'project.controllers',
     'resources.projects'
+    'pascalprecht.translate'
   ])
 
   .config ($stateProvider) ->
     states = [
       name: "home.projects.project"
       url: '/:pid'
-      label: "Project"
-      data:
-        commands: ['home.projects.project.outline']
+      label: 'state.home.projects.project.label'
       views:
+        "css@":
+          template: '<css-inject></css-inject>'
+        "banner@":
+          template: '<project-banner></project-banner>'
+        "footer@":
+          template: '<project-footer></project-footer>'
         "content@":
           templateUrl: 'projects/project/project.jade'
-          controller: ($scope, project) ->
-            $scope.project = project
-            $scope.$stateParams.mid = 1
-            $scope.$stateParams.db = 'main'
-            $scope.$stateParams.nid = 1
-            $scope.$state.$current.self.tooltip = project.title
+          controller: 'ProjectViewCtrl'
           resolve:
             project: ($stateParams, ProjectLoader) ->
-              new ProjectLoader($stateParams)
+              $stateParams.mid = 1
+              $stateParams.db = 'main'
+              $stateParams.nid = 1
+              return new ProjectLoader $stateParams
+    ,
+      name: 'home.projects.project.new'
+      url: '/new'
+      label: "state.home.projects.project.new.label"
+      views:
+        "content@":
+          templateUrl: 'projects/project/newArgGraph.jade'
+          controller: 'ProjectNewArgGraphCtrl'
+        "subnav@":
+          template: '<page-navigation-sm-offset-2><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
+          controller: 'SubnavController'
+        "mobsubnav@":
+          template: '<page-navigation-sm-offset-2><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
+          controller: 'MobSubnavController'
+    ,
+      name: 'home.projects.project.edit'
+      url: '/edit'
+      label: "state.home.projects.project.edit.label"
+      views:
+        "content@":
+          templateUrl: 'projects/project/edit.jade'
+          controller: 'ProjectEditCtrl'
+          resolve:
+            project: ($stateParams, ProjectLoader) ->
+              $stateParams.mid = 1
+              $stateParams.nid = 1
+              return new ProjectLoader $stateParams
+        "subnav@":
+          template: '<page-navigation-sm-offset-2><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
+          controller: 'SubnavController'
+        "mobsubnav@":
+          template: '<page-navigation-sm-offset-2><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
+          controller: 'MobSubnavController'
     ]
 
     angular.forEach states, (state) ->

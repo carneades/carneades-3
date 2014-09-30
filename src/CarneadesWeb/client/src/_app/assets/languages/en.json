@@ -41,6 +41,7 @@
     "projects.relation": "Relation",
     "projects.rights": "Rights",
     "projects.source": "Source",
+    "projects.fulltext": "Fulltext",
     "projects.subject": "Subject",
     "projects.title": "Title",
     "projects.type": "Type",
@@ -70,6 +71,11 @@
     "projects.cce": "Clear and Convincing Evidence",
     "projects.brd": "Beyond Reasonable Doubt",
 
+    "projects.save": "Save",
+    "projects.cancel": "Cancel",
+
+    "projects.statement.formalization": "Formalization",
+    "projects.statement.properties": "Properties",
     "projects.statement.value.false": "Presumably false",
     "projects.statement.value.true": "Presumably true",
     "projects.statement.value.uncertain": "Uncertain",
@@ -77,7 +83,85 @@
     "projects.statement.con_arguments": "Arguments against this statement:",
     "projects.statement.premise_of": "Arguments having this statement as a premise:",
 
+    "projects.argument.formalization": "Formalization",
+    "projects.argument.properties": "Properties",
     "projects.argument.value.unacceptable": "Unacceptable",
     "projects.argument.value.acceptable": "Acceptable",
-    "projects.argument.value.unclear": "Unclear"
+    "projects.argument.value.unclear": "Unclear",
+
+    "projects.newag": "New argument graph",
+    "projects.newag.name": "Name",
+
+    "projects.edit": "Edit project",
+    "projects.edit.name": "Name",
+    "projects.edit.policies": "Policies",
+
+    "projects.metadata.title": "Title",
+    "projects.metadata.description": "Description",
+
+    "projects.createstatement": "New statement",
+    "projects.editstatement": "Edit statement",
+
+    "projects.createargument": "New argument",
+    "projects.editargument": "Edit argument",
+
+    "projects.true": "true",
+    "projects.false": "false",
+
+    "projects.text": "text",
+    "projects.pro": "Pro",
+
+    "projects.addpremise": "Add premise",
+    "projects.premise": "premise",
+
+    "projects.positive": "positive",
+    "projects.implicit": "implicit",
+    "projects.role": "role",
+
+    "projects.delete": "delete",
+
+    "state.home.label": "Carneades",
+    "state.home.about.label": "About",
+    "state.home.privacy.label": "Privacy",
+    "state.home.admin.label": "Admin",
+    "state.home.help.label": "Help",
+    "state.home.signin.label": "Sign in",
+    "state.home.projects.label": "Projects",
+    "state.home.projects.project.label": "Project",
+    "state.home.projects.project.new.label": "New argument graph",
+    "state.home.projects.project.edit.label": "Edit project",
+    "state.home.projects.project.arguments.new.label": "New argument",
+    "state.home.projects.project.arguments.argument.label": "Argument",
+    "state.home.projects.project.arguments.argument.edit.label": "Edit argument",
+    "state.home.projects.project.map.label": "Map",
+    "state.home.projects.project.outline.label": "Outline",
+    "state.home.projects.project.statements.new.label": "New statement",
+    "state.home.projects.project.statements.statement.label": "Statement",
+    "state.home.projects.project.statements.statement.edit.label": "Edit statement",
+    "state.home.projects.project.theory": "Theory",
+
+    "state.lican.label": "License Analyser Introduction",
+    "state.lican.questions.label": "License Analyser Questions",
+    "state.lican.demo.label": "License Analyser Questions (Demo)",
+
+
+    "tooltip.cancel": "Close without saving",
+    "tooltip.argumentgraph.save": "Save this graph",
+    "tooltip.argumentgraph.new": "Create a new argument graph within this project",
+    "tooltip.argument.save": "Save this argument",
+    "tooltip.argument.edit": "Edit this argument",
+    "tooltip.argument.new": "Create a new argument",
+    "tooltip.project.save": "Save this project",
+    "tooltip.statement.save": "Save this statement",
+    "tooltip.statement.edit": "Edit this statement",
+    "tooltip.statement.new": "Create a new statement",
+    "tooltip.premise": "Add a premise",
+    "tooltip.outline.edit": "Edit this outline",
+
+    "placeholder.title": "type title here",
+    "placeholder.policy": "type the name of the policy",
+    "placeholder.scheme": "type the name of the scheme",
+    "placeholder.name": "type the name here, without spaces and special characters",
+
+    "outline.info": "This outline provides an overview of the main arguments. Click on an item in the outline for more information, including further arguments."
 }

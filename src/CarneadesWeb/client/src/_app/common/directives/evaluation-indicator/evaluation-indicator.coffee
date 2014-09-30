@@ -9,12 +9,12 @@ define [
 ], (angular) ->
   angular.module("directives.evaluationIndicator", [])
 
-  .directive("evaluationIndicator", ->
-    restrict: "E"
+  .directive "evaluationIndicator", () ->
+    restrict: 'A'
     scope:
-      value: '=',
-      size: '@',
-      position: '@',
+      value: '='
+      size: '@'
+      position: '@'
     link: (scope, element, attrs) ->
       getEvaluationClass = (value) ->
         if not value?
@@ -26,6 +26,4 @@ define [
         else if value > 0.25 and value < 0.75
           "evaluation-undecided-#{scope.size}-#{scope.position}"
 
-      element.children().addClass (getEvaluationClass scope.value)
-
-  )
+      element.addClass getEvaluationClass scope.value

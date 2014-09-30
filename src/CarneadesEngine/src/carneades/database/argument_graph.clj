@@ -75,7 +75,7 @@
           ["foreign key(description) references translation(id)"])
 
         (jdbc/create-table
-          :statement
+         :statement
           [:id "varchar primary key not null"] ; a URN in the UUID namespace
           [:weight "double default null"]
           [:value "double default null"]
@@ -88,8 +88,8 @@
           ["foreign key(header) references metadata(id)"])
 
         (jdbc/create-table
-          :argument
-          [:id "varchar primary key not null"] ; a URN in the UUID namespace
+         :argument
+         [:id "varchar primary key not null"] ; a URN in the UUID namespace
           [:conclusion "varchar not null"]     ; URN of the conclusion
           [:strict "boolean default false"]
           [:weight "double default 0.50"]
@@ -112,7 +112,7 @@
           ["foreign key(statement) references statement(id)"])
 
         (jdbc/create-table
-          :namespace
+         :namespace
           [:prefix "varchar primary key not null"]
           [:uri    "varchar not null"])
 
@@ -399,12 +399,16 @@
    statement for the literal is first created and its id is
    returned."
   [literal]
+  (debug "get-statement")
   (cond (uuid/urn-symbol? literal)
         (str literal)
 
-        (and (statement-created? literal)
-             (:id literal))
+        (and (statement-created? literal) (:id literal))
+        (:id literal)
+        
+        (and (statement-created? literal) (:atom literal))
         (first (statements-for-atom (literal-atom literal)))
+        
         :else (create-statement literal)))
 
 (defn update-statement
@@ -414,7 +418,7 @@
    the update was successful."
   [id m]
   {:pre [(map? m)]}
-  (let [m (dissoc m :positive)
+  (let [m (dissoc m :positive :premise-of :pro :con)
         existing-header-id (if (:header m)
                              (jdbc/with-query-results
                                res ["SELECT header FROM statement WHERE id=?" id]
@@ -552,7 +556,7 @@
   [arg]
   (let [arg-id (str (:id arg)),
         scheme-id (str (serialize-atom (:scheme arg)))
-        conclusion-id (get-statement (:conclusion arg)),
+        conclusion-id (spy (get-statement (:conclusion arg))),
         header-id (if (:header arg) (create-metadata (:header arg)))]
     (jdbc/insert-record
       :argument
@@ -677,7 +681,8 @@
    succeeds."
   [id m]
   {:pre [(string? id) (map? m)]}
-  (let [header-id1 (if (:header m)
+  (let [m (dissoc m :dependents :rebuttals :exceptions :undercutters)
+        header-id1 (if (:header m)
                     (or (jdbc/with-query-results
                           res1 ["SELECT header FROM argument WHERE id=?" id]
                           (:header (first res1)))
@@ -956,3 +961,4 @@
              (> (:weight s) 0.5)
              (<= (:weight s) 0.75))  ; assumed true
         (update-statement id {:weight 0.5}))))) ; question
+

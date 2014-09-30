@@ -1,3 +1,9 @@
-.page-header
-  h1 Outline
-div(ng-include="'projects/project/outline/outline-statement.jade'",ng-repeat='node in outline')
+div(my-loading-spinner='viewLoading')
+  .page-header
+    h1 Outline
+
+  alert(type='success') {{'outline.info' | translate }}
+
+  div(
+    ng-include="'projects/project/outline/outline-statement.jade'",
+    ng-repeat='node in outline')

@@ -5,12 +5,13 @@ html(lang='en')
     title Carneades Web Application
     meta(name='viewport',content='width=device-width, initial-scale=1.0')
     meta(http-equiv='X-UA-Compatible',content='IE=edge')
+    link(rel='stylesheet',href='css/codemirror.css',media='screen')
+    link(rel='stylesheet',href='css/xq-light.css',media='screen')
+    link(rel="stylesheet",href="css/font-awesome.min.css",media='screen')
+    link(rel="stylesheet",href="css/open-sans.min.css",media='screen')
+    link(rel="stylesheet",href="css/montserrat-regular.css",media='screen')
     link(rel='stylesheet',href='css/layout.css',media='screen')
-    link(rel='stylesheet',href='css/perfect-scrollbar.css',media='screen')
-    link(href='http://fonts.googleapis.com/css?family=Open+Sans',rel='stylesheet',type='text/css')
-    link(href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css",rel="stylesheet")
-
-
+    
   body(ng-controller='AppCtrl')
     div(ui-view='css')
     header#top(ng-controller='HeaderCtrl')
@@ -34,8 +35,7 @@ html(lang='en')
                 .row.mob-bc-head
                   ul
                     li.bc-default-a
-                      a(ng-click='openView(bcTop.name, top.params)',tooltip='{{bcTop.tooltip}}',tooltip-append-to-body='true',tooltip-placement='bottom')
-                        {{bcTop.label}}
+                      a(ng-click='openView(bcTop.name, top.params)',tooltip='{{bcTop.tooltip}}',tooltip-append-to-body='true',tooltip-placement='bottom') {{bcTop.label}}
                     li(ng-show='hasHistory')
                       a
                         i.fa.fa-chevron-down.font-inc-130(ng-init='navBcCollapsed = true',ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
@@ -43,16 +43,15 @@ html(lang='en')
         .row.collapse#mobbcnavdetails(collapse='navBcCollapsed',ng-cloak='')
           ul
             li(ng-repeat='navigatedState in subNavStatesReversed')
-              a(ng-click='openView(navigatedState.name, navigatedState.params)')
-                {{navigatedState.label}}
+              a(ng-click='openView(navigatedState.name, navigatedState.params)') {{navigatedState.label}}
       div#global.my-fluid-container
         div(ui-view='banner',ng-cloak='')
         div.navbar.subnav-navbar
           breadcrumb(states='navigatedStates',style='style')
         div#subnav.row(ui-view='subnav',ng-cloak='')
 
-    div(ui-view='content',ng-cloak='')
+    div(ui-view='content')
 
-    div(ui-view='footer',class='navbar-fixed-bottom',ng-cloak='')
+    div.navbar-fixed-bottom(ui-view='footer')
 
     script(src='require.js',data-main='main.min.js')

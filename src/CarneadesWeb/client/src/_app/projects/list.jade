@@ -11,19 +11,16 @@
               span.arrow
               markdown(ng-model='project.title', strip='true')
 
-            section
-              button.btn.btn-default.btn-xs(type='button',ng-click='copyLink(project.id)')
-                small copy link
-              button.btn.btn-default.btn-xs(type='button',ng-click='open(project.id)')
-                small open
+            .section#commands
+              button.btn.btn-default.btn-small(
+                type='button',
+                ng-click='copyLink(project.id)')
+                i.fa.fa-copy: span copy link
 
-            p
+              button.btn.btn-default.btn-small(
+                type='button',
+                ng-click='open(project.id)')
+                i.fa.fa-folder-open-o: span open
 
-            section
+            .section
               markdown(strip='true', ng-model='project.description')
-            // section
-            //   markdown(extensions='carneades', ng-model='project.description',strip='true')
-            section
-              ul.nav.nav-pills
-                li(ng-repeat='tool in project.tools')
-                  a(tooltip='{{tool.description}}',tooltip-append-to-body='true',ui-sref='{{tool.link}}') {{tool.name}}

@@ -3,5 +3,21 @@
     .col-md-9(role='main')
       .section#overview
         .page-header
-          h1 {{project.title}}
-        markdown(strip='true', ng-model='project.description')
+          .h1.highlight {{project.title}}
+          
+      .section#commands
+        button.btn.btn-default.btn-small(
+          type='button',
+          tooltip="{{tooltipNew}}",
+          tooltip-append-to-body="true",
+          tooltip-placement="right",
+          ng-click="newArgumentGraph()")
+          i.fa.fa-plus-square-o: span new graph
+
+        button.btn.btn-default.btn-small(
+          type='button',
+          ng-click='copyLink()')
+          i.fa.fa-copy: span copy link
+
+      .section#description
+        markdown(strip='true',ng-model='project.description')

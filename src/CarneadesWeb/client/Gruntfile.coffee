@@ -1,4 +1,4 @@
-#global module, require
+1#global module, require
 
 ##########################
 # Carneades config
@@ -138,18 +138,34 @@ module.exports = (grunt) ->
           destPrefix: '<%= gen.base %>/libs'
         files:
           'angular.js': 'angular/angular.js'
+          'angular-capitalize-filter.js': 'angular-capitalize-filter/capitalize.js'
           'angular-sanitize.js': 'angular-sanitize/angular-sanitize.js'
           'angular-ui-router.js': 'angular-ui-router/release/angular-ui-router.js'
           'angular-ui-utils.js': 'angular-ui-utils/ui-utils.js'
+          'angular-ui-slider.js': 'angular-ui-slider/src/slider.js'
           'angular-resource.js': 'angular-resource/angular-resource.js'
           'angular-translate.js': 'angular-translate/angular-translate.js'
           'angular-translate-loader-static-files.js': 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
           'angular-bootstrap.js': 'angular-bootstrap/ui-bootstrap-tpls.js'
           'requirejs-domready.js': 'requirejs-domready/domReady.js'
-          'angular-perfect-scrollbar': ['angular-perfect-scrollbar/src/angular-perfect-scrollbar.js', 'angular-perfect-scrollbar/dependencies/perfect-scrollbar.js', 'angular-perfect-scrollbar/dependencies/perfect-scrollbar.css', 'angular-perfect-scrollbar/dependencies/jquery.mousewheel.js']
-          'jquery.js': 'jquery/dist/jquery.min.js'
+          'angular-perfect-scrollbar': 'angular-perfect-scrollbar/src/angular-perfect-scrollbar.js'
           'showdown': 'showdown/src'
           'spin.js': 'spin.js/spin.js'
+          'hallo.js': '../libs/hallo.js'
+          'to-markdown.js': '../libs/to-markdown.js'
+          'jquery.js': 'jquery/jquery.min.js'
+          'jquery-ui.js': 'jquery-ui/ui/jquery-ui.js'
+          'jquery-htmlclean.js': 'jquery-htmlclean/jquery.htmlClean.js'
+          'rangy-core.js': 'rangy/rangy-core.js'
+          'angular-ui-codemirror.js': 'angular-ui-codemirror/ui-codemirror.js'
+          'codemirror/lib': 'codemirror/lib'
+          'codemirror/mode/clojure': '../libs/codemirror/mode/clojure'
+          'codemirror/theme': '../libs/codemirror/theme/xq-light.css'
+          'codemirror/addon': '../libs/codemirror/addon'
+          'fontawesome/css': 'fontawesome/css/font-awesome.min.css'
+          'fontawesome/fonts': 'fontawesome/fonts'
+          'open-sans/css': 'open-sans/css/open-sans.min.css'
+          'open-sans/fonts': 'open-sans/fonts'
 
     jade:
       compile:
@@ -160,6 +176,41 @@ module.exports = (grunt) ->
           '<%= dist.base %>/index.html': '<%= src.base %>/index.jade'
 
     copy:
+      montserrat:
+        files: [
+          src: ["montserrat-regular.css"]
+          dest: "<%= dist.base %>/css"
+          cwd: '<%= src.base %>/assets/fonts/montserrat-regular-webfont/css'
+          expand: true
+        ]
+      fontawesome:
+        files: [
+          src: ["font-awesome.min.css"]
+          dest: "<%= dist.base %>/css"
+          cwd: '<%= gen.base %>/libs/fontawesome/css'
+          expand: true
+        ]
+      opensans:
+        files: [
+          src: ["open-sans.min.css"]
+          dest: "<%= dist.base %>/css"
+          cwd: '<%= gen.base %>/libs/open-sans/css'
+          expand: true
+        ]
+      codemirror:
+        files: [
+          src: ["codemirror.css"]
+          dest: "<%= dist.base %>/css"
+          cwd: 'libs/codemirror/lib'
+          expand: true
+        ]
+      codemirror_theme_xq_light:
+        files: [
+          src: ["xq-light.css"]
+          dest: "<%= dist.base %>/css"
+          cwd: 'libs/codemirror/theme'
+          expand: true
+        ]
       perfect_scrollbar:
         files: [
           src: ["perfect-scrollbar.css"]
@@ -202,12 +253,29 @@ module.exports = (grunt) ->
           cwd: "<%= gen.base %>/css"
           dest: '<%= projects.markos %>'
         ]
-      fonts:
+
+      fonts_ms:
         files: [
           dest: "<%= dist.base %>/fonts"
           src: "**"
           expand: true
-          cwd: "<%= src.assets %>/fonts"
+          cwd: "<%= src.base %>/assets/fonts/montserrat-regular-webfont/fonts"
+        ]
+
+      fonts_fa:
+        files: [
+          dest: "<%= dist.base %>/fonts"
+          src: "**"
+          expand: true
+          cwd: "<%= gen.base %>/libs/fontawesome/fonts"
+        ]
+
+      fonts_os:
+        files: [
+          dest: "<%= dist.base %>/fonts"
+          src: "**"
+          expand: true
+          cwd: "<%= gen.base %>/libs/open-sans/fonts"
         ]
 
       images:

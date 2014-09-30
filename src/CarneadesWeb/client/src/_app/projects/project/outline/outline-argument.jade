@@ -1,5 +1,4 @@
 ul
-  a(ui-sref='home.projects.project.argument({pid: $stateParams.pid, db: $stateParams.db, aid: node.id})')
+  a(ui-sref='home.projects.project.arguments.argument({pid: $stateParams.pid, db: $stateParams.db, aid: node.id})')
     markdown(ng-model='node.text',strip='true',extensions='carneades')
-
   li(ng-repeat='node in node.children',ng-include="'projects/project/outline/outline-statement.jade'")

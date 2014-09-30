@@ -92,7 +92,8 @@
   :post! (fn [_]
            {::id (post-argument pid db argument)})
   :handle-created (fn [ctx]
-                    {:id (::id ctx)}))
+                    {:id (::id ctx)})
+)
 
 (defresource argument-resource [pid db id context update]
   :available-media-types ["application/json"]
@@ -100,8 +101,12 @@
   :available-charsets["utf-8"]
   :exists? (fn [_]
              (session-put-language nil)
-             (when-let [arg (get-argument [pid db id] :lang (get-lang))]
-               {::entry arg}))
+             (condp = context
+               "edit" (when-let [arg (get-edit-argument pid db id (get-lang))]
+                        {::entry arg})
+               ;; else
+               (when-let [arg (get-argument [pid db id] :lang (get-lang))]
+                 {::entry arg})))
   :handle-ok ::entry
   :put! (fn [_]
           (put-argument pid db id update))
@@ -133,10 +138,10 @@
   :exists? (fn [_]
              (session-put-language nil)
              (let [lang (keyword (session-get :language))]
-               (when-let [stmts (get-statements pid db (keyword lang))]
-                 {::entry stmts})))
+               {::entry (get-statements pid db (keyword lang))}))
   :handle-ok ::entry
   :post! (fn [_]
+           (info "post! statements-resource")
            {::id (post-statement pid db statement)})
   :handle-created (fn [ctx]
                     {:id (::id ctx)}))
@@ -170,7 +175,7 @@
                {::entry p}))
   :handle-ok ::entry
   :post! (fn [_]
-           (debug "post! project-resource")
+           (info "post! project-resource")
            (when (= entity "ag")
              {::id (post-ag pid (:name content) (:header content))}))
   :handle-created (fn [ctx]
@@ -253,12 +258,9 @@
   :available-media-types ["application/json"]
   :allowed-methods [:get :post]
   :available-charsets["utf-8"]
-  :handle-created (fn [ctx]
-                    {:id (::id ctx)})
-  :handle-ok (fn [ctx]
-               (get-profiles pid))
-  :post! (fn [_]
-           {::id (post-profile pid profile)}))
+  :handle-created (fn [ctx] {:id (::id ctx)})
+  :handle-ok (fn [ctx] (get-profiles pid))
+  :post! (fn [_] {::id (post-profile pid profile)}))
 
 (defresource legal-profiles-resource [pid id update]
   :available-media-types ["application/json"]
@@ -267,15 +269,13 @@
   :exists? (fn [ctx]
              (when-let [p (get-profile pid id)]
                {::entry p}))
-  :put! (fn [ctx]
-          (put-profile pid id update))
-  :delete! (fn [ctx]
-             (delete-profile pid id))
+  :put! (fn [ctx] (put-profile pid id update))
+  :delete! (fn [ctx] (delete-profile pid id))
   :handle-ok ::entry)
 
 (defroutes carneades-projects-api-routes
   (ANY "/" [] (list-project-resource))
-  
+
   (context "/:pid" [pid]
     (ANY "/" req (project-resource pid
                                    (-> req :params :entity)
@@ -323,11 +323,10 @@
                                             (-> req :params :aid)
                                             (-> req :params :context)
                                             (:body req))))
-      
+
       (context "/nodes" []
         (ANY "/" [] (list-node-resource pid db))
         (ANY "/:nid" [nid] (node-resource pid db nid)))
 
       (context "/map" []
         (ANY "/" [] (map-resource pid db))))))
-

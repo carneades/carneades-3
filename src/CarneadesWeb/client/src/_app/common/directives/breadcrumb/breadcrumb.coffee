@@ -5,10 +5,12 @@
 define [
   "angular",
   "angular-ui-router",
-  "angular-bootstrap"
+  "angular-bootstrap",
+  "angular-translate"
 ], (angular) ->
   # Prefix state
-  angular.module("ui.bootsrap.breadcrumb", [
+  angular.module("ui.carneades.breadcrumb", [
+    'pascalprecht.translate',
     'ui.bootstrap.collapse',
     "ui.router.state"
   ])
@@ -54,7 +56,7 @@ define [
     return $navigationStates
   )
 
-  .factory('breadcrumbService', ($navigationStates, $state, $stateParams) ->
+  .factory('breadcrumbService', ($navigationStates, $state, $stateParams, $translate) ->
     options = {}
     navigationStates = $navigationStates('LimitedStack', 6)
 
@@ -92,6 +94,8 @@ define [
     @updateStates = () -> navigationStates.push _build $state, $stateParams
     @getStates = () -> return navigationStates.asArray()
     @getRenderedStates = () -> return _render $breadcrumb.getStates(), $state
+    @pop = () -> navigationStates.pop()
+    @peek = () -> return navigationStates.peek()
 
     return @
   )

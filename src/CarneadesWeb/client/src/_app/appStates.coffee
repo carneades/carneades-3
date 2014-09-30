@@ -16,10 +16,13 @@ define [
   .config(($stateProvider) ->
     states = [
       name: "home"
-      label: "Carneades"
+      label: "state.home.label"
       url: "/"
-      data:
-        commands: ['home.projects','home.about','home.privacy','home.help','home.admin','home.signin']
+      # data:
+      #   commands: [
+      #     'home.projects','home.about','home.privacy','home.help','home.admin'
+      #     ,'home.signin'
+      #   ]
       views:
         "css@":
           template: '<css-inject></css-inject>'
@@ -30,14 +33,14 @@ define [
         "content@":
           templateUrl: 'home.jade'
         "subnav@":
-          templateUrl: 'subnav.jade'
+          template: '<page-navigation><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation>'
           controller: 'SubnavController'
         "mobsubnav@":
-          templateUrl: 'subnav.jade'
+          template: '<page-navigation><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation>'
           controller: 'MobSubnavController'
     ,
       name: "home.about"
-      label: "About"
+      label: "state.home.about.label"
       parent: 'home'
       url: "about"
       views:
@@ -45,7 +48,7 @@ define [
           template: "<h1>About</h1>"
     ,
       name: "home.privacy"
-      label: "Privacy"
+      label: "state.home.privacy.label"
       url: "privacy"
       views:
         "content@":
@@ -59,14 +62,14 @@ define [
           template: "<h1>Help</h1>"
     ,
       name: "home.admin"
-      label: "Admin"
+      label: "state.home.admin.label"
       url: "admin"
       views:
         "content@":
           template: "<h1>Admin</h1>"
     ,
       name: "home.signin"
-      label: "Sign in"
+      label: "state.home.signin.label"
       url: "signin"
       views:
         "content@":
