@@ -116,9 +116,26 @@
 
     "projects.positive": "positive",
     "projects.implicit": "implicit",
+<<<<<<< HEAD
     "projects.role": "role",
 
     "projects.delete": "delete",
+=======
+
+    "projects.role": "role" ,
+
+    "projects.delete": "delete",
+    "projects.edit": "edit",
+    "projects.save": "save",
+    "projects.cancel": "cancel",
+    "projects.legalprofiles": "Legal Profiles",
+    "projects.legalprofile": "Legal Profile",
+    "projects.legalprofile.edit": "Edit Legal Profile",
+    "projects.legalprofile.delete": "Delete Legal Profile",
+    "projects.legalprofile.save": "Save Legal Profile",
+    "projects.legalprofile.cancel": "Cancel Legal Profile",
+    "projects.legalprofile.new": "New Legal Profile",
+>>>>>>> editors-legalprofiles
 
     "state.home.label": "Carneades",
     "state.home.about.label": "About",
@@ -158,10 +175,17 @@
     "tooltip.premise": "Add a premise",
     "tooltip.outline.edit": "Edit this outline",
 
+    "tooltip.legalprofile.new": "Create a new legal profile",
+    "tooltip.legalprofile.save": "Save the legal profile",
+    "tooltip.legalprofile.cancel": "Cancel the creation of the current legal profile",
+    "tooltip.legalprofile.edit": "Edit this legal profile",
+    "tooltip.legalprofile.delete": "Delete this legal profile",
+
     "placeholder.title": "type title here",
     "placeholder.policy": "type the name of the policy",
     "placeholder.scheme": "type the name of the scheme",
     "placeholder.name": "type the name here, without spaces and special characters",
 
     "outline.info": "This outline provides an overview of the main arguments. Click on an item in the outline for more information, including further arguments."
+
 }

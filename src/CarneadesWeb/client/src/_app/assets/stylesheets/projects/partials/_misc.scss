@@ -109,3 +109,15 @@ ul.icon li:before {
     content: url("../../../../../images/circle_orange_24x24.png");
     margin-right: 12px;
 }
+
+.schemeOut h4, a.schemeOut {
+    background-color: tomato;
+}
+
+.schemeIn h4, a.schemeIn {
+    background-color: lightgreen;
+}
+
+.schemeUndecided h4, a.schemeUndecided {
+    background-color: lightgray;
+}
