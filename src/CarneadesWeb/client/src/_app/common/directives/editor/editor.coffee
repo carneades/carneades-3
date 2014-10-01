@@ -309,7 +309,6 @@ define [
       name: '@'
     link: (scope) ->
 
-
   .directive 'metadataEditTab', () ->
     restrict: 'E'
     templateUrl: "common/directives/editor/edit/metadata-edit-tab.jade"

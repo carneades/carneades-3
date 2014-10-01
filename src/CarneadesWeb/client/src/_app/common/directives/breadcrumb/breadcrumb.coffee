@@ -83,8 +83,13 @@ define [
       return (_fnSetIsActive(_fnSetIsLast(s,++index)) for s in states)
 
     _build = () ->
+      _translate = (stateName) ->
+        label = $translate.instant($state.get(stateName).label)
+        console.log label
+        return label
+
       return {
-        label: $state.get($state.$current.name).label
+        label: _translate $state.$current.name
         name: $state.$current.name
         params: angular.copy $stateParams
         tooltip: $state.$current.tooltip
@@ -93,7 +98,7 @@ define [
     @isEmpty = () -> return navigationStates.isEmpty()
     @updateStates = () -> navigationStates.push _build $state, $stateParams
     @getStates = () -> return navigationStates.asArray()
-    @getRenderedStates = () -> return _render $breadcrumb.getStates(), $state
+    @getRenderedStates = () -> return _render navigationStates.asArray(), $state
     @pop = () -> navigationStates.pop()
     @peek = () -> return navigationStates.peek()
 

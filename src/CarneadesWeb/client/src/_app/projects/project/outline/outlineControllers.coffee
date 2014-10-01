@@ -16,8 +16,6 @@ define [
     $translate, project, tproject, scroll, tpid) ->
 
     $stateParams.tpid = tpid
-    $q.all([project, tproject]).then (data) ->
-      $scope.viewLoading = false
 
     _openStatementEditor = () ->
       url = 'home.projects.project.statements.new'

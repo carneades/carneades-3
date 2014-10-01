@@ -116,11 +116,9 @@
 
     "projects.positive": "positive",
     "projects.implicit": "implicit",
-<<<<<<< HEAD
     "projects.role": "role",
 
     "projects.delete": "delete",
-=======
 
     "projects.role": "role" ,
 
@@ -135,9 +133,9 @@
     "projects.legalprofile.save": "Save Legal Profile",
     "projects.legalprofile.cancel": "Cancel Legal Profile",
     "projects.legalprofile.new": "New Legal Profile",
->>>>>>> editors-legalprofiles
 
     "state.home.label": "Carneades",
+
     "state.home.about.label": "About",
     "state.home.privacy.label": "Privacy",
     "state.home.admin.label": "Admin",

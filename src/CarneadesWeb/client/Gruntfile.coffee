@@ -322,15 +322,16 @@ module.exports = (grunt) ->
           outputStyle: 'compressed'
 
     watch:
-      haml:
-        files: ["<%= src.base %>/**/*.haml"]
-        tasks: ["haml", "chtml2js", "timestamp"]
       coffee:
         files: ["<%= src.base %>/**/*.coffee"]
         tasks: ["coffee", "timestamp"]
+        options:
+          livereload: true
       css:
         files: ["<%= comp.base %>/*.css"]
         tasks: ["compass", "cssmin"]
+        options:
+          livereload: true
 
      requirejs:
       compile:
@@ -397,6 +398,3 @@ module.exports = (grunt) ->
 
   # # deploy: do a full build from scratch
   # grunt.registerTask "deploy", ["clean", "build", "test"]
-
-  # # watchers
-  # grunt.registerTask "build-watch", ["watch"]

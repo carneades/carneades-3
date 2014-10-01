@@ -97,7 +97,7 @@ define [
     return @
 
   .controller 'StatementEditCtrl', ($scope, $translate, $state, $stateParams,
-    statement, project, breadcrumbService, editorService) ->
+    statement, Statement, project, breadcrumbService, editorService) ->
 
     _showModel = () ->
       $scope.tabModel = true
@@ -109,13 +109,12 @@ define [
 
     _onSave = () ->
       statement = extend statement,
-        db: $stateParams.db
         pid: $stateParams.pid
-        sid: $stateParams.sid
 
-      statement.$update()
-      url = 'home.projects.project.statements.statement'
-      $state.transitionTo url, $stateParams
+      Statement.update($stateParams, statement).$promise.then((data) ->
+        url = 'home.projects.project.statements.statement'
+        $state.transitionTo url, $stateParams
+      )
 
     $scope = extend $scope,
       standards: editorService.fillWithPrefixSuffixes(

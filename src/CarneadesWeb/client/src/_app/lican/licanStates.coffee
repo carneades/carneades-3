@@ -19,13 +19,15 @@ define [
         name: 'lican'
         label: 'state.lican.label'
         url: '/lican?entity&legalprofile&debug'
+        data:
+          theme: 'markos'
         views:
-          "css@":
-            template: '<css-inject theme="\'markos\'"></css-inject>'
-          "banner@":
-            template: '<project-banner theme="\'markos\'"></project-banner>'
-          "footer@":
-            template: '<project-footer theme="\'markos\'"></project-footer>'
+          "header@":
+            templateUrl: 'header.jade'
+            controller: 'HeaderCtrl'
+          "subnav@":
+            template: '<page-navigation ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation>'
+            controller: 'SubnavController'
           "content@":
             templateUrl: 'lican/introduction.jade'
             controller: 'IntroCtrl',

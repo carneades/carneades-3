@@ -15,12 +15,12 @@ define [
   ])
 
   .factory "Theme", (urlService) ->
-    url = "/projects/:pid/theme/:did"
+    url = "/projects/:pid/theme/html/:did"
     params = pid: "@pid", did: "@did"
     return urlService.$resource url, params
 
   .factory "ThemeLoader", (Theme, $q) ->
-    (params) ->
+    return (params) ->
       delay = $q.defer()
       Theme.get params, ((theme) ->
         delay.resolve theme

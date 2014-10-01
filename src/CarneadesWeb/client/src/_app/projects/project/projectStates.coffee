@@ -20,6 +20,10 @@ define [
       name: "home.projects.project"
       url: '/:pid'
       label: 'state.home.projects.project.label'
+      data:
+        css: [
+          'api/projects/{{pid}}/theme/css/{{pid}}.css'
+        ]
       views:
         "css@":
           template: '<css-inject></css-inject>'
@@ -45,11 +49,8 @@ define [
           templateUrl: 'projects/project/newArgGraph.jade'
           controller: 'ProjectNewArgGraphCtrl'
         "subnav@":
-          template: '<page-navigation-sm-offset-2><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
+          template: '<page-navigation-sm-offset-2 ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
           controller: 'SubnavController'
-        "mobsubnav@":
-          template: '<page-navigation-sm-offset-2><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
-          controller: 'MobSubnavController'
     ,
       name: 'home.projects.project.edit'
       url: '/edit'
@@ -64,11 +65,8 @@ define [
               $stateParams.nid = 1
               return new ProjectLoader $stateParams
         "subnav@":
-          template: '<page-navigation-sm-offset-2><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
+          template: '<page-navigation-sm-offset-2 ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
           controller: 'SubnavController'
-        "mobsubnav@":
-          template: '<page-navigation-sm-offset-2><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
-          controller: 'MobSubnavController'
     ]
 
     angular.forEach states, (state) ->

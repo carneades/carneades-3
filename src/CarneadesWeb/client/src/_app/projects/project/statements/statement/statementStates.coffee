@@ -33,8 +33,6 @@ define [
       name: 'home.projects.project.statements.statement.edit'
       label: 'state.home.projects.project.statements.statement.edit.label'
       url: '/edit'
-      data:
-        commands: ['home.projects.project.map','home.projects.project.outline']
       views:
         'content@':
           templateUrl: 'projects/project/statements/statement/edit.jade'

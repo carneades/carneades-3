@@ -5,7 +5,7 @@
         .col-sm-offset-2.col-sm-10
           .section
             .page-header
-              h1 {{'projects.newag' | translate}}
+              h1(translate='projects.newag')
 
       form.form-horizontal(name="form", novalidate)
         form-group(label-key='projects.newag.name')
@@ -38,7 +38,7 @@
             tooltip-append-to-body="true",
             tooltip-placement="top",
             ng-disabled="form.$invalid")
-            i.fa.fa-floppy-o: span {{'projects.save' | translate}}
+            i.fa.fa-floppy-o: span(translate='projects.save')
 
           button.btn.btn-default.btn-xs(
             type='button',
@@ -46,7 +46,7 @@
             tooltip="{{tooltipCancel}}",
             tooltip-append-to-body="true",
             tooltip-placement="top")
-            i.fa.fa-times: span {{'projects.cancel' | translate}}
+            i.fa.fa-times: span(translate='projects.cancel')
 
         
             

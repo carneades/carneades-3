@@ -27,6 +27,7 @@ define [
   "common/directives/markdown/markdown",
   "common/directives/loader/loader",
   'common/directives/editor/editor',
+  'common/resources/themes',
   'showdown',
   'hallo',
   'to-markdown',
@@ -60,21 +61,54 @@ define [
     "pascalprecht.translate",
     'markdown',
     'ui.editor',
-    'angular-capitalize-filter'
+    'angular-capitalize-filter',
+    'resources.themes'
   ])
 
-  .run(($rootScope, $state, $stateParams) ->
+  .run ($rootScope, $state, $stateParams, ThemeLoader) ->
     $rootScope.$state = $state
     $rootScope.$stateParams = $stateParams
-  )
+
+    $rootScope.$on '$stateChangeStart', (e, to) ->
+      $rootScope.viewLoading = true
+
+    $rootScope.$on '$stateChangeSuccess', (e, to) ->
+      $rootScope.viewLoading = false
+
+    $rootScope.$watch '$stateParams.pid', (val) ->
+      if $state.current.data and $state.current.data.theme
+        val = $state.current.data.theme
+
+      if val
+        theme = new ThemeLoader({pid: val, did: 'footer.tpl'})
+        theme.then((theme) ->
+          i = 0
+          data = []
+          while theme[i]
+            data.push theme[i]
+            i = i + 1
+          $rootScope.footer = data.join ''
+        )
+
+        banner = new ThemeLoader({pid: val, did: 'banner.tpl'})
+        banner.then((banner) ->
+          bi = 0
+          bannerData = []
+          while banner[bi]
+            bannerData.push banner[bi]
+            bi = bi + 1
+          $rootScope.banner = bannerData.join ''
+        )
 
   .config((
     $urlRouterProvider,
+    $cssProvider,
     $stateProvider,
     $provide,
     $translateProvider,
     $uiViewScrollProvider,
-    markdownConverterProvider
+    markdownConverterProvider,
+    $locationProvider
   ) ->
     carneades = (converter) ->
       return [

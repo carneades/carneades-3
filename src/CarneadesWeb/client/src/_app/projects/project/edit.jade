@@ -5,12 +5,12 @@
         .col-sm-offset-2.col-sm-10
           .section
             .page-header
-              h1 {{'projects.edit' | translate}}
+              h1(translate='projects.edit')
 
       form.form-horizontal(name="form", novalidate)
         form-group(label-key='projects.edit.name')
           .form-control-static
-            span(style='font-family: monospace;font-weight:bold;') {{ data.id }}
+            span(style='font-family: monospace;font-weight:bold;') {{data.id | translate}}
             
         form-group(label-key='projects.metadata.title')
           input.form-control.input-md(
@@ -34,9 +34,10 @@
             ng-model="data.schemes")
           
         form-group(label-key='projects.description')
-          tabset
-            tab(ng-repeat="lang in languages", heading='{{lang[1]}}')
-              hallo-editor(ng-model='data.description', lang='lang')
+          multilang-hallo-editor(
+            ng-model='data.description', 
+            languages='languages', 
+            name='text')
             
         form-group-no-label
           button.btn.btn-default.btn-xs(
@@ -46,7 +47,7 @@
             tooltip-append-to-body="true",
             tooltip-placement="top",
             ng-disabled="form.$invalid")
-            i.fa.fa-floppy-o: span {{'projects.save' | translate}}
+            i.fa.fa-floppy-o: span(translate='projects.save')
 
           button.btn.btn-default.btn-xs(
             type='button',
@@ -54,4 +55,4 @@
             tooltip="{{tooltipCancel}}",
             tooltip-append-to-body="true",
             tooltip-placement="top")
-            i.fa.fa-times: span {{'projects.cancel' | translate}}
+            i.fa.fa-times: span(translate='projects.cancel')

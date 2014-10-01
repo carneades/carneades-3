@@ -5,9 +5,7 @@
 
 define ['angular'], (angular) ->
 
-  angular.module('app.helper', [])
-
-  .factory('urlService', ($resource, $location) ->
+  urlService = ($resource, $location) ->
     url = [
       $location.protocol(),
       '://',
@@ -25,4 +23,44 @@ define ['angular'], (angular) ->
       return $resource url + path, params
 
     return @
-  )
+
+
+  $cssProvider = () ->
+    _storage = []
+
+    _getIndexOf = (id) ->
+      idx = 0
+      angular.forEach _storage, (item) ->
+        if item.id is id then return
+        idx = idx + 1
+      return idx;
+
+    _add = (id, val) ->
+      _storage.push id: id, val: val
+
+    _remove = (id) ->
+      idx = _getIndexOf id
+      _storage.slice idx, 1
+
+    _contains = (id) ->
+      bFound = false
+      angular.forEach _storage, (item) ->
+        if item.id is id
+          bFound = true
+          return;
+      return bFound;
+
+    return {
+      add: _add
+      $get: () ->
+        get: () -> return _storage
+        clearAll: () -> _storage = []
+        contains: _contains
+        remove: _remove
+        add: _add
+    }
+
+  angular.module('app.helper', [])
+  .factory 'urlService', urlService
+  .provider '$css', $cssProvider
+

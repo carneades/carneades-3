@@ -1,0 +1,51 @@
+.my-fluid-container#mobheader
+  .row.border-bottom
+    .col-md-1
+      .section#mobnav(ng-show='isSubNavDisplayed')
+        button.navbar-toggle(
+          type='button',
+          ng-init='navCollapsed = true',
+          ng-click='navCollapsed = !navCollapsed; navBcCollapsed = true')
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+      .section#mobnav(ng-show='!isSubNavDisplayed')
+        button.navbar-toggle.disabled(type='button')
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+    .col-md-11
+      .section#mobbc
+        .row.mob-bc-head
+          ul
+            li.bc-default-a
+              a(
+                ng-click='openView(bcTop.name, top.params)',
+                tooltip='{{bcTop.tooltip}}',
+                tooltip-append-to-body='true',
+                tooltip-placement='bottom',
+                ng-bind='bcTop.label')
+            li(ng-show='hasHistory')
+              a
+                i.fa.fa-chevron-down.font-inc-130(
+                  ng-init='navBcCollapsed = true',
+                  ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
+  
+  .row.collapse#mobnavdetails(collapse='navCollapsed')
+    page-navigation
+      page-navigation-item(cmd='c' ng-repeat='c in commands')
+
+  .row.collapse#mobbcnavdetails(
+    collapse='navBcCollapsed')
+    ul
+      li(ng-repeat='navigatedState in subNavStatesReversed')
+        a(
+          ng-click='openView(navigatedState.name, navigatedState.params)',
+          ng-bind='navigatedState.label')
+
+div#global.my-fluid-container
+  div(ng-bind-html='banner')
+  div.navbar.subnav-navbar
+    breadcrumb(states='navigatedStates',style='style')

@@ -5,53 +5,18 @@ html(lang='en')
     title Carneades Web Application
     meta(name='viewport',content='width=device-width, initial-scale=1.0')
     meta(http-equiv='X-UA-Compatible',content='IE=edge')
-    link(rel='stylesheet',href='css/codemirror.css',media='screen')
-    link(rel='stylesheet',href='css/xq-light.css',media='screen')
-    link(rel="stylesheet",href="css/font-awesome.min.css",media='screen')
-    link(rel="stylesheet",href="css/open-sans.min.css",media='screen')
-    link(rel="stylesheet",href="css/montserrat-regular.css",media='screen')
-    link(rel='stylesheet',href='css/layout.css',media='screen')
-    
-  body(ng-controller='AppCtrl')
-    div(ui-view='css')
-    header#top(ng-controller='HeaderCtrl')
-      .my-fluid-container#mobheader
-        .row.border-bottom
-          .col-md-1
-            .section#mobnav(ng-show='isSubNavDisplayed')
-              button.navbar-toggle(type='button',ng-init='navCollapsed = true',ng-click='navCollapsed = !navCollapsed; navBcCollapsed = true')
-                span.sr-only Toggle navigation
-                span.icon-bar
-                span.icon-bar
-                span.icon-bar
-            .section#mobnav(ng-show='!isSubNavDisplayed')
-              button.navbar-toggle.disabled(type='button')
-                span.sr-only Toggle navigation
-                span.icon-bar
-                span.icon-bar
-                span.icon-bar
-          .col-md-11
-            .section#mobbc
-                .row.mob-bc-head
-                  ul
-                    li.bc-default-a
-                      a(ng-click='openView(bcTop.name, top.params)',tooltip='{{bcTop.tooltip}}',tooltip-append-to-body='true',tooltip-placement='bottom') {{bcTop.label}}
-                    li(ng-show='hasHistory')
-                      a
-                        i.fa.fa-chevron-down.font-inc-130(ng-init='navBcCollapsed = true',ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
-        .row.collapse#mobnavdetails(collapse='navCollapsed',ui-view='mobsubnav',ng-cloak='')
-        .row.collapse#mobbcnavdetails(collapse='navBcCollapsed',ng-cloak='')
-          ul
-            li(ng-repeat='navigatedState in subNavStatesReversed')
-              a(ng-click='openView(navigatedState.name, navigatedState.params)') {{navigatedState.label}}
-      div#global.my-fluid-container
-        div(ui-view='banner',ng-cloak='')
-        div.navbar.subnav-navbar
-          breadcrumb(states='navigatedStates',style='style')
-        div#subnav.row(ui-view='subnav',ng-cloak='')
+    link(rel='stylesheet', href='api/projects/default/theme/css/default.css', media='screen')
+    link(rel='stylesheet', href='css/font-awesome.min.css', media='screen')
+    link(rel='stylesheet', href='css/open-sans.min.css', media='screen')
+    link(rel='stylesheet', href='css/montserrat-regular.css', media='screen')
+    link(rel='stylesheet', href='css/codemirror.css', media='screen')
+    link(rel='stylesheet', href='css/xq-light.css', media='screen')
 
-    div(ui-view='content')
-
-    div.navbar-fixed-bottom(ui-view='footer')
-
-    script(src='require.js',data-main='main.min.js')
+  body
+    div(ui-view='header')
+    div(my-loading-spinner='viewLoading')
+      css-inject(theme='$stateParams.pid')
+      div#subnav.row(ui-view='subnav')
+      div(ui-view='content')
+    div(ng-bind-html='footer')
+    script(src='require.js', data-main='main.min.js')

@@ -32,12 +32,8 @@ define [
                 url: "#{p}://#{h}:#{po}/carneades/api/projects/#{pid}/#{db}/map"
               ).then (data) -> data.data
         "subnav@":
-          template: '<page-navigation-full><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-full>'
+          template: '<page-navigation-full ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-full>'
           controller: 'SubnavController'
-        "mobsubnav@":
-          template: '<page-navigation-full><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-full>'
-          controller: 'MobSubnavController'
-
     ]
 
     angular.forEach states, (state) -> $stateProvider.state state

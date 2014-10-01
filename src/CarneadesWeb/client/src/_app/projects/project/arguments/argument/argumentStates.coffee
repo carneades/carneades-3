@@ -39,8 +39,6 @@ define [
       label: "state.home.projects.project.arguments.argument.edit.label"
       url: "/edit"
       views:
-        "nav@":
-          template: "<bc-navigation></bc-navigation>"
         "content@":
           templateUrl: "projects/project/arguments/argument/edit.jade"
           controller: "ArgumentEditCtrl"

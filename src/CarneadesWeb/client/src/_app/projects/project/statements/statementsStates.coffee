@@ -24,17 +24,17 @@ define [
           return new ProjectLoader $stateParams
       views:
         "subnav@":
-          template: '<page-navigation-sm-offset-2><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
+          template: '<page-navigation-sm-offset-2 ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
           controller: 'SubnavController'
-        "mobsubnav@":
-          template: '<page-navigation-sm-offset-2><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
-          controller: 'MobSubnavController'
     ,
       name: 'home.projects.project.statements.new'
       label: 'state.home.projects.project.statements.new.label'
       url: '/new'
       data:
-        commands: ['home.projects.project.map','home.projects.project.outline']
+        commands: [
+          'home.projects.project.map',
+          'home.projects.project.outline'
+        ]
       views:
         'content@':
           templateUrl: 'projects/project/statements/statement/edit.jade'

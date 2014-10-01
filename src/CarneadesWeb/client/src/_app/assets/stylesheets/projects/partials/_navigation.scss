@@ -116,7 +116,7 @@
 }
 
 @media (max-width: $grid-float-breakpoint - 1) {
-  #global {
+  #global, #subnav {
     position: absolute;
     top: -1000px;
   }
@@ -146,7 +146,6 @@
         cursor: pointer;
         &:hover { text-decoration: underline; }
       }
-      &.divider {visibility: hidden;}
     }
   }
 }

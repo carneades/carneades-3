@@ -31,7 +31,7 @@ define [
         pro: true
         scheme: ''
         strict: false
-        weight: ''
+        weight: 0.5
         conclusion: ''
         premises: []
 

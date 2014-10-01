@@ -16,7 +16,7 @@ define [
     url = "/projects/:pid/theories/:tpid/:tid?translate=t"
     params = pid: '@pid', tpid: '@tpid', tid: '@tid'
     return urlService.$resource url, params
-  .factory 'TheoryLoader', (Theory, $q) ->
+  .factory "TheoryLoader", (Theory, $q) ->
     return (params) ->
       delay = $q.defer()
       Theory.get params, ((theory) ->

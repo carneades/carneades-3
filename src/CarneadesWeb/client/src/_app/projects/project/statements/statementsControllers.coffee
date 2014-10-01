@@ -38,7 +38,7 @@ define [
     _onSave = () ->
       pid = $stateParams.pid
       db = $stateParams.db
-      statement = Statement.save {
+      Statement.save({
         pid: pid
         db: db
         title: $scope.title
@@ -47,8 +47,7 @@ define [
         header: $scope.statement.header
         pro: $scope.statement.pro
         main: $scope.statement.main
-      }
-      statement.$promise.then((s) ->
+      }).$promise.then((s) ->
         url = 'home.projects.project.statements.statement'
         params = pid: pid, db: db, sid: s.id
         $state.transitionTo url, params
@@ -77,7 +76,3 @@ define [
       editorOptions: editorService.getCodeMirrorOptions()
       tooltipSave: $translate.instant 'tooltip.statement.save'
       tooltipCancel: $translate.instant 'tooltip.cancel'
-
-    $timeout(() ->
-      $cope.$broadcast 'refreshSlider'
-    )
