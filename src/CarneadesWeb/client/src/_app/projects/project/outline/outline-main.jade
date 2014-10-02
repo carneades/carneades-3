@@ -1,9 +1,8 @@
 .container.outline
   .row
     .col-md-12(role='main')
-      .section#overview(my-loading-spinner='viewLoading')
-        .page-header
-          h1(ng-bind='project.title')
+      .section#overview
+        .page-header: h1(ng-bind='project.title')
 
       .section#commands
         button.btn.btn-default.btn-small(
@@ -12,7 +11,7 @@
           tooltip="{{tooltipEdit}}",
           tooltip-append-to-body="true",
           tooltip-placement="top")
-          i.fa.fa-edit: span edit
+          i.fa.fa-edit: span(translate='state.home.projects.project.edit.label')
 
         button.btn.btn-default.btn-small(
           type='button',
@@ -20,7 +19,7 @@
           tooltip="{{tooltipNewStatement}}" ,
           ooltip-append-to-body="true",
           tooltip-placement="top")
-          i.fa.fa-plus-square-o: span new statement
+          i.fa.fa-plus-square-o: span(translate='state.home.projects.project.statements.new.label')
 
         button.btn.btn-default.btn-small(
           type='button',
@@ -28,7 +27,7 @@
           tooltip="{{tooltipNewArgument}}",
           tooltip-append-to-body="true",
           tooltip-placement="top")
-          i.fa.fa-plus-square-o: span new argument
+          i.fa.fa-plus-square-o: span(translate='state.home.projects.project.arguments.new.label')
           
       .section#description
         markdown(strip='true',ng-model='project.description')

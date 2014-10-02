@@ -29,6 +29,7 @@ define [
       url = 'home.projects.project.edit'
       $state.transitionTo url, $stateParams
 
+    console.log project
     $scope = extend $scope,
       viewLoading: true
       project: project

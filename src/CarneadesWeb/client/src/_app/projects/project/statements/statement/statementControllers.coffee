@@ -108,9 +108,6 @@ define [
       $scope.tabMetadata = true
 
     _onSave = () ->
-      statement = extend statement,
-        pid: $stateParams.pid
-
       Statement.update($stateParams, statement).$promise.then((data) ->
         url = 'home.projects.project.statements.statement'
         $state.transitionTo url, $stateParams

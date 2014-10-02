@@ -20,17 +20,7 @@ define [
       name: "home.projects.project"
       url: '/:pid'
       label: 'state.home.projects.project.label'
-      data:
-        css: [
-          'api/projects/{{pid}}/theme/css/{{pid}}.css'
-        ]
       views:
-        "css@":
-          template: '<css-inject></css-inject>'
-        "banner@":
-          template: '<project-banner></project-banner>'
-        "footer@":
-          template: '<project-footer></project-footer>'
         "content@":
           templateUrl: 'projects/project/project.jade'
           controller: 'ProjectViewCtrl'
