@@ -39,9 +39,9 @@ define [
       top = breadcrumbService.peek()
       if top?
         breadcrumbService.pop()
-        $state.transitionTo top.name, $stateParams
+        $state.transitionTo top.name, top.params
       else
-        $state.transitionTo 'home.projects'
+        $state.transitionTo 'home.projects', $stateParams
 
     @getLanguages = () ->
       return [

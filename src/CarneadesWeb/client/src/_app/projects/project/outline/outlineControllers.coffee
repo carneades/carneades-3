@@ -14,7 +14,6 @@ define [
     $scope = angular.extend $scope,
       project: project
       scrollTo: scroll.scrollTo
-      $stateParams: $stateParams
       tooltipEdit: $translate.instant 'tooltip.outline.edit'
       tooltipNewStatement: $translate.instant 'tooltip.statement.new'
       tooltipNewArgument: $translate.instant 'tooltip.argument.new'
