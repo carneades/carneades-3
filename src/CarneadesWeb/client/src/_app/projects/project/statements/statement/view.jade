@@ -9,7 +9,8 @@
                 evaluation-indicator,
                 value='statement.value',
                 size='32x32',
-                position='before') {{'projects.statement' | translate}}
+                position='before')
+                span(translate='projects.statement')
 
       form.form-horizontal
         form-group
@@ -19,7 +20,8 @@
             tooltip-append-to-body="true",
             tooltip-placement="right",
             ng-click="edit()")
-            i.fa.fa-edit: span edit
+            i.fa.fa-edit
+              span(translate='state.home.projects.project.statements.statement.edit.label')
 
           button.btn.btn-default.btn-small(
             type='button',
@@ -27,7 +29,8 @@
             tooltip="{{tooltipNew}}",
             tooltip-append-to-body="true",
             tooltip-placement="top")
-            i.fa.fa-plus-square-o: span new argument
+            i.fa.fa-plus-square-o
+              span(translate='state.home.projects.project.arguments.new.label')
             
         form-group
           tabset
@@ -42,35 +45,37 @@
         div(ng-show='tabModel')
           form-group(label-key='projects.statement.formalization')
             .form-control-static
-              markdown.statement-text(strip='true',ng-model='statement.text')
+              markdown.statement-text(
+                strip='true',
+                ng-model='statement.text')
 
             .form-control-static#pro(ng-hide="statement.pro.length == 0")
-              .span.argument-indication {{'projects.statement.pro_arguments' | translate}}
+              .span.argument-indication(translate='projects.statement.pro_arguments')
                 ul(ng-repeat='arg in statement.pro')
                   li
-                    a(ng-click='openArgument(arg.id)') {{argumentName(arg, $index)}}
+                    a(ng-click='openArgument(arg.id)', ng-bind='argumentName(arg, $index)')
                     ul(ng-repeat='p in arg.premises')
                       li
                         span(ng-show="!p.positive")
-                          span {{'projects.negative_premise' | translate}}
-                        a(ng-click='openStatement(p.id)') {{p.text}}
+                          span(translate='projects.negative_premise')
+                        a(ng-click='openStatement(p.id)', ng-bind='p.text')
                            
             .form-control-static#con(ng-hide="statement.con.length == 0")
-              .span.argument-indication {{projects.statement.con_arguments | translate}}
+              .span.argument-indication(translate='projects.statement.con_arguments')
                 ul(ng-repeat='arg in statement.con')
                   li
-                    a(ng-click='openArgument(arg.id)') {{argumentName(arg, $index)}}
+                    a(ng-click='openArgument(arg.id)', ng-bind='argumentName(arg, $index)')
                     ul(ng-repeat='p in arg.premises')
                       li
                         span(ng-show="!p.positive")
-                          span{{'projects.negative_premise' | translate}}
-                      a(ng-click='openStatement(p.id)') {{p.text}}
+                          span(translate='projects.negative_premise')
+                      a(ng-click='openStatement(p.id)', ng-bind='p.text')
 
             .form-control-static#premises(ng-hide="statement['premise-of'].length == 0")
-              .span.premise-of-indication {{'projects.statement.premise_of' | translate}}
+              .span.premise-of-indication(translate='projects.statement.premise_of')
               ul(ng-repeat="arg in statement['premise-of']")
                 li
-                  a(ng-click='openArgument(arg.id)') {{argumentName(arg, $index)}}
+                  a(ng-click='openArgument(arg.id)',ng-bind='argumentName(arg, $index)')
                       
           form-group(label-key='projects.statement.properties')
             properties(keys="[['valueText', 'projects.value'],['standard', 'projects.standard'],['weight', 'projects.weight'],['main', 'projects.main_issues'],['atom', 'projects.atom'],['id', 'projects.id']]",model="statement")
@@ -78,7 +83,7 @@
         div(ng-show='tabMetadata')
           form-group(ng-repeat="(k,v) in statement.header",label-key='projects.{{k}}',ng-show="v != null && k != 'description'")
             .form-control-static
-              markdown(extensions='carneades',ng-model='v')
+              span(ng-bind='v')
           form-group(label-key='projects.description',ng-show="statement.header.description != null")
             .form-control-static
               markdown(extensions='carneades',ng-model='statement.header.description')

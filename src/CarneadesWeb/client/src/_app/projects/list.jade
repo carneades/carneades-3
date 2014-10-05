@@ -15,12 +15,13 @@
               button.btn.btn-default.btn-small(
                 type='button',
                 ng-click='copyLink(project.id)')
-                i.fa.fa-copy: span copy link
+                i.fa.fa-copy: span(translate='projects.copylink')
 
-              button.btn.btn-default.btn-small(
-                type='button',
-                ng-click='open(project.id)')
-                i.fa.fa-folder-open-o: span open
+              a(ui-sref='home.projects.project({pid: project.id})')
+                button.btn.btn-default.btn-small(type='button')
+                  i.fa.fa-folder-open-o: span(translate='projects.outline')
 
             .section
-              markdown(strip='true', ng-model='project.description')
+              markdown(
+                strip='true',
+                ng-model='project.description')

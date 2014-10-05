@@ -71,9 +71,6 @@
     "projects.cce": "Clear and Convincing Evidence",
     "projects.brd": "Beyond Reasonable Doubt",
 
-    "projects.save": "Save",
-    "projects.cancel": "Cancel",
-
     "projects.statement.formalization": "Formalization",
     "projects.statement.properties": "Properties",
     "projects.statement.value.false": "Presumably false",
@@ -112,20 +109,20 @@
     "projects.pro": "Pro",
 
     "projects.addpremise": "Add premise",
+    "projects.premise.remove": "Remove this premise",
     "projects.premise": "premise",
 
     "projects.positive": "positive",
     "projects.implicit": "implicit",
     "projects.role": "role",
 
-    "projects.delete": "delete",
+    "projects.copylink": "Copy link",
+    "projects.outline": "Open outline",
+    "projects.delete": "Delete",
+    "projects.edit": "Edit",
+    "projects.save": "Save",
+    "projects.cancel": "Cancel",
 
-    "projects.role": "role" ,
-
-    "projects.delete": "delete",
-    "projects.edit": "edit",
-    "projects.save": "save",
-    "projects.cancel": "cancel",
     "projects.legalprofiles": "Legal Profiles",
     "projects.legalprofile": "Legal Profile",
     "projects.legalprofile.edit": "Edit Legal Profile",

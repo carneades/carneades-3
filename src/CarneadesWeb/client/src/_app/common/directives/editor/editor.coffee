@@ -287,7 +287,6 @@ define [
             scope.$apply(() ->
               data = _markdownize elm.html()
               model.assign scope, data
-              console.log $parse attr.ngModel
             )
 
   .directive 'halloEditor', () ->

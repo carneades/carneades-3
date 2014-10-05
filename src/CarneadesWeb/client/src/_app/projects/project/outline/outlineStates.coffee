@@ -31,7 +31,10 @@ define [
         label: 'state.home.projects.project.outline.label'
         url: '/:db/outline?scrollTo'
         data:
-          commands: ['home.projects.project.map', 'home.projects.project.theory']
+          commands: [
+            'home.projects.project.map',
+            'home.projects.project.theory'
+          ]
         views:
           "content@":
             templateUrl: 'projects/project/outline/outline-main.jade'

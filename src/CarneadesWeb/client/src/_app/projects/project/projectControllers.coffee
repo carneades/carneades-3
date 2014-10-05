@@ -72,7 +72,8 @@ define [
     return @
 
   .controller 'ProjectEditCtrl', ($scope, $state,
-  $stateParams, $translate, project, Project, breadcrumbService, editorService) ->
+  $stateParams, $translate, project, Project,
+  breadcrumbService, editorService) ->
     _normalize = ({id, description, title, schemes, policies}) ->
       return {
         id: id
@@ -99,7 +100,7 @@ define [
       Project.update().$promise.then((data) ->
         url = 'home.projects.project'
         params = pid: $scope.data.id, db: $scope.db
-        $state.transitionTo url, params
+        $state.transitionTo url, params, reload: true
       )
 
     $scope = extend $scope,

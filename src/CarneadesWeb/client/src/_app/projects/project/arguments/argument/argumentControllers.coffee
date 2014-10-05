@@ -107,11 +107,8 @@ define [
 
     return @
 
-  .controller 'ArgumentEditCtrl', ($scope, $q, $state, $stateParams, $translate,
+  .controller 'ArgumentEditCtrl', ($scope, $state, $stateParams, $translate,
     statements, argument, theory, breadcrumbService, editorService) ->
-
-    $q.all([argument]).then (data) ->
-      onArgumentRetrieve $scope
 
     _showModel = () ->
       $scope.tabModel = true
@@ -122,14 +119,9 @@ define [
       $scope.tabMetadata = true
 
     _onSave = () ->
-      argument = extend argument,
-        db: $stateParams.db
-        pid: $stateParams.pid
-        sid: $stateParams.sid
-
-      argument.$update()
-      url = 'home.projects.project.arguments.argument'
-      $state.transitionTo url, $stateParams
+      argument.update($stateParams, argument).$promise.then((data) ->
+        url = 'home.projects.project.arguments.argument'
+        $state.transitionTo url, $stateParams, reload: true)
 
     _addPremise = () ->
       editorService.addPremise $scope.argument
@@ -160,7 +152,6 @@ define [
       tabMetadata: false
       showModel: _showModel
       showMetadata: _showMetadata
-      title: $translate.instant 'projects.editargument'
       tooltipPremise: $translate.instant 'tooltip.premise'
       tooltipCancel: $translate.instant 'tooltip.cancel'
       tooltipSave: $translate.instant 'tooltip.argument.save'

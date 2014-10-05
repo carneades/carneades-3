@@ -27,9 +27,6 @@ define [
             $scope.copyLink = (pid) ->
               window.prompt("Copy to clipboard: Ctrl+C, Enter", $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/" + $scope.$state.href 'home.projects.project', pid: pid)
 
-            $scope.open = (pid) ->
-              $scope.$state.go "home.projects.project", {pid: pid}
-
           resolve:
             projects: (MultiProjectLoader) ->
               return new MultiProjectLoader()

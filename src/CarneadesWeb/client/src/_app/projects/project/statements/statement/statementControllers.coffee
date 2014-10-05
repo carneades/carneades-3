@@ -110,8 +110,7 @@ define [
     _onSave = () ->
       Statement.update($stateParams, statement).$promise.then((data) ->
         url = 'home.projects.project.statements.statement'
-        $state.transitionTo url, $stateParams
-      )
+        $state.transitionTo url, $stateParams, reload: true)
 
     $scope = extend $scope,
       standards: editorService.fillWithPrefixSuffixes(

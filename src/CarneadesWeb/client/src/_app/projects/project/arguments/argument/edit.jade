@@ -4,8 +4,7 @@
       .row
         .col-sm-offset-2.col-sm-10
           .section
-            .page-header
-              h1 {{ title }}
+            .page-header: h1(translate='projects.editargument')
 
       form.form-horizontal(name="form", novalidate)
         form-group
@@ -22,7 +21,7 @@
           
           form-group(label-key='projects.weight')
             .col-sm-1
-              .form-control-static: span {{argument.weight}}
+             .form-control-static: span(ng-bind='argument.weight')
             .col-sm-11(
               style='margin: 12px 0px 0px !important;',
               ui-slider,
@@ -42,7 +41,7 @@
             form-group-source(
               label-key='projects.source',
               ng-repeat='s in theory.schemes | selectedById:argument.scheme')
-              p.form-control-static {{ s.header.source }}
+              p.form-control-static(ng-bind='s.header.source')
                        
           form-group(label-key='projects.premises')
             premise-editor(
@@ -57,7 +56,7 @@
               tooltip="{{tooltipPremise}}",
               tooltip-append-to-body="true",
               tooltip-placement="top")
-              i.fa.fa-plus: span {{'projects.addpremise' | translate}}
+              i.fa.fa-plus: span(translate='projects.addpremise')
 
           form-group(label-key='projects.conclusion')
             input.form-control(type="text", ng-model="argument.conclusion",
@@ -67,7 +66,7 @@
             form-group-source(
               label-key='projects.fulltext',
               ng-repeat='s in statements | selectedById:argument.conclusion')
-              p.form-control-static {{ s.text }}
+              p.form-control-static(ng-bind='s.text')
 
         div(ng-show='tabMetadata')
           metadata-edit-tab(ng-model='argument.header')
@@ -80,7 +79,7 @@
             tooltip-append-to-body="true",
             tooltip-placement="top",
             ng-disabled="form.$invalid")
-            i.fa.fa-floppy-o: span {{'projects.save' | translate}}
+            i.fa.fa-floppy-o: span(translate='projects.save')
 
           button.btn.btn-default.btn-xs(
             type='button',
@@ -88,4 +87,4 @@
             tooltip="{{tooltipCancel}}",
             tooltip-append-to-body="true", 
             tooltip-placement="top")
-            i.fa.fa-times: span {{'projects.cancel' | translate}}
+            i.fa.fa-times: span(translate='projects.cancel')
