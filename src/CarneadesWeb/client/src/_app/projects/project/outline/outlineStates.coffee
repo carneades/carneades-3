@@ -35,8 +35,6 @@ define [
             'home.projects.project.map',
             'home.projects.project.theory'
           ]
-        onEnter: () ->
-          console.log 'entering outlien state'
         views:
           "content@":
             templateUrl: 'projects/project/outline/outline-main.jade'

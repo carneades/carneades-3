@@ -48,7 +48,6 @@ define [
 
     _onSave = () ->
       _description = {}
-      console.log $scope
       for k, v of $scope.ag.header.description
         _description[k] = editorService.htmlize v
 
