@@ -36,7 +36,7 @@
 
           form-group(label-key='projects.weight')
             .col-sm-1
-              .form-control-static: span(ng-bind='statement.weight')
+              .form-control-static: span(ng-bind='statement.weight | doublePrecision')
             .col-sm-11(
               style='margin: 12px 0px 0px !important;',
               ui-slider,

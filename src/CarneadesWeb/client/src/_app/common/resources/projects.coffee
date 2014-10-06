@@ -17,6 +17,10 @@ define [
   .factory "Project", (urlService) ->
     url = '/projects/:pid'
     methods =
+      'getRaw':
+        method: 'GET'
+        params:
+          context: 'edit'
       'newArgumentGraph':
         method: 'POST'
         params:

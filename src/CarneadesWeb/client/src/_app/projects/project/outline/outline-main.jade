@@ -5,7 +5,7 @@
         .page-header: h1(ng-bind='project.title')
 
       .section#commands
-        a(ui-sref='home.projects.project.edit')
+        a(ui-sref='home.projects.project.edit($stateParams)')
           button.btn.btn-default.btn-small(
             type='button',
             tooltip="{{tooltipEdit}}",
@@ -13,7 +13,7 @@
             tooltip-placement="top")
             i.fa.fa-edit: span(translate='state.home.projects.project.edit.label')
 
-        a(ui-sref='home.projects.project.statements.new')
+        a(ui-sref='home.projects.project.statements.new($stateParams)')
           button.btn.btn-default.btn-small(
             type='button',
             tooltip="{{tooltipNewStatement}}" ,
@@ -21,7 +21,7 @@
             tooltip-placement="top")
             i.fa.fa-plus-square-o: span(translate='state.home.projects.project.statements.new.label')
 
-        a(ui-sref='home.projects.project.arguments.new')
+        a(ui-sref='home.projects.project.arguments.new($stateParams)')
           button.btn.btn-default.btn-small(
             type='button',
             tooltip="{{tooltipNewArgument}}",

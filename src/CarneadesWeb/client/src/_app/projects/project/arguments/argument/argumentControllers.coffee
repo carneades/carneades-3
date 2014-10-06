@@ -156,7 +156,4 @@ define [
       tooltipCancel: $translate.instant 'tooltip.cancel'
       tooltipSave: $translate.instant 'tooltip.argument.save'
 
-    $scope.$watch $scope.schemeId, (value) ->
-      onSchemeChange $scope, value
-
     return @

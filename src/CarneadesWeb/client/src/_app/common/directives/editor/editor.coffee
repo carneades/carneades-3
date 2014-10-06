@@ -18,7 +18,7 @@ define [
   ])
 
   .factory 'editorService', ($state,
-  $stateParams, $translate, breadcrumbService) ->
+  $stateParams, $translate, breadcrumbService, markdownConverter) ->
     # add a new premise to argument.premise
     @addPremise = ({premises}) ->
       premises.push {
@@ -83,6 +83,16 @@ define [
 
     @isMapInitialized = (obj) ->
       return (v for k,v of obj when v).length > 0
+
+    @htmlize = (content) ->
+      return markdownConverter.makeHtml content
+
+    @markdownize = (content) ->
+      html = content.split('\n').map($.trim).filter((line) ->
+        return line isnt ''
+      ).join '\n'
+      return toMarkdown html
+
 
     return @
 
@@ -180,6 +190,13 @@ define [
     transclude: true
     templateUrl: 'common/directives/editor/form-group-no-label.jade'
 
+  .filter 'doublePrecision', () ->
+    return (value) ->
+      if value?
+        return value.toFixed(2).toString()
+      else
+        return '0.00'
+
   .filter 'selectedById', () ->
     return (items, id) ->
       return (items.filter (s) -> s.id is id)
@@ -251,43 +268,35 @@ define [
         getSchemesName: propertiesCtrl.getSchemesName
         getSchemesProject: propertiesCtrl.getSchemesProject
 
-  .directive 'hallo', ($parse, $timeout, markdownConverter) ->
+  .directive 'hallo', ($parse, $timeout, editorService) ->
     restrict: 'AC'
     scope: true
     require: '?ngModel'
     compile: (tElement, tAttrs) ->
       return (scope, elm, attr, ngModel) ->
         unless ngModel? then return
-        _htmlize = (content) ->
-          return markdownConverter.makeHtml content
-
-        _markdownize = (content) ->
-          html = content.split('\n').map($.trim).filter((line) ->
-            return line isnt ''
-          ).join '\n'
-          return toMarkdown html
-
-        # ngModel.$render = () ->
-        #   elm.hallo(
-        #     scope.$eval attr.hallo
-        #   ).html(_htmlize(ngModel.$viewValue or elm.html())).addClass 'editable'
 
         params = scope.$eval attr.hallo
         bound = angular.isDefined attr.ngModel
-        contents = if bound then scope.$eval(attr.ngModel) else elm.html()
-        contents = _htmlize(contents or '')
-        elm.hallo(params).html(contents).addClass 'editable'
 
-        ngModel.$render = () ->
-          elm.html(_htmlize(ngModel.$viewValue or elm.html()))
+        $timeout(() ->
+          contents = if bound then scope.$eval(attr.ngModel) else elm.html()
+          contents = editorService.htmlize(contents or '')
+          elm.hallo(params).html(contents).addClass 'editable'
+        , 100)
 
         if angular.isDefined(attr.ngModel)?
           model = $parse attr.ngModel
+          elm.bind 'halloactivated', () ->
+            scope.$apply(() ->
+              elm.html(editorService.htmlize elm.html())
+          )
+
           elm.bind 'hallodeactivated', () ->
             scope.$apply(() ->
-              data = _markdownize elm.html()
+              data = editorService.markdownize elm.html()
               model.assign scope, data
-            )
+          )
 
   .directive 'halloEditor', () ->
     restrict: 'E'

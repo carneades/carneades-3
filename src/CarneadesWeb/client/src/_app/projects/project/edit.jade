@@ -10,32 +10,32 @@
       form.form-horizontal(name="form", novalidate)
         form-group(label-key='projects.edit.name')
           .form-control-static
-            span(style='font-family: monospace;font-weight:bold;') {{data.id | translate}}
+            span(style='font-family: monospace;font-weight:bold;') {{project.id | translate}}
             
         form-group(label-key='projects.metadata.title')
           input.form-control.input-md(
             name="title",
             placeholder="{{placeholderTitle}}",
             type="text",
-            ng-model="data.title")
+            ng-model="project.title")
 
         form-group(label-key='projects.edit.policies')
           input.form-control.input-md(
             name="policy",
             placeholder="{{placeholderPolicy}}",
             type="text",
-            ng-model="data.policies")
+            ng-model="project.policies")
 
         form-group(label-key='projects.scheme')
           input.form-control.input-md(
             name="scheme",
             placeholder="{{placeholderScheme}}",
             type="text",
-            ng-model="data.schemes")
+            ng-model="project.schemes")
           
         form-group(label-key='projects.description')
           multilang-hallo-editor(
-            ng-model='data.description', 
+            ng-model='project.description', 
             languages='languages', 
             name='text')
             

@@ -50,10 +50,10 @@ define [
           templateUrl: 'projects/project/edit.jade'
           controller: 'ProjectEditCtrl'
           resolve:
-            project: ($stateParams, ProjectLoader) ->
+            project: ($stateParams, Project) ->
               $stateParams.mid = 1
               $stateParams.nid = 1
-              return new ProjectLoader $stateParams
+              return Project.getRaw {}, $stateParams
         "subnav@":
           template: '<page-navigation-sm-offset-2 ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
           controller: 'SubnavController'

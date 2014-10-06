@@ -47,18 +47,24 @@ define [
         title: ""
 
     _onSave = () ->
-      pid = $stateParams.pid
-      p = Project.get {}, pid: pid
-      p.name = $scope.ag.name
-      p.title = $scope.ag.title
-      p.header = $scope.header
-      p.$newArgumentGraph().$promise.then((data) ->
-        params = pid: pid, db: $scope.ag.name
+      _description = {}
+      console.log $scope
+      for k, v of $scope.ag.header.description
+        _description[k] = editorService.htmlize v
+
+      $scope.ag.header.description = _description
+      project = {
+        name: $scope.ag.name
+        title: $scope.ag.title
+        header: $scope.ag.header
+      }
+
+      Project.newArgumentGraph({pid: $stateParams.pid}, project).$promise.then((data) ->
+        params = pid: $stateParams.pid, db: $scope.ag.name
         url = 'home.projects.project.outline'
-        $state.transitionTo url, params
+        $state.transitionTo url, params, relaod: true
       )
 
-    $stateParams.db = 'main'
     $scope = extend $scope,
       ag: ag
       languages: editorService.getLanguages()
@@ -90,21 +96,15 @@ define [
       }
 
     _onSave = () ->
-      Project = extend Project,
-        id: $scope.data.id
-        description: $scope.data.description
-        title: $scope.data.title
-        schemes: $scope.data.schemes
-        policies: $scope.data.policies
-
-      Project.update().$promise.then((data) ->
-        url = 'home.projects.project'
-        params = pid: $scope.data.id, db: $scope.db
-        $state.transitionTo url, params, reload: true
-      )
+      params = pid: $scope.data.id, db: $scope.db
+      # no put implemented yet
+      # Project.update(params, project).$promise.then((data) ->
+      #   url = 'home.projects.project'
+      #   $state.transitionTo url, params, reload: true
+      # )
 
     $scope = extend $scope,
-      data: _normalize project
+      project: _normalize project
       languages: editorService.getLanguages()
       onSave: _onSave
       onCancel: editorService.onCancel
