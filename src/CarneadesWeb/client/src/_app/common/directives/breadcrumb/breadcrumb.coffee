@@ -85,7 +85,6 @@ define [
     _build = () ->
       _translate = (stateName) ->
         label = $translate.instant($state.get(stateName).label)
-        console.log label
         return label
 
       return {

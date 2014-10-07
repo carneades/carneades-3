@@ -12,7 +12,7 @@ define [
       object[key] = val
     object
 
-  angular.module('ui.editor', [
+  angular.module('ui.carneades.editor', [
     'pascalprecht.translate',
     'services.projectInfo'
   ])
