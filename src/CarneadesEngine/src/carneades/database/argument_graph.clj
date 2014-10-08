@@ -232,11 +232,10 @@
     (doall (map (fn [id] (read-metadata id)) ids))))
 
 (defn update-metadata
-  "integer map -> boolean
-   Updates the metadata record with the given id in the database with the values
+  "Updates the metadata record with the given id in the database with the values
    in the map.  Returns true if the update was successful."
   [id md]
-  {:pre [(integer? id) (map? md)]}
+  {:pre [(map? md)]}
   (let [existing-description-id (jdbc/with-query-results
                                   res ["SELECT description FROM metadata WHERE id=?" id]
                                   (if (empty? res) nil (:description (first res))))

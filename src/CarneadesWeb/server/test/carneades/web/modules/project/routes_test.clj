@@ -412,3 +412,27 @@
                         (str "/projects/" project "/mydb/statements/" stmtid))]
           id => "mydb"
           (:status response) => 200)))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "Argument graphs metadata can be updated."
+        (let [project (:project-name @state)
+              g {:name "mydb" :header (m/make-metadata :title "New argument graph")}
+              response (post-request
+                        (str "/projects/" project "?entity=ag")
+                        g)
+              id (:id (parse (:body response)))
+              stmt (s/make-statement :text {:en "Fred wears a ring."}
+                                     :header {:description {:en "A long
+            description from Fred wearing a ring."}})
+              response (post-request
+                        (str "/projects/" project "/mydb/statements/")
+                        stmt)
+              update (m/make-metadata :title "New title")
+              response (put-request
+                        (str "/projects/" project "/mydb/metadata/1")
+                        update)
+              request (get-request
+                       (str "/projects/" project "/mydb/metadata/1"))
+              metadatum (parse (:body request))]
+          (:title metadatum) => "New title")))
