@@ -110,10 +110,16 @@
         this.element.attr("contentEditable", true);
         if (!jQuery.parseHTML(this.element.html())) {
           this.element.html(this.options.placeholder);
-          jQuery(this.element).addClass('inPlaceholderMode');
-          this.element.css({
-            'min-width': this.element.innerWidth(),
-            'min-height': this.element.innerHeight()
+            jQuery(this.element).addClass('inPlaceholderMode');
+            innerHeight = this.element.innerHeight();
+            height = 150;
+            if (innerHeight > 50) {
+                height = innerHeight;
+            }
+            this.element.css({
+                'min-width': this.element.innerWidth(),
+                'min-height': 150
+                //'min-height': this.element.innerHeight()
           });
         }
         if (!this.bound) {
