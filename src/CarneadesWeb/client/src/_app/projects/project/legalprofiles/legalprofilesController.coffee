@@ -24,7 +24,7 @@ define [
       Legalprofile.save($stateParams, legalprofile).$promise.then((l) ->
         url = 'home.projects.project.legalprofiles.legalprofile'
         params = pid: $stateParams.pid, db: $stateParams.db, lpid: l.id
-        $state.transitionTo url, params)
+        $state.transitionTo url, params, reload: true)
 
     _cancel = ->
       url = 'home.projects.project.legalprofiles'
