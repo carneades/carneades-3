@@ -78,7 +78,13 @@
   [project db id]
   (let [dbconn (db/make-connection project db "guest" "")]
     (db/with-db dbconn
-      (ag-db/read-metadata id))))
+      (spy (ag-db/read-metadata id)))))
+
+(defn put-metadatum
+  [project db id update]
+  (let [dbconn (db/make-connection project db "root" "pw1")]
+    (db/with-db dbconn
+      (ag-db/update-metadata update))))
 
 (defn get-metadata
   [project db]
