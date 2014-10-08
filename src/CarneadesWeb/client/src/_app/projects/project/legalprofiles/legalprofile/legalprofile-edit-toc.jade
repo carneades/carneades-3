@@ -17,6 +17,8 @@ h2 {{title}}
     ng-click="cancel()")
     i.fa.fa-cancel: span {{'projects.cancel' | translate}}
 
+metadata-edit-tab(ng-model='legalprofile.metadata')
+
 ul
   li(ng-repeat='scheme in section.schemes')
     a(ui-sref='home.projects.project.legalprofiles.legalprofile({pid: $stateParams.pid, scrollTo: scheme.id})', ng-class="{'schemeOut': isSchemeOut(legalprofile, scheme), 'schemeIn': isSchemeIn(legalprofile, scheme), 'schemeUndecided': isSchemeUndecided(legalprofile, scheme)}") {{scheme.header.title}}
