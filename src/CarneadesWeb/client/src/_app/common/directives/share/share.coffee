@@ -17,12 +17,15 @@ define [
         model: "=model",
         skipped: "=skipped"
       controller: ($scope) ->
-        $scope.getTranslateKey = (k) ->
-          return "projects.#{k}"
-        $scope.isHidden = (k, v) ->
-          (not v?) or ($scope.skipped? and ($scope.skipped.indexOf k) != -1)
-
+        console.log $scope.model
+        @getTranslateKey = (k) -> return "projects.#{k}"
+        @isHidden = ({skipped}, k, v) ->
+          (not v?) or (skipped? and (skipped.indexOf k) != -1)
         return @
+      link: (scope, element, attrs, metadataCtrl) ->
+        scope.getTranslateKey = metadataCtrl.getTranslateKey
+        scope.isHidden = (k, v) ->
+          return metadataCtrl.isHidden scope, k, v
     }
 
   loaderDirective = () ->

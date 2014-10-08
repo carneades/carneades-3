@@ -14,7 +14,8 @@ define [
 
   angular.module('ui.carneades.editor', [
     'pascalprecht.translate',
-    'services.projectInfo'
+    'services.projectInfo',
+    'ui.carneades.share'
   ])
 
   .factory 'editorService', ($state,
@@ -95,23 +96,6 @@ define [
 
 
     return @
-
-  .directive 'metadata', () ->
-    restrict: "E"
-    replace: true
-    templateUrl: 'common/directives/editor/metadata.jade'
-    scope:
-      model: "=model",
-      skipped: "=skipped"
-    controller: ($scope) ->
-      @getTranslateKey = (k) -> return "projects.#{k}"
-      @isHidden = ({skipped}, k, v) ->
-        (not v?) or (skipped? and (skipped.indexOf k) != -1)
-      return @
-    link: (scope, element, attrs, metadataCtrl) ->
-      scope.getTranslateKey = metadataCtrl.getTranslateKey
-      scope.isHidden = (k, v) ->
-        return metadataCtrl.isHidden scope, k, v
 
   .directive 'premiseEditor', ->
     restrict: "E"
