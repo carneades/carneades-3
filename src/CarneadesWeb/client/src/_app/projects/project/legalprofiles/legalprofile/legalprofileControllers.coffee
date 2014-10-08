@@ -22,10 +22,9 @@ define [
     _delete = ->
       legalprofile.pid = $stateParams.pid      
       legalprofile.lpid = $stateParams.lpid      
-      legalprofile.$delete()
-      
-      url = 'home.projects.project.legalprofiles'
-      $state.transitionTo url, $stateParams
+      legalprofile.$delete({}, () ->
+        url = 'home.projects.project.legalprofiles'
+        $state.transitionTo url, $stateParams, reload: true)
       
     $scope.title = _title
     $scope.section = theory
