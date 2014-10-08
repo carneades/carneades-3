@@ -78,8 +78,6 @@
   :exists? (fn [_]
              (session-put-language nil)
              (when-let [m (get-metadatum pid db id (get-lang))]
-               (spy id)
-               (spy m)
                {::entry m}))
   :put! (fn [_]
           (put-metadatum pid db id update))

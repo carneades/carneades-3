@@ -84,7 +84,7 @@
   [project db id update]
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
-      (ag-db/update-metadata update))))
+      (ag-db/update-metadata id update))))
 
 (defn get-metadata
   [project db]
