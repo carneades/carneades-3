@@ -22,8 +22,18 @@
 	:schemes
 	[(make-scheme
           :conclusion '(flies ?x)
-          :premises [(pm '(bird ?x))]
-          :exceptions [(pm '(penguin ?x))])])
+          :premises [(pm '(bird ?x))
+                     (pm '(alive ?x))]
+          :exceptions [(pm '(penguin ?x))])
+
+         (make-scheme
+          :conclusion '(flies ?x)
+          :premises [(pm '(has-wings ?x))
+                     (pm '(alive ?x))])
+
+         (make-scheme
+          :conclusion '(travels-fast ?x)
+          :premises [(pm '(flies ?x))])])
 
        (make-section
 	:schemes
@@ -129,7 +139,47 @@
 	(make-scheme
           :id 'r2
           :conclusion '(foo ?x)
-          :premises [(pm '(bar ?x))])])]))
+          :premises [(pm '(bar ?x))])])
+
+       (make-section ; KvB's problematic set of schemes
+        :schemes
+        [(make-scheme
+          :id 'mode
+          :conclusion '(takes ?P ?M ?E) ; P takes M to E
+          :premises [(pm '(visit ?P ?E))
+                     (pm '(move ?P ?M))])
+
+         (make-scheme
+          :id 'visit-1
+          :conclusion '(visit ?P ?E)
+          :premises [(pm '(type ?E concert))
+                     (pm '(loc ?E O2))
+                     (pm '(occ ?P employee))
+                     (pm '(gender ?P male))
+                     (pm '(age ?P ?A))
+                     (pm '(eval true true))
+                     ; (pm '(eval true (< ?A 35)))
+                      ])
+
+         (make-scheme
+          :id 'move-1-1
+          :conclusion '(move ?P car)
+          :premises [(pm '(occ ?P employee))
+                     (pm '(gender ?P male))
+                     (pm '(age ?P ?A))
+                     (pm '(eval true true))
+                     ;; (pm '(eval true (< ?A 35)))
+                     ])
+
+         (make-scheme
+          :id 'move-1-2
+          :conclusion '(move ?P walk)
+          :premises [(pm '(occ ?P employee))
+                     (pm '(gender ?P male))
+                     (pm '(age ?P ?A))
+                     ; (pm '(eval true true))
+                     ; (pm '(eval true (< ?A 35))) 
+                     ])])]))
 
 
 (def max-goals 10000)
@@ -143,12 +193,12 @@
          query))
 
 (fact "Facts are in."
-  (let [facts '((bird Tweety)
-		(bird Peppie)
-		(bird Pilot)
-		(bird Ozzie))
-	query '(bird Tweety)]
-    (expect (in? (ag facts query) query) => true)))
+      (let [facts '((bird Tweety)
+                    (bird Peppie)
+                    (bird Pilot)
+                    (bird Ozzie))
+            query '(bird Tweety)]
+        (expect (in? (ag facts query) query) => true)))
 
 (fact  "Variables are unified"
   (let [facts '((bird Tweety)
@@ -162,6 +212,35 @@
   (let [facts '((coins item1))
 	query '(money ?x)]
     (expect (in? (ag facts query) '(money item1)) => true)))
+
+(fact "Multiple applicable rules with common premises and same conclusion work."
+      (let [facts '((bird Tweety)
+                    (has-wings Tweety)
+                    (alive Tweety))
+            query '(flies Tweety)
+            ag1 (ag facts query)]
+        ;; (export ag1 "/tmp/ag.svg")
+        (expect (in? ag1 '(flies Tweety)) => true)))
+
+(fact "Multiple applicable rules with common premises and same conclusion and rule chaining works."
+      (let [facts '((bird Tweety)
+                    (has-wings Tweety)
+                    (alive Tweety))
+            query '(travels-fast Tweety)
+            ag1 (ag facts query)]
+        ;; (export ag1 "/tmp/ag.svg")
+        (expect (in? ag1 '(travels-fast Tweety)) => true)))
+
+(fact "KvB's example works."
+  (let [facts '((type e1 concert)
+                (loc e1 O2)
+                (occ p1 employee)
+                (gender p1 male)
+                (age p1 40) )
+        query '(takes p1 ?x e1)]
+    ;; (pprint (ag facts query))
+    (export (ag facts query) "/tmp/ag.svg")
+    (expect (in? (ag facts query) '(takes p1 walk e1)) => true)))
 
 (fact "Conjunctions can be used"
   (let [facts '((enacted r1 d1)
@@ -336,9 +415,3 @@
 
 ;; (run-tests)
 
-(defn -main []
-  (let [facts '((enacted r1 d1)
-		(enacted r2 d2)
-		(later d2 d1))
-	query '(prior ?x ?y)]
-    (in? (ag facts query) '(prior r2 r1))))
