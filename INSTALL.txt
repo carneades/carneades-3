@@ -1,5 +1,0 @@
-;;; Copyright © 2010-2012 Fraunhofer Gesellschaft 
-;;; Licensed under the EUPL V.1.1
-
-These installation instructions for Carneades are in the "System Administration" chapter of the user manual, in the doc/manual directory. Formatted versions of the manual, in HTML, PDF, ePub and Word (.docx) formats, are in the doc/manual/out directory.
-

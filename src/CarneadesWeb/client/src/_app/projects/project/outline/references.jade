@@ -1,6 +1,0 @@
-div(ng-show='hasReferences',my-loading-spinner='viewLoading')
-  .page-header
-    h1 References
-  ul.references
-    li(ng-repeat='r in references', id='{{r.key}}') [{{r.key}}] {{ r.creator }}. {{ r.date }}.
-      a(href='{{ r.identifier }}') {{ r.title }}

@@ -1,8 +1,0 @@
-
-To Do:
-
-- weak copyleft licenses (e.g. LGPL, MPL)
-- fair use exceptions
-- non-original elements of works
-- GPL linking exception
-- GPLv2 option to allow use of later versions of the GPL (or not)
