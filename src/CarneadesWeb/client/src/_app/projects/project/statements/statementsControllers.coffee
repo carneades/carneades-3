@@ -28,7 +28,7 @@ define [
     _statement =
       text: lang
       header:
-        title: lang
+        title: ''
         description: lang
       pro: true
       main: false

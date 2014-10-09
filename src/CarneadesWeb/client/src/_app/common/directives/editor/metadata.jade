@@ -1,6 +1,0 @@
-table
-  tr(ng-repeat='(k,v) in model')
-    td.object-key(ng-hide='isHidden(k, v)')
-      .span(translate='{{getTranslateKey(k)}}') {{k}}
-    td.object-value(ng-hide='isHidden(k, v)')
-      markdown(extensions='carneades',ng-model='v')

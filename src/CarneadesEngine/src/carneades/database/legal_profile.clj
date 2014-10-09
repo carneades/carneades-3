@@ -117,12 +117,13 @@
 (defn update-profile
   "Update a profile in the database."
   [id change]
-  (when (= (:default change) false)
-    (throw (ex-info "Invalid update. Cannot set the default property
+  (transaction
+   (when (and (:default (read-profile id))
+              (= (:default change) false))
+     (throw (ex-info "Invalid update. Cannot set the default property
            to false. Set the default property of another profile to
            true if you want to change this one."
-                    {:update change})))
-  (transaction
+                     {:update change})))
    (update profiles
            (set-fields change)
            (where {:id [= id]}))

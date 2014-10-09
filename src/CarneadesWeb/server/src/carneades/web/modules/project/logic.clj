@@ -117,28 +117,22 @@
   (->> (make-outline project db :lang lang)
        (#(if-not (nil? id) (get-sub-outline % id) %))))
 
-(defn get-metadata
-  [[project db :as params] & {:keys [k lang]}]
-  {:pre [(not (nil? project))
-         (not (nil? db))]}
-  (->> (s/get-metadata project db)
-       (#(if (nil? k)
-           %
-           (filter (fn [x] (= (:key x) k)) %)))
-       (to-map)))
-
 (defn get-metadatum
-  [[project db id :as params] & {:keys [k lang]}]
-  {:pre [(not (nil? project))
-         (not (nil? db))]}
-  (->> (s/get-metadatum project db id)
-       (#(if (nil? k)
-           %
-           (filter (fn [x] (= (:key x) k)) %)))
-        (#(if (contains? % :description)
-           (set-description-text lang %)
-           %))
-        (to-map)))
+  [project db id lang]
+  (let [m (s/get-metadatum project db id)]
+    (assoc m :description (-> m :description lang))))
+
+(defn get-edit-metadatum
+  [project db id lang]
+  (s/get-metadatum project db id))
+
+(defn get-metadata
+  [pid db lang]
+  (s/get-metadata pid db))
+
+(defn put-metadatum
+  [pid db mid update]
+  (s/put-metadatum pid db mid update))
 
 (defn trim-premises
   "Removes premises information that are not used from a collection of premises."
@@ -328,7 +322,6 @@
 
 (defn put-statement
   [project db id update]
-  (info "tttttt")
   (s/put-statement project db id update))
 
 (defn delete-statement
@@ -344,9 +337,9 @@
 (defn get-nodes
   [project db id & {:keys [lang] :or {lang :en}}]
   (let [[info outline refs]
-        [(get-metadata [project db id] :lang lang)
+        [(get-metadatum [project db id] :lang lang)
          (get-outline [project db] :lang lang)
-         (get-metadata [project db] :lang lang)]]
+         (get-metadatum [project db] :lang lang)]]
     (-> {}
         (assoc :description (-> info :description lang))
         (assoc :issues (make-issues outline))

@@ -22,10 +22,9 @@ define [
     _delete = ->
       legalprofile.pid = $stateParams.pid      
       legalprofile.lpid = $stateParams.lpid      
-      legalprofile.$delete()
-      
-      url = 'home.projects.project.legalprofiles'
-      $state.transitionTo url, $stateParams
+      legalprofile.$delete({}, () ->
+        url = 'home.projects.project.legalprofiles'
+        $state.transitionTo url, $stateParams, reload: true)
       
     $scope.title = _title
     $scope.section = theory
@@ -43,14 +42,13 @@ define [
       
     return undefined
 
-  .controller 'LegalprofileEditCtrl', ($scope, $translate, $state, $stateParams, theory, legalprofile, legalprofileInfo, scroll, project) ->
+  .controller 'LegalprofileEditCtrl', ($scope, $translate, $state, $stateParams, theory, legalprofile, legalprofileInfo, Legalprofile, scroll, project) ->
     _title = legalprofile.metadata.title + ' ' + ($translate.instant 'projects.legalprofile')
     
     _save = ->
-      console.log 'save'
-      legalprofile.pid = $stateParams.pid
-      legalprofile.lpid = $stateParams.lpid
-      legalprofile.$update()
+      Legalprofile.update($stateParams, legalprofile).$promise.then((data) ->
+        url = 'home.projects.project.legalprofiles.legalprofile'
+        $state.transitionTo url, $stateParams, reload: true)
 
     _cancel = ->
       url = 'home.projects.project.legalprofiles.legalprofile'

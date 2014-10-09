@@ -30,7 +30,8 @@
   :available-charsets["utf-8"]
   :exists? (fn [_]
              (session-put-language nil)
-             (when-let [m (get-metadata [pid db] :k k :lang (get-lang))]
+             ;; TODO: reimplement k usage?
+             (when-let [m (get-metadata pid db (get-lang))]
                {::entry m}))
   :handle-ok ::entry)
 
@@ -70,14 +71,20 @@
              {::entry (get-issues [pid db] :lang (get-lang))})
   :handle-ok ::entry)
 
-(defresource metadata-resource [pid db id]
+(defresource metadatum-resource [pid db id context update]
   :available-media-types ["application/json"]
-  :allowed-methods [:get]
+  :allowed-methods [:get :put]
   :available-charsets["utf-8"]
   :exists? (fn [_]
              (session-put-language nil)
-             (when-let [m (get-metadatum [pid db id] :lang (get-lang))]
-               {::entry m}))
+             (condp = context
+               "edit" (when-let [m (get-edit-metadatum pid db id (get-lang))]
+                        {::entry m})
+               ;; else
+               (when-let [m (get-metadatum pid db id (get-lang))]
+                 {::entry m})))
+  :put! (fn [_]
+          (put-metadatum pid db id update))
   :handle-ok ::entry)
 
 (defresource arguments-resource [pid db argument]
@@ -92,8 +99,7 @@
   :post! (fn [_]
            {::id (post-argument pid db argument)})
   :handle-created (fn [ctx]
-                    {:id (::id ctx)})
-)
+                    {:id (::id ctx)}))
 
 (defresource argument-resource [pid db id context update]
   :available-media-types ["application/json"]
@@ -302,7 +308,10 @@
       (context "/metadata" []
         (ANY "/references" [] (list-reference-resource pid db))
         (ANY "/" [k] (list-metadata-resource pid db k))
-        (ANY "/:mid" [mid] (metadata-resource pid db mid)))
+        (ANY "/:mid" req (metadatum-resource pid db
+                                             (-> req :params :mid)
+                                             (-> req :params :context)
+                                             (:body req))))
 
       (context "/outline" []
         (ANY "/" [] (list-outline-resource pid db))
