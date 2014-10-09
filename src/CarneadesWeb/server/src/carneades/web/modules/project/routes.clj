@@ -71,14 +71,18 @@
              {::entry (get-issues [pid db] :lang (get-lang))})
   :handle-ok ::entry)
 
-(defresource metadatum-resource [pid db id update]
+(defresource metadatum-resource [pid db id context update]
   :available-media-types ["application/json"]
   :allowed-methods [:get :put]
   :available-charsets["utf-8"]
   :exists? (fn [_]
              (session-put-language nil)
-             (when-let [m (get-metadatum pid db id (get-lang))]
-               {::entry m}))
+             (condp = context
+               "edit" (when-let [m (get-edit-metadatum pid db id (get-lang))]
+                        {::entry m})
+               ;; else
+               (when-let [m (get-metadatum pid db id (get-lang))]
+                 {::entry m})))
   :put! (fn [_]
           (put-metadatum pid db id update))
   :handle-ok ::entry)
@@ -95,8 +99,7 @@
   :post! (fn [_]
            {::id (post-argument pid db argument)})
   :handle-created (fn [ctx]
-                    {:id (::id ctx)})
-)
+                    {:id (::id ctx)}))
 
 (defresource argument-resource [pid db id context update]
   :available-media-types ["application/json"]
@@ -307,6 +310,7 @@
         (ANY "/" [k] (list-metadata-resource pid db k))
         (ANY "/:mid" req (metadatum-resource pid db
                                              (-> req :params :mid)
+                                             (-> req :params :context)
                                              (:body req))))
 
       (context "/outline" []

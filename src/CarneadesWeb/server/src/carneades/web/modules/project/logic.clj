@@ -119,6 +119,11 @@
 
 (defn get-metadatum
   [project db id lang]
+  (let [m (s/get-metadatum project db id)]
+    (assoc m :description (-> m :description lang))))
+
+(defn get-edit-metadatum
+  [project db id lang]
   (s/get-metadatum project db id))
 
 (defn get-metadata
