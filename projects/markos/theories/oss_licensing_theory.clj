@@ -9,14 +9,14 @@
              [carneades.project.fs :as project]
              [taoensso.timbre :as timbre :refer [debug error spy]]))
 
-(def oss-licensing-ontology
-  (try
-    (owl/import-from-project "markos" "ontologies/MARKOS/markos-licenses.owl")
-    (catch Exception e
-      (error "Error loading markos-copyright.owl")
-      (error "If you don't use the MARKOS project, ignore this.")
-      (error "Error:" e)
-      {})))
+;; (def oss-licensing-ontology
+;;   (try
+;;     (owl/import-from-project "markos" "ontologies/MARKOS/markos-licenses.owl")
+;;     (catch Exception e
+;;       (error "Error loading markos-copyright.owl")
+;;       (error "If you don't use the MARKOS project, ignore this.")
+;;       (error "Error:" e)
+;;       {})))
 
 (def copyright-theory
   (project/load-theory "markos" "copyright_theory"))
