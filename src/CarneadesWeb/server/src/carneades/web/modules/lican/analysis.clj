@@ -194,7 +194,7 @@
 
 (defn load-profile
   [project id]
-  (if (or (empty? id) (= id "null"))
+  (if (or (empty? id) (= id "null") (= id "undefined"))
     empty-legal-profile
     (lp/with-db project "root" "pw1"
       (lp/read-profile+ id))))
