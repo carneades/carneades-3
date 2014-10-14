@@ -13,14 +13,14 @@
 ;; and returns a record with two fields:
 ;; 1. owl/language: a map; and 2. owl/axioms: a sequence of schemes
 
-(def copyright-ontology
-  (try
-    (owl/import-from-project "markos" "ontologies/MARKOS/markos-copyright.owl")
-    (catch Exception e
-      (error "Error loading markos-copyright.owl")
-      (error "If you don't use the MARKOS project, ignore this.")
-      (error "Error:" e)
-      {})))
+;; (def copyright-ontology
+;;   (try
+;;     (owl/import-from-project "markos" "ontologies/MARKOS/markos-copyright.owl")
+;;     (catch Exception e
+;;       (error "Error loading markos-copyright.owl")
+;;       (error "If you don't use the MARKOS project, ignore this.")
+;;       (error "Error:" e)
+;;       {})))
 
 (def copyright-law-theory
   (t/make-theory
