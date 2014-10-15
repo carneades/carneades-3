@@ -55,7 +55,6 @@ npm install -g coffee-script
 npm install -g bower
 gem update --system
 gem install compass
-gem install haml
 ```
 
 # Server
