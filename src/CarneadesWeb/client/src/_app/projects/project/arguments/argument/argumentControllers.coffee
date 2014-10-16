@@ -44,9 +44,31 @@ define [
     'angular-capitalize-filter'
   ])
 
+  .controller 'ModalArgumentRemoveCtrl', ($scope, $modalInstance) ->
+    $scope.ok = () ->
+      $modalInstance.close true
+
+    $scope.cancel = () ->
+      $modalInstance.dismiss 'cancel'
+
+    return @
+
   .controller 'ArgumentViewCtrl', ($scope, $state, $stateParams, $translate,
-    argument, project, editorService) ->
-    console.log argument
+    $modal, argument, Argument, project, editorService) ->
+
+    _remove = () ->
+      modalInstance = $modal.open(
+        templateUrl: 'projects/project/arguments/argument/modalArgumentRemove.jade'
+        controller: 'ModalArgumentRemoveCtrl'
+      )
+
+      modalInstance.result.then((m) ->
+        Argument.delete($stateParams, argument).$promise.then((data) ->
+          url = 'home.projects.project.outline'
+          $state.transitionTo url, $stateParams, reload: true
+        )
+      )
+
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -96,6 +118,7 @@ define [
       conclusion_text: _getConclusionText argument
       project: project
       edit: _edit
+      remove: _remove
       openStatement: _openStatement
       tabModel: true
       tabMetadata: false
@@ -103,6 +126,7 @@ define [
       showMetadata: _showMetadata
       isMapInitialized: editorService.isMapInitialized
       tooltipEdit: $translate.instant 'tooltip.argument.edit'
+      tooltipRemove: $translate.instant 'tooltip.argument.remove'
 
     $state.$current.self.tooltip = _getTooltip argument
 
@@ -111,7 +135,6 @@ define [
   .controller 'ArgumentEditCtrl', ($scope, $state, $stateParams, $translate,
     statements, argument, Argument, theory, breadcrumbService,
     editorService) ->
-    console.log theory.schemes
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false

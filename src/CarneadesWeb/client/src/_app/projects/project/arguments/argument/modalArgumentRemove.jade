@@ -1,0 +1,29 @@
+.container.argument.remove
+  .row
+    .col-sm-7
+      .row
+        .col-sm-offset-2.col-sm-7
+          .section
+            .page-header: h1(translate='confirmation.title')
+
+      form.form-horizontal(name="form", novalidate)
+        form-group-no-label
+          .form-control-static
+            span(translate='confirmation.argument.remove.text')
+
+      form-group-no-label
+          button.btn.btn-default.btn-xs(
+            type='button',
+            ng-click='ok()',
+            tooltip="{{tooltipSave}}",
+            tooltip-append-to-body="true",
+            tooltip-placement="top")
+            i.fa.fa-trash: span(translate='projects.yes')
+
+          button.btn.btn-default.btn-xs(
+            type='button',
+            ng-click='cancel()',
+            tooltip="{{tooltipCancel}}",
+            tooltip-append-to-body="true",
+            tooltip-placement="top")
+            i.fa.fa-times: span(translate='projects.cancel')

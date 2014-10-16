@@ -17,6 +17,15 @@
           .commands
             button.btn.btn-default.btn-small(
               type='button',
+              tooltip="{{tooltipRemove}}",
+              tooltip-append-to-body="true",
+              tooltip-placement="right",
+              ng-click="remove()")
+              i.fa.fa-remove
+                span(translate='state.home.projects.project.statements.statement.remove.label')
+
+            button.btn.btn-default.btn-small(
+              type='button',
               tooltip="{{tooltipEdit}}",
               tooltip-append-to-body="true",
               tooltip-placement="right",
@@ -32,7 +41,7 @@
               tooltip-placement="top")
               i.fa.fa-plus-square-o
                 span(translate='state.home.projects.project.arguments.new.label')
-            
+
         form-group
           tabset
             tab(

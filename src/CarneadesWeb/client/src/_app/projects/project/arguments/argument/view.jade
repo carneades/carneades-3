@@ -24,6 +24,15 @@
               i.fa.fa-edit
                 span(translate='state.home.projects.project.arguments.argument.edit.label')
 
+            button.btn.btn-default.btn-small(
+              type='button',
+              tooltip="{{tooltipRemove}}",
+              tooltip-append-to-body="true",
+              tooltip-placement="right",
+              ng-click="remove()")
+              i.fa.fa-remove
+                span(translate='state.home.projects.project.arguments.argument.remove.label')
+
         form-group
           tabset
             tab(
