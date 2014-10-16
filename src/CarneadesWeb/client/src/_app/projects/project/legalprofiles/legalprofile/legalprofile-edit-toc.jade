@@ -1,26 +1,43 @@
-h2 {{title}}
+.container
+  .row
+    .col-sm-11
+      .row
+        .col-sm-offset-2.col-sm-10
+          .section
+            .page-header
+              h2 {{title}}
+        
+      form.form-horizontal(name="form", novalidate)
+        form-group-no-label
+          form-group-no-label
+            button.btn.btn-default.btn-xs(
+              type='button',
+              ng-click='save()',
+              tooltip="{{tooltipSave}}",
+              tooltip-append-to-body="true",
+              tooltip-placement="top",
+              ng-disabled="form.$invalid")
+              i.fa.fa-floppy-o: span(translate='projects.save')
+  
+            button.btn.btn-default.btn-xs(
+              type='button',
+              ng-click='cancel()', 
+              tooltip="{{tooltipCancel}}",
+              tooltip-append-to-body="true", 
+              tooltip-placement="top")
+              i.fa.fa-times: span(translate='projects.cancel')
+      
+        form-group
+          metadata-edit-tab(ng-model='legalprofile.metadata')
+      
+        form-group-no-label
+          form-group(label-key='projects.main_issues')
+            radio-buttons(model='legalprofile.default')
 
-.section#commands
-  button.btn.btn-default.btn-small(
-    type='button',
-    tooltip="{{'tooltip.legalprofile.save' | translate}}",
-    tooltip-append-to-body="true",
-    tooltip-placement="right", 
-    ng-click="save()")
-    i.fa.fa-save: span {{'projects.save' | translate}}
-
-  button.btn.btn-default.btn-small(
-    type='button',
-    tooltip="{{'tooltip.legalprofile.cancel' | translate}}",
-    tooltip-append-to-body="true",
-    tooltip-placement="right", 
-    ng-click="cancel()")
-    i.fa.fa-cancel: span {{'projects.cancel' | translate}}
-
-metadata-edit-tab(ng-model='legalprofile.metadata')
-
-ul
-  li(ng-repeat='scheme in section.schemes')
-    a(ui-sref='home.projects.project.legalprofiles.legalprofile({pid: $stateParams.pid, scrollTo: scheme.id})', ng-class="{'schemeOut': isSchemeOut(legalprofile, scheme), 'schemeIn': isSchemeIn(legalprofile, scheme), 'schemeUndecided': isSchemeUndecided(legalprofile, scheme)}") {{scheme.header.title}}
-ul
-  li(ng-repeat='section in section.sections','ng-include'="'projects/project/legalprofiles/legalprofile/legalprofile-edit-subtoc.jade'")
+        form-group-no-label
+          .form-control-static          
+            ul
+              li(ng-repeat='scheme in section.schemes')
+                a(ui-sref='home.projects.project.legalprofiles.legalprofile({pid: $stateParams.pid, scrollTo: scheme.id})', ng-class="{'schemeOut': isSchemeOut(legalprofile, scheme), 'schemeIn': isSchemeIn(legalprofile, scheme), 'schemeUndecided': isSchemeUndecided(legalprofile, scheme)}") {{scheme.header.title}}
+            ul
+              li(ng-repeat='section in section.sections','ng-include'="'projects/project/legalprofiles/legalprofile/legalprofile-edit-subtoc.jade'")

@@ -17,6 +17,9 @@ h2 {{title}}
     ng-click="delete()")
     i.fa.fa-delete: span {{'projects.delete' | translate}}
 
+div
+  {{'projects.legalprofile.default' | translate}}: {{legalprofile.default}}
+
 ul
   li(ng-repeat='scheme in section.schemes')
     a(ui-sref='home.projects.project.legalprofiles.legalprofile.edit({pid: $stateParams.pid, scrollTo: scheme.id})', ng-class="{'schemeOut': isSchemeOut(legalprofile, scheme), 'schemeIn': isSchemeIn(legalprofile, scheme), 'schemeUndecided': isSchemeUndecided(legalprofile, scheme)}") {{scheme.header.title}}

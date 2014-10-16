@@ -51,6 +51,9 @@ define [
         data:
           commands: ['home.projects.project.legalprofiles']
         views:
+          "subnav@":
+            template: '<page-navigation-sm-offset-2 ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
+            controller: 'SubnavController'
           'content@':
             templateUrl: 'projects/project/legalprofiles/legalprofile/edit.jade'
             controller: 'LegalprofileEditCtrl'
