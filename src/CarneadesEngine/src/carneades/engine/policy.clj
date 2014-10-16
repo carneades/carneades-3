@@ -5,8 +5,7 @@
 
 (ns carneades.engine.policy
   (:use (carneades.engine statement theory argument-graph aspic argument-evaluation utils))
-  (:require [carneades.config.config :as config]
-            [carneades.engine.translation :as tr]
+  (:require [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
             [taoensso.timbre :as timbre :refer [debug info]]))
 
