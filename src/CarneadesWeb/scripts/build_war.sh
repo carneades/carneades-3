@@ -16,8 +16,8 @@ prepare_local_deps () {
 build_webclient () {
     cd $SCRIPTPATH/../client
     npm install
-    bower install
-    grunt build
+    ./node_modules/bower/bin/bower install
+    ./node_modules/grunt-cli/bin/grunt build
     cd -
 }
 
