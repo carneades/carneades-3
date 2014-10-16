@@ -5,10 +5,12 @@
 define [
   "angular",
   "./mapControllers",
-  "./mapStates"
+  "./mapStates",
+  "angular-perfect-scrollbar"
 ], (angular) ->
   "use strict"
   angular.module 'map.module', [
     'map.controllers',
-    'map.states'
+    'map.states',
+    'perfect_scrollbar'
   ]

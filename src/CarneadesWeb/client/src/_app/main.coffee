@@ -52,8 +52,12 @@ require.config
     "perfect-scrollbar":
       deps: ["jquery"]
 
+    "angular-perfect-scrollbar":
+      deps: ["perfect-scrollbar"]
+
   paths:
     "angular": "./libs/angular"
+    'perfect-scrollbar': './libs/perfect-scrollbar/perfect-scrollbar.min'
     'angular-perfect-scrollbar': './libs/angular-perfect-scrollbar/angular-perfect-scrollbar'
     'angular-sanitize': './libs/angular-sanitize'
     'angular-ui-router': './libs/angular-ui-router'
@@ -67,7 +71,6 @@ require.config
     'angular-capitalize-filter': './libs/angular-capitalize-filter'
     'angular-translate-loader-static-files': './libs/angular-translate-loader-static-files'
     'angular-bootstrap': './libs/angular-bootstrap'
-    'perfect-scrollbar': './libs/angular-perfect-scrollbar/perfect-scrollbar'
     'requirejs-domready': './libs/requirejs-domready'
     'showdown': './libs/showdown/showdown'
     'spinjs': './libs/spin'

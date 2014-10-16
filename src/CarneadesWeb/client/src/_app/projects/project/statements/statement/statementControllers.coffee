@@ -59,8 +59,8 @@ define [
       url = 'home.projects.project.statements.statement.edit'
       $state.transitionTo url, $stateParams
 
-    _openArgumentEditor = (statement) ->
-      url = 'home.projects.project.arguments.new'
+    _openArgumentEditor = () ->
+      url = 'home.projects.project.arguments.new.withConclusion'
       $state.transitionTo url, $stateParams
 
     _openArgument = (id) ->
@@ -72,7 +72,6 @@ define [
       url = 'home.projects.project.statements.statement'
       params = pid: $stateParams.pid, db: $stateParams.db, sid: id
       $state.transitionTo url, params
-
 
     statement.valueText = _getValueText statement
     $scope = extend $scope,
@@ -98,7 +97,6 @@ define [
 
   .controller 'StatementEditCtrl', ($scope, $translate, $state, $stateParams,
     statement, Statement, project, breadcrumbService, editorService) ->
-
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -111,6 +109,7 @@ define [
       Statement.update($stateParams, statement).$promise.then((data) ->
         url = 'home.projects.project.statements.statement'
         $state.transitionTo url, $stateParams, reload: true)
+
 
     $scope = extend $scope,
       standards: editorService.fillWithPrefixSuffixes(

@@ -1,0 +1,18 @@
+
+// URL to base font directory
+$montserrat-path: "../fonts/montserrat" !default;
+
+// @font-face mixin
+
+@mixin montserrat-font-face( $font, $svgid, $weight: normal, $style: normal ) {
+  @font-face {
+    font-family: 'Montserrat';
+    src: url('#{$montserrat-path}/montserrat-#{$font}-webfont.eot');
+    src: url('#{$montserrat-path}/#{$font}/montserrat-#{$font}-webfont.eot?#iefix') format('embedded-opentype'),
+    url('#{$montserrat-path}/montserrat-#{$font}-webfont.woff') format('woff'),
+    url('#{$montserrat-path}/montserrat-#{$font}-webfont.ttf') format('truetype'),
+    url('#{$montserrat-path}/montserrat-#{$font}-webfont.svg##{$svgid}') format('svg');
+    font-weight: $weight;
+    font-style: $style;
+  }
+}

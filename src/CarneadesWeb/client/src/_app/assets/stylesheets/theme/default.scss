@@ -1,0 +1,42 @@
+$font-family-sans-serif:  'Open Sans', sans-serif !default;
+$font-family-serif:       "museo-slab", Georgia, "Times New Roman", Times, serif !default;
+
+$body-bg:               #fff !default;
+$brand-primary:         #428bca !default;
+$link-color:            $brand-primary !default;
+
+$navbar-inverse-bg:                         #222 !default;
+$navbar-inverse-border:                     darken($navbar-inverse-bg, 10%) !default;
+
+
+////////////////////////////////////
+//
+// Module configuration
+//
+///////////////////////////////////
+// Navbar
+$navbar-bg: $navbar-inverse-bg !default;
+
+///////////////////////////////////
+// MISC
+///////////////////////////////////
+$project-body-bg: $body-bg !default;
+
+///////////////////////////////////
+// Breadcrumb
+// JS-Code supports up to 7 levels
+$breadcrumbs-levels: 7 !default;
+$breadcrumbs-height: 2em !default;
+$breadcrumbs-border-radius: 4px !default;
+$breadcrumbs-link-color: $link-color !default;
+$breadcrumbs-link-hover-color: #C3DDF3 !default;
+$breadcrumbs-border: $navbar-inverse-border !default;
+$breadcrumbs-bg: $navbar-inverse-border !default;
+$breadcrumbs-dark-bg: darken($breadcrumbs-bg,15%) !default;
+
+
+///////////////////////////////////
+// Page Navigation
+$pagenav-bg: $breadcrumbs-bg !default;
+
+@import "custom_packaging";

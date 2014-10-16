@@ -1,0 +1,51 @@
+.conclusion-text {
+margin-left: 2%;
+}
+.properties {
+margin-top: 10px;
+}
+.conclusion-indication, .premises-indication, .argument-indication, .premise-of-indication, .exceptions-indication {
+font-style: italic;
+margin-bottom: 4px;
+}
+.exceptions-indication {
+margin-top: 4px;
+}
+.references .scrolled {
+background-color: lemonchiffon;
+}
+.object-key {
+font-weight: bold;
+cursor: select;
+vertical-align: baseline;
+}
+.object-value {
+padding-left: 10px;
+}
+.statement-text {
+margin-bottom: 20px;
+}
+ul.icon li:before {
+width: 3.5em;
+float: left;
+}
+.schemeOut h4, a.schemeOut {
+background-color: tomato;
+}
+.schemeIn h4, a.schemeIn {
+background-color: lightgreen;
+}
+.schemeUndecided h4, a.schemeUndecided {
+background-color: lightgray;
+}
+
+svg g text {
+font-size: 11px !important;
+dominant-baseline: alphabetic !important;
+stroke-width: 1.5 !important;
+line-height: 1px !important;
+}
+
+.panel-title {
+  cursor: pointer;
+}

@@ -1,11 +1,12 @@
-my-fluid-container
+.container
   .row(
-    my-loading-spinner='viewLoading',
-    resize='',
-    bn-map-click='handleClick( $event )',
-    bn-map-mouseout='handleMouseout( $event )',
-    bn-map-mouseover='handleMouseover( $event )')
-    div.col-md-12(
-      map,
+    resize,
+    bn-map-click='handleClick($event)',
+    bn-map-mouseout='handleMouseout($event)',
+    bn-map-mouseover='handleMouseover($event)')
+    perfect-scrollbar(
       wheelPropagation='true',
-      refresh-on-change='dimensions')
+      wheelSpeed='50',
+      refresh-on-change='dimensions',
+      style='white-space: pre-line;position: relative;overflow-y: hidden;width:100%;height:{{ resizeHeightWithOffset() }};')
+      svg-include(ng-model='svg')

@@ -285,7 +285,7 @@ define [
   .directive 'halloEditor', () ->
     restrict: 'E'
     templateUrl: "common/directives/editor/hallo-editor.jade"
-    require:'?ngModel'
+    require:'ngModel'
     scope:
       ngModel: '='
       lang: '='
@@ -294,7 +294,7 @@ define [
   .directive 'multilangHalloEditor', () ->
     restrict: 'E'
     templateUrl: "common/directives/editor/multilang-hallo-editor.jade"
-    require:'?ngModel'
+    require:'ngModel'
     scope:
       ngModel: '='
       languages: '='

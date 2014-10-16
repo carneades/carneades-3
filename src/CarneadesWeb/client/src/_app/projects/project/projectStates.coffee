@@ -26,9 +26,6 @@ define [
           controller: 'ProjectViewCtrl'
           resolve:
             project: ($stateParams, ProjectLoader) ->
-              $stateParams.mid = 1
-              $stateParams.db = 'main'
-              $stateParams.nid = 1
               return new ProjectLoader $stateParams
     ,
       name: 'home.projects.project.new'
@@ -50,10 +47,8 @@ define [
           templateUrl: 'projects/project/edit.jade'
           controller: 'ProjectEditCtrl'
           resolve:
-            project: ($stateParams, Project) ->
-              $stateParams.mid = 1
-              $stateParams.nid = 1
-              return Project.getRaw {}, $stateParams
+            project: ($stateParams, ProjectRawLoader) ->
+              return new ProjectRawLoader $stateParams
         "subnav@":
           template: '<page-navigation-sm-offset-2 ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
           controller: 'SubnavController'

@@ -74,7 +74,7 @@ define [
         scope.windowWidth = newValue.w
         fnCalc = (base, offset) ->
           scope.$eval attr.notifier
-          return base - offset
+          return base - offset - 2
 
         scope.resizeHeightWithOffset = (offsetH = 0) ->
           return fnCalc newValue.h, offsetH

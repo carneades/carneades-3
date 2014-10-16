@@ -1,0 +1,36 @@
+@mixin make-breadcrumb-entry() {
+    &.bc-simple-level {
+        > a {
+            background: $breadcrumbs-bg;
+
+            &:after {
+                border: {
+                  right: 2px solid $breadcrumbs-link-color;
+                  top: 2px solid $breadcrumbs-link-color;
+                }
+            }
+        }
+    }
+}
+
+@mixin make-breadcrumb-link-after() {
+    &:after {
+        content: '';
+        display: block;
+        z-index: 1;
+
+        @include box-sizing(border-box);
+        height: $breadcrumbs-height;
+        width: $breadcrumbs-height;
+
+        border: {
+            right: 2px solid $breadcrumbs-link-color;
+            top: 2px solid $breadcrumbs-link-color;
+        }
+        position: absolute;
+        right: 0;
+        top: 0;
+
+        @include transform(translateX($breadcrumbs-height/2) rotate(45deg) scale(1/sqrt(3)) skew(15deg, 15deg));
+    }
+}

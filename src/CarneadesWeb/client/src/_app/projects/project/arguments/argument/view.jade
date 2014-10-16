@@ -9,17 +9,20 @@
                 evaluation-indicator,
                 value='argument.value',
                 size='32x32',
-                position='after') {{'projects.argument' | translate}}
+                position='before')
+                span(translate='projects.argument')
           
       form.form-horizontal
         form-group
-          button.btn.btn-default.btn-small(
-            type='button',
-            tooltip="{{tooltipEdit}}",
-            tooltip-append-to-body="true",
-            tooltip-placement="right",
-            ng-click="edit()")
-            i.fa.fa-edit: span edit
+          #commands
+            button.btn.btn-default.btn-small(
+              type='button',
+              tooltip="{{tooltipEdit}}",
+              tooltip-append-to-body="true",
+              tooltip-placement="right",
+              ng-click="edit()")
+              i.fa.fa-edit
+                span(translate='state.home.projects.project.arguments.argument.edit.label')
 
         form-group
           tabset
@@ -35,22 +38,27 @@
             label-key='projects.argument.formalization',
             ng-hide='argument.premises.length == 0')
             .form-control-static
-              .premises-indication {{'projects.premises_text' | translate}}
+              .premises-indication(translate='projects.premises_text')
               ul(ng-repeat='p in argument.premises')
                 li
-                  span(ng-hide="p.role == ''") {{p.role}}.
+                  span(ng-hide="p.role == ''", ng-bind='p.role')
                   span(ng-show="!p.positive")
-                    span {{'projects.negative_premise' | translate}}
-                  a(ng-click='openStatement(p.id)') {{p.text}}
+                    span(translate='projects.negative_premise')
+                  a(ng-click='openStatement(p.id)', ng-bind='p.text')
       
-              .conclusion-indication {{conclusion_text}}
-              a.conclusion-text(ng-click='openStatement(argument.conclusion.id)') {{argument.conclusion.text}}
+              .conclusion-indication(ng-bind='conclusion_text')
+              a.conclusion-text(
+                ng-click='openStatement(argument.conclusion.id)',
+                ng-bind='argument.conclusion.text')
 
           form-group(label-key='projects.argument.properties')
             properties(keys="[['valueText', 'projects.value'],['scheme', 'projects.scheme'],['strict', 'projects.strict'],['weight', 'projects.weight'],['id', 'projects.id']]",model='argument')
             
         div(ng-show='tabMetadata')
-          form-group(ng-repeat="(k,v) in argument.header",label-key='projects.{{k}}',ng-show="v != null && k != 'description'")
+          form-group(
+            ng-repeat="(k,v) in argument.header",
+            label-key='projects.{{k}}',
+            ng-show="v != null && k != 'description'")
             .form-control-static
               markdown(extensions='carneades',ng-model='v')
           form-group(label-key='projects.description',ng-show="argument.header.description")

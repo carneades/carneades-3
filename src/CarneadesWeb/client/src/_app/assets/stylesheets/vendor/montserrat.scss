@@ -1,0 +1,14 @@
+@import 'montserrat/base';
+
+@import 'montserrat/regular';
+@import 'montserrat/bold';
+
+
+.montserrat {
+  display: inline-block;
+  font: normal normal normal 14px/1 Montserrat;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

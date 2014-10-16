@@ -16,7 +16,8 @@ define [
   ])
 
   .controller 'ArgumentNewCtrl', ($scope, $state, $stateParams,
-  $translate, Argument, statements, breadcrumbService, theory, editorService) ->
+  $translate, Argument, statements, conclusion, breadcrumbService,
+  theory, editorService) ->
     _normalize = () ->
       return extend {},
         header:
@@ -32,7 +33,7 @@ define [
         scheme: ''
         strict: false
         weight: 0.5
-        conclusion: ''
+        conclusion: if conclusion then conclusion.id else ''
         premises: []
 
     _addPremise = () ->
@@ -58,23 +59,21 @@ define [
     _onSave = () ->
       pid = $stateParams.pid
       db = $stateParams.db
-      argument = Argument.save {
-        pid: pid
-        db: db
+      Argument.save({pid: pid, db: db}, {
         header: $scope.argument.header
         pro: $scope.argument.pro
         scheme: "(#{$scope.argument.scheme})"
         weight: $scope.argument.weight
         conclusion: $scope.argument.conclusion
         premises: $scope.argument.premises
-      }
-      argument.$promise.then((a) ->
+      }).$promise.then((a) ->
         url = 'home.projects.project.arguments.argument'
-        params = pid: $stateParams.pid, db: $stateParams.db, aid: a.id
+        params = pid: pid, db: db, aid: a.id
         $state.transitionTo url, params
       )
 
     $scope = extend $scope,
+      title: $translate.instant 'projects.createargument'
       statements: statements
       argument: _normalize()
       theory: theory

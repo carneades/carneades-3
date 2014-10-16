@@ -48,3 +48,13 @@ define [
         delay.reject "Unable to fetch project " + params.id
 
       delay.promise
+
+  .factory "ProjectRawLoader", (Project, $q) ->
+    return (params) ->
+      delay = $q.defer()
+      Project.getRaw params, ((project) ->
+        delay.resolve project
+      ), ->
+        delay.reject "Unable to fetch project " + params.id
+
+      delay.promise

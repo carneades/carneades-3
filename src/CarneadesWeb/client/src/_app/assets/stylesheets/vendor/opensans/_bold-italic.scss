@@ -1,0 +1,8 @@
+/* Bold 700 Italic
+ * -------------------------- */
+
+@include open-sans-font-face(
+	'bold-italic',
+	'OpenSansItalic',
+	bold, italic
+);

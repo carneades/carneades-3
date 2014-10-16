@@ -117,6 +117,7 @@
     "projects.role": "role",
 
     "projects.copylink": "Copy link",
+    "projects.open": "Open project",
     "projects.outline": "Open outline",
     "projects.delete": "Delete",
     "projects.edit": "Edit",

@@ -54,6 +54,32 @@ define [
               return new TheoryLoader $stateParams
             statements: (MultiStatementLoader, $stateParams) ->
               return new MultiStatementLoader $stateParams
+
+    ,
+      name: "home.projects.project.arguments.new.withConclusion"
+      label: 'state.home.projects.project.arguments.new.label'
+      url: '/:sid'
+      data:
+        commands: [
+          'home.projects.project.map',
+          'home.projects.project.outline'
+        ]
+      views:
+        "content@":
+          templateUrl: "projects/project/arguments/argument/edit.jade"
+          controller: 'ArgumentNewCtrl'
+          resolve:
+            project: (ProjectLoader, $stateParams) ->
+              return new ProjectLoader $stateParams
+            theory: (TheoryLoader, $stateParams, project, projectInfo) ->
+              $stateParams.tpid = projectInfo.getSchemesProject project
+              $stateParams.tid = projectInfo.getSchemesName project
+              return new TheoryLoader $stateParams
+            statements: (MultiStatementLoader, $stateParams) ->
+              params = pid: $stateParams.pid, db: $stateParams.db
+              return new MultiStatementLoader params
+            conclusion: (StatementLoader, $stateParams) ->
+              return new StatementLoader $stateParams
     ]
 
     angular.forEach states, (state) ->

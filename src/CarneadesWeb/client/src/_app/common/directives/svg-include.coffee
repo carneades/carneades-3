@@ -8,17 +8,14 @@ define [
   "use strict"
   angular.module("directives.svg.include", [])
 
-  .directive 'svgInclude', ($compile) ->
+  .directive 'svgInclude', () ->
     restrict: 'E'
     replace: true
     template: '<div></div>'
-    require: "?ngModel"
+    require: '?ngModel'
     link: (scope, element, attrs, model) ->
       render = ->
         val = model.$modelValue
-        if (val)
-          e = $compile(val)(scope)
-          element.append e
-          element.css('width', "#{angular.element(e[2]).attr('width')}px")
-          element.css('height', "#{angular.element(e[2]).attr('height')}px")
+        if val then element.append val
+
       if attrs['ngModel'] then scope.$watch(attrs['ngModel'], render)

@@ -16,20 +16,23 @@ define [
 
   .controller 'StatementNewCtrl', ($scope, $translate, $state,
   $stateParams, $q, $timeout, breadcrumbService, editorService, Statement) ->
-    lang = {
-      en: ""
-      de: ""
-      fr: ""
-      it: ""
-      sp: ""
-      nl: ""
-    }
-
     _statement =
-      text: lang
+      text:
+        en: ""
+        de: ""
+        fr: ""
+        it: ""
+        sp: ""
+        nl: ""
       header:
         title: ''
-        description: lang
+        description:
+          en: ""
+          de: ""
+          fr: ""
+          it: ""
+          sp: ""
+          nl: ""
       pro: true
       main: false
       weight: 0.5
@@ -47,6 +50,7 @@ define [
         header: $scope.statement.header
         pro: $scope.statement.pro
         main: $scope.statement.main
+        weight: $scope.statement.weight
       }).$promise.then((s) ->
         url = 'home.projects.project.statements.statement'
         params = pid: pid, db: db, sid: s.id

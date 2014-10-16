@@ -1,10 +1,9 @@
 .container.outline
   .row
     .col-md-12(role='main')
-      .section#overview
-        .page-header: h1(ng-bind='project.title')
+      #overview: .page-header: h1(ng-bind='project.title')
 
-      .section#commands
+      #commands
         a(ui-sref='home.projects.project.edit($stateParams)')
           button.btn.btn-default.btn-small(
             type='button',
@@ -29,13 +28,13 @@
             tooltip-placement="top")
             i.fa.fa-plus-square-o: span(translate='state.home.projects.project.arguments.new.label')
           
-      .section#description
+      #description
         markdown(
           strip='true',
           ng-model='project.description')
 
-      .section#issues(ui-view='issues')
+      #issues(ui-view='issues')
 
-      .section#outline(ui-view='outline')
+      #outline(ui-view='outline')
 
-      .section#references(ui-view='references')
+      #references(ui-view='references')

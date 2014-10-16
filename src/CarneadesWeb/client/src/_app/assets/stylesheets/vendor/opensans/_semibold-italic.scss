@@ -1,0 +1,8 @@
+/* Semi-Bold 600 Italic
+ * -------------------------- */
+
+@include open-sans-font-face(
+	'semibold-italic',
+	'OpenSansSemiboldItalic',
+	600, italic
+);

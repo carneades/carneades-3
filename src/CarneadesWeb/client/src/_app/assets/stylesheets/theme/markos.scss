@@ -1,0 +1,65 @@
+$markos-green:          #8EB144 !default;
+$brand-primary:         $markos-green !default;
+$font-family-sans-serif:  'Open Sans', sans-serif !default;
+$font-family-serif:       "museo-slab", Georgia, "Times New Roman", Times, serif !default;
+
+$body-bg:               #fff !default;
+$link-color:            #296b97 !default;
+//** Link hover color set via `darken()` function.
+$link-hover-color:      darken($link-color, 15%) !default;
+
+$navbar-inverse-bg:                         #222 !default;
+$navbar-inverse-border:                     darken($navbar-inverse-bg, 10%) !default;
+
+////////////////////////////////////
+//
+// Module configuration
+//
+///////////////////////////////////
+///////////////////////////////////
+$navbar-bg: $markos-green !default;
+$breadcrumbs-height: 2em !default;
+$breadcrumbs-border-radius: 4px !default;
+$breadcrumbs-link-color: #296b97 !default;
+$breadcrumbs-link-hover-color: $link-hover-color !default;
+$breadcrumbs-bg: #f5ffd6 !default;
+$breadcrumbs-border: $breadcrumbs-bg !default;
+$breadcrumbs-dark-bg: darken($breadcrumbs-bg,15%) !default;
+
+
+///////////////////////////////////
+// Page Navigation
+$pagenav-bg: $breadcrumbs-bg !default;
+
+@import "custom_packaging";
+
+.markos-banner {
+    background-color: $body-bg;
+    height: 70px;
+    background-image: url('/carneades/api/projects/markos/theme/png/logo-banner.png');
+    background-repeat: no-repeat;
+    background-position: left;
+}
+
+.headerDivLeft {
+    background-color: $navbar-bg;
+
+    a {
+        font-size:12px;
+        color: #fff;
+    }
+}
+
+.markos-footer {
+    background-color: #8EB144;
+}
+.nav {
+    a.footerLink {
+        font-size:12px;
+        color: #fff;
+        &:hover {
+            text-decoration: underline;
+            background-color: #8EB144;
+        }
+    }
+}

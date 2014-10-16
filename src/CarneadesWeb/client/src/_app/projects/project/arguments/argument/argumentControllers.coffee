@@ -108,8 +108,8 @@ define [
     return @
 
   .controller 'ArgumentEditCtrl', ($scope, $state, $stateParams, $translate,
-    statements, argument, theory, breadcrumbService, editorService) ->
-
+    statements, argument, Argument, theory, breadcrumbService,
+    editorService) ->
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -119,7 +119,8 @@ define [
       $scope.tabMetadata = true
 
     _onSave = () ->
-      argument.update($stateParams, argument).$promise.then((data) ->
+      argument.scheme = "(#{$scope.argument.scheme})"
+      Argument.update($stateParams, argument).$promise.then((data) ->
         url = 'home.projects.project.arguments.argument'
         $state.transitionTo url, $stateParams, reload: true)
 
@@ -135,9 +136,13 @@ define [
     _getStatementText = (model) ->
       return editorService.getStatementText model, statements
 
+    if argument.conclusion?
+      argument.conclusion = argument.conclusion.id
+
     argument.scheme = argument.scheme.id
     $scope = extend $scope,
       statements: statements
+      title: $translate.instant 'projects.editargument'
       argument: argument
       theory: theory
       languages: editorService.getLanguages()

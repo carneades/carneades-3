@@ -104,6 +104,7 @@ module.exports = (grunt) ->
       base: "src/_app"
       assets: "<%= src.base %>/assets"
       scss: "<%= src.assets %>/stylesheets"
+      fonts: "<%= src.assets %>/fonts"
 
     gen:
       base: ".generated"
@@ -148,7 +149,8 @@ module.exports = (grunt) ->
           'angular-translate-loader-static-files.js': 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
           'angular-bootstrap.js': 'angular-bootstrap/ui-bootstrap-tpls.js'
           'requirejs-domready.js': 'requirejs-domready/domReady.js'
-          'angular-perfect-scrollbar': 'angular-perfect-scrollbar/src/angular-perfect-scrollbar.js'
+          'perfect-scrollbar': 'perfect-scrollbar/min',
+          'angular-perfect-scrollbar': 'angular-perfect-scrollbar-allfix53/src/angular-perfect-scrollbar.js'
           'showdown': 'showdown/src'
           'spin.js': 'spin.js/spin.js'
           'hallo.js': '../libs/hallo.js'
@@ -176,27 +178,27 @@ module.exports = (grunt) ->
           '<%= dist.base %>/index.html': '<%= src.base %>/index.jade'
 
     copy:
-      montserrat:
-        files: [
-          src: ["montserrat-regular.css"]
-          dest: "<%= dist.base %>/css"
-          cwd: '<%= src.base %>/assets/fonts/montserrat-regular-webfont/css'
-          expand: true
-        ]
-      fontawesome:
-        files: [
-          src: ["font-awesome.min.css"]
-          dest: "<%= dist.base %>/css"
-          cwd: '<%= gen.base %>/libs/fontawesome/css'
-          expand: true
-        ]
-      opensans:
-        files: [
-          src: ["open-sans.min.css"]
-          dest: "<%= dist.base %>/css"
-          cwd: '<%= gen.base %>/libs/open-sans/css'
-          expand: true
-        ]
+      # montserrat:
+      #   files: [
+      #     src: ["montserrat-regular.css"]
+      #     dest: "<%= dist.base %>/css"
+      #     cwd: '<%= src.base %>/assets/fonts/montserrat-regular-webfont/css'
+      #     expand: true
+      #   ]
+      # fontawesome:
+      #   files: [
+      #     src: ["font-awesome.min.css"]
+      #     dest: "<%= dist.base %>/css"
+      #     cwd: '<%= gen.base %>/libs/fontawesome/css'
+      #     expand: true
+      #   ]
+      # opensans:
+      #   files: [
+      #     src: ["open-sans.min.css"]
+      #     dest: "<%= dist.base %>/css"
+      #     cwd: '<%= gen.base %>/libs/open-sans/css'
+      #     expand: true
+      #   ]
       codemirror:
         files: [
           src: ["codemirror.css"]
@@ -213,9 +215,9 @@ module.exports = (grunt) ->
         ]
       perfect_scrollbar:
         files: [
-          src: ["perfect-scrollbar.css"]
+          src: ["perfect-scrollbar.min.css"]
           dest: "<%= dist.base %>/css"
-          cwd: '<%= gen.base %>/libs/angular-perfect-scrollbar'
+          cwd: '<%= gen.base %>/libs/perfect-scrollbar'
           expand: true
         ]
       index:
@@ -225,17 +227,25 @@ module.exports = (grunt) ->
           cwd: 'src'
           expand: true
         ]
-      layout:
+
+      fonts:
         files: [
+          dest: "<%= dist.base %>/fonts"
+          src: "**"
           expand: true
-          cwd: '<%= gen.base %>/css'
-          src: ['layout.css']
-          dest: '<%= dist.base %>/css'
+          cwd: "<%= src.fonts %>"
         ]
+      # layout:
+      #   files: [
+      #     expand: true
+      #     cwd: '<%= gen.base %>/css'
+      #     src: ['layout.css']
+      #     dest: '<%= dist.base %>/css'
+      #   ]
       default:
         files: [
           expand: true
-          cwd: '<%= gen.base %>/css'
+          cwd: '<%= gen.base %>/css/theme'
           src: ['default.css']
           dest: '<%= projects.default %>'
         ]
@@ -243,40 +253,40 @@ module.exports = (grunt) ->
         files: [
           src: ['copyright.css']
           expand: true
-          cwd: "<%= gen.base %>/css"
+          cwd: "<%= gen.base %>/css/theme"
           dest: '<%= projects.copyright %>'
         ]
       markos:
         files: [
           src: ['markos.css']
           expand: true
-          cwd: "<%= gen.base %>/css"
+          cwd: "<%= gen.base %>/css/theme"
           dest: '<%= projects.markos %>'
         ]
 
-      fonts_ms:
-        files: [
-          dest: "<%= dist.base %>/fonts"
-          src: "**"
-          expand: true
-          cwd: "<%= src.base %>/assets/fonts/montserrat-regular-webfont/fonts"
-        ]
+      # fonts_ms:
+      #   files: [
+      #     dest: "<%= dist.base %>/fonts"
+      #     src: "**"
+      #     expand: true
+      #     cwd: "<%= src.base %>/assets/fonts/montserrat-regular-webfont/fonts"
+      #   ]
 
-      fonts_fa:
-        files: [
-          dest: "<%= dist.base %>/fonts"
-          src: "**"
-          expand: true
-          cwd: "<%= gen.base %>/libs/fontawesome/fonts"
-        ]
+      # fonts_fa:
+      #   files: [
+      #     dest: "<%= dist.base %>/fonts"
+      #     src: "**"
+      #     expand: true
+      #     cwd: "<%= gen.base %>/libs/fontawesome/fonts"
+      #   ]
 
-      fonts_os:
-        files: [
-          dest: "<%= dist.base %>/fonts"
-          src: "**"
-          expand: true
-          cwd: "<%= gen.base %>/libs/open-sans/fonts"
-        ]
+      # fonts_os:
+      #   files: [
+      #     dest: "<%= dist.base %>/fonts"
+      #     src: "**"
+      #     expand: true
+      #     cwd: "<%= gen.base %>/libs/open-sans/fonts"
+      #   ]
 
       images:
         files: [
@@ -318,8 +328,17 @@ module.exports = (grunt) ->
         options:
           sassDir: "<%= src.scss %>"
           cssDir: "<%= gen.base %>/css"
+          fontsPath: "<%= src.fonts %>"
+          fontsDir: "../fonts/"
+          imagesPath: "<%= src.images %>"
+          imagesDir: "../images/"
           importPath: 'bower_components'
           outputStyle: 'compressed'
+
+    concat_css:
+      all:
+        src: ["<%= gen.base %>/css/**/*.css"]
+        dest: "<%= dist.base %>/css/carneades.css"
 
     watch:
       coffee:
@@ -380,6 +399,7 @@ module.exports = (grunt) ->
     "ngmin",
     "bowercopy",
     "compass",
+    "concat_css",
     "requirejs",
     "copy",
     "jade"

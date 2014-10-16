@@ -77,8 +77,9 @@ define [
     return @
 
   .controller 'ProjectEditCtrl', ($scope, $state,
-  $stateParams, $translate, project, Project,
+  $stateParams, $translate, project,
   breadcrumbService, editorService) ->
+    console.log project
     _normalize = ({id, description, title, schemes, policies}) ->
       return {
         id: id
@@ -109,7 +110,7 @@ define [
       onCancel: editorService.onCancel
       tooltipSave: $translate.instant 'tooltip.project.save'
       tooltipCancel: $translate.instant 'tooltip.cancel'
-      placeholderTitle: $translate.instant 'placehodler.title'
+      placeholderTitle: $translate.instant 'placeholder.title'
       placeholderPolicy: $translate.instant 'placeholder.policy'
       placeholderScheme: $translate.instant 'placeholder.scheme'
 

@@ -1,7 +1,7 @@
-.my-fluid-container#mobheader
+.container-fluid#mobheader
   .row.border-bottom
     .col-md-1
-      .section#mobnav(ng-show='isSubNavDisplayed')
+      #mobnav(ng-show='isSubNavDisplayed')
         button.navbar-toggle(
           type='button',
           ng-init='navCollapsed = true',
@@ -10,14 +10,14 @@
           span.icon-bar
           span.icon-bar
           span.icon-bar
-      .section#mobnav(ng-show='!isSubNavDisplayed')
+      #mobnav(ng-show='!isSubNavDisplayed')
         button.navbar-toggle.disabled(type='button')
           span.sr-only Toggle navigation
           span.icon-bar
           span.icon-bar
           span.icon-bar
     .col-md-11
-      .section#mobbc
+      #mobbc
         .row.mob-bc-head
           ul
             li.bc-default-a
@@ -34,8 +34,10 @@
                   ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
   
   .row.collapse#mobnavdetails(collapse='navCollapsed')
-    page-navigation
-      page-navigation-item(cmd='c' ng-repeat='c in commands')
+    .container
+      ul
+        li(cmd='c' ng-repeat='c in commands')
+          a(ng-click='navOpen(c.state)') {{c.label | translate}}
 
   .row.collapse#mobbcnavdetails(
     collapse='navBcCollapsed')
@@ -45,7 +47,7 @@
           ng-click='openView(navigatedState.name, navigatedState.params)',
           ng-bind='navigatedState.label')
 
-div#global.my-fluid-container
+#global.container-fluid
   div(ng-bind-html='banner')
   div.navbar.subnav-navbar
     breadcrumb(states='navigatedStates',style='style')

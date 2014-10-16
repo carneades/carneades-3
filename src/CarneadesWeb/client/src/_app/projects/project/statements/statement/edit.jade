@@ -15,20 +15,20 @@
         div(ng-show='tabModel')           
           form-group(label-key='projects.main_issues')
             radio-buttons(model='statement.main')
-    
+
+          form-group(label-key='projects.text')
+            multilang-hallo-editor(
+              ng-model='statement.text',
+              languages='languages',
+              name='text')
+          
           form-group(label-key='projects.atom')
             textarea.form-control.input-md(
               ui-codemirror,
               ui-codemirror-opts="editorOptions",
               ng-model="statement.atom",
               placeholder="optional")
-    
-          form-group(label-key='projects.text')
-            multilang-hallo-editor(
-              ng-model='statement.text',
-              languages='languages',
-              name='text')
-              
+        
           form-group(label-key='projects.standard')
             select(
               ng-model='statement.standard',
