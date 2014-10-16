@@ -73,7 +73,7 @@
   ;; (service/start)
   (system/start)
   (info "Carneades started successfully.")
-  (info "Properties were loaded from " config/configfilename))
+  (info "Properties will be read from " config/configfilename))
 
 (defn destroy
   "destroy will be called when your application

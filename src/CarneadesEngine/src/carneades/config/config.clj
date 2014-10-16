@@ -4,7 +4,7 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns ^{:doc "Read and save properties from the properties file"}
-    carneades.config.config
+  carneades.config.config
   (:use [carneades.engine.utils :only [exists?
                                        safe-read-string
                                        file-separator]]))
@@ -34,11 +34,12 @@
   (spit (pr-str props) pathname))
 
 (def properties
-     (try
-       (read-properties configfilename)
-       (catch Exception _
-         (do
-           (printf "The configuration file %s is missing or has invalid content."
-                   configfilename)
-           (throw (ex-info "Invalid or missing configuration file"
-                           {:configfilename configfilename}))))))
+  (delay
+   (try
+     (read-properties configfilename)
+     (catch Exception _
+       (do
+         (printf "The configuration file %s is missing or has invalid content."
+                 configfilename)
+         (throw (ex-info "Invalid or missing configuration file"
+                         {:configfilename configfilename})))))))
