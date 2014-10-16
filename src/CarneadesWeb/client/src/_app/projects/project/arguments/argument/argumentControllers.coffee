@@ -46,6 +46,7 @@ define [
 
   .controller 'ArgumentViewCtrl', ($scope, $state, $stateParams, $translate,
     argument, project, editorService) ->
+    console.log argument
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -110,6 +111,7 @@ define [
   .controller 'ArgumentEditCtrl', ($scope, $state, $stateParams, $translate,
     statements, argument, Argument, theory, breadcrumbService,
     editorService) ->
+    console.log theory.schemes
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -136,10 +138,15 @@ define [
     _getStatementText = (model) ->
       return editorService.getStatementText model, statements
 
+    _getSchemeId = ({scheme}) ->
+      return scheme.slice 1, -1
+
     if argument.conclusion?
       argument.conclusion = argument.conclusion.id
 
-    argument.scheme = argument.scheme.id
+    if argument.scheme?
+      argument.scheme = _getSchemeId argument
+
     $scope = extend $scope,
       statements: statements
       title: $translate.instant 'projects.editargument'
