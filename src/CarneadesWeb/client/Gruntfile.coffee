@@ -162,7 +162,6 @@ module.exports = (grunt) ->
           'angular-ui-codemirror.js': 'angular-ui-codemirror/ui-codemirror.js'
           'codemirror/lib': 'codemirror/lib'
           'codemirror/mode/clojure': '../libs/codemirror/mode/clojure'
-          'codemirror/theme': '../libs/codemirror/theme/xq-light.css'
           'codemirror/addon': '../libs/codemirror/addon'
           'fontawesome/css': 'fontawesome/css/font-awesome.min.css'
           'fontawesome/fonts': 'fontawesome/fonts'

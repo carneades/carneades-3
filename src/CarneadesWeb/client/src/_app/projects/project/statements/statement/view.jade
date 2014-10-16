@@ -14,23 +14,24 @@
 
       form.form-horizontal
         form-group
-          button.btn.btn-default.btn-small(
-            type='button',
-            tooltip="{{tooltipEdit}}",
-            tooltip-append-to-body="true",
-            tooltip-placement="right",
-            ng-click="edit()")
-            i.fa.fa-edit
-              span(translate='state.home.projects.project.statements.statement.edit.label')
+          .commands
+            button.btn.btn-default.btn-small(
+              type='button',
+              tooltip="{{tooltipEdit}}",
+              tooltip-append-to-body="true",
+              tooltip-placement="right",
+              ng-click="edit()")
+              i.fa.fa-edit
+                span(translate='state.home.projects.project.statements.statement.edit.label')
 
-          button.btn.btn-default.btn-small(
-            type='button',
-            ng-click='openArgumentEditor()',
-            tooltip="{{tooltipNew}}",
-            tooltip-append-to-body="true",
-            tooltip-placement="top")
-            i.fa.fa-plus-square-o
-              span(translate='state.home.projects.project.arguments.new.label')
+            button.btn.btn-default.btn-small(
+              type='button',
+              ng-click='openArgumentEditor()',
+              tooltip="{{tooltipNew}}",
+              tooltip-append-to-body="true",
+              tooltip-placement="top")
+              i.fa.fa-plus-square-o
+                span(translate='state.home.projects.project.arguments.new.label')
             
         form-group
           tabset
