@@ -123,6 +123,7 @@
     "projects.edit": "Edit",
     "projects.save": "Save",
     "projects.cancel": "Cancel",
+    "projects.yes": "Yes",
 
     "projects.legalprofiles": "Legal Profiles",
     "projects.legalprofile": "Legal Profile",
@@ -146,11 +147,13 @@
     "state.home.projects.project.arguments.new.label": "New argument",
     "state.home.projects.project.arguments.argument.label": "Argument",
     "state.home.projects.project.arguments.argument.edit.label": "Edit argument",
+    "state.home.projects.project.arguments.argument.remove.label": "Remove argument",
     "state.home.projects.project.map.label": "Map",
     "state.home.projects.project.outline.label": "Outline",
     "state.home.projects.project.statements.new.label": "New statement",
     "state.home.projects.project.statements.statement.label": "Statement",
     "state.home.projects.project.statements.statement.edit.label": "Edit statement",
+    "state.home.projects.project.statements.statement.remove.label": "Remove statement",
     "state.home.projects.project.theory": "Theory",
 
     "state.lican.label": "License Analyser Introduction",
@@ -163,11 +166,13 @@
     "tooltip.argumentgraph.new": "Create a new argument graph within this project",
     "tooltip.argument.save": "Save this argument",
     "tooltip.argument.edit": "Edit this argument",
+    "tooltip.argument.remove": "Remove this argument",
     "tooltip.argument.new": "Create a new argument",
     "tooltip.project.save": "Save this project",
     "tooltip.statement.save": "Save this statement",
     "tooltip.statement.edit": "Edit this statement",
     "tooltip.statement.new": "Create a new statement",
+    "tooltip.statement.remove": "Remove this statement",
     "tooltip.premise": "Add a premise",
     "tooltip.outline.edit": "Edit this outline",
 
@@ -182,6 +187,10 @@
     "placeholder.scheme": "type the name of the scheme",
     "placeholder.name": "type the name here, without spaces and special characters",
 
-    "outline.info": "This outline provides an overview of the main arguments. Click on an item in the outline for more information, including further arguments."
+    "outline.info": "This outline provides an overview of the main arguments. Click on an item in the outline for more information, including further arguments.",
+
+    "confirmation.title": "Confirmation",
+    "confirmation.statement.remove.text": "Do you really want to remove this statement?",
+    "confirmation.argument.remove.text": "Do you really want to remove this argument?"
 
 }

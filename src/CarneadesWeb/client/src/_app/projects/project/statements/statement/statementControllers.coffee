@@ -25,8 +25,30 @@ define [
     'pascalprecht.translate'
   ])
 
+  .controller 'ModalStatementRemoveCtrl', ($scope, $modalInstance) ->
+    $scope.ok = () ->
+      $modalInstance.close true
+
+    $scope.cancel = () ->
+      $modalInstance.dismiss 'cancel'
+
+    return @
+
   .controller 'StatementViewCtrl', ($scope, $state, $stateParams,
-  $translate, statement, project, editorService) ->
+  $translate, $modal, statement, Statement, project, editorService) ->
+    _remove = () ->
+      modalInstance = $modal.open(
+        templateUrl: 'projects/project/statements/statement/modalStatementRemove.jade'
+        controller: 'ModalStatementRemoveCtrl'
+      )
+
+      modalInstance.result.then((m) ->
+        Statement.delete($stateParams, statement).$promise.then((data) ->
+          url = 'home.projects.project.outline'
+          $state.transitionTo url, $stateParams, reload: true
+        )
+      )
+
     _getValueText = ({value}) ->
       key = 'projects.statement.value.uncertain'
       if value <= 0.25
@@ -80,6 +102,7 @@ define [
       headerIsEmpty: _isHeaderEmpty statement
       argumentName: _getArgumentName
       edit: _edit
+      remove: _remove
       openArgumentEditor: _openArgumentEditor
       openArgument: _openArgument
       openStatement: _openStatement
@@ -89,6 +112,7 @@ define [
       showMetadata: _showMetadata
       isMapInitialized: editorService.isMapInitialized
       tooltipEdit: $translate.instant 'tooltip.statement.edit'
+      tooltipRemove: $translate.instant 'tooltip.statement.remove'
       tooltipNew: $translate.instant 'tooltip.argument.new'
 
     $state.$current.self.tooltip = _getTooltip statement
