@@ -25,7 +25,10 @@
             [com.postspectacular.rotor :as rotor]
             [ring.middleware.json :refer [wrap-json-params wrap-json-body]]
             [carneades.project.fs :as p]
-            [carneades.web.system :as system]))
+            [carneades.web.system :as system]
+            [carneades.config.config :as config])
+  (:import javax.servlet.ServletContextEvent
+           javax.servlet.ServletContextListener))
 
 (defroutes app-routes
   (route/resources "/")
@@ -59,6 +62,9 @@
 
 (timbre/merge-config! logger-config)
 
+(defn get-init-parameter
+  [])
+
 (defn init
   "Called when app is deployed as a servlet on an app server such as
    Tomcat. Put any initialization code here."
@@ -66,7 +72,8 @@
   (timbre/merge-config! logger-config)
   ;; (service/start)
   (system/start)
-  (info "Carneades started successfully."))
+  (info "Carneades started successfully.")
+  (info "Properties were loaded from " config/configfilename))
 
 (defn destroy
   "destroy will be called when your application
