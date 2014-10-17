@@ -54,7 +54,8 @@ define [
               return new TheoryLoader $stateParams
             statements: (MultiStatementLoader, $stateParams) ->
               return new MultiStatementLoader $stateParams
-
+            conclusion: () ->
+              return null
     ,
       name: "home.projects.project.arguments.new.withConclusion"
       label: 'state.home.projects.project.arguments.new.label'
