@@ -4,41 +4,12 @@
       .row
         .col-sm-offset-2.col-sm-10
           .section
-            .page-header: h1(translate='projects.edit')
+            .page-header: h1(translate='projects.editargumentgraph')
 
       form.form-horizontal(name="form", novalidate)
-        form-group(label-key='projects.edit.name')
-          .form-control-static
-            span.pid(ng-bind='project.id')
-            
-        form-group(label-key='projects.metadata.title')
-          input.form-control.input-md(
-            name="title",
-            placeholder="{{placeholderTitle}}",
-            type="text",
-            ng-model="project.title")
+        div: metadata-edit-tab(ng-model='metadata')
 
-        form-group(label-key='projects.edit.policies')
-          input.form-control.input-md(
-            name="policy",
-            placeholder="{{placeholderPolicy}}",
-            type="text",
-            ng-model="project.policies")
-
-        form-group(label-key='projects.scheme')
-          input.form-control.input-md(
-            name="scheme",
-            placeholder="{{placeholderScheme}}",
-            type="text",
-            ng-model="project.schemes")
-          
-        form-group(label-key='projects.description')
-          multilang-hallo-editor(
-            ng-model='project.description', 
-            languages='languages', 
-            name='text')
-            
-        form-group-no-label
+        form-group-no-label    
           button.btn.btn-default.btn-xs(
             type='button',
             ng-click='onSave()',

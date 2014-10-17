@@ -77,41 +77,22 @@ define [
     return @
 
   .controller 'ProjectEditCtrl', ($scope, $state,
-  $stateParams, $translate, project,
+  $stateParams, $translate, metadata, Metadata,
   breadcrumbService, editorService) ->
-    console.log project
-    _normalize = ({id, description, title, schemes, policies}) ->
-      return {
-        id: id
-        description:
-          en: description
-          de: ""
-          fr: ""
-          it: ""
-          sp: ""
-          nl: ""
-        title: title
-        schemes: schemes
-        policies: policies
-      }
-
     _onSave = () ->
-      params = pid: $scope.data.id, db: $scope.db
+      params = pid: $stateParams.pid, db: 'main', mid: 1
       # no put implemented yet
-      # Project.update(params, project).$promise.then((data) ->
-      #   url = 'home.projects.project'
-      #   $state.transitionTo url, params, reload: true
-      # )
+      Metadata.update(params, metadata).$promise.then((data) ->
+        url = 'home.projects.project'
+        $state.transitionTo url, $stateParams, reload: true
+      )
 
     $scope = extend $scope,
-      project: _normalize project
+      metadata: metadata
       languages: editorService.getLanguages()
       onSave: _onSave
       onCancel: editorService.onCancel
-      tooltipSave: $translate.instant 'tooltip.project.save'
+      tooltipSave: $translate.instant 'tooltip.ag.save'
       tooltipCancel: $translate.instant 'tooltip.cancel'
-      placeholderTitle: $translate.instant 'placeholder.title'
-      placeholderPolicy: $translate.instant 'placeholder.policy'
-      placeholderScheme: $translate.instant 'placeholder.scheme'
 
     return @

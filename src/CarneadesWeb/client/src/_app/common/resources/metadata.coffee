@@ -17,7 +17,14 @@ define [
   .factory "Metadata", (urlService) ->
     url = '/projects/:pid/:db/metadata/:mid'
     params = pid: "@pid", db: "@db", mid: "@mid"
-    return urlService.$resource url, params
+    methods =
+      'getRaw':
+        method: 'GET'
+        params:
+          context: 'edit'
+      'update':
+        method: 'PUT'
+    return urlService.$resource url, params, methods
 
   .factory "MultiMetadataLoader", (Metadata, $q) ->
     return (params) ->
@@ -36,5 +43,15 @@ define [
         delay.resolve metadata
       ), ->
         delay.reject "Unable to fetch metadata"
+
+      delay.promise
+
+  .factory "MetadataRawLoader", (Metadata, $q) ->
+    return (params) ->
+      delay = $q.defer()
+      Metadata.getRaw params, ((metadata) ->
+        delay.resolve metadata
+      ), ->
+        delay.reject "Unable to fetch metadata " + metadata.id
 
       delay.promise
