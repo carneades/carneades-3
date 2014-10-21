@@ -266,11 +266,11 @@
   [id change]
   (transaction
    (let [change' (if (seq (:metadata change))
-                   (let [oldmetadataid (:metadatum (read-profile id))
-                         metadataid (create-metadatum (:metadata change))]
-                     (when oldmetadataid
+                   (do
+                     (when-let [oldmetadataid (:metadatum (read-profile id))]
                        (delete-metadatum oldmetadataid))
-                     (pack-profile+ change metadataid))
+                     (let [metadataid (create-metadatum (:metadata change))]
+                       (pack-profile+ change metadataid)))
                    (pack-profile+ change nil))]
      (when (seq (:rules change))
        (do
