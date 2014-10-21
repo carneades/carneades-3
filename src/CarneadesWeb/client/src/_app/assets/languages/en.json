@@ -100,6 +100,7 @@
     "projects.editstatement": "Edit statement",
 
     "projects.createargument": "New argument",
+    "projects.editargumentgraph": "Edit argument graph",
     "projects.editargument": "Edit argument",
 
     "projects.true": "true",
@@ -170,6 +171,7 @@
     "tooltip.argument.remove": "Remove this argument",
     "tooltip.argument.new": "Create a new argument",
     "tooltip.project.save": "Save this project",
+    "tooltip.ag.save": "Save this argument graph",
     "tooltip.statement.save": "Save this statement",
     "tooltip.statement.edit": "Edit this statement",
     "tooltip.statement.new": "Create a new statement",
