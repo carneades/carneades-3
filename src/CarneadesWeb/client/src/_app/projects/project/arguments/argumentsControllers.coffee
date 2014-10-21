@@ -62,7 +62,7 @@ define [
       Argument.save({pid: pid, db: db}, {
         header: $scope.argument.header
         pro: $scope.argument.pro
-        scheme: "(#{$scope.argument.scheme})"
+        scheme: "(#{$scope.argument.scheme.id})"
         weight: $scope.argument.weight
         conclusion: $scope.argument.conclusion
         premises: $scope.argument.premises
@@ -73,7 +73,6 @@ define [
       )
 
     $scope = extend $scope,
-      title: $translate.instant 'projects.createargument'
       statements: statements
       argument: _normalize()
       theory: theory

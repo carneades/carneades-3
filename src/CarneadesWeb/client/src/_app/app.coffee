@@ -11,6 +11,7 @@ define [
   "angular-ui-router",
   "angular-ui-utils",
   "angular-ui-slider",
+  "angular-ui-select",
   "projects/projectsModule",
   "lican/licanModule",
   "admin/adminModule",
@@ -42,6 +43,7 @@ define [
   angular.module("app", [
     "ui.bootstrap",
     'ui.utils',
+    'ui.select',
     'ui.codemirror',
     "ui.carneades.breadcrumb",
     'ui.carneades.share',

@@ -31,18 +31,35 @@
               use-decimals,
               ng-model='argument.weight')
                     
+          // form-group(label-key='projects.scheme')
+          //   input.form-control(
+          //     type="text",
+          //     ng-model="argument.scheme",
+          //     placeholder="{{argument.scheme}}",
+          //     typeahead="scheme.id as scheme.header.title for scheme in theory.schemes | filter:$viewValue",
+          //     typeahead-input-formatter="getSchemeTitle($model)")
+          //   form-group-source(
+          //     label-key='projects.source',
+          //     ng-repeat='s in theory.schemes | selectedById:argument.scheme')
+          //     p.form-control-static(ng-bind='s.header.source')
+
+
           form-group(label-key='projects.scheme')
-            input.form-control(
-              type="text",
+            ui-select(
               ng-model="argument.scheme",
-              placeholder="{{argument.scheme}}",
-              typeahead="scheme.id as scheme.header.title for scheme in theory.schemes | filter:$viewValue",
-              typeahead-input-formatter="getSchemeTitle($model)")
+              theme="select2",
+              style='width: 100%;')
+              ui-select-match(placeholder="{{argument.scheme.header.title}}") {{$select.selected.header.title}}
+              ui-select-choices(repeat="scheme in theory.schemes | propsFilter: {title: $select.search, id: $select.search}")
+                div(ng-bind-html="scheme.header.title | highlight: $select.search")
+                small id: {{scheme.id}}
+                
             form-group-source(
               label-key='projects.source',
-              ng-repeat='s in theory.schemes | selectedById:argument.scheme')
+              ng-repeat='s in theory.schemes | selectedById:argument.scheme.id')
               p.form-control-static(ng-bind='s.header.source')
-                       
+
+              
           form-group(label-key='projects.premises')
             premise-editor(
               model='p',
@@ -59,13 +76,23 @@
               i.fa.fa-plus: span(translate='projects.addpremise')
 
           form-group(label-key='projects.conclusion')
-            input.form-control(type="text", ng-model="argument.conclusion",
-              typeahead="statement.id as statement.text for statement in statements | filter:{text:$viewValue}",
-              typeahead-input-formatter="getStatementText($model)",
-              required)
+            ui-select(
+              ng-model="argument.conclusion",
+              theme="select2",
+              style='width: 100%;')
+              ui-select-match(placeholder="{{argument.conclusion}}") {{$select.selected.text}}
+              ui-select-choices(repeat="statement in statements | propsFilter: {text: $select.search, id: $select.search}")
+                div(ng-bind-html="statement.text | highlight: $select.search")
+                small id: {{statement.id}}
+            
+          
+            // input.form-control(type="text", ng-model="argument.conclusion",
+            //   typeahead="statement.id as statement.text for statement in statements | filter:{text:$viewValue}",
+            //   typeahead-input-formatter="getStatementText($model)",
+            //   required)
             form-group-source(
               label-key='projects.fulltext',
-              ng-repeat='s in statements | selectedById:argument.conclusion')
+              ng-repeat='s in statements | selectedById:argument.conclusion.id')
               p.form-control-static(ng-bind='s.text')
 
         div(ng-show='tabMetadata')

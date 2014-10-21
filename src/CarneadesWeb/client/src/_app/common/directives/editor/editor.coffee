@@ -72,6 +72,11 @@ define [
         mode: 'clojure'
       }
 
+    @getScheme = (model, schemes) ->
+      for scheme in schemes
+        if model is scheme.id
+          return scheme
+
     @getSchemeTitle = (model, schemes) ->
       for scheme in schemes
         if model is scheme.id
@@ -81,6 +86,12 @@ define [
       for statement in statements
         if model is statement.id
           return statement.text
+
+    @getStatement = (model, statements) ->
+      for statement in statements
+        if model is statement.id
+          return statement
+
 
     @isMapInitialized = (obj) ->
       return (v for k,v of obj when v).length > 0
@@ -307,3 +318,27 @@ define [
     scope:
       ngModel: '='
       activeOn: '='
+
+  .filter 'propsFilter', () ->
+    return (items, props) ->
+      out = []
+      if angular.isArray items
+        items.forEach((item) ->
+          itemMatches = false
+
+          keys = Object.keys props
+          for key in keys
+            prop = key
+            text = props[prop].toLowerCase()
+            k = (if prop is 'title' then item.header.title else item[prop])
+            if k.toString().toLowerCase().indexOf(text) isnt -1
+              itemMatches = true
+              break
+
+          if itemMatches
+            out.push item
+        )
+      else
+        out = items
+
+      return out

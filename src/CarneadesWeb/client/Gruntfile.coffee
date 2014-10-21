@@ -144,6 +144,7 @@ module.exports = (grunt) ->
           'angular-ui-router.js': 'angular-ui-router/release/angular-ui-router.js'
           'angular-ui-utils.js': 'angular-ui-utils/ui-utils.js'
           'angular-ui-slider.js': 'angular-ui-slider/src/slider.js'
+          'angular-ui-select.js': 'angular-ui-select/dist/select.js'
           'angular-resource.js': 'angular-resource/angular-resource.js'
           'angular-translate.js': 'angular-translate/angular-translate.js'
           'angular-translate-loader-static-files.js': 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
@@ -177,27 +178,6 @@ module.exports = (grunt) ->
           '<%= dist.base %>/index.html': '<%= src.base %>/index.jade'
 
     copy:
-      # montserrat:
-      #   files: [
-      #     src: ["montserrat-regular.css"]
-      #     dest: "<%= dist.base %>/css"
-      #     cwd: '<%= src.base %>/assets/fonts/montserrat-regular-webfont/css'
-      #     expand: true
-      #   ]
-      # fontawesome:
-      #   files: [
-      #     src: ["font-awesome.min.css"]
-      #     dest: "<%= dist.base %>/css"
-      #     cwd: '<%= gen.base %>/libs/fontawesome/css'
-      #     expand: true
-      #   ]
-      # opensans:
-      #   files: [
-      #     src: ["open-sans.min.css"]
-      #     dest: "<%= dist.base %>/css"
-      #     cwd: '<%= gen.base %>/libs/open-sans/css'
-      #     expand: true
-      #   ]
       codemirror:
         files: [
           src: ["codemirror.css"]
@@ -234,13 +214,6 @@ module.exports = (grunt) ->
           expand: true
           cwd: "<%= src.fonts %>"
         ]
-      # layout:
-      #   files: [
-      #     expand: true
-      #     cwd: '<%= gen.base %>/css'
-      #     src: ['layout.css']
-      #     dest: '<%= dist.base %>/css'
-      #   ]
       default:
         files: [
           expand: true

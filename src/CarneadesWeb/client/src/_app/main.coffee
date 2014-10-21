@@ -13,6 +13,9 @@ require.config
     "angular-ui-router":
       deps: ["angular"]
 
+    "angular-ui-select":
+      deps: ["angular"]
+
     "angular-ui-slider":
       deps: ["angular", "jquery", "jquery-ui"]
 
@@ -63,6 +66,7 @@ require.config
     'angular-ui-router': './libs/angular-ui-router'
     'angular-ui-utils': './libs/angular-ui-utils'
     'angular-ui-slider': './libs/angular-ui-slider'
+    'angular-ui-select': './libs/angular-ui-select'
     'angular-touch': './libs/angular-touch'
     'angular-resource': './libs/angular-resource'
     'angular-markdown': './libs/angular-markdown'

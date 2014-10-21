@@ -144,7 +144,9 @@ define [
       $scope.tabMetadata = true
 
     _onSave = () ->
-      argument.scheme = "(#{$scope.argument.scheme})"
+      argument.scheme = $scope.argument.scheme.id
+      argument.scheme = "(#{argument.scheme})"
+      argument.conclusion = $scope.argument.conclusion.id
       Argument.update($stateParams, argument).$promise.then((data) ->
         url = 'home.projects.project.arguments.argument'
         $state.transitionTo url, $stateParams, reload: true)
@@ -155,20 +157,33 @@ define [
     _deletePremise = (p) ->
       editorService.deletePremise $scope.argument, p
 
-    _getSchemeTitle = (model) ->
-      return editorService.getSchemeTitle model, theory.schemes
+    _getScheme = (model) ->
+      return editorService.getScheme model, theory.schemes
 
     _getStatementText = (model) ->
       return editorService.getStatementText model, statements
 
+    _getStatement = (model) ->
+      return editorService.getStatement model, statements
+
     _getSchemeId = ({scheme}) ->
       return scheme.slice 1, -1
+
+    _getConclusionId = ({conclusion}) ->
+      return conclusion.slice 1, -1
 
     if argument.conclusion?
       argument.conclusion = argument.conclusion.id
 
-    if argument.scheme?
-      argument.scheme = _getSchemeId argument
+    if typeof argument.scheme is 'string'
+      id = _getSchemeId argument
+      argument.scheme = _getScheme id
+
+    if typeof argument.conclusion is 'string'
+      id = argument.conclusion
+      console.log id
+      argument.conclusion = _getStatement id
+      console.log argument.conclusion
 
     $scope = extend $scope,
       statements: statements
@@ -176,7 +191,6 @@ define [
       argument: argument
       theory: theory
       languages: editorService.getLanguages()
-      getSchemeTitle: _getSchemeTitle
       getStatementText: _getStatementText
       editorOptions: editorService.getCodeMirrorOptions()
       addPremise: _addPremise
