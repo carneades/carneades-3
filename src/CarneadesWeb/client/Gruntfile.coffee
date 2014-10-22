@@ -287,13 +287,17 @@ module.exports = (grunt) ->
           ignores: ["assets/*"]
         ]
 
-    ngmin:
+    ngAnnotate:
       scripts:
-        expand: true
-        cwd: "<%= gen.base %>"
-        src: ['./**/*.gen.js']
-        dest: "<%= gen.base %>"
-        ext: '.js'
+        options:
+          singleQuotes: true
+        files: [
+          expand: true
+          cwd: "<%= gen.base %>"
+          src: ['./**/*.gen.js']
+          dest: "<%= gen.base %>"
+          ext: '.js'
+        ]
 
     compass:
       carneades:
@@ -368,7 +372,7 @@ module.exports = (grunt) ->
     "clean",
     "chtml2js",
     "coffee",
-    "ngmin",
+    "ngAnnotate",
     "bowercopy",
     "compass",
     "concat_css",

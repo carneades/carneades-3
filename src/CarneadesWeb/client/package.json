@@ -2,7 +2,8 @@
   "author": "Sebastian Kaiser",
   "name": "carneades-web",
   "homepage": "https://github.com/carneades-web/carneades-web",
-  "version": "0.0.1-SNAPSHOT",
+  "version": "0.0.1-pre",
+  "description": "Carneades web application for argument mapping and evaluation.",
   "repository": {
     "type": "git",
     "url": "git@github.com:carneades-web/carneades-web.git"
@@ -45,7 +46,7 @@
       "grunt-html2js": "^0.2.6",
       "grunt-contrib-watch": "~0.6.1",
       "grunt-bower-requirejs": "~0.7.1",
-      "grunt-ngmin": "~0.0.3",
+      "grunt-ng-annotate": "~0.4.0",
       "requirejs": "~2.1.10"
   }
 }
