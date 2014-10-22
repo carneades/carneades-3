@@ -41,17 +41,9 @@ define [
     _onSave = () ->
       pid = $stateParams.pid
       db = $stateParams.db
-      Statement.save({
-        pid: pid
-        db: db
+      Statement.save({pid: pid, db: db}, extend $scope.statement,
         title: $scope.title
-        standard: $scope.statement.standard
-        text: $scope.statement.text
-        header: $scope.statement.header
-        pro: $scope.statement.pro
-        main: $scope.statement.main
-        weight: $scope.statement.weight
-      }).$promise.then((s) ->
+      ).$promise.then((s) ->
         url = 'home.projects.project.statements.statement'
         params = pid: pid, db: db, sid: s.id
         $state.transitionTo url, params

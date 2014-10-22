@@ -69,13 +69,7 @@
               ui-select-match(placeholder="{{argument.conclusion}}") {{$select.selected.text}}
               ui-select-choices(repeat="statement in statements | propsFilter: {text: $select.search, id: $select.search}")
                 div(ng-bind-html="statement.text | highlight: $select.search")
-                small id: {{statement.id}}
-            
-          
-            // input.form-control(type="text", ng-model="argument.conclusion",
-            //   typeahead="statement.id as statement.text for statement in statements | filter:{text:$viewValue}",
-            //   typeahead-input-formatter="getStatementText($model)",
-            //   required)
+           
             form-group-source(
               label-key='projects.fulltext',
               ng-repeat='s in statements | selectedById:argument.conclusion.id')

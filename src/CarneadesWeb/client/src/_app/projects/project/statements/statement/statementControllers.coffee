@@ -134,7 +134,6 @@ define [
         url = 'home.projects.project.statements.statement'
         $state.transitionTo url, $stateParams, reload: true)
 
-
     $scope = extend $scope,
       standards: editorService.fillWithPrefixSuffixes(
         [], 'projects.', ['pe', 'dv', 'cce', 'brd'])

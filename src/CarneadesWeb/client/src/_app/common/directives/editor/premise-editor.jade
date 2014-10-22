@@ -34,7 +34,6 @@
       ui-select-match(placeholder="{{model.statement}}") {{$select.selected.text}}
       ui-select-choices(repeat="statement in statements | propsFilter: {text: $select.search, id: $select.search}")
         div(ng-bind-html="statement.text | highlight: $select.search")
-        small id: {{statement.id}}
             
     form-group-source(
       label-key='projects.fulltext',
