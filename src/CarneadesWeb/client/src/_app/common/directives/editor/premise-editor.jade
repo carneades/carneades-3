@@ -27,12 +27,15 @@
   label.control-label.col-lg-1(
     ng-bind="'projects.statement' | translate | capitalize:'first'")
   .col-lg-11
-    input.form-control(
-      type="text",
-      ng-model="model.statement.id",
-      typeahead="statement.id as statement.text for statement in statements | filter:{text:$viewValue}",
-      typeahead-input-formatter="formatStatement($model)",
-      required)
+    ui-select(
+      ng-model="model.statement",
+      theme="select2",
+      style='width: 100%;')
+      ui-select-match(placeholder="{{model.statement}}") {{$select.selected.text}}
+      ui-select-choices(repeat="statement in statements | propsFilter: {text: $select.search, id: $select.search}")
+        div(ng-bind-html="statement.text | highlight: $select.search")
+        small id: {{statement.id}}
+            
     form-group-source(
       label-key='projects.fulltext',
       ng-repeat='s in statements | selectedById:model.statement.id')

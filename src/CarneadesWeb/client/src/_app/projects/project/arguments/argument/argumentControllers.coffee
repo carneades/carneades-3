@@ -154,8 +154,8 @@ define [
     _addPremise = () ->
       editorService.addPremise $scope.argument
 
-    _deletePremise = (p) ->
-      editorService.deletePremise $scope.argument, p
+    _deletePremise = (index) ->
+      editorService.deletePremise $scope.argument, index
 
     _getScheme = (model) ->
       return editorService.getScheme model, theory.schemes
@@ -180,10 +180,7 @@ define [
       argument.scheme = _getScheme id
 
     if typeof argument.conclusion is 'string'
-      id = argument.conclusion
-      console.log id
-      argument.conclusion = _getStatement id
-      console.log argument.conclusion
+      argument.conclusion = _getStatement argument.conclusion
 
     $scope = extend $scope,
       statements: statements

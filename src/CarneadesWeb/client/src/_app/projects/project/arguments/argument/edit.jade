@@ -30,19 +30,6 @@
               step='0.05',
               use-decimals,
               ng-model='argument.weight')
-                    
-          // form-group(label-key='projects.scheme')
-          //   input.form-control(
-          //     type="text",
-          //     ng-model="argument.scheme",
-          //     placeholder="{{argument.scheme}}",
-          //     typeahead="scheme.id as scheme.header.title for scheme in theory.schemes | filter:$viewValue",
-          //     typeahead-input-formatter="getSchemeTitle($model)")
-          //   form-group-source(
-          //     label-key='projects.source',
-          //     ng-repeat='s in theory.schemes | selectedById:argument.scheme')
-          //     p.form-control-static(ng-bind='s.header.source')
-
 
           form-group(label-key='projects.scheme')
             ui-select(
@@ -59,12 +46,11 @@
               ng-repeat='s in theory.schemes | selectedById:argument.scheme.id')
               p.form-control-static(ng-bind='s.header.source')
 
-              
           form-group(label-key='projects.premises')
             premise-editor(
               model='p',
               statements='statements',
-              on-delete="deletePremise(p)",
+              on-delete="deletePremise($index)",
               ng-repeat="p in argument.premises")
             
             button.btn.btn-default.btn-xs(

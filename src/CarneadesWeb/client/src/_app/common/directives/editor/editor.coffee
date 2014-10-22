@@ -31,8 +31,8 @@ define [
       }
 
     # remove a premise p from argument.premises
-    @deletePremise = (argument, p) ->
-      argument.premises = (q for q in argument.premises when p.role != q.role)
+    @deletePremise = (argument, index) ->
+      argument.premises.splice index,1
 
     @onCancel = () ->
       breadcrumbService.peek()
@@ -144,7 +144,6 @@ define [
 
     link: (scope, elem, attrs) ->
       scope.onDeletePremise = ->
-        console.log 'onDeletePremise'
         scope.onDelete()
 
   .controller 'EditorController', () ->
