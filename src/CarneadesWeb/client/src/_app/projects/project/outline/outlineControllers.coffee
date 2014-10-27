@@ -8,11 +8,11 @@ define [
   return angular.module('outline.controllers', [])
 
   .controller 'OutlineRootCtrl', ($scope, $state, $stateParams,
-    $translate, $location, project, tproject, scroll, tpid) ->
+    $translate, $location, $window, ag, tproject, scroll, tpid) ->
       
     $stateParams.tpid = tpid
     $scope = angular.extend $scope,
-      project: project
+      project: ag
       scrollTo: scroll.scrollTo
       tooltipEdit: $translate.instant 'tooltip.outline.edit'
       tooltipNewStatement: $translate.instant 'tooltip.statement.new'
@@ -24,7 +24,13 @@ define [
         $scope.isSharing = !$scope.isSharing
       shareOnMarkos: ->
         console.log 'share on markos'
-
+      shareOnTwitter: ->
+        console.log 'share on twitter'
+        _url = escape($scope.currentUrl)
+        _text = escape(ag.title)
+        $window.open("https://twitter.com/intent/tweet?url=#{_url}&text=#{_text}");
+        return true
+        
     return @
 
   .controller 'OutlineIssuesCtrl', ($scope, issues) ->

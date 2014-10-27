@@ -10,8 +10,19 @@
     background-image: url("../../../../../images/markos.png");
     background-repeat: no-repeat;
     background-position: left;
-    padding-left: 240px;
-    height: 123px;
+    height: 32px;
+    padding-left: 32px;
+    padding-right: 0px;
+    cursor: pointer;
+}
+
+#share .twitter {
+    background-image: url("../../../../../images/twitter.png");
+    background-repeat: no-repeat;
+    background-position: left;
+    height: 32px;
+    padding-left: 32px;
+    padding-right: 0px;
     cursor: pointer;
 }
 

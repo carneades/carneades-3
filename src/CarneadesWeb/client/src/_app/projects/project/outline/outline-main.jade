@@ -39,6 +39,8 @@
       #share(ng-show="isSharing")
         div
           button.markos(type='button', ng-click='shareOnMarkos()')
+          button.twitter(type='button', ng-click='shareOnTwitter()')
+
         .shareInput
           input(type='text', value="{{currentUrl}}", readonly)
 

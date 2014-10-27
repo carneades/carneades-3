@@ -42,7 +42,7 @@ define [
             resolve:
               tproject: (ProjectLoader, $stateParams) ->
                 return new ProjectLoader $stateParams
-              project: (MetadataLoader, $stateParams) ->
+              ag: (MetadataLoader, $stateParams) ->
                 $stateParams.mid = 1
                 return new MetadataLoader $stateParams
               scroll: 'scroll'
