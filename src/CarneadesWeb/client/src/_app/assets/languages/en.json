@@ -125,6 +125,7 @@
     "projects.save": "Save",
     "projects.cancel": "Cancel",
     "projects.yes": "Yes",
+    "projects.share": "Share",
 
     "projects.legalprofiles": "Legal Profiles",
     "projects.legalprofile": "Legal Profile",
@@ -157,7 +158,7 @@
     "state.home.projects.project.statements.statement.edit.label": "Edit statement",
     "state.home.projects.project.statements.statement.remove.label": "Remove statement",
     "state.home.projects.project.theory": "Theory",
-
+    
     "state.lican.label": "License Analyser Introduction",
     "state.lican.questions.label": "License Analyser Questions",
     "state.lican.demo.label": "License Analyser Questions (Demo)",
@@ -178,6 +179,7 @@
     "tooltip.statement.remove": "Remove this statement",
     "tooltip.premise": "Add a premise",
     "tooltip.outline.edit": "Edit this outline",
+    "tooltip.share": "Share an argument graph",
 
     "tooltip.legalprofile.new": "Create a new legal profile",
     "tooltip.legalprofile.save": "Save the legal profile",

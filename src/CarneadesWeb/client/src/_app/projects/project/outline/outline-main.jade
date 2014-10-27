@@ -27,7 +27,21 @@
             tooltip-append-to-body="true",
             tooltip-placement="top")
             i.fa.fa-plus-square-o: span(translate='state.home.projects.project.arguments.new.label')
-          
+
+        button.btn.btn-default.btn-small(
+          type='button',
+          tooltip="{{tooltipShare}}",
+          tooltip-append-to-body="true",
+          tooltip-placement="top",
+          ng-click="onShare()")
+          i.fa.fa-plus-square-o: span(translate='projects.share')
+      
+      #share(ng-show="isSharing")
+        div
+          button.markos(type='button', ng-click='shareOnMarkos()')
+        .shareInput
+          input(type='text', value="{{currentUrl}}", readonly)
+
       #description
         markdown(
           strip='true',

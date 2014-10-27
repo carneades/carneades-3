@@ -5,3 +5,24 @@
 #outline a {
   color: $text-color;
 }
+
+#share .markos {
+    background-image: url("../../../../../images/markos.png");
+    background-repeat: no-repeat;
+    background-position: left;
+    padding-left: 240px;
+    height: 123px;
+    cursor: pointer;
+}
+
+.shareInput {
+    margin-top: 10px;
+}
+
+.shareInput input {
+    width: 500px;
+}
+
+#share {
+    margin-bottom: 2%;
+}

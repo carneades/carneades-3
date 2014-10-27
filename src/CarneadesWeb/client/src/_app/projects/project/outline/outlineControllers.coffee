@@ -8,8 +8,8 @@ define [
   return angular.module('outline.controllers', [])
 
   .controller 'OutlineRootCtrl', ($scope, $state, $stateParams,
-    $translate, project, tproject, scroll, tpid) ->
-
+    $translate, $location, project, tproject, scroll, tpid) ->
+      
     $stateParams.tpid = tpid
     $scope = angular.extend $scope,
       project: project
@@ -17,6 +17,13 @@ define [
       tooltipEdit: $translate.instant 'tooltip.outline.edit'
       tooltipNewStatement: $translate.instant 'tooltip.statement.new'
       tooltipNewArgument: $translate.instant 'tooltip.argument.new'
+      tooltipShare: $translate.instant 'tooltip.share'
+      currentUrl: $location.absUrl()
+      isSharing: false
+      onShare: ->
+        $scope.isSharing = !$scope.isSharing
+      shareOnMarkos: ->
+        console.log 'share on markos'
 
     return @
 
