@@ -56,7 +56,13 @@ require.config
       deps: ["jquery"]
 
     "angular-perfect-scrollbar":
-      deps: ["perfect-scrollbar"]
+      deps: ["angular", "perfect-scrollbar"]
+
+    "selectize":
+      deps: ["angular", "jquery", "jquery-ui"]
+
+    "angular-selectize":
+      deps: ["angular", "jquery", "jquery-ui", "selectize"]
 
   paths:
     "angular": "./libs/angular"
@@ -87,5 +93,7 @@ require.config
     'codemirror': './libs/codemirror/lib/codemirror'
     'codemirror-clj': './libs/codemirror/mode/clojure/clojure'
     'codemirror-addon': './libs/codemirror/addon'
+    'selectize': './libs/selectize'
+    'angular-selectize': './libs/angular-selectize'
 
   deps: ["./bootstrap"]

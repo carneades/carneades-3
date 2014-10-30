@@ -5,10 +5,43 @@
 define [
   'angular'
 ], (angular) ->
+  # If you want to merge two arrays without creating a new object
+
+  Array::where = (query) ->
+    return [] if typeof query isnt "object"
+    hit = Object.keys(query).length
+    @filter (item) ->
+      match = 0
+      for key, val of query
+        match += 1 if item[key] is val
+      if match is hit then true else false
+
+  _resolveRoleKey = (p, roles) ->
+    if isFinite p.role
+      p.role = roles[p.role].title
+
+  _resolveRoleKeys = (premises, roles) ->
+    for p in premises
+      _resolveRoleKey p, roles
+
+  mergeRolesD = (a1, a2) ->
+    for o in a2
+      contains = a1.where title: o.title
+      if contains.length is 0
+        a1.push id: a1.length + 1, title: o.title
+
+  mergePremisesD = (a1, a2, roles) ->
+    for o in a2
+      contains = a1.where role: o.role
+      if contains.length is 0
+        _resolveRoleKey o, roles
+        a1.push o
+
   extend = (object, properties) ->
     for key, val of properties
       object[key] = val
     object
+
 
   angular.module('arguments.controllers', [
     'pascalprecht.translate',
@@ -56,9 +89,76 @@ define [
     _getStatementText = (model) ->
       return editorService.getStatementText model, statements
 
+    _getStatement = (model) ->
+      return editorService.getStatement model, statements
+
+
+    repoRoles = []
+    repoPremises = []
+
+    _getRoles = ({premises}) ->
+      roles = []
+      unless premises then return roles
+      i = 0
+      for p in premises
+        roles.push id: i, title: p.role
+        i = i + 1
+      return roles
+
+    _getPremises = ({premises}) ->
+      ps = []
+      unless premises then return ps
+      for p in premises
+        if p.statement? and typeof p.statement.text is 'string'
+          ps.push p
+        else
+          p.statement = {}
+          p.statement.id = ''
+          p.statement.text = ''
+          ps.push p
+
+      return ps
+
+    _initRolesPremises = (a) ->
+      if a.premises?.length > 0
+        repoRoles = _getRoles a
+        repoPremises = _getPremises a
+
+    _updatePremises = (newVal, oldVal) ->
+      if oldVal is '' and $scope.argument.premises.length > 0
+        _initRolesPremises $scope.argument
+
+      roles = repoRoles
+      premises = repoPremises
+      if newVal?
+        newRoles = _getRoles newVal
+        newPremises = _getPremises newVal
+
+        if premises.length > 0
+          _resolveRoleKeys premises, roles
+          mergePremisesD repoPremises, newPremises, roles
+        else repoPremises = newPremises
+
+        if roles.length > 0
+          mergeRolesD repoRoles, newRoles
+        else repoRoles = newRoles
+
+        $scope.premiseRoles = repoRoles
+        $scope.argument.premises = []
+        $scope.argument.premises.push repoPremises...
+
+    $scope.$watch 'argument.scheme', (newVal, oldVal) ->
+      _updatePremises newVal, oldVal
+
     _onSave = () ->
       pid = $stateParams.pid
       db = $stateParams.db
+      _updatePremises $scope.argument
+
+      for p in $scope.argument.premises
+        key = 'translation'
+        if key of p then delete p[key]
+
       Argument.save({pid: pid, db: db}, {
         header: $scope.argument.header
         pro: $scope.argument.pro

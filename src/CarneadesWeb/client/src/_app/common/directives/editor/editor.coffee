@@ -115,7 +115,16 @@ define [
       model: '=',
       statements: '=',
       onDelete: '&'
+      roles: '='
     controller: ($scope) ->
+      $scope.selectizeConfig =
+        create: true
+        valueField: 'id'
+        labelField: 'title'
+        delimiter: '|'
+        placeholder: 'Pick something'
+        maxItems: 1
+
       _setIsPositive = (value) ->
         isPositiveLabel = ['positive', 'negative']
         iSelector = if value then 0 else 1

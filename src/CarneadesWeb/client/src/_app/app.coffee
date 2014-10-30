@@ -37,7 +37,8 @@ define [
   'codemirror-clj',
   'codemirror-addon/edit/matchbrackets',
   'codemirror-addon/edit/closebrackets',
-  'angular-ui-codemirror'
+  'angular-ui-codemirror',
+  'angular-selectize'
 ], (require, angular) ->
   window.CodeMirror = require 'codemirror'
   angular.module("app", [
@@ -62,7 +63,8 @@ define [
     "pascalprecht.translate",
     'markdown',
     'angular-capitalize-filter',
-    'resources.themes'
+    'resources.themes',
+    'selectize'
   ])
 
   .run ($rootScope, $state, $stateParams, ThemeLoader) ->

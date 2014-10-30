@@ -168,7 +168,8 @@ module.exports = (grunt) ->
           'fontawesome/fonts': 'fontawesome/fonts'
           'open-sans/css': 'open-sans/css/open-sans.min.css'
           'open-sans/fonts': 'open-sans/fonts'
-
+          'selectize.js': 'selectize/dist/js/standalone/selectize.min.js'
+          'angular-selectize.js': 'angular-selectize2/dist/selectize.js'
     jade:
       compile:
         options:
@@ -185,6 +186,7 @@ module.exports = (grunt) ->
           cwd: 'libs/codemirror/lib'
           expand: true
         ]
+
       codemirror_theme_xq_light:
         files: [
           src: ["xq-light.css"]
@@ -192,6 +194,7 @@ module.exports = (grunt) ->
           cwd: 'libs/codemirror/theme'
           expand: true
         ]
+
       perfect_scrollbar:
         files: [
           src: ["perfect-scrollbar.min.css"]
@@ -199,6 +202,7 @@ module.exports = (grunt) ->
           cwd: '<%= gen.base %>/libs/perfect-scrollbar'
           expand: true
         ]
+
       index:
         files: [
           src: ["index.html"]
@@ -214,6 +218,7 @@ module.exports = (grunt) ->
           expand: true
           cwd: "<%= src.fonts %>"
         ]
+
       default:
         files: [
           expand: true
@@ -221,6 +226,7 @@ module.exports = (grunt) ->
           src: ['default.css']
           dest: '<%= projects.default %>'
         ]
+
       copyright:
         files: [
           src: ['copyright.css']
@@ -228,6 +234,7 @@ module.exports = (grunt) ->
           cwd: "<%= gen.base %>/css/theme"
           dest: '<%= projects.copyright %>'
         ]
+
       markos:
         files: [
           src: ['markos.css']
@@ -235,30 +242,6 @@ module.exports = (grunt) ->
           cwd: "<%= gen.base %>/css/theme"
           dest: '<%= projects.markos %>'
         ]
-
-      # fonts_ms:
-      #   files: [
-      #     dest: "<%= dist.base %>/fonts"
-      #     src: "**"
-      #     expand: true
-      #     cwd: "<%= src.base %>/assets/fonts/montserrat-regular-webfont/fonts"
-      #   ]
-
-      # fonts_fa:
-      #   files: [
-      #     dest: "<%= dist.base %>/fonts"
-      #     src: "**"
-      #     expand: true
-      #     cwd: "<%= gen.base %>/libs/fontawesome/fonts"
-      #   ]
-
-      # fonts_os:
-      #   files: [
-      #     dest: "<%= dist.base %>/fonts"
-      #     src: "**"
-      #     expand: true
-      #     cwd: "<%= gen.base %>/libs/open-sans/fonts"
-      #   ]
 
       images:
         files: [

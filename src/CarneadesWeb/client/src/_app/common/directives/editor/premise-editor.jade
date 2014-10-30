@@ -16,13 +16,11 @@
       label.control-label.col-lg-2(
         ng-bind="'projects.role' | translate | capitalize:'first'")
       .col-lg-10
-        input.form-control.input-md(
-          name='role',
-          type='text',
-          ng-model='model.role',
-          placeholder='set the role',
-          style='width:100%;')
-
+        div.form-control(selectize='selectizeConfig',
+          options='roles',
+          ng-model="model.role",
+          style='width: 100%;')
+          
 .row.form-group
   label.control-label.col-lg-1(
     ng-bind="'projects.statement' | translate | capitalize:'first'")

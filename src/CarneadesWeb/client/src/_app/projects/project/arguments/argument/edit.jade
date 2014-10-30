@@ -51,7 +51,8 @@
               model='p',
               statements='statements',
               on-delete="deletePremise($index)",
-              ng-repeat="p in argument.premises")
+              ng-repeat="p in argument.premises",
+              roles='premiseRoles')
             
             button.btn.btn-default.btn-xs(
               type='button',
