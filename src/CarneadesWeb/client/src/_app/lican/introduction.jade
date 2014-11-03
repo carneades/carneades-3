@@ -1,6 +1,6 @@
 div(my-loading-spinner='viewLoading')
   h1 {{title}}
-  p.introduction{{'lican.intro.text' | translate}}
+  p.introduction(translate='lican.intro.text')
 
   form(ng-submit='startAnalysis()')
-    button.btn.btn-default(type='submit') {{'lican.intro.start' | translate}}
+    button.btn.btn-default(type='submit', translate='lican.intro.start')
