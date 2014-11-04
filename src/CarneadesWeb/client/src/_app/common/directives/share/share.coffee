@@ -76,6 +76,11 @@ define [
           scope.$eval attr.notifier
           return base - offset - 2
 
+        scope.resizeHeight = () ->
+          offset = document.getElementById('header-section').offsetHeight
+          offset = offset + document.getElementById('subnav-section').offsetHeight
+          return fnCalc newValue.h, offset
+
         scope.resizeHeightWithOffset = (offsetH = 0) ->
           return fnCalc newValue.h, offsetH
 

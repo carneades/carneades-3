@@ -17,6 +17,9 @@ define [
       data:
         commands: ['home.projects.project.outline','home.projects.project.theory']
       views:
+        "subnav@":
+          template: '<page-navigation-full ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-full>'
+          controller: 'SubnavController'
         "content@":
           templateUrl: "projects/project/map/map.jade"
           controller: "MapCtrl"

@@ -1,4 +1,4 @@
-.container
+.container-fluid
   .row(
     resize,
     bn-map-click='handleClick($event)',
@@ -8,5 +8,5 @@
       wheelPropagation='true',
       wheelSpeed='50',
       refresh-on-change='dimensions',
-      style='white-space: pre-line;position: relative;overflow-y: hidden;width:100%;height:{{ resizeHeightWithOffset() }};')
+      style='white-space:pre-line;position:relative;overflow-y:hidden;overflow-x:hidden;width:100%;height:{{resizeHeight()}}px;')
       svg-include(ng-model='svg')

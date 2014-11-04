@@ -13,10 +13,10 @@ html(lang='en')
 
 
   body
-    div(ui-view='header')
+    div(id='header-section', ui-view='header')
     div(my-loading-spinner='viewLoading')
       css-inject(theme='$stateParams.pid')
-      div(ui-view='subnav')
+      div(id='subnav-section', ui-view='subnav')
       div(ui-view='content')
     div(ng-bind-html='footer')
     script(src='require.js', data-main='main.min.js')
