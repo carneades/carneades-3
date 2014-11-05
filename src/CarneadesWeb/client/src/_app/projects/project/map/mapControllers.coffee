@@ -75,7 +75,8 @@ define [
       (target is 'path' and relatedTarget is 'circle')
         e = angular.element event.target
         e.css 'cursor', 'pointer'
-        if event.target.localName is 'rect'
+        if (event.target.localName is 'rect') or
+        (event.target.localName is 'circle')
           e.css 'stroke-width', '2px'
           e.css 'stroke-dasharray', '9, 5'
         else if event.target.localName is 'text'
@@ -94,7 +95,7 @@ define [
       if element.farthestViewportElement?.localName is 'svg'
         e = angular.element(element)
         if event.relatedTarget?.localName is 'svg'
-          if element.localName is 'rect'
+          if (element.localName is 'rect') or (element.localName is 'circle')
             e.css 'stroke-width', '1px'
             e.css 'stroke-dasharray', '0'
           else if element.localName is 'text'
@@ -107,9 +108,12 @@ define [
             rect.css 'stroke-dasharray', '0'
         else
           if (event.relatedTarget is null) or
-          (event.target?.localName is 'tspan' and event.relatedTarget?.localName is 'tspan') or
-          (event.target?.localName is 'rect' or event.originalTarget?.localName is 'rect') or
-          (event.target?.localName is 'tspan' or event.originalTarget?.localName is 'tspan')
+          (event.target?.localName is 'tspan' and
+          event.relatedTarget?.localName is 'tspan') or
+          (event.target?.localName is 'rect' or
+          event.originalTarget?.localName is 'rect') or
+          (event.target?.localName is 'tspan' or
+          event.originalTarget?.localName is 'tspan')
             rect = e.parent().parent().find 'rect'
             rect.css 'stroke-width', '1px'
             rect.css 'stroke-dasharray', '0'
