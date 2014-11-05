@@ -1,8 +1,10 @@
 .container.outline
   .row
-    .col-md-12(role='main')
+    .col-md-12
       #overview: .page-header: h1(ng-bind='project.title')
 
+  .row
+    .col-md-12(role='main')
       .commands
         a(ui-sref='home.projects.project.edit($stateParams)')
           button.btn.btn-default.btn-small(
@@ -35,7 +37,8 @@
           tooltip-placement="top",
           ng-click="onShare()")
           i.fa.fa-plus-square-o: span(translate='projects.share')
-      
+
+         
       #share(ng-show="isSharing")
         div
           button.markos(type='button', ng-click='shareOnMarkos()')
@@ -44,13 +47,21 @@
         .shareInput
           input(type='text', value="{{currentUrl}}", readonly)
 
+  .row
+    .col-md-12(role='main')
       #description
         markdown(
           strip='true',
           ng-model='project.description')
 
+  .row
+    .col-md-12(role='main')
       #issues(ui-view='issues')
 
+  .row
+    .col-md-12(role='main')
       #outline(ui-view='outline')
 
+  .row
+    .col-md-12(role='main')
       #references(ui-view='references')

@@ -1,3 +1,27 @@
+@media (max-width: $grid-float-breakpoint - 1) {
+    .outline h1{
+        font-size: 22px;
+    }
+
+    #description, #issues, #references, #outline {
+        font-size: 12px;
+    }
+    
+    #outline {
+        ul {
+            padding: 5px;  
+        }
+    }
+}
+
+@media (min-width: $grid-float-breakpoint) {
+    #outline {
+        ul {
+            padding: 12px;  
+        }
+    }
+}
+
 #outline ul {
   list-style-type: none;
 }

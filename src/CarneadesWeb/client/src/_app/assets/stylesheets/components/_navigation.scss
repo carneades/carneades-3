@@ -43,6 +43,21 @@
   > ul {
     padding: 5px 0px 5px 79px !important;
     list-style:none;
+    > li {
+        > a {
+            color: $breadcrumbs-link-color;
+            display: block;
+            float: left;
+            position: relative;
+            line-height: $breadcrumbs-height;
+            padding: 0 1em 0 1.5em;
+            text-decoration: none;
+            &:hover {
+                color: $breadcrumbs-link-hover-color;
+                cursor: pointer;
+            }
+        }
+    }
   }
 }
 
@@ -54,7 +69,7 @@
   ul {
     list-style-type: none;
     li {
-      padding: 5em 0 !important;
+      padding: .5em 0 !important;
       border-bottom: 1px solid $breadcrumbs-link-hover-color;
       > a {
         &:active, &:hover {

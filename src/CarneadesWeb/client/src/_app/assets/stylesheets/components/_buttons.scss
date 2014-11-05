@@ -1,7 +1,24 @@
+@media (max-width: $grid-float-breakpoint - 1) {
+    button {
+        margin: 0 5px 0 0 !important;
+        
+        i.fa {
+            padding: 5px 0 5px 0px !important;
+            font-size: 120%;
+
+            span {
+                display: none;
+            }
+        }
+    }
+}    
+
 .commands {
   margin: 0px 0px 20px !important;
 }
 
+
+@media (min-width: $grid-float-breakpoint) {
 button {
   margin: 0 5px 0 0 !important;
   
@@ -13,4 +30,5 @@ button {
       padding: 0 0 0 10px !important;
     }
   }
+}
 }
