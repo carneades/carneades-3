@@ -15,7 +15,8 @@
    [clojure.java.io :as io]
    [carneades.web.system :as s]
    [carneades.config.config :refer [properties]]
-   [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]))
+   [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]
+   [carneades.database.evaluation :as eval]))
 
 (defn- get-project-properties
   [id]
@@ -25,6 +26,12 @@
 (defn- get-project-theories
   [id]
   (get-in (deref s/state) [:projects-data id :available-theories]))
+
+(defmacro with-evaluation
+  [instruction]
+  `(let [r# ~instruction]
+     (eval/evaluate-graph')
+     r#))
 
 (defn get-projects
   []
@@ -61,19 +68,22 @@
   [project db id update]
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
-      (spy (ag-db/update-statement id update)))))
+      (with-evaluation
+        (ag-db/update-statement id update)))))
 
 (defn post-statement
   [project db statement]
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
-      (ag-db/create-statement (p/unpack-statement statement)))))
+      (with-evaluation
+        (ag-db/create-statement (p/unpack-statement statement))))))
 
 (defn delete-statement
   [project db id]
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
-      (ag-db/delete-statement id))))
+      (with-evaluation
+        (ag-db/delete-statement id)))))
 
 (defn get-metadatum
   [project db id]
@@ -109,19 +119,22 @@
   [project db id update]
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
-      (ag-db/update-argument id update))))
+      (with-evaluation
+        (ag-db/update-argument id update)))))
 
 (defn post-argument
   [project db arg]
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
-      (ag-db/create-argument (p/unpack-argument arg)))))
+      (with-evaluation
+        (ag-db/create-argument (p/unpack-argument arg))))))
 
 (defn delete-argument
   [project db id]
   (let [dbconn (db/make-connection project db "root" "pw1")]
     (db/with-db dbconn
-      (ag-db/delete-argument id))))
+      (with-evaluation
+        (ag-db/delete-argument id)))))
 
 (defn get-outline
   [project db]

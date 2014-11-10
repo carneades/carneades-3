@@ -332,8 +332,6 @@
 
 (defn post-statement
   [project db statement]
-  (info "db " db)
-  (info "statement " statement)
   (s/post-statement project db statement))
 
 (defn get-nodes

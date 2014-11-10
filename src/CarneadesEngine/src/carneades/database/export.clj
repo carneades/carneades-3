@@ -11,6 +11,15 @@
         [carneades.database.argument-graph :as ag-db]
         [clojure.java.jdbc.deprecated :as jdbc]))
 
+(defn export-to-argument-graph'
+  []
+  (-> (ag/make-argument-graph)
+      (ag/enter-statements (ag-db/list-statements))
+      (ag/enter-arguments (ag-db/list-arguments))
+      (ag/enter-references (ag-db/list-metadata))
+      (ag/enter-namespaces (ag-db/list-namespaces))
+      (assoc :header (ag-db/read-metadata 1))))
+
 (defn export-to-argument-graph
   "database-connection -> argument-graph
    Exports all the statement nodes, argument nodes, references and namespaces in 
@@ -21,10 +30,5 @@
   (jdbc/with-connection 
     db
     (jdbc/transaction
-      (-> (ag/make-argument-graph)
-          (ag/enter-statements (ag-db/list-statements))
-          (ag/enter-arguments (ag-db/list-arguments))
-          (ag/enter-references (ag-db/list-metadata))
-          (ag/enter-namespaces (ag-db/list-namespaces))
-          (assoc :header (ag-db/read-metadata 1))))))
+     (export-to-argument-graph'))))
         

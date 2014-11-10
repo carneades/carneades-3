@@ -147,7 +147,6 @@
                {::entry (get-statements pid db (keyword lang))}))
   :handle-ok ::entry
   :post! (fn [_]
-           (info "post! statements-resource")
            {::id (post-statement pid db statement)})
   :handle-created (fn [ctx]
                     {:id (::id ctx)}))

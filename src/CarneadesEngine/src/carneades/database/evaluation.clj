@@ -5,13 +5,24 @@
 
 (ns ^{:doc "Utility to evaluate an argument graph stored in the database."}
     carneades.database.evaluation
-  (:use [carneades.database.export :only [export-to-argument-graph]]
+    (:use [carneades.database.export :only [export-to-argument-graph export-to-argument-graph']]
         [carneades.engine.argument-evaluation :only [evaluate]]
         ;; there is a problem with the aspic evaluation
         ;; [carneades.engine.aspic :only [aspic-grounded]]
         [carneades.engine.caes :only [caes]])
   (:require [carneades.database.db :as db]
             [carneades.database.argument-graph :as ag-db]))
+
+(defn evaluate-graph'
+  []
+  (let [ag1 (export-to-argument-graph')
+        ag2 (evaluate caes ag1)]
+    (doseq [sn (vals (:statement-nodes ag2))]
+      (ag-db/update-statement (str (:id sn))
+                              {:value (:value sn)}))
+    (doseq [an (vals (:argument-nodes ag2))]
+      (ag-db/update-argument (str (:id an))
+                             {:value (:value an)}))))
 
 (defn evaluate-graph
   "Evalutes a graph stored in the database."
