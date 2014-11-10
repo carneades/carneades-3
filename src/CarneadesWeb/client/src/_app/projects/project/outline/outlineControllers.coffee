@@ -40,13 +40,9 @@ define [
     return @
 
   .controller 'OutlineReferencesCtrl', ($scope, references) ->
-    emptyReferences = (references) ->
-      (v for k,v of references when v? and k != '$promise' and k != '$resolved')
-      .length is 0
-
     $scope = angular.extend $scope,
       references: references
-      hasReferences: not emptyReferences references
+      hasReferences: not (references.length == 0)
 
     return @
 
