@@ -8,7 +8,7 @@ define [
   return angular.module('outline.controllers', [])
 
   .controller 'OutlineRootCtrl', ($scope, $state, $stateParams,
-    $translate, $location, $window, ag, tproject, scroll, tpid) ->
+    $translate, $location, $window, ag, tproject, scroll, tpid, markos) ->
       
     $stateParams.tpid = tpid
     $scope = angular.extend $scope,
@@ -23,7 +23,7 @@ define [
       onShare: ->
         $scope.isSharing = !$scope.isSharing
       shareOnMarkos: ->
-        console.log 'share on markos'
+        markos.share()
       shareOnTwitter: ->
         console.log 'share on twitter'
         _url = escape($scope.currentUrl)

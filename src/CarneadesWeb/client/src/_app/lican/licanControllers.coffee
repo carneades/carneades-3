@@ -6,6 +6,7 @@ define [
   'angular',
   'angular-translate',
   '../common/services/notifications',
+  '../common/services/markos',
   '../common/directives/questions/questions'
 ], (angular) ->
   markQuestionGroupAnswered = (questions) ->
@@ -16,21 +17,23 @@ define [
 
   angular.module('lican.controllers', [
     'services.notifications',
+    'services.markos',
     'directives.questions',
     'pascalprecht.translate'
   ])
 
   # Example of call http://localhost:8080/carneades/#/lican?entity=http:%2F%2Fmarkosproject.eu%2Fkb%2FSoftwareRelease%2F1970&legalprofile=1
-  .controller('IntroCtrl', ($scope, $state, $stateParams, $translate, $q, entity) ->
+  .controller('IntroCtrl', ($scope, $state, $stateParams, $translate, $q, entity, markos) ->
     $scope.viewLoading = true
     $q.all([entity]).then((data) ->
       $scope.viewLoading = false
     )
-    # TODO: check success + error msg
+
     sEntity = entity.get uri: $stateParams.entity, ->
       $scope.title = $translate.instant 'lican.title', {entity: sEntity.name}
 
-    console.log $stateParams.debug
+    markos.setUserId $stateParams.userId
+
     if not $stateParams.debug
       $state.go 'lican.questions'
 

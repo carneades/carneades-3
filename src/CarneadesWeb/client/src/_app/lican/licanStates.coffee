@@ -18,7 +18,7 @@ define [
       {
         name: 'lican'
         label: 'state.lican.label'
-        url: '/lican?entity&legalprofile&debug'
+        url: '/lican?entity&legalprofile&userId&debug'
         data:
           theme: 'markos'
         views:
