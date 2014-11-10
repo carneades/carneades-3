@@ -146,7 +146,7 @@
     "state.home.projects.label": "Projects",
     "state.home.projects.project.label": "Project",
     "state.home.projects.project.new.label": "New argument graph",
-    "state.home.projects.project.edit.label": "Edit project",
+    "state.home.projects.project.edit.label": "Edit metadata",
     "state.home.projects.project.arguments.new.label": "New argument",
     "state.home.projects.project.arguments.argument.label": "Argument",
     "state.home.projects.project.arguments.argument.edit.label": "Edit argument",
