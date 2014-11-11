@@ -20,16 +20,40 @@ define [
       url: 'projects'
       views:
         "content@":
-          templateUrl: 'projects/list.jade'
-          controller: ($scope, $location, projects) ->
-            $scope.projects = projects
-
-            $scope.copyLink = (pid) ->
-              window.prompt("Copy to clipboard: Ctrl+C, Enter", $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/" + $scope.$state.href 'home.projects.project', pid: pid)
+          templateUrl: 'projects/projects.jade'
+          controller: ($scope, $location, $translate, projects, editorService) ->
+            $scope = extend $scope,
+              projects: projects
+              ag: ag
+              languages: editorService.getLanguages()
+              onSave: _onSave
+              onCancel: editorService.onCancel
+              placeholderName: $translate.instant 'placeholder.name'
+              placeholderTitle: $translate.instant 'placeholder.title'
+              tooltipSave: $translate.instant 'tooltip.argumentgraph.save'
+              tooltipCancel: $translate.instant 'tooltip.cancel'
+              tooltipNewProject: $translate.instant 'tooltip.projects.new'
+              projectProperties:
+                name: ""
+                title: ""
+                properties:
+                  description:
+                    en: "a description"
+              copylink: (pid) ->
+                window.prompt("Copy to clipboard: Ctrl+C, Enter", $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/" + $scope.$state.href 'home.projects.project', pid: pid)
+         
 
           resolve:
             projects: (MultiProjectLoader) ->
               return new MultiProjectLoader()
+    ,
+      name: 'home.projects.new'
+      label: 'state.home.projects.new.label'
+      url: '/new'
+      views:
+        "content@":
+          templateUrl: 'projects/newProject.jade'
+        
     ]
 
     angular.forEach states, (state) ->
