@@ -39,14 +39,19 @@ define [
               return new MultiProjectLoader()
     ,
       name: 'home.projects.new'
-      label: 'state.home.projects.new.label'
+      label: 'projects.new'
       url: '/new'
       views:
         "content@":
           templateUrl: 'projects/newProject.jade'
-          controller: ($scope, $location, $translate, editorService) ->
+          controller: ($scope, $location, $translate, $state, editorService, Project) ->
             _onSave = () ->
-              console.log 'on save'
+              Project.save({}, $scope.projectContent).$promise.then((s) ->
+                url = 'home.projects.project'
+                params =
+                  pid: $scope.projectContent.name
+                $state.transitionTo url, params, reload: true
+              )
               
             $scope = extend $scope,
               languages: editorService.getLanguages()
@@ -57,12 +62,12 @@ define [
               tooltipSave: $translate.instant 'tooltip.argumentgraph.save'
               tooltipCancel: $translate.instant 'tooltip.cancel'
               tooltipNewProject: $translate.instant 'tooltip.projects.new'
-              projectProperties:
+              projectContent:
                 name: ""
-                title: ""
                 properties:
+                  title: ""
                   description:
-                    en: "a description"
+                    en: ""
                     
             undefined
          

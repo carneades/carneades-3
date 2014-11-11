@@ -13,7 +13,7 @@
             name="name",
             placeholder="{{placeholderName}}",
             type="text",
-            ng-model="projectProperties.name",
+            ng-model="projectContent.name",
             ng-pattern="/^([a-zA-Z]+)$/",
             required)
             
@@ -22,11 +22,11 @@
             name="title",
             placeholder="{{placeholderTitle}}",
             type="text",
-            ng-model="projectProperties.title")
+            ng-model="projectContent.properties.title")
 
         form-group(label-key='projects.metadata.description')
           multilang-hallo-editor(
-            ng-model='projectProperties.description', 
+            ng-model='projectContent.properties.description', 
             languages='languages', 
             name='text')
             
