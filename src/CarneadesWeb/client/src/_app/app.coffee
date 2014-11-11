@@ -5,104 +5,47 @@
 
 #global define
 define [
-  'require',
-  "angular",
-  "angular-bootstrap",
-  "angular-ui-router",
-  "angular-ui-utils",
-  "angular-ui-slider",
-  "angular-ui-select",
-  "projects/projectsModule",
-  "lican/licanModule",
-  "admin/adminModule",
-  "appStates",
-  "appControllers",
-  "common/directives/breadcrumb/breadcrumb",
-  "common/providers/css-injector",
-  "common/directives/page-navigation/page-navigation",
-  "templates/app",
-  "angular-translate",
-  "angular-translate-loader-static-files",
-  "common/directives/svg-include",
-  "common/directives/markdown/markdown",
-  "common/directives/share/share",
-  'common/directives/editor/editor',
-  'common/resources/themes',
-  'showdown',
-  'hallo',
-  'to-markdown',
-  'jquery',
-  'angular-capitalize-filter',
-  'codemirror',
-  'codemirror-clj',
-  'codemirror-addon/edit/matchbrackets',
-  'codemirror-addon/edit/closebrackets',
-  'angular-ui-codemirror',
+  'require'
+  "angular"
+  'root'
+  "angular-bootstrap"
+  "angular-ui-router"
+  "angular-ui-utils"
+  "angular-ui-slider"
+  "angular-ui-select"
+  "projects/projectsModule"
+  "lican/licanModule"
+  "admin/adminModule"
+  "appStates"
+  "appControllers"
+  "common/directives/breadcrumb/breadcrumb"
+  "common/providers/css-injector"
+  "common/directives/page-navigation/page-navigation"
+  "templates/app"
+  "angular-translate"
+  "angular-translate-loader-static-files"
+  "common/directives/svg-include"
+  "common/directives/markdown/markdown"
+  "common/directives/share/share"
+  'common/directives/editor/editor'
+  'common/resources/themes'
+  'showdown'
+  'hallo'
+  'to-markdown'
+  'jquery'
+  'angular-capitalize-filter'
+  'codemirror'
+  'codemirror-clj'
+  'codemirror-addon/edit/matchbrackets'
+  'codemirror-addon/edit/closebrackets'
+  'angular-ui-codemirror'
   'angular-selectize'
-], (require, angular) ->
+  'utils'
+], (require, angular, cn) ->
+  carneades = cn.carneades
   window.CodeMirror = require 'codemirror'
-  angular.module("app", [
-    "ui.bootstrap",
-    'ui.utils',
-    'ui.select',
-    'ui.codemirror',
-    "ui.carneades.breadcrumb",
-    'ui.carneades.share',
-    'ui.carneades.editor',
-    "ui.slider",
-    "directives.pagenav",
-    "directives.svg.include",
-    "ui.router",
-    "css.injector",
-    "app.states",
-    "app.controllers",
-    "templates.app",
-    "projects.module",
-    "lican.module",
-    "admin.module",
-    "pascalprecht.translate",
-    'markdown',
-    'angular-capitalize-filter',
-    'resources.themes',
-    'selectize'
-  ])
 
-  .run ($rootScope, $state, $stateParams, ThemeLoader) ->
-    $rootScope.$state = $state
-    $rootScope.$stateParams = $stateParams
-
-    $rootScope.$on '$stateChangeStart', (e, to) ->
-      $rootScope.viewLoading = true
-
-    $rootScope.$on '$stateChangeSuccess', (e, to) ->
-      $rootScope.viewLoading = false
-
-    $rootScope.$watch '$stateParams.pid', (val) ->
-      if $state.current.data and $state.current.data.theme
-        val = $state.current.data.theme
-
-      if val
-        theme = new ThemeLoader({pid: val, did: 'footer.tpl'})
-        theme.then((theme) ->
-          i = 0
-          data = []
-          while theme[i]
-            data.push theme[i]
-            i = i + 1
-          $rootScope.footer = data.join ''
-        )
-
-        banner = new ThemeLoader({pid: val, did: 'banner.tpl'})
-        banner.then((banner) ->
-          bi = 0
-          bannerData = []
-          while banner[bi]
-            bannerData.push banner[bi]
-            bi = bi + 1
-          $rootScope.banner = bannerData.join ''
-        )
-
-  .config((
+  configure = (
     $urlRouterProvider,
     $cssProvider,
     $stateProvider,
@@ -146,4 +89,87 @@ define [
     $urlRouterProvider.when '', '/projects'
     # disable autoscrolling on ui-views
     $uiViewScrollProvider.useAnchorScroll()
-  )
+
+
+  init = ($rootScope, $state, $stateParams, ThemeLoader) ->
+    $rootScope.$state = $state
+    $rootScope.$stateParams = $stateParams
+
+    $rootScope.$on '$stateChangeStart', (e, to) ->
+      $rootScope.viewLoading = true
+
+    $rootScope.$on '$stateChangeSuccess', (e, to) ->
+      $rootScope.viewLoading = false
+
+    $rootScope.$watch '$stateParams.pid', (val) ->
+
+      onThemeSuccess = (data) ->
+        $rootScope.footer = carneades.readData data
+
+      onThemeError = (data) ->
+        console.log 'theme could not be loaded...'
+
+      onBannerSuccess = (data) ->
+        $rootScope.banner = carneades.readData data
+
+      onBannerError = (data) ->
+        console.log 'banner could not be loaded...'
+
+      if $state.current.data and $state.current.data.theme
+        val = $state.current.data.theme
+        theme = new ThemeLoader({pid: val, did: 'footer.tpl'})
+        theme.then onThemeSuccess, onThemeError
+
+        banner = new ThemeLoader({pid: val, did: 'banner.tpl'})
+        banner.then onBannerSuccess, onBannerError
+
+
+  modules = [
+    "ui.bootstrap"
+    'ui.utils'
+    'ui.select'
+    'ui.codemirror'
+    "ui.carneades.breadcrumb"
+    'ui.carneades.share'
+    'ui.carneades.editor'
+    "ui.slider"
+    "directives.pagenav"
+    "directives.svg.include"
+    "ui.router"
+    "css.injector"
+    "app.states"
+    "app.controllers"
+    "templates.app"
+    "projects.module"
+    "lican.module"
+    "admin.module"
+    "pascalprecht.translate"
+    'markdown'
+    'angular-capitalize-filter'
+    'resources.themes'
+    'selectize'
+  ]
+
+  module = angular.module 'app', modules
+
+
+  module.config [
+    '$urlRouterProvider'
+    '$cssProvider'
+    '$stateProvider'
+    '$provide'
+    '$translateProvider'
+    '$uiViewScrollProvider'
+    'markdownConverterProvider'
+    '$locationProvider'
+    configure
+  ]
+
+
+  module.run [
+    '$rootScope'
+    '$state'
+    '$stateParams'
+    'ThemeLoader'
+    init
+  ]

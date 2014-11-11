@@ -4,43 +4,65 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-define ['angular',
-  'common/services/i18nNotifications',
-  'common/services/httpRequestTracker',
+define [
+  'angular'
+  'root'
+  'classes'
+  'utils'
+  'common/services/i18nNotifications'
+  'common/services/httpRequestTracker'
   'common/resources/themes'
-], (angular) ->
+  'bucketnav/nav'
+], (angular, cn) ->
   "use strict"
-  extend = (object, properties) ->
-    for key, val of properties
-      object[key] = val
-    object
 
-  angular.module('app.controllers', [
-    'services.i18nNotifications',
-    'services.httpRequestTracker',
+  carneades = cn.carneades
+
+  modules = [
+    'services.i18nNotifications'
+    'services.httpRequestTracker'
     'resources.themes'
-  ])
+    'ui.carneades.bucketnav'
+  ]
 
-  .service 'themeService', () ->
-    @setTheme = (scope, theme, fallback = 'default') ->
+  module = angular.module 'app.controllers', modules
+
+  class ThemeService extends carneades.Service
+    @.$inject = []
+
+    constructor: () ->
+      super()
+
+    setTheme: (scope, theme, fallback = 'default') ->
       scope.theme = theme || fallback
-    return @
 
-  .directive 'cssInject', () ->
-    restrict: 'E'
-    replace: true
-    template: '<link rel="stylesheet" ng-href="api/projects/{{theme}}/theme/css/{{theme}}.css" media="screen"/>'
-    scope:
-      theme: '=?'
-    controller: ($scope, $state, themeService) ->
-      $scope.$watch 'theme', () ->
-        theme = $scope.theme
+
+  module.service '$cnTheme', ThemeService
+
+
+  cssDirective = ($state, $cnTheme) ->
+    link = (scope) ->
+      scope.$watch 'theme', () ->
+        theme = scope.theme
         if $state.current.data and $state.current.data.theme
           theme = $state.current.data.theme
-        themeService.setTheme $scope, theme
+        $cnTheme.setTheme scope, theme
 
-  .directive 'head', ($rootScope, $stateParams, $compile, $state) ->
-    linker = (scope, elem) ->
+    return {
+      restrict: 'E'
+      replace: true
+      template: '<link rel="stylesheet" ng-href="api/projects/{{theme}}/theme/css/{{theme}}.css" media="screen"/>'
+      scope:
+        theme: '=?'
+      link: link
+    }
+
+
+  module.directive 'cssInject', cssDirective
+
+
+  headDirective = ($rootScope, $stateParams, $compile, $state) ->
+    link = (scope, elem) ->
       html = '<link rel="stylesheet" ng-repeat="(routeCtrl, cssUrl) in routeStyles" ng-href="{{cssUrl}}" />'
       elem.append($compile(html)(scope))
       scope.routeStyles = {}
@@ -51,7 +73,6 @@ define ['angular',
             fromState.css = [fromState.data.css]
           angular.forEach fromState.data.css, (sheet) ->
             delete scope.routeStyles[sheet]
-
         if toState.data?.css
           unless Array.isArray toState.data.css
             toState.css = [toState.data.css]
@@ -60,17 +81,37 @@ define ['angular',
 
     return {
       restrict: 'E'
-      link: linker
+      link: link
     }
 
-  .controller 'SubnavController', ($scope, $state) ->
 
-    update = () ->
-      builder = (params...) ->
-        create = (label, state, clazz) ->
+  module.directive 'head', headDirective
+
+
+  #############################################################################
+  ## SubnavController
+  #  Updates the page navigation when the event '$stateChangeSuccess' has been
+  #  fired. The controller resolves the state names which are provided by the
+  #  current state and collects them in a new data structure called commands.
+  #############################################################################
+  class SubnavController extends carneades.Controller
+    @.$inject = [
+      '$scope'
+      '$state'
+    ]
+
+    constructor: (@scope, @state) ->
+      @scope.$on '$stateChangeSuccess', =>
+       @.update()
+
+      @.update()
+
+    update: ->
+      builder = (params...) =>
+        create = (label, state, clazz) =>
           return {label: label, state: state, clazz: clazz}
 
-        createCommands = ($state,states...) ->
+        createCommands = ($state,states...) =>
           commands = []
           for state in states
             label = $state.get(state).label
@@ -81,33 +122,71 @@ define ['angular',
           #if commands.length > 0 then commands.pop()
           return commands
 
-        return ($state) -> return createCommands($state, params...)
+        return ($state) => return createCommands($state, params...)
 
-      commands = []
-      if $state.current.data and $state.current.data.commands
-        _commands = builder($state.current.data.commands...) $state
-      $scope.commands = _commands
+      _commands = []
+      if @state.current.data and @state.current.data.commands
+        _commands = builder(@state.current.data.commands...) @state
+      @scope.commands = _commands
 
-    $scope.$on '$stateChangeSuccess', ->
-      update()
 
-    update()
+  module.controller 'SubnavController', SubnavController
 
-    return @
 
-  .controller 'HeaderCtrl', ($scope, $location, $state, breadcrumbService) ->
-    $scope.viewLoading = true
-    _openView = (name, params) -> $state.go name, params
+  #############################################################################
+  ## HeaderController
+  #
+  #############################################################################
+  class HeaderController extends carneades.Controller
+    @.$inject = [
+      '$scope'
+      '$location'
+      '$state'
+      'breadcrumbService'
+      '$cnBucket'
+    ]
 
-    _getReversedNavigationStates = (states) ->
+    constructor: (@scope, @location, @state, @breadcrumbService, @cnBucket) ->
+      @scope.$on '$stateChangeSuccess', =>
+        #@breadcrumbService.updateStates()
+        @cnBucket.append @state
+        @.update()
+
+        data = @state.$current.self.data
+        _isSubNavDisplayed = data and data.commands and data.commands.length > 0
+
+        # In order to update the list passed to ng-repeat properly
+        #_navigatedStates = angular.copy @breadcrumbService.getStates()
+        _navigatedStates = angular.copy @cnBucket.getBucketItems()
+        _subNavStatesReversed = @._getReversedNavigationStates _navigatedStates
+
+        @scope = carneades.extend @scope,
+          navigatedStates: _navigatedStates
+          bcTop: @breadcrumbService.peek()
+          subNavStatesReversed: _subNavStatesReversed
+          navBcCollapsed: true
+          navCollapsed: true
+          hasHistory: !@cnBucket.isEmpty()
+          #hasHistory: !@breadcrumbService.isEmpty()
+          isSubNavDisplayed: _isSubNavDisplayed
+
+      @scope = carneades.extend @scope,
+        openView: @._openView
+        hasHistory: false
+
+      @.update()
+
+    _openView: (name, params) -> @state.go name, params
+
+    _getReversedNavigationStates: (states) ->
       return states.slice(0, states.length-1).reverse()
 
-    update = () ->
-      builder = (params...) ->
-        create = (label, state, clazz) ->
+    update: ->
+      builder = (params...) =>
+        create = (label, state, clazz) =>
           return {label: label, state: state, clazz: clazz}
 
-        createCommands = ($state,states...) ->
+        createCommands = ($state,states...) =>
           commands = []
           for state in states
             label = $state.get(state).label
@@ -118,38 +197,12 @@ define ['angular',
           #if commands.length > 0 then commands.pop()
           return commands
 
-        return ($state) -> return createCommands($state, params...)
+        return ($state) => return createCommands($state, params...)
 
-      commands = []
-      if $state.current.data and $state.current.data.commands
-        _commands = builder($state.current.data.commands...) $state
-      $scope.commands = _commands
+      _commands = []
+      if @state.current.data and @state.current.data.commands
+        _commands = builder(@state.current.data.commands...) @state
+      @scope.commands = _commands
 
-    $scope.$on '$stateChangeSuccess', ->
-      breadcrumbService.updateStates()
-      update()
 
-      data = $state.$current.self.data
-      _isSubNavDisplayed = data and data.commands and data.commands.length > 0
-
-      # In order to update the list passed to ng-repeat properly
-      _navigatedStates = angular.copy breadcrumbService.getStates()
-      _subNavStatesReversed = _getReversedNavigationStates _navigatedStates
-
-      $scope = extend $scope,
-        navigatedStates: _navigatedStates
-        bcTop: breadcrumbService.peek()
-        subNavStatesReversed: _subNavStatesReversed
-        navBcCollapsed: true
-        navCollapsed: true
-        hasHistory: !breadcrumbService.isEmpty()
-        isSubNavDisplayed: _isSubNavDisplayed
-        viewLoading: false
-
-    $scope = extend $scope,
-      openView: _openView
-      hasHistory: false
-
-    update()
-
-    return @
+  module.controller 'HeaderCtrl', HeaderController

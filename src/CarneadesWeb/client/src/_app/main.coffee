@@ -64,6 +64,14 @@ require.config
     "angular-selectize":
       deps: ["angular", "jquery", "jquery-ui", "selectize"]
 
+
+    "utils":
+      deps: ['root']
+
+    "classes":
+      deps: ['root']
+
+
   paths:
     "angular": "./libs/angular"
     'perfect-scrollbar': './libs/perfect-scrollbar/perfect-scrollbar.min'
@@ -95,5 +103,9 @@ require.config
     'codemirror-addon': './libs/codemirror/addon'
     'selectize': './libs/selectize'
     'angular-selectize': './libs/angular-selectize'
+    'root': './root'
+    'utils': './utils'
+    'classes': './classes'
+    'app': './app'
 
   deps: ["./bootstrap"]

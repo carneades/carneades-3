@@ -9,7 +9,7 @@ define [
 
   .controller 'OutlineRootCtrl', ($scope, $state, $stateParams,
     $translate, $location, $window, ag, tproject, scroll, tpid, markos) ->
-      
+
     $stateParams.tpid = tpid
     $scope = angular.extend $scope,
       project: ag
@@ -30,7 +30,7 @@ define [
         _text = escape(ag.title)
         $window.open("https://twitter.com/intent/tweet?url=#{_url}&text=#{_text}");
         return true
-        
+
     return @
 
   .controller 'OutlineIssuesCtrl', ($scope, issues) ->

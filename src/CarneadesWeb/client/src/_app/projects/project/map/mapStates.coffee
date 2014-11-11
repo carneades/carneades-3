@@ -15,7 +15,7 @@ define [
       label: "state.home.projects.project.map.label"
       url: "/:db/map"
       data:
-        commands: ['home.projects.project.outline','home.projects.project.theory']
+        commands: ['home.projects.project.outline']
       views:
         "subnav@":
           template: '<page-navigation-full ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-full>'

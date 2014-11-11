@@ -1,0 +1,5 @@
+define [], () ->
+
+  @carneades = carneades = {}
+
+  return @
