@@ -8,7 +8,11 @@ define [
   'angular',
   '../common/resources/projects'
 ], (angular) ->
-  "use strict"
+  extend = (object, properties) ->
+    for key, val of properties
+      object[key] = val
+    object
+
   angular.module('projects.states', [
     'resources.projects'
   ])
@@ -21,10 +25,30 @@ define [
       views:
         "content@":
           templateUrl: 'projects/projects.jade'
-          controller: ($scope, $location, $translate, projects, editorService) ->
+          controller: ($scope, $location, $translate, projects) ->
             $scope = extend $scope,
               projects: projects
-              ag: ag
+              tooltipNewProject: $translate.instant 'tooltip.projects.new'
+              copylink: (pid) ->
+                window.prompt("Copy to clipboard: Ctrl+C, Enter", $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/" + $scope.$state.href 'home.projects.project', pid: pid)
+            undefined
+         
+
+          resolve:
+            projects: (MultiProjectLoader) ->
+              return new MultiProjectLoader()
+    ,
+      name: 'home.projects.new'
+      label: 'state.home.projects.new.label'
+      url: '/new'
+      views:
+        "content@":
+          templateUrl: 'projects/newProject.jade'
+          controller: ($scope, $location, $translate, editorService) ->
+            _onSave = () ->
+              console.log 'on save'
+              
+            $scope = extend $scope,
               languages: editorService.getLanguages()
               onSave: _onSave
               onCancel: editorService.onCancel
@@ -39,21 +63,9 @@ define [
                 properties:
                   description:
                     en: "a description"
-              copylink: (pid) ->
-                window.prompt("Copy to clipboard: Ctrl+C, Enter", $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/" + $scope.$state.href 'home.projects.project', pid: pid)
+                    
+            undefined
          
-
-          resolve:
-            projects: (MultiProjectLoader) ->
-              return new MultiProjectLoader()
-    ,
-      name: 'home.projects.new'
-      label: 'state.home.projects.new.label'
-      url: '/new'
-      views:
-        "content@":
-          templateUrl: 'projects/newProject.jade'
-        
     ]
 
     angular.forEach states, (state) ->
