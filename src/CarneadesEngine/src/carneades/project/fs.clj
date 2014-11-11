@@ -194,7 +194,7 @@ representing the project."
 
 (defn create-project-files
   "Creates a new project in the projects' directory"
-  [project]
+  [project props]
   (let [docpath (str (@properties :projects-directory) file-separator
                      project file-separator
                      documents-directory)
@@ -204,7 +204,7 @@ representing the project."
         properties-path (get-properties-path project)]
     (fs/mkdirs docpath)
     (fs/mkdir theoriespath)
-    (spit properties-path (pr-str default-properties))))
+    (spit properties-path (pr-str (merge default-properties props)))))
 
 (defn delete-project
   "Delete project from project's directory."

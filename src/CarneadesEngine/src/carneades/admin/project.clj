@@ -6,7 +6,8 @@
 (ns ^{:doc "Administration of the projects."}
   carneades.admin.project
   (:require [carneades.admin.db :as db]
-            [carneades.project.fs :as pfs]))
+            [carneades.project.fs :as pfs]
+            [taoensso.timbre :as timbre :refer [debug spy]]))
 
 (def default-properties
   {:title "A title"
@@ -15,6 +16,8 @@
 
 (defn create-project
   "Creates a new project, its files and databases."
-  [name username password]
-  (pfs/create-project-files name)
-  (db/create-project-dbs name username password))
+  ([name username password]
+     (create-project name username password {}))
+  ([name username password properties]
+     (pfs/create-project-files name properties) 
+     (db/create-project-dbs name username password)))

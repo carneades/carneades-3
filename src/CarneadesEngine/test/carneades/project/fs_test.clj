@@ -19,7 +19,7 @@
 (defn create-tmp-project
   []
   (reset! state (initial-state-value))
-  (project/create-project-files (:project-name @state)))
+  (project/create-project-files (:project-name @state) {}))
 
 (defn delete-tmp-project
   []
