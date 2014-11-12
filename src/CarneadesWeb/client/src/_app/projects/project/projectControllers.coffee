@@ -61,7 +61,7 @@ define [
       Project.newArgumentGraph({pid: $stateParams.pid}, project).$promise.then((data) ->
         params = pid: $stateParams.pid, db: $scope.ag.name
         url = 'home.projects.project.outline'
-        $state.transitionTo url, params, relaod: true
+        $state.transitionTo url, params, reload: true
       )
 
     $scope = extend $scope,
