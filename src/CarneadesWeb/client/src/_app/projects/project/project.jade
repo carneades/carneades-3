@@ -12,12 +12,12 @@
           tooltip-append-to-body="true",
           tooltip-placement="right",
           ng-click="newArgumentGraph()")
-          i.fa.fa-plus-square-o: span new graph
+          i.fa.fa-plus-square-o: span {{ 'projects.newag' | translate}}
 
         button.btn.btn-default.btn-small(
           type='button',
           ng-click='copyLink()')
-          i.fa.fa-copy: span copy link
+          i.fa.fa-copy: span {{ 'projects.copylink' | translate}}
 
       .section#description
         markdown(strip='true',ng-model='project.description')
