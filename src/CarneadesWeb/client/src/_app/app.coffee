@@ -42,7 +42,6 @@ define [
   'angular-selectize'
   'utils'
 ], (require, angular, cn) ->
-  carneades = cn.carneades
   window.CodeMirror = require 'codemirror'
 
   configure = (
@@ -61,7 +60,13 @@ define [
         type: "lang"
         regex: "\\[@([^\\,]+)[^\\]]*\\]"
         replace: (match, citation_key) ->
-          return "<a href='/carneades/#/projects/%PID%/%DB%/outline?scrollTo=#{citation_key}'>#{match}</a>"
+          return [
+            "<a "
+            "href='/carneades/#/projects/%PID%/%DB%/outline"
+            "?scrollTo=#{citation_key}'>"
+            "#{match}"
+            "</a>"
+          ].join ''
       ,
         type: "output"
         filter: (source) ->
@@ -100,28 +105,6 @@ define [
 
     $rootScope.$on '$stateChangeSuccess', (e, to) ->
       $rootScope.viewLoading = false
-
-    $rootScope.$watch '$stateParams.pid', (val) ->
-
-      onThemeSuccess = (data) ->
-        $rootScope.footer = carneades.readData data
-
-      onThemeError = (data) ->
-        console.log 'theme could not be loaded...'
-
-      onBannerSuccess = (data) ->
-        $rootScope.banner = carneades.readData data
-
-      onBannerError = (data) ->
-        console.log 'banner could not be loaded...'
-
-      if $state.current.data and $state.current.data.theme
-        val = $state.current.data.theme
-        theme = new ThemeLoader({pid: val, did: 'footer.tpl'})
-        theme.then onThemeSuccess, onThemeError
-
-        banner = new ThemeLoader({pid: val, did: 'banner.tpl'})
-        banner.then onBannerSuccess, onBannerError
 
 
   modules = [

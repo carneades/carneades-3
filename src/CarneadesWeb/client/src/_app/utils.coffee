@@ -20,7 +20,7 @@ define [
     val
 
   readData = (data) ->
-    bis = 0
+    bi = 0
     buffer = []
     while data[bi]
       buffer.push data[bi]

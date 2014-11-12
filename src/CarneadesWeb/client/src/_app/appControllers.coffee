@@ -27,46 +27,88 @@ define [
 
   module = angular.module 'app.controllers', modules
 
-  class ThemeService extends carneades.Service
-    @.$inject = []
-
-    constructor: () ->
-      super()
-
-    setTheme: (scope, theme, fallback = 'default') ->
-      scope.theme = theme || fallback
+  module.filter 'theme', () ->
+    return (val) ->
+      if val? then val else 'default'
 
 
-  module.service '$cnTheme', ThemeService
-
-
-  cssDirective = ($state, $cnTheme) ->
-    link = (scope) ->
-      scope.$watch 'theme', () ->
-        theme = scope.theme
-        if $state.current.data and $state.current.data.theme
-          theme = $state.current.data.theme
-        $cnTheme.setTheme scope, theme
-
-    return {
-      restrict: 'E'
-      replace: true
-      template: '<link rel="stylesheet" ng-href="api/projects/{{theme}}/theme/css/{{theme}}.css" media="screen"/>'
-      scope:
-        theme: '=?'
-      link: link
-    }
-
+  cssDirective = ($state) ->
+    restrict: 'E'
+    replace: true
+    scope:
+      theme: '=?'
+    template: """
+      <link
+        rel="stylesheet"
+        ng-href="api/projects/{{name | theme}}/theme/css/{{name | theme}}.css"
+        media="screen" />
+    """
+    link: (scope, elm) ->
+      scope.$watch 'theme', (newVal) ->
+        scope.name = $state.current.data?.theme or newVal
 
   module.directive 'cssInject', cssDirective
 
 
+  footerDirective = ($state, $stateParams, ThemeLoader) ->
+    restrict: 'E'
+    replace: true
+    scope:
+      theme: '=?'
+    template: "<div ng-bind-html='footerTpl'></div>"
+    link: (scope, elm) ->
+      onLoadingFooterSuccess = (data) ->
+        scope.footerTpl = carneades.readData data
+
+      onLoadingFooterError = (data) ->
+        scope.footerTpl = ''
+        console.log 'theme could not be loaded...'
+
+      scope.$watch 'theme', (newVal, oldVal) ->
+        val = $state.current.data?.theme or newVal or 'default'
+        theme = new ThemeLoader pid: val, did: 'footer.tpl'
+        theme.then onLoadingFooterSuccess, onLoadingFooterError
+
+  module.directive 'footerLoader', footerDirective
+
+
+  bannerDirective = ($state, $stateParams, ThemeLoader) ->
+    restrict: 'E'
+    replace: true
+    scope:
+      theme: '=?'
+    template: "<div ng-bind-html='bannerTpl'></div>"
+    link: (scope, elm) ->
+      onLoadingBannerSuccess = (data) ->
+        scope.bannerTpl = carneades.readData data
+
+      onLoadingBannerError = (data) ->
+        scope.bannerTpl = ''
+        console.log 'theme could not be loaded...'
+
+      scope.$watch 'theme', (newVal, oldVal) ->
+        val = $state.current.data?.theme or newVal or 'default'
+        theme = new ThemeLoader pid: val, did: 'banner.tpl'
+        theme.then onLoadingBannerSuccess, onLoadingBannerError
+
+
+  module.directive 'bannerLoader', bannerDirective
+
+
   headDirective = ($rootScope, $stateParams, $compile, $state) ->
     link = (scope, elem) ->
-      html = '<link rel="stylesheet" ng-repeat="(routeCtrl, cssUrl) in routeStyles" ng-href="{{cssUrl}}" />'
+      html = [
+        '<link '
+        'rel="stylesheet" '
+        'ng-repeat="(routeCtrl, cssUrl) in routeStyles" '
+        'ng-href="{{cssUrl}}" '
+        '/>'
+      ].join ''
+
       elem.append($compile(html)(scope))
       scope.routeStyles = {}
-      $rootScope.$on '$stateChangeStart', (event, toState, toParams, fromState, fromParams) ->
+      $rootScope.$on '$stateChangeStart', (
+      event, toState, toParams, fromState, fromParams) ->
         scope.routeStyles = {}
         if fromState.data?.css
           unless Array.isArray fromState.data.css
@@ -102,7 +144,7 @@ define [
 
     constructor: (@scope, @state) ->
       @scope.$on '$stateChangeSuccess', =>
-       @.update()
+        @.update()
 
       @.update()
 
