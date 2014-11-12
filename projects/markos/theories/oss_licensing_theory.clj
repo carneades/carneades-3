@@ -198,7 +198,7 @@ project."})
                  ; (a/pm '(lic:licenseTemplate ?W2 ?T2))
                                         ; (a/pm '(ReciprocalLicenseTemplate ?T2))
                   ]
-       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
+      ;;  :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
        )
 
       
