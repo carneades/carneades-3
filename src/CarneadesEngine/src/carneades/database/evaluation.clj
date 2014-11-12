@@ -10,7 +10,7 @@
         ;; there is a problem with the aspic evaluation
         ;; [carneades.engine.aspic :only [aspic-grounded]]
         [carneades.engine.caes :only [caes]])
-  (:require [carneades.database.db :as db]
+    (:require [carneades.database.db :as db]
             [carneades.database.argument-graph :as ag-db]))
 
 (defn evaluate-graph'

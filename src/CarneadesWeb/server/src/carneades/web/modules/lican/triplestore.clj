@@ -39,7 +39,7 @@
 (defn build-names-map
   "Builds a map from entities' uris to names."
   [sliteral endpoint repo-name markos-namespaces]
-  (let [uris (filter (every-pred symbol? namespace/uri?) (tree-seq seq? seq sliteral))]
+  (let [uris (set (filter (every-pred symbol? namespace/uri?) (tree-seq seq? seq sliteral)))]
     (reduce (fn [k uri]
               (if-let [name (get-entity-name endpoint repo-name markos-namespaces uri)]
                 (assoc k uri name)

@@ -415,8 +415,7 @@
   [filepath]
   (deref (load-file filepath)))
 
-;; ensure we don't load twice the same namespace
-(def load-theory (memoize load-theory*))
+(def load-theory load-theory*)
 
 (defn- scheme-index-key
   "term -> symbol
