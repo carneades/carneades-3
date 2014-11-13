@@ -152,6 +152,14 @@ project."})
                                     :negative "%s is not an implementation of the %s API."
                                     :question "Is %s an implementation of the %s API?")})
 
+         (t/make-role
+          :symbol 'http://www.markosproject.eu/ontologies/software#previousVersion
+          :forms {:en (t/make-form :positive "A previous version of  %s is %s."
+                                   :negative "It is not the case that
+                                   a previous version of %s is %s."
+                                   :question "Is it the case that a
+                                   previous version of %s is %s?")})
+
           ) ; end of make-language
 
           
@@ -171,62 +179,21 @@ project."})
                                :description {:en ""})
 
      :schemes
-     [ 
-      (t/make-scheme
-       :id 'default-licensing-rule
-       :weight 0.25
-       :header (dc/make-metadata
-                :title "Default licensing"
-                :description {:en "Presumably, a work may be licensed
-                   using any license template."})
-       :conclusion '(copyright:mayBeLicensedUsing ?W ?T)
-       :premises [;; (a/pm '(lic:CopyrightLicenseTemplate ?T))
-                  ])
+     [
 
       (t/make-scheme
-       :id 'reciprocity-rule
+       :id 'software-works
        :header (dc/make-metadata
-                :title "Reciprocity"
-                :description {:en "A work W1 may not use a license
-                template T1 if the work is derived from a work W2
-                licensed using a reciprocal license template T2,
-                unless T1 is compatible with T2."})
-       :pro false
-       :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
-       :premises [ ;; (a/pm '(lic:CopyrightLicenseTemplate ?T1))
-                  (a/pm '(copyright:derivedFrom ?W1 ?W2))
-                 ; (a/pm '(lic:licenseTemplate ?W2 ?T2))
-                                        ; (a/pm '(ReciprocalLicenseTemplate ?T2))
-                  ]
-      ;;  :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
-       )
-
-      
-      (t/make-scheme
-       :id 'protected-software
-       :header (dc/make-metadata
-                :title "Copyright protection of software"
-                :description {:en "Software is work protected by copyright."})
+                :title "Copyright protection of software releases"
+                :description {:en "A software release is a work
+                protected by copyright."})
        :conclusion '(copyright:ProtectedWork ?SE)
-       :premises [(a/pm '(soft:SoftwareEntity ?SE))])
+       :premises [(a/pm '(soft:SoftwareRelease ?SE))])
 
       (t/make-scheme
        :id 'use-by-derivation
        :conclusion '(copyright:workUsed (derivation ?W1 ?W2) ?w2)
-       :premises [(a/pm '(soft:usedSoftwareEntity ?W1 ?W2))])
-
-      (t/make-scheme
-       :id 'software-entity-license-template-rule
-       :header (dc/make-metadata
-                :title "Software Entity License Template"
-                :description {:en "Presumably, the license template
-                applied to a software entity is the same as the license
-                template applied to the project of the provenance
-                release of the entity."})
-       :conclusion '(lic:licenseTemplate ?SE ?T)
-       :premises [(a/pm '(soft:provenanceRelease ?SE ?R))
-                  (a/pm '(soft:releasedSoftware ?P ?R))
-                  (a/pm '(lic:licenseTemplate ?P ?T))])
+       :premises [(a/pm '(copyright:derivedFrom ?W1 ?W2))])
 
       (t/make-scheme
        :id 'software-release-license-template-rule
@@ -239,17 +206,45 @@ project."})
        :premises [(a/pm '(soft:releasedSoftware ?P ?R))
                   (a/pm '(lic:licenseTemplate ?P ?T))])
 
-      
+ 
       (t/make-scheme
-       :id 'default-derivative-software-rule
+       :id 'default-licensing-rule
        :weight 0.25
        :header (dc/make-metadata
-                :title "Derivative Software Works"
-                :description {:en "As a general rule, any use of a
-                software entity, SE1, by another software entity, S2,
-                causes S2 to be a derivative work of S1."})
-       :conclusion '(copyright:derivedFrom ?SE2 ?SE1)
-       :premises [(a/pm '(soft:usedSoftwareEntity ?SE2 ?SE1))])
+                :title "Default licensing"
+                :description {:en "Presumably, a work may be licensed
+                   using any license template."})
+       :conclusion '(copyright:mayBeLicensedUsing ?W ?T)
+       :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T))])
+
+      (t/make-scheme
+       :id 'reciprocity-rule
+       :header (dc/make-metadata
+                :title "Reciprocity"
+                :description {:en "A work W1 may not use a license
+                template T1 if the work is derived from a work W2
+                licensed using a reciprocal license template T2,
+                unless T1 is compatible with T2."})
+       :pro false
+       :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
+       :premises [(a/pm '(copyright:derivedFrom ?W1 ?W2))
+                  (a/pm '(lic:licenseTemplate ?W2 ?T2))
+                  (a/pm '(ReciprocalLicenseTemplate ?T2))]
+       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
+
+      ;; 
+      ;; (t/make-scheme
+      ;;  :id 'default-derivative-work-rule
+      ;;  :weight 0.25
+      ;;  :header (dc/make-metadata
+      ;;           :title "Derivative Works"
+      ;;           :description {:en "As a general rule, any use of a
+      ;;           work, R1, by another work, R2,
+      ;;           causes R2 to be a derivative work of R1."})
+      ;;  :conclusion '(copyright:derivedFrom ?R1 ?R2)
+      ;;  :premises [(a/pm '(top:provenanceRelease ?E1 ?R1))
+      ;;             (a/pm '(top:usedEntity ?E1 ?E2))
+      ;;             (a/pm '(top:provenanceRelease ?E2 ?R2))])
 
       (t/make-scheme
        :id 'compatible-reflexive-rule
@@ -260,108 +255,59 @@ project."})
        :conclusion '(copyright:compatibleWith ?T1 ?T1)
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))])
 
-
       (t/make-scheme
-       :id 'fsf-theory-of-linking
-       :header (dc/make-metadata
-                :title "FSF theory of linking"
-                :description {:en "The Free Software Foundation claims
-                that linking creates derivative works."})
-       :conclusion '(copyright:derivedFrom ?W1 ?W2)
-       :premises [(a/pm '(linked ?W1 ?W2))])
-
-      (t/make-scheme
-       :id 'rosen-theory-of-linking
-       :header (dc/make-metadata 
-                :title "Lawrence Rosen theory of linking"
-                :description {:en "Lawrence Rosen claims that linking
-                does not create derivate works."})
-       :pro false
-       :conclusion '(copyright:derivedFrom ?W1 ?W2)
-       :premises [(a/pm '(linked ?W1 ?W2))])
-
-      ;; (t/make-scheme
-      ;;  :id 'linked-library-rule
-      ;;  :header (dc/make-metadata 
-      ;;           :title "Linking of libraries contained in software releases"
-      ;;           :description {:en "Presumably libraries contained in a
-      ;;           software release are linked to by the released
-      ;;           software."})
-      ;;  :conclusion '(linked ?REL ?LIB)
-      ;;  :premises [(a/pm '(soft:SoftwareRelease ?REL))
-      ;;             (a/pm '(top:containedEntity ?REL ?LIB))
-      ;;             (a/pm '(soft:Library ?LIB))])
-
-     (t/make-scheme
-       :id 'contained-entity-rule
-       :weight 0.25
-       :header (dc/make-metadata 
-                :title "Derivation from contained software entities"
-                :description {:en "Presumably a container uses the
-                software entities it contains."})
-       :conclusion '(soft:usedSoftwareEntity ?C ?E)
-       :premises [(a/pm '(top:containedEntity ?C ?E))])
-
-     (t/make-scheme
        :id 'dynamically-linked-library-rule
        :header (dc/make-metadata 
                 :title "Dynamic linking"
-                :description {:en "Dynamic linking is a form of
-                linking."})
-       :conclusion '(linked ?REL ?LIB)
-       :premises [(a/pm '(soft:dynamicallyLinkedEntity ?REL ?LIB))])
+                :description {:en "The Free Software Foundation claims
+                that dynamic linking creates a derivative work."})
+       :conclusion '(copyright:derivedFrom ?R1 ?R2)
+       :premises [(a/pm '(top:provenanceRelease ?E1 ?R1))
+                  (a/pm '(soft:dynamicallyLinkedEntity ?E1 ?E2))
+                  (a/pm '(top:provenanceRelease ?E2 ?R2))])
 
       (t/make-scheme
        :id 'statically-linked-library-rule
        :header (dc/make-metadata 
                 :title "Static linking"
-                :description {:en "Static linking is a form of
-                linking"})
-       :conclusion '(linked ?REL ?LIB)
-       :premises [(a/pm '(soft:staticallyLinkedEntity ?REL ?LIB))])
-
-
-      (t/make-scheme
-       :id 'implementing-language-rule
-       :header (dc/make-metadata 
-                :title "Derivation from Implementation Language"
-                :description {:en "Software is not a derivative work
-                of the programming language used to implement the
-                software."})
-       :pro false
-       :conclusion '(copyright:derivedFrom ?W1 ?W2)
-       :premises [(a/pm '(soft:implementingLanguage ?W1 ?W2))])
-
-      (t/make-scheme
-       :id 'compiler-rule
-       :header (dc/make-metadata 
-                :title "Derivation from Compiler"
-                :description {:en "Object code is not a derivative
-                work of the complier used to create it."})
-       :pro false
-       :conclusion '(copyright:derivedFrom ?W1 ?W2)
-       :premises [(a/pm '(soft:usedCompiler ?W1 ?W2))])
-
-      (t/make-scheme
-       :id 'sas-v-world-programming
-       :pro false
-       :header (dc/make-metadata 
-                :title "SAS Institute v. World Programming"
-                :description {:en "European Court of Justice (ECJ) in
-                SAS Institute Inc. v World Programming Ltd., [2013]
-                EWHC 69 (Ch)."})
-       :conclusion '(copyright:derivedFrom ?W1 ?W2)
-       :premises [(a/pm '(soft:implementedAPI ?W1 ?W2))])
+                :description {:en "The Free Software Foundation claims
+                that static linking creates a derivative work."})
+       :conclusion '(copyright:derivedFrom ?R1 ?R2)
+       :premises [(a/pm '(top:provenanceRelease ?E1 ?R1))
+                  (a/pm '(soft:staticallyLinkedEntity ?E1 ?E2))
+                  (a/pm '(top:provenanceRelease ?E2 ?R2))])
 
       (t/make-scheme
        :id 'oracle-v-google
        :header (dc/make-metadata 
-                :title "Oracle v. Google"
+                :title "Derivation by Implementing an API"
                 :description {:en "Oracle America, Inc. v. Google,
                 Inc., United States Court of Appeals for the Federal
                 Circuit, 2013-1021, -1022, May 9, 2014"})
-       :pro true
-       :conclusion '(copyright:derivedFrom ?W1 ?W2)
-       :premises [(a/pm '(soft:implementedAPI ?W1 ?W2))])
+       :conclusion '(copyright:derivedFrom ?R1 ?R2)
+       :premises [(a/pm '(top:provenanceRelease ?E1 ?R1))
+                  (a/pm '(soft:implementedAPI ?E1 ?E2))
+                  (a/pm '(top:provenanceRelease ?E2 ?R2))])
+
+    (t/make-scheme
+       :id 'derivation-by-forking
+       :header (dc/make-metadata 
+                :title "Derivation by Forking"
+                :description {:en "A fork of a software release is a
+                work derived from the release."})
+       :conclusion '(copyright:derivedFrom ?R1 ?R2)
+       :premises [(a/pm '(soft:softwareFork ?R2 ?R1))])
       
+
+    (t/make-scheme
+     :id 'derivation-by-modification
+     :header (dc/make-metadata 
+              :title "Derivation by Modification"
+              :description {:en "A work created by modifying a work is
+              derived from it. "})
+     :conclusion '(copyright:derivedFrom ?R1 ?R2)
+     :premises [(a/pm '(top:provenanceRelease ?E1 ?R1))
+                (a/pm '(soft:previousVersion ?E1 ?E2))
+                (a/pm '(top:provenanceRelease ?E2 ?R2))])
+
       ])]))
