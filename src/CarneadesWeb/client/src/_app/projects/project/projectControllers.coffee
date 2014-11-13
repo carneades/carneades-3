@@ -22,7 +22,20 @@ define [
       $state.transitionTo 'home.projects.project.new', pid: project.id
 
     _copyLink = () ->
-      window.prompt("Copy to clipboard: Ctrl+C, Enter", $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/" + $scope.$state.href 'home.projects.project', pid: project.id)
+      lnk = [
+        $location.protocol()
+        "://"
+        $location.host()
+        ":"
+        $location.port()
+        "/carneades"
+        $scope.$state.href 'home.projects.project'
+      ].join ''
+      window.prompt(
+        "Copy to clipboard: Ctrl+C, Enter",
+        lnk,
+        pid: project.id
+      )
 
     $scope = extend $scope,
       project: project
@@ -58,7 +71,10 @@ define [
         header: $scope.ag.header
       }
 
-      Project.newArgumentGraph({pid: $stateParams.pid}, project).$promise.then((data) ->
+      Project.newArgumentGraph(
+        {pid: $stateParams.pid},
+        project
+      ).$promise.then((data) ->
         params = pid: $stateParams.pid, db: $scope.ag.name
         url = 'home.projects.project.outline'
         $state.transitionTo url, params, reload: true

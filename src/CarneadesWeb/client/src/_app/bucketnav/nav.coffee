@@ -15,8 +15,7 @@ define [
     ordering = []
     buckets = {}
 
-    _contains = (state) ->
-      return state.name in buckets
+    _contains = (state) -> return state.name of buckets
 
     service.isEmpty = () -> return ordering.length is 0
 
@@ -24,7 +23,7 @@ define [
       if not _contains(state)
         ordering.push state.name
 
-      buckets[state.name] = null
+      carneades.del buckets, state.name
       buckets[state.name] = state
 
     service.remove = (state) ->

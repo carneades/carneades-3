@@ -48,6 +48,6 @@
           ng-bind='navigatedState.label')
 
 #global.container-fluid
-  div(ng-bind-html='banner')
+  banner-loader(theme='$stateParams.pid')
   div.navbar.subnav-navbar
     breadcrumb(states='navigatedStates',style='style')

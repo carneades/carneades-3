@@ -10,13 +10,13 @@ html(lang='en')
     //link(rel='stylesheet', href='css/open-sans.min.css', media='screen')
     //link(rel='stylesheet', href='css/montserrat-regular.css', media='screen')
     link(rel='stylesheet', href='css/perfect-scrollbar.min.css', media='screen')
+    css-inject(theme='$stateParams.pid')  
 
-
+    
   body
     div(id='header-section', ui-view='header')
     div(my-loading-spinner='viewLoading')
-      css-inject(theme='$stateParams.pid')
       div(id='subnav-section', ui-view='subnav')
       div(ui-view='content')
-    div(ng-bind-html='footer')
+    footer-loader(theme='$stateParams.pid')
     script(src='require.js', data-main='main.min.js')
