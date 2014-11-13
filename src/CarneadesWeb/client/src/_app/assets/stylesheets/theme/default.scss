@@ -30,8 +30,8 @@ $breadcrumbs-height: 2em !default;
 $breadcrumbs-border-radius: 4px !default;
 $breadcrumbs-link-color: $link-color !default;
 $breadcrumbs-link-hover-color: #C3DDF3 !default;
-$breadcrumbs-border: $navbar-inverse-border !default;
-$breadcrumbs-bg: $navbar-inverse-border !default;
+$breadcrumbs-border: #EEE !default;
+$breadcrumbs-bg: #FFF!default;
 $breadcrumbs-dark-bg: darken($breadcrumbs-bg,15%) !default;
 
 

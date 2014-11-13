@@ -145,7 +145,7 @@
     "state.home.signin.label": "Sign in",
     "state.home.projects.label": "Projects",
     "state.home.projects.project.label": "Project",
-    "state.home.projects.project.new.label": "New argument graph",
+    "state.home.projects.project.new.label": "New graph",
     "state.home.projects.project.edit.label": "Edit metadata",
     "state.home.projects.project.arguments.new.label": "New argument",
     "state.home.projects.project.arguments.argument.label": "Argument",
@@ -158,7 +158,7 @@
     "state.home.projects.project.statements.statement.edit.label": "Edit statement",
     "state.home.projects.project.statements.statement.remove.label": "Remove statement",
     "state.home.projects.project.theory": "Theory",
-    
+
     "state.lican.label": "License Analyser Introduction",
     "state.lican.questions.label": "License Analyser Questions",
     "state.lican.demo.label": "License Analyser Questions (Demo)",

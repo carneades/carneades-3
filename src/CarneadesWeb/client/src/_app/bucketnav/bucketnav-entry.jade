@@ -1,0 +1,7 @@
+li: a(
+  ui-sref='{{state.name}}(state.params)',)
+  button(
+    tooltip='{{state.tooltip}}',
+    tooltip-append-to-body='true',
+    tooltip-placement='bottom')
+    span(ng-bind='state.label | translate')

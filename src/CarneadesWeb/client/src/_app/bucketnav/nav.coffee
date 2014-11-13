@@ -108,4 +108,76 @@ define [
 
         return (_fnSetIsActive(_fnSetIsLast(s,++index)) for s in states)
 
-   module.service '$cnBucket', BucketService
+  module.service '$cnBucket', BucketService
+
+
+  class BucketnavController extends carneades.Controller
+    @.$inject = [
+      '$scope'
+      '$state'
+    ]
+
+    constructor: (@scope, @state) ->
+      super()
+
+    doStuff: ->
+
+
+  module.controller 'BucketnavController', BucketnavController
+
+
+  bucketnavDirective = ->
+    restrict: 'E'
+    scope:
+      states: '='
+    replace: true
+    templateUrl: 'bucketnav/bucketnav.jade'
+    controller: 'BucketnavController'
+
+
+  module.directive 'bucketnav', bucketnavDirective
+
+
+  bucketnavContainerDirective = () ->
+    restrict: 'EA'
+    scope:
+      states: '='
+    replace: true
+    transclude: true
+    templateUrl: 'bucketnav/bucketnav-container.jade'
+
+
+  module.directive 'bucketnavContainer', bucketnavContainerDirective
+
+
+  class BucketnavEntryController extends carneades.Controller
+    @.$inject = [
+      '$scope'
+      '$state'
+    ]
+
+    constructor: (@scope, @state) ->
+      super()
+
+    open: (name, params) ->
+      @state.go name, params
+
+
+  module.controller 'BucketnavEntryController', BucketnavEntryController
+
+
+  bucketnavEntryDirective = ->
+    restrict: 'E'
+    replace: true
+    scope:
+      state: '='
+      index: '='
+    templateUrl: 'bucketnav/bucketnav-entry.jade'
+    controller: 'BucketnavEntryController'
+    link: (scope, elm, ctrl) ->
+      scope.open = -> (a, b) ->
+        console.log 'found'
+      if scope.state.isActive then elm.addClass "active"
+      else elm.removeClass "active"
+
+  module.directive 'bucketnavEntry', bucketnavEntryDirective

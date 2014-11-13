@@ -93,21 +93,29 @@ define [
     return @
 
   .controller 'ProjectEditCtrl', ($scope, $state,
-  $stateParams, $translate, metadata, Metadata,
-  breadcrumbService, editorService) ->
-    _onSave = () ->
+  $stateParams, $translate, $cnBucket, metadata, Metadata,
+  editorService) ->
+    _onSave = ->
       params = pid: $stateParams.pid, db: 'main', mid: 1
+
       # no put implemented yet
       Metadata.update(params, metadata).$promise.then((data) ->
         url = 'home.projects.project'
+        state = $state.$current
         $state.transitionTo url, $stateParams, reload: true
+        $cnBucket.remove state
       )
+
+    _onCancel = ->
+      state = $state.$current
+      $state.transitionTo url, $stateParams, reload: true
+      $cnBucket.remove state
 
     $scope = extend $scope,
       metadata: metadata
       languages: editorService.getLanguages()
       onSave: _onSave
-      onCancel: editorService.onCancel
+      onCancel: _onCancel
       tooltipSave: $translate.instant 'tooltip.ag.save'
       tooltipCancel: $translate.instant 'tooltip.cancel'
 
