@@ -54,7 +54,7 @@ define [
     replace: true
     scope:
       theme: '=?'
-    template: "<div ng-bind-html='footerTpl'></div>"
+    template: "<div class='row' ng-bind-html='footerTpl'></div>"
     link: (scope, elm) ->
       onLoadingFooterSuccess = (data) ->
         scope.footerTpl = carneades.readData data
@@ -76,7 +76,7 @@ define [
     replace: true
     scope:
       theme: '=?'
-    template: "<div ng-bind-html='bannerTpl'></div>"
+    template: "<div class='col-lg-12' ng-bind-html='bannerTpl'></div>"
     link: (scope, elm) ->
       onLoadingBannerSuccess = (data) ->
         scope.bannerTpl = carneades.readData data

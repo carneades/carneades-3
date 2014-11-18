@@ -4,9 +4,9 @@ $font-family-sans-serif:  'Open Sans', sans-serif !default;
 $font-family-serif:       "museo-slab", Georgia, "Times New Roman", Times, serif !default;
 
 $body-bg:               #fff !default;
-$link-color:            #296b97 !default;
+$link-color:            darken($markos-green, 15%) !default;
 //** Link hover color set via `darken()` function.
-$link-hover-color:      darken($link-color, 15%) !default;
+$link-hover-color:      darken($link-color, 25%) !default;
 
 $navbar-inverse-bg:                         #222 !default;
 $navbar-inverse-border:                     darken($navbar-inverse-bg, 10%) !default;
@@ -20,10 +20,11 @@ $navbar-inverse-border:                     darken($navbar-inverse-bg, 10%) !def
 $navbar-bg: $markos-green !default;
 $breadcrumbs-height: 2em !default;
 $breadcrumbs-border-radius: 4px !default;
-$breadcrumbs-link-color: #296b97 !default;
+$breadcrumbs-link-color: $link-color !default;
 $breadcrumbs-link-hover-color: $link-hover-color !default;
-$breadcrumbs-bg: #f5ffd6 !default;
-$breadcrumbs-border: $breadcrumbs-bg !default;
+$breadcrumbs-bg: $body-bg !default;
+$breadcrumbs-bg-hover: #DFF0D8 !default;
+$breadcrumbs-border: $markos-green !default;
 $breadcrumbs-dark-bg: darken($breadcrumbs-bg,15%) !default;
 
 
@@ -46,25 +47,20 @@ $pagenav-bg: $breadcrumbs-bg !default;
 
     a {
         font-size:12px;
-        color: #fff;
+        color: $body-bg;
     }
 }
 
 .markos-footer {
-    background-color: #8EB144;
+    background-color: $markos-green;
 }
 .nav {
     a.footerLink {
         font-size:12px;
-        color: #fff;
+        color: $body-bg;
         &:hover {
             text-decoration: underline;
-            background-color: #8EB144;
+            background-color: $markos-green;
         }
     }
 }
-
-/* #header-section { */
-/*     margin-bottom: 100px; */
-/*     margin-top: -10px; */
-/* } */

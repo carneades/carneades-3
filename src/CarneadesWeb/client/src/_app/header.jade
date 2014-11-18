@@ -1,5 +1,5 @@
-.container-fluid#mobheader
-  .row.border-bottom
+.col-lg-12
+  .row.border-bottom#mobheader
     .col-md-1
       #mobnav(ng-show='isSubNavDisplayed')
         button.navbar-toggle(
@@ -33,22 +33,22 @@
                   ng-init='navBcCollapsed = true',
                   ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
   
-  .row.collapse#mobnavdetails(collapse='navCollapsed')
-    .container
-      ul
-        li(cmd='c' ng-repeat='c in commands')
-          a(ng-click='navOpen(c.state, $stateParams)', ng-bind='c.label | translate')
+  // .row.collapse#mobnavdetails(collapse='navCollapsed')
+  //   .container
+  //     ul
+  //       li(cmd='c' ng-repeat='c in commands')
+  //         a(ng-click='navOpen(c.state, $stateParams)', ng-bind='c.label | translate')
 
-  .row.collapse#mobbcnavdetails(
-    collapse='navBcCollapsed')
-    ul
-      li(ng-repeat='navigatedState in subNavStatesReversed')
-        a(
-          ng-click='openView(navigatedState.name, navigatedState.params)',
-          ng-bind='navigatedState.label')
+  // .row.collapse#mobbcnavdetails(
+  //   collapse='navBcCollapsed')
+  //   ul
+  //     li(ng-repeat='navigatedState in subNavStatesReversed')
+  //       a(
+  //         ng-click='openView(navigatedState.name, navigatedState.params)',
+  //         ng-bind='navigatedState.label')
 
-#global.container-fluid
-  banner-loader(theme='$stateParams.pid')
-  div.montserrat
-    bucketnav(states='navigatedStates')
+  .row#global
+    .col-lg-12
+      .row: banner-loader(theme='$stateParams.pid')
+      .row.montserrat.pagenav-adjusted: bucketnav(states='navigatedStates')
     

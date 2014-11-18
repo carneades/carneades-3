@@ -25,13 +25,15 @@ $project-body-bg: $body-bg !default;
 ///////////////////////////////////
 // Breadcrumb
 // JS-Code supports up to 7 levels
+
 $breadcrumbs-levels: 7 !default;
 $breadcrumbs-height: 2em !default;
 $breadcrumbs-border-radius: 4px !default;
 $breadcrumbs-link-color: $link-color !default;
 $breadcrumbs-link-hover-color: #C3DDF3 !default;
-$breadcrumbs-border: #EEE !default;
-$breadcrumbs-bg: #FFF!default;
+$breadcrumbs-border: $brand-primary !default;
+$breadcrumbs-bg: $body-bg !default;
+$breadcrumbs-bg-hover: #C3DDF3 !default;
 $breadcrumbs-dark-bg: darken($breadcrumbs-bg,15%) !default;
 
 

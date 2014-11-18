@@ -14,9 +14,11 @@ html(lang='en')
 
     
   body
-    div(id='header-section', ui-view='header')
-    div(my-loading-spinner='viewLoading')
-      div(id='subnav-section', ui-view='subnav')
-      div(ui-view='content')
-    footer-loader(theme='$stateParams.pid')
-    script(src='require.js', data-main='main.min.js')
+    .container-fluid
+      .row(id='header-section', ui-view='header')
+      .row(my-loading-spinner='viewLoading')
+        .col-lg-12
+          .row(id='subnav-section', ui-view='subnav')
+          .row(ui-view='content')
+      footer-loader(theme='$stateParams.pid', ng-hide='viewLoading')
+      script(src='require.js', data-main='main.min.js')

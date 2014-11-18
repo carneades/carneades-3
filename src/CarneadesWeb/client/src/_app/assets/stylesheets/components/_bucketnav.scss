@@ -5,10 +5,11 @@
     @include inline-list;
     font-size: 15px;
     letter-spacing: 1px;
-    margin: 0 0 0 5px !important;
 
     > li {
       padding: 0px;
+      margin-right: -7px;
+      float: left;
       button {
         color: $text-color;
         cursor: pointer;
@@ -16,10 +17,10 @@
         border-width: 2px;
         border-radius: 18px;
         border-style: solid;
-        border-color: $breadcrumbs-border $breadcrumbs-border #fff;
+        border-color: $breadcrumbs-border $breadcrumbs-border $breadcrumbs-bg;
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
-        background-color: #fff;
+        background-color: $breadcrumbs-bg;
         padding: 0 15px;
 
         &.active {
@@ -27,7 +28,9 @@
         }
 
         &:hover {
-          font-size: 16px;
+          background-color:$breadcrumbs-bg-hover;
+          border-bottom: 2px solid $breadcrumbs-bg-hover;
+          color: darken($breadcrumbs-border,50%);
         }
       }
     }
