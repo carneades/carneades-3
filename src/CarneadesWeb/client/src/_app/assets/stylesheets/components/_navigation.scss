@@ -132,12 +132,12 @@
   #global {
     clear:both;
     background-color:$breadcrumbs-bg;
-    border-bottom: 2px solid $breadcrumbs-border;
+    border-bottom: 1px solid $breadcrumbs-border;
   }
 }
 
 .pagenav-adjusted {
-  margin-bottom: -7px;
+  margin-bottom: -6px;
 }
 
 @media (max-width: $grid-float-breakpoint - 1) {

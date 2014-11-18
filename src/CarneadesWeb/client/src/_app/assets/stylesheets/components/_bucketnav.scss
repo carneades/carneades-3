@@ -8,13 +8,13 @@
 
     > li {
       padding: 0px;
-      margin-right: -7px;
+      margin-right: -6px;
       float: left;
       button {
         color: $text-color;
         cursor: pointer;
         height: 49px;
-        border-width: 2px;
+        border-width: 1px;
         border-radius: 18px;
         border-style: solid;
         border-color: $breadcrumbs-border $breadcrumbs-border $breadcrumbs-bg;
@@ -29,7 +29,7 @@
 
         &:hover {
           background-color:$breadcrumbs-bg-hover;
-          border-bottom: 2px solid $breadcrumbs-bg-hover;
+          border-bottom: 1px solid $breadcrumbs-bg-hover;
           color: darken($breadcrumbs-border,50%);
         }
       }
