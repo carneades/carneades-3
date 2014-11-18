@@ -19,7 +19,8 @@ define [
   ])
 
   .factory 'editorService', ($state,
-  $stateParams, $translate, breadcrumbService, markdownConverter) ->
+  $stateParams, $translate, breadcrumbService, markdownConverter,
+  $cnBucket) ->
     # add a new premise to argument.premise
     @addPremise = ({premises}) ->
       premises.push {
@@ -34,15 +35,15 @@ define [
     @deletePremise = (argument, index) ->
       argument.premises.splice index,1
 
-    @onCancel = () ->
-      breadcrumbService.peek()
-      breadcrumbService.pop()
-      top = breadcrumbService.peek()
-      if top?
-        breadcrumbService.pop()
-        $state.transitionTo top.name, top.params
-      else
-        $state.transitionTo 'home.projects', $stateParams
+    # @onCancel = () ->
+    #   breadcrumbService.peek()
+    #   breadcrumbService.pop()
+    #   top = breadcrumbService.peek()
+    #   if top?
+    #     breadcrumbService.pop()
+    #     $state.transitionTo top.name, top.params
+    #   else
+    #     $state.transitionTo 'home.projects', $stateParams
 
     @getLanguages = () ->
       return [

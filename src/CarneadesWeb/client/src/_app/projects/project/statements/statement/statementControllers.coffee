@@ -120,7 +120,7 @@ define [
     return @
 
   .controller 'StatementEditCtrl', ($scope, $translate, $state, $stateParams,
-    statement, Statement, project, breadcrumbService, editorService) ->
+    statement, Statement, project, breadcrumbService, editorService, $cnBucket) ->
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -132,7 +132,8 @@ define [
     _onSave = () ->
       Statement.update($stateParams, statement).$promise.then((data) ->
         url = 'home.projects.project.statements.statement'
-        $state.transitionTo url, $stateParams, reload: true)
+        $state.transitionTo url, $stateParams, reload: true
+        $cnBucket.remove $state.$current)
 
     $scope = extend $scope,
       standards: editorService.fillWithPrefixSuffixes(
@@ -146,7 +147,10 @@ define [
       showModel: _showModel
       showMetadata: _showMetadata
       onSave: _onSave
-      onCancel: editorService.onCancel
+      onCancel: ->
+        url = 'home.projects.project.statements.statement'
+        $state.transitionTo url, $stateParams
+        $cnBucket.remove @$state.$current
       editorOptions: editorService.getCodeMirrorOptions()
       tooltipSave: $translate.instant 'tooltip.statement.save'
       tooltipCancel: $translate.instant 'tooltip.cancel'

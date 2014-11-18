@@ -4,7 +4,14 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 define [
   'angular'
-], (angular) ->
+  'root'
+  'classes'
+  'utils'
+], (angular, cn) ->
+  'use strict'
+
+  carneades = cn.carneades
+
   # If you want to merge two arrays without creating a new object
 
   Array::where = (query) ->
@@ -37,75 +44,40 @@ define [
         _resolveRoleKey o, roles
         a1.push o
 
-  extend = (object, properties) ->
-    for key, val of properties
-      object[key] = val
-    object
-
-
-  angular.module('arguments.controllers', [
-    'pascalprecht.translate',
+  modules = [
+    'pascalprecht.translate'
     'angular-capitalize-filter'
-  ])
+  ]
 
-  .controller 'ArgumentNewCtrl', ($scope, $state, $stateParams,
-  $translate, Argument, statements, conclusion, breadcrumbService,
-  theory, editorService) ->
-    _normalize = () ->
-      return extend {},
-        header:
-          title: ''
-          description:
-            en: ''
-            de: ''
-            fr: ''
-            it: ''
-            sp: ''
-            nl: ''
-        pro: true
-        scheme: ''
-        strict: false
-        weight: 0.5
-        conclusion: if conclusion then conclusion.id else ''
-        premises: []
-
-    _addPremise = () ->
-      editorService.addPremise $scope.argument
-
-    _deletePremise = (p) ->
-      editorService.deletePremise $scope.argument, p
-
-    _showModel = () ->
-      $scope.tabModel = true
-      $scope.tabMetadata = false
-
-    _showMetadata = () ->
-      $scope.tabModel = false
-      $scope.tabMetadata = true
-
-    _getSchemeTitle = (model) ->
-      return editorService.getSchemeTitle model, theory.schemes
-
-    _getStatementText = (model) ->
-      return editorService.getStatementText model, statements
-
-    _getStatement = (model) ->
-      return editorService.getStatement model, statements
+  module = angular.module 'arguments.controllers', modules
 
 
-    repoRoles = []
-    repoPremises = []
+  class PremiseService extends carneades.Service
+    @.$inject = [
+      '$state'
+      '$stateParams'
+      'editorService'
+    ]
 
-    _getRoles = ({premises}) ->
+    constructor: (@state, @stateParams, @editorService) ->
+      @.repoRoles = []
+      @.repoPremises = []
+
+    addPremise: (scope) ->
+      @editorService.addPremise scope.argument
+
+    deletePremise: (scope, p) ->
+      @editorService.deletePremise scope.argument, p
+
+    getRoles: ({premises}) ->
       roles = []
       unless premises then return roles
-      i = 0
-      for p in premises
+      for p,i in premises
         roles.push id: i, title: p.role
-        i = i + 1
+
       return roles
 
-    _getPremises = ({premises}) ->
+    getPremises: ({premises}) ->
       ps = []
       unless premises then return ps
       for p in premises
@@ -119,76 +91,139 @@ define [
 
       return ps
 
-    _initRolesPremises = (a) ->
+    initRoles: (a) ->
       if a.premises?.length > 0
-        repoRoles = _getRoles a
-        repoPremises = _getPremises a
+        @.repoRoles = @.getRoles a
+        @.repoPremises = @.getPremises a
 
-    _updatePremises = (newVal, oldVal) ->
-      if oldVal is '' and $scope.argument.premises.length > 0
-        _initRolesPremises $scope.argument
+    updatePremises: (scope, newVal, oldVal) ->
+      if oldVal is '' and scope.argument.premises.length > 0
+        @.initRoles scope.argument
 
-      roles = repoRoles
-      premises = repoPremises
+      roles = @repoRoles
+      premises = @repoPremises
       if newVal?
-        newRoles = _getRoles newVal
-        newPremises = _getPremises newVal
+        newRoles = @.getRoles newVal
+        newPremises = @.getPremises newVal
 
         if premises.length > 0
           _resolveRoleKeys premises, roles
-          mergePremisesD repoPremises, newPremises, roles
-        else repoPremises = newPremises
+          mergePremisesD @.repoPremises, newPremises, roles
+        else @.repoPremises = newPremises
 
         if roles.length > 0
-          mergeRolesD repoRoles, newRoles
-        else repoRoles = newRoles
+          mergeRolesD @.repoRoles, newRoles
+        else @.repoRoles = newRoles
 
-        $scope.premiseRoles = repoRoles
-        $scope.argument.premises = []
-        $scope.argument.premises.push repoPremises...
+        scope.premiseRoles = @.repoRoles
+        scope.argument.premises = []
+        scope.argument.premises.push @.repoPremises...
 
-    $scope.$watch 'argument.scheme', (newVal, oldVal) ->
-      _updatePremises newVal, oldVal
 
-    _onSave = () ->
-      pid = $stateParams.pid
-      db = $stateParams.db
-      _updatePremises $scope.argument
+  module.service '$cnPremise', PremiseService
 
-      for p in $scope.argument.premises
+
+  class NewArgumentController extends carneades.Controller
+    @.$inject = [
+      '$scope'
+      '$state'
+      '$stateParams'
+      '$translate'
+      '$cnBucket'
+      '$cnPremise'
+      'Argument'
+      'editorService'
+      'statements'
+      'theory'
+      'conclusion'
+    ]
+
+    constructor: (@scope, @state, @stateParams, @translate,
+      @cnBucket, @cnPremise, @Argument, @editorService, @statements,
+      @theory, @conclusion
+    ) ->
+      @.defineScope()
+
+    getArgumentTemplate: =>
+      return carneades.extend {},
+        header:
+          title: ''
+          description:
+            en: ''
+            de: ''
+            fr: ''
+            it: ''
+            sp: ''
+            nl: ''
+        pro: true
+        scheme: ''
+        strict: false
+        weight: 0.5
+        conclusion: if @conclusion then @conclusion.id else ''
+        premises: []
+
+    showModel: =>
+      @scope.tabModel = true
+      @scope.tabMetadata = false
+
+    showMetadata: =>
+      @scope.tabModel = false
+      @scope.tabMetadata = true
+
+
+    save: =>
+      pid = @stateParams.pid
+      db = @stateParams.db
+      @cnPremise.updatePremises @scope, @scope.argument
+
+      for p in @scope.argument.premises
         key = 'translation'
         if key of p then delete p[key]
 
-      Argument.save({pid: pid, db: db}, {
-        header: $scope.argument.header
-        pro: $scope.argument.pro
-        scheme: "(#{$scope.argument.scheme.id})"
-        weight: $scope.argument.weight
-        conclusion: $scope.argument.conclusion
-        premises: $scope.argument.premises
-      }).$promise.then((a) ->
+      @Argument.save({pid: pid, db: db}, {
+        header: @scope.argument.header
+        pro: @scope.argument.pro
+        scheme: "(#{@scope.argument.scheme.id})"
+        weight: @scope.argument.weight
+        conclusion: @scope.argument.conclusion
+        premises: @scope.argument.premises
+      }).$promise.then((a) =>
         url = 'home.projects.project.arguments.argument'
         params = pid: pid, db: db, aid: a.id
-        $state.transitionTo url, params
+        @state.transitionTo url, params
+        @cnBucket.remove @state.$current
       )
 
-    $scope = extend $scope,
-      statements: statements
-      argument: _normalize()
-      theory: theory
-      addPremise: _addPremise
-      deletePremise: _deletePremise
-      tabModel: true
-      tabMetadata: false
-      showModel: _showModel
-      showMetadata: _showMetadata
-      onSave: _onSave
-      onCancel: editorService.onCancel
-      languages: editorService.getLanguages()
-      getSchemeTitle: _getSchemeTitle
-      getStatementText: _getStatementText
-      editorOptions: editorService.getCodeMirrorOptions()
-      title: $translate.instant 'projects.createargument'
-      tooltipPremise: $translate.instant 'tooltip.premise'
-      tooltipCancel: $translate.instant 'tooltip.cancel'
-      tooltipSave: $translate.instant 'tooltip.argument.save'
+
+    defineScope: =>
+      @scope = carneades.extend @scope,
+        statements: @statements
+        theory: @theory
+        argument: @.getArgumentTemplate()
+        addPremise: () => @cnPremise.addPremise @scope
+        deletePremise: (p) => @cnPremise.deletePremise @scope, p
+        tabModel: true
+        tabMetadata: false
+        showModel: @.showModel
+        showMetadata: @.showMetadata
+        onSave: @.save
+        onCancel: () =>
+          url = 'home.projects.project'
+          @state.transitionTo url, @stateParams
+          @cnBucket.remove @state.$current
+        languages: @editorService.getLanguages()
+        getSchemeTitle: @.getSchemeTitle
+
+        getStatementText: @.getStatementText
+        editorOptions: @editorService.getCodeMirrorOptions()
+        title: @translate.instant 'projects.createargument'
+        tooltipPremise: @translate.instant 'tooltip.premise'
+        tooltipCancel: @translate.instant 'tooltip.cancel'
+        tooltipSave: @translate.instant 'tooltip.argument.save'
+
+
+      @scope.$watch 'argument.scheme', (newVal, oldVal) =>
+        @cnPremise.updatePremises @scope, newVal, oldVal
+
+
+  module.controller 'ArgumentNewCtrl', NewArgumentController

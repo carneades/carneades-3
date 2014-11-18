@@ -45,7 +45,7 @@ define [
 
     return @
 
-  .controller 'ProjectNewArgGraphCtrl', ($scope, $state,
+  .controller 'ProjectNewArgGraphCtrl', ($scope, $state, $cnBucket,
   $stateParams, $translate, Project, breadcrumbService, editorService) ->
     ag =
       name: ""
@@ -78,13 +78,17 @@ define [
         params = pid: $stateParams.pid, db: $scope.ag.name
         url = 'home.projects.project.outline'
         $state.transitionTo url, params, reload: true
+        $cnBucket.remove $state.$current
       )
 
     $scope = extend $scope,
       ag: ag
       languages: editorService.getLanguages()
       onSave: _onSave
-      onCancel: editorService.onCancel
+      onCancel: () ->
+        $state.transitionTo 'home.projects', $stateParams
+        $cnBucket.remove $state.$current
+
       placeholderName: $translate.instant 'placeholder.name'
       placeholderTitle: $translate.instant 'placeholder.title'
       tooltipSave: $translate.instant 'tooltip.argumentgraph.save'
@@ -101,15 +105,14 @@ define [
       # no put implemented yet
       Metadata.update(params, metadata).$promise.then((data) ->
         url = 'home.projects.project'
-        state = $state.$current
         $state.transitionTo url, $stateParams, reload: true
-        $cnBucket.remove state
+        $cnBucket.remove $state.$current
       )
 
     _onCancel = ->
-      state = $state.$current
+      url = 'home.projects.project'
       $state.transitionTo url, $stateParams, reload: true
-      $cnBucket.remove state
+      $cnBucket.remove $state.$current
 
     $scope = extend $scope,
       metadata: metadata

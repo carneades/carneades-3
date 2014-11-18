@@ -3,7 +3,6 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
 define [
   'angular'
   'root'
@@ -190,7 +189,6 @@ define [
 
     constructor: (@scope, @location, @state, @breadcrumbService, @cnBucket) ->
       @scope.$on '$stateChangeSuccess', =>
-        #@breadcrumbService.updateStates()
         @cnBucket.append @state
         @.update()
 
@@ -198,7 +196,6 @@ define [
         _isSubNavDisplayed = data and data.commands and data.commands.length > 0
 
         # In order to update the list passed to ng-repeat properly
-        #_navigatedStates = angular.copy @breadcrumbService.getStates()
         _navigatedStates = angular.copy @cnBucket.getBucketItems()
         _subNavStatesReversed = @._getReversedNavigationStates _navigatedStates
 
@@ -239,7 +236,8 @@ define [
           #if commands.length > 0 then commands.pop()
           return commands
 
-        return ($state) => return createCommands($state, params...)
+        return ($state) =>
+          return createCommands $state, params...
 
       _commands = []
       if @state.current.data and @state.current.data.commands

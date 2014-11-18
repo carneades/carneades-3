@@ -137,7 +137,7 @@ define [
 
   .controller 'ArgumentEditCtrl', ($scope, $state, $stateParams, $translate,
     statements, argument, Argument, theory, breadcrumbService,
-    editorService) ->
+    editorService, $cnBucket) ->
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -158,7 +158,8 @@ define [
       argument.conclusion = $scope.argument.conclusion.id
       Argument.update($stateParams, argument).$promise.then((data) ->
         url = 'home.projects.project.arguments.argument'
-        $state.transitionTo url, $stateParams, reload: true)
+        $state.transitionTo url, $stateParams, reload: true
+        $cnBucket.remove $state.$current)
 
     _addPremise = () ->
       editorService.addPremise $scope.argument
@@ -265,7 +266,11 @@ define [
       addPremise: _addPremise
       deletePremise: _deletePremise
       onSave: _onSave
-      onCancel: editorService.onCancel
+      onCancel: () ->
+        url = 'home.projects.project.arguments.argument'
+        params = pid: pid, db: db
+        $state.transitionTo url, params
+        $cnBucket.remove $state.$current
       tabModel: true
       tabMetadata: false
       showModel: _showModel
