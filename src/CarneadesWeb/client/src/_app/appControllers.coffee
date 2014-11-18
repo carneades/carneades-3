@@ -183,11 +183,13 @@ define [
       '$scope'
       '$location'
       '$state'
-      'breadcrumbService'
+      '$stateParams'
       '$cnBucket'
     ]
 
-    constructor: (@scope, @location, @state, @breadcrumbService, @cnBucket) ->
+    constructor: (
+      @scope, @location, @state, @stateParams, @cnBucket
+    ) ->
       @scope.$on '$stateChangeSuccess', =>
         @cnBucket.append @state
         @.update()
@@ -201,21 +203,23 @@ define [
 
         @scope = carneades.extend @scope,
           navigatedStates: _navigatedStates
-          bcTop: @breadcrumbService.peek()
+          bcTop: @cnBucket._build @state.$current
           subNavStatesReversed: _subNavStatesReversed
           navBcCollapsed: true
           navCollapsed: true
-          hasHistory: !@cnBucket.isEmpty()
-          #hasHistory: !@breadcrumbService.isEmpty()
+          hasHistory: @cnBucket.size() > 1
           isSubNavDisplayed: _isSubNavDisplayed
 
       @scope = carneades.extend @scope,
-        openView: @._openView
+        openView: @.openView
+        navOpen: @.navOpen
         hasHistory: false
 
       @.update()
 
-    _openView: (name, params) -> @state.go name, params
+    openView: (name, params) => @state.go name, params
+
+    navOpen: (name, params) => @state.go name, params
 
     _getReversedNavigationStates: (states) ->
       return states.slice(0, states.length-1).reverse()

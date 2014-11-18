@@ -37,7 +37,7 @@
     .container
       ul
         li(cmd='c' ng-repeat='c in commands')
-          a(ng-click='navOpen(c.state)') {{c.label | translate}}
+          a(ng-click='navOpen(c.state, $stateParams)', ng-bind='c.label | translate')
 
   .row.collapse#mobbcnavdetails(
     collapse='navBcCollapsed')

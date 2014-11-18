@@ -17,7 +17,9 @@ define [
 
     _contains = (state) -> return state.name of buckets
 
-    service.isEmpty = () -> return ordering.length is 0
+    service.isEmpty = -> return ordering.length is 0
+
+    service.size = -> return ordering.length
 
     service.add = (state) ->
       if not _contains(state)
@@ -38,6 +40,11 @@ define [
       for key in ordering
         list.push buckets[key]
       return list
+
+    service.getTop = ->
+      index = ordering.length - 1
+      if index < 0 then return null
+      return buckets[ordering[index]]
 
     return service
 
@@ -74,8 +81,13 @@ define [
 
     isEmpty: -> return @cnBucketProvider.isEmpty()
 
+    size: -> return @cnBucketProvider.size()
+
     append: (state) ->
       @cnBucketProvider.add @._build state
+
+    peek: ->
+      return @cnBucketProvider.getTop()
 
     remove: (state) ->
       @cnBucketProvider.remove state
@@ -83,7 +95,7 @@ define [
     getBucketItems: ->
       return @cnBucketProvider.asArray()
 
-    getRenderedBucketItems: () ->
+    getRenderedBucketItems: ->
       items = @cnBucketProvider.asArray()
 
       _render = (states) =>
