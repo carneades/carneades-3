@@ -199,8 +199,6 @@ define [
 
         # In order to update the list passed to ng-repeat properly
         _navigatedStates = angular.copy @cnBucket.getRenderedBucketItems()
-
-        console.log _navigatedStates
         _subNavStatesReversed = @._getReversedNavigationStates _navigatedStates
 
         @scope = carneades.extend @scope,

@@ -208,7 +208,7 @@ define [
         showMetadata: @.showMetadata
         onSave: @.save
         onCancel: () =>
-          url = 'home.projects.project'
+          url = 'home.projects.project.outline'
           @state.transitionTo url, @stateParams
           @cnBucket.remove @state.$current
         languages: @editorService.getLanguages()

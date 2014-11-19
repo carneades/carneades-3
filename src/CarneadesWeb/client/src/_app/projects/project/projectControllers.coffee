@@ -86,7 +86,7 @@ define [
       languages: editorService.getLanguages()
       onSave: _onSave
       onCancel: () ->
-        $state.transitionTo 'home.projects', $stateParams
+        $state.transitionTo 'home.projects.project', $stateParams
         $cnBucket.remove $state.$current
 
       placeholderName: $translate.instant 'placeholder.name'

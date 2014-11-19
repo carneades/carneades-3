@@ -215,6 +215,7 @@ define [
 
       return items
 
+
   .directive 'radioButtons', () ->
     restrict: "E"
     templateUrl: "common/directives/editor/radio-buttons.jade"
@@ -223,6 +224,17 @@ define [
     link: (scope, element, attrs) ->
       scope.activate = (val) ->
         scope.model = val
+
+
+  .directive 'radioButtonsDir', () ->
+    restrict: "E"
+    templateUrl: "common/directives/editor/radio-buttons-dir.jade"
+    scope:
+      model: '='
+    link: (scope, element, attrs) ->
+      scope.activate = (val) ->
+        scope.model = val
+
 
   .directive 'properties', () ->
     restrict: "E"

@@ -13,9 +13,6 @@
             tab(heading='Metadata',select='showMetadata()')
 
         div(ng-show='tabModel')
-          form-group(label-key='projects.pro')
-            radio-buttons(model='argument.pro')
-  
           form-group(label-key='projects.strict')
             radio-buttons(model='argument.strict')
           
@@ -62,6 +59,10 @@
               tooltip-placement="top")
               i.fa.fa-plus: span(translate='projects.addpremise')
 
+          form-group(label-key='projects.dir')
+            radio-buttons-dir(model='argument.pro')
+  
+          
           form-group(label-key='projects.conclusion')
             ui-select(
               ng-model="argument.conclusion",

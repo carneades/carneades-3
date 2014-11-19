@@ -268,8 +268,7 @@ define [
       onSave: _onSave
       onCancel: () ->
         url = 'home.projects.project.arguments.argument'
-        params = pid: pid, db: db
-        $state.transitionTo url, params
+        $state.transitionTo url, $stateParams
         $cnBucket.remove $state.$current
       tabModel: true
       tabMetadata: false
