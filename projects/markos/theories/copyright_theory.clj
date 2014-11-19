@@ -85,6 +85,8 @@
                   (a/pm '(ec:happens ?U ?T)) ]
        :exceptions []) ;; To do: unless one has an appropriate license or fair use or ...
 
+    
+
       (t/make-scheme
        ;; copying exercises the reproduction right
        :id 'excerise-1
@@ -92,10 +94,9 @@
        :premises [(a/pm '(Copy ?U))])
 
       (t/make-scheme
-       ;; modifying the work is a clear case of exercising the adaptation right
        :id 'exercise-2
-       :conclusion '(exercise ?U AdaptationRight)
-       :premises [(a/pm '(Modify ?U))])
+       :conclusion '(excerise (derivation ?W1 ?W2) AdaptationRight)
+       :premises [(a/pm '(derivedFrom ?W1 ?W2))])
 
       (t/make-scheme
        :id 'protected-work-1
