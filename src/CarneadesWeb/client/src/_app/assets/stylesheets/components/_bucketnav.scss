@@ -26,6 +26,8 @@
         &.active {
             color: $breadcrumbs-link-color;
             text-decoration: underline;
+            background-color: $breadcrumbs-bg-hover;
+            border-bottom: 1px solid $breadcrumbs-bg-hover;
         }
 
         &:hover {
