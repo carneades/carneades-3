@@ -99,26 +99,13 @@ define [
       items = @cnBucketProvider.asArray()
 
       _render = (states) =>
-        index = 0
-        isActiveSet = false
-        isActiveIndex = -1
-
         _fnSetIsActive = (s) =>
           s.isActive = (@state.$current.name is s.name)
-          if s.isActive
-            if isActiveSet
-              states[isActiveIndex].isActive = false
-              states[isActiveIndex].isLast = false
-            isActiveIndex = index - 1
-            isActiveSet = true
-
           return s
 
-        _fnSetIsLast = (s, index) =>
-          s.isLast = (index is states.length)
-          return s
+        return (_fnSetIsActive(s) for s in states)
 
-        return (_fnSetIsActive(_fnSetIsLast(s,++index)) for s in states)
+      return _render items
 
   module.service '$cnBucket', BucketService
 
@@ -189,7 +176,8 @@ define [
     link: (scope, elm, ctrl) ->
       scope.open = -> (a, b) ->
         console.log 'found'
-      if scope.state.isActive then elm.addClass "active"
-      else elm.removeClass "active"
+      if scope.state.isActive
+        elm.find('a').find('button').addClass "active"
+      else elm.find('a').find('button').removeClass "active"
 
   module.directive 'bucketnavEntry', bucketnavEntryDirective

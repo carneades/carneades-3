@@ -1,9 +1,9 @@
 .bucketnav {
-  height: 49px;
+  height: 36px;
 
   > ul {
     @include inline-list;
-    font-size: 15px;
+    font-size: 13px;
     letter-spacing: 1px;
 
     > li {
@@ -13,7 +13,7 @@
       button {
         color: $text-color;
         cursor: pointer;
-        height: 49px;
+        height: 36px;
         border-width: 1px;
         border-radius: 18px;
         border-style: solid;
@@ -24,7 +24,8 @@
         padding: 0 15px;
 
         &.active {
-          color: $breadcrumbs-link-color
+            color: $breadcrumbs-link-color;
+            text-decoration: underline;
         }
 
         &:hover {
