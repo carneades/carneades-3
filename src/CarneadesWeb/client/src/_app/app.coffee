@@ -103,7 +103,9 @@ define [
     $rootScope.$on '$stateChangeStart', (e, to) ->
       $rootScope.viewLoading = true
 
-    $rootScope.$on '$stateChangeSuccess', (e, to) ->
+    $rootScope.$on '$stateChangeSuccess', (
+      event, toState, toParams, fromState, fromParams
+    ) ->
       $rootScope.viewLoading = false
 
 

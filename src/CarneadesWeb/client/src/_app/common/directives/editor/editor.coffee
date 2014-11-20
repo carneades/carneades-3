@@ -36,10 +36,17 @@ define [
       argument.premises.splice index,1
 
     @onCancel = ->
+      url = 'home.projects.project'
+      params = $stateParams
+
       $cnBucket.remove $state.$current
-      top = $cnBucket.peek()
-      unless top then top = name: 'home.projects.project'
-      $state.transitionTo top.name, $stateParams
+      top = $cnBucket.getLastVisitedBucket()
+      if top?.name
+        item = $cnBucket.getBucketItemByName top.name
+        url = item.name
+        params = item.params
+
+      $state.transitionTo url, params
 
     @getLanguages = () ->
       return [

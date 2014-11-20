@@ -46,6 +46,9 @@ define [
       if index < 0 then return null
       return buckets[ordering[index]]
 
+    service.getBucketItemByName = (name) ->
+      return buckets[name]
+
     return service
 
   module.factory '$cnBucketProvider', bucketProvider
@@ -66,6 +69,7 @@ define [
 
     constructor: (@cnBucketProvider, @state, @stateParams, @translate) ->
 
+      @.visitedLast = null
 
     _build: ->
       _translate = (stateName) =>
@@ -78,6 +82,13 @@ define [
         params: angular.copy @stateParams
         tooltip: @state.$current.tooltip
       }
+
+    getLastVisitedBucket: -> return @.visitedLast
+
+    setLastVisitedBucket: (state) -> @.visitedLast = state
+
+    getBucketItemByName: (name) ->
+      return @cnBucketProvider.getBucketItemByName name
 
     isEmpty: -> return @cnBucketProvider.isEmpty()
 
