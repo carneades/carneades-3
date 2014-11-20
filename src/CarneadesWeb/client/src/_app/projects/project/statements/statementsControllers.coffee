@@ -64,10 +64,7 @@ define [
       standards: editorService.fillWithPrefixSuffixes(
         [], 'projects.', ['pe', 'dv', 'cce', 'brd'])
       onSave: _onSave
-      onCancel: () ->
-        url = 'home.projects.project.outline'
-        $state.transitionTo url, $stateParams
-        $cnBucket.remove $state.$current
+      onCancel: editorService.onCancel
       languages: editorService.getLanguages()
       tabModel: true
       tabMetadata: false

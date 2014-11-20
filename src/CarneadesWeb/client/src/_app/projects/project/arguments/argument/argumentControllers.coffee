@@ -17,7 +17,7 @@ define [
 
   _resolveRoleKey = (p, roles) ->
     if isFinite p.role
-      p.role = roles[p.role].title
+      p.role = roles[p.role]?.title
 
   _resolveRoleKeys = (premises, roles) ->
     for p in premises
@@ -29,12 +29,21 @@ define [
       if contains.length is 0
         a1.push id: a1.length + 1, title: o.title
 
-  mergePremisesD = (a1, a2, roles) ->
+  mergePremisesD = (a1, a2, roles, newRoles) ->
+    merge = []
+    for p in a1
+      containsRole = newRoles.where title: p.role
+      if (p.statement.id.length isnt 0) or
+      (containsRole.length is 1)
+        merge.push p
+
     for o in a2
       contains = a1.where role: o.role
       if contains.length is 0
         _resolveRoleKey o, roles
-        a1.push o
+        merge.push o
+
+    return merge
 
 
   extend = (object, properties) ->
@@ -239,7 +248,9 @@ define [
 
         if premises.length > 0
           _resolveRoleKeys premises, roles
-          mergePremisesD repoPremises, newPremises, roles
+          repoPremises = mergePremisesD(
+            repoPremises, newPremises, roles, newRoles
+          )
         else repoPremises = newPremises
 
         if roles.length > 0
@@ -266,10 +277,7 @@ define [
       addPremise: _addPremise
       deletePremise: _deletePremise
       onSave: _onSave
-      onCancel: () ->
-        url = 'home.projects.project.arguments.argument'
-        $state.transitionTo url, $stateParams
-        $cnBucket.remove $state.$current
+      onCancel: editorService.onCancel
       tabModel: true
       tabMetadata: false
       showModel: _showModel

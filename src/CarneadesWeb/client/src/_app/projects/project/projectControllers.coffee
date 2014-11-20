@@ -85,10 +85,7 @@ define [
       ag: ag
       languages: editorService.getLanguages()
       onSave: _onSave
-      onCancel: () ->
-        $state.transitionTo 'home.projects.project', $stateParams
-        $cnBucket.remove $state.$current
-
+      onCancel: editorService.onCancel
       placeholderName: $translate.instant 'placeholder.name'
       placeholderTitle: $translate.instant 'placeholder.title'
       tooltipSave: $translate.instant 'tooltip.argumentgraph.save'
@@ -109,16 +106,11 @@ define [
         $cnBucket.remove $state.$current
       )
 
-    _onCancel = ->
-      url = 'home.projects.project'
-      $state.transitionTo url, $stateParams, reload: true
-      $cnBucket.remove $state.$current
-
     $scope = extend $scope,
       metadata: metadata
       languages: editorService.getLanguages()
       onSave: _onSave
-      onCancel: _onCancel
+      onCancel: editorService.onCancel
       tooltipSave: $translate.instant 'tooltip.ag.save'
       tooltipCancel: $translate.instant 'tooltip.cancel'
 

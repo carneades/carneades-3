@@ -147,10 +147,7 @@ define [
       showModel: _showModel
       showMetadata: _showMetadata
       onSave: _onSave
-      onCancel: ->
-        url = 'home.projects.project.statements.statement'
-        $state.transitionTo url, $stateParams
-        $cnBucket.remove @$state.$current
+      onCancel: editorService.onCancel
       editorOptions: editorService.getCodeMirrorOptions()
       tooltipSave: $translate.instant 'tooltip.statement.save'
       tooltipCancel: $translate.instant 'tooltip.cancel'

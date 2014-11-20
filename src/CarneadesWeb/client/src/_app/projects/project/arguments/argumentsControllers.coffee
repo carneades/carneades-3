@@ -25,7 +25,7 @@ define [
 
   _resolveRoleKey = (p, roles) ->
     if isFinite p.role
-      p.role = roles[p.role].title
+      p.role = roles[p.role]?.title
 
   _resolveRoleKeys = (premises, roles) ->
     for p in premises
@@ -37,12 +37,21 @@ define [
       if contains.length is 0
         a1.push id: a1.length + 1, title: o.title
 
-  mergePremisesD = (a1, a2, roles) ->
+  mergePremisesD = (a1, a2, roles, newRoles) ->
+    merge = []
+    for p in a1
+      containsRole = newRoles.where title: p.role
+      if (p.statement.id.length isnt 0) or
+      (containsRole.length is 1)
+        merge.push p
+
     for o in a2
       contains = a1.where role: o.role
       if contains.length is 0
         _resolveRoleKey o, roles
-        a1.push o
+        merge.push o
+
+    return merge
 
   modules = [
     'pascalprecht.translate'
@@ -73,7 +82,7 @@ define [
       roles = []
       unless premises then return roles
       for p,i in premises
-        roles.push id: i, title: p.role
+        if p.role then roles.push id: i, title: p.role
 
       return roles
 
@@ -108,7 +117,9 @@ define [
 
         if premises.length > 0
           _resolveRoleKeys premises, roles
-          mergePremisesD @.repoPremises, newPremises, roles
+          @.repoPremises = mergePremisesD(
+            @.repoPremises, newPremises, roles, newRoles
+          )
         else @.repoPremises = newPremises
 
         if roles.length > 0
@@ -159,7 +170,7 @@ define [
         scheme: ''
         strict: false
         weight: 0.5
-        conclusion: if @conclusion then @conclusion.id else ''
+        conclusion: if @conclusion then @conclusion else ''
         premises: []
 
     showModel: =>
@@ -207,10 +218,8 @@ define [
         showModel: @.showModel
         showMetadata: @.showMetadata
         onSave: @.save
-        onCancel: () =>
-          url = 'home.projects.project.outline'
-          @state.transitionTo url, @stateParams
-          @cnBucket.remove @state.$current
+
+        onCancel: @editorService.onCancel
         languages: @editorService.getLanguages()
         getSchemeTitle: @.getSchemeTitle
 

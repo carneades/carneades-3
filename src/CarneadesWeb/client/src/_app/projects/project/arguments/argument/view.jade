@@ -50,7 +50,7 @@
               .premises-indication(translate='projects.premises_text')
               ul(ng-repeat='p in argument.premises')
                 li
-                  span(ng-hide="p.role == ''", ng-bind='p.role')
+                  span(ng-hide="p.role == ''", ng-bind='p.role',style='padding-right: 8px;')
                   span(ng-show="!p.positive")
                     span(translate='projects.negative_premise')
                   a(ng-click='openStatement(p.id)', ng-bind='p.text')

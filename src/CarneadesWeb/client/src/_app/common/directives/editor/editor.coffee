@@ -35,15 +35,11 @@ define [
     @deletePremise = (argument, index) ->
       argument.premises.splice index,1
 
-    # @onCancel = () ->
-    #   breadcrumbService.peek()
-    #   breadcrumbService.pop()
-    #   top = breadcrumbService.peek()
-    #   if top?
-    #     breadcrumbService.pop()
-    #     $state.transitionTo top.name, top.params
-    #   else
-    #     $state.transitionTo 'home.projects', $stateParams
+    @onCancel = ->
+      $cnBucket.remove $state.$current
+      top = $cnBucket.peek()
+      unless top then top = name: 'home.projects.project'
+      $state.transitionTo top.name, $stateParams
 
     @getLanguages = () ->
       return [

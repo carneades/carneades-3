@@ -13,9 +13,6 @@
             tab(heading='Metadata',select='showMetadata()')
 
         div(ng-show='tabModel')
-          form-group(label-key='projects.strict')
-            radio-buttons(model='argument.strict')
-          
           form-group(label-key='projects.weight')
             .col-sm-1
              .form-control-static: span(ng-bind='argument.weight | doublePrecision')
@@ -59,6 +56,11 @@
               tooltip-placement="top")
               i.fa.fa-plus: span(translate='projects.addpremise')
 
+              
+          form-group(label-key='projects.strict')
+            radio-buttons(model='argument.strict')
+          
+              
           form-group(label-key='projects.dir')
             radio-buttons-dir(model='argument.pro')
   
