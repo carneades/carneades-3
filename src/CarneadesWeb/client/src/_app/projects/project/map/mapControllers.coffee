@@ -50,17 +50,17 @@ define [
           if nid[0] == 's'
             $stateParams.sid = nid.substr(2)
             url = 'home.projects.project.statements.statement'
-            $scope.$state.transitionTo url, $stateParams
+            $scope.$state.go url, $stateParams
           else if nid[0] != 'e'
             $stateParams.aid = nid.substr(2)
             url = 'home.projects.project.arguments.argument'
-            $scope.$state.transitionTo url, $stateParams
+            $scope.$state.go url, $stateParams
         else
           nid = angular.element(element).parent().parent()
           if nid.attr 'id'
             $stateParams.sid = nid.attr('id').substr(2)
             url = 'home.projects.project.statements.statement'
-            $scope.$state.transitionTo url, $stateParams
+            $scope.$state.go url, $stateParams
 
       return undefined
 

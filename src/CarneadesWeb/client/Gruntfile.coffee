@@ -147,6 +147,7 @@ module.exports = (grunt) ->
           'angular-ui-select.js': 'angular-ui-select/dist/select.js'
           'angular-resource.js': 'angular-resource/angular-resource.js'
           'angular-translate.js': 'angular-translate/angular-translate.js'
+          'ui-router-extras.js': 'ui-router-extras/release/ct-ui-router-extras.js'
           'angular-translate-loader-static-files.js': 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
           'angular-bootstrap.js': 'angular-bootstrap/ui-bootstrap-tpls.js'
           'requirejs-domready.js': 'requirejs-domready/domReady.js'

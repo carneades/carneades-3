@@ -14,12 +14,13 @@ define [
   return angular.module('project.controllers', [])
 
   .controller 'ProjectViewCtrl', ($scope, $stateParams, $state, $translate,
-  $location, project) ->
+    $location, $previousState, project) ->
     $scope.$state.$current.self.tooltip = project.title
     $stateParams.db = 'main'
 
-    _newArgumentGraph = () ->
-      $state.transitionTo 'home.projects.project.new', pid: project.id
+    _newArgumentGraph = ->
+      $state.go 'home.projects.project.new', pid: project.id, reload: true
+      $previousState.memo 'newArgumentGraphEditor'
 
     _copyLink = () ->
       lnk = [
@@ -46,7 +47,8 @@ define [
     return @
 
   .controller 'ProjectNewArgGraphCtrl', ($scope, $state, $cnBucket,
-  $stateParams, $translate, Project, breadcrumbService, editorService) ->
+    $stateParams, $translate, Project, breadcrumbService, editorService) ->
+
     ag =
       name: ""
       header:
@@ -62,7 +64,7 @@ define [
     _onSave = () ->
       _description = {}
       for k, v of $scope.ag.header.description
-        _description[k] = editorService.htmlize v
+        _description[k] = editor.htmlize v
 
       $scope.ag.header.description = _description
       project = {
@@ -75,17 +77,18 @@ define [
         {pid: $stateParams.pid},
         project
       ).$promise.then((data) ->
-        params = pid: $stateParams.pid, db: $scope.ag.name
-        url = 'home.projects.project.outline'
-        $state.transitionTo url, params, reload: true
         $cnBucket.remove $state.$current
+        state = $previousState.get 'newArgumentGraphEditor'
+        params = pid: $stateParams.pid, db: $scope.ag.name
+        $state.go state.state.name, params, reload: true
+        $previousState.forget 'newArgumentGraphEditor'
       )
 
     $scope = extend $scope,
       ag: ag
       languages: editorService.getLanguages()
       onSave: _onSave
-      onCancel: editorService.onCancel
+      onCancel: -> editorService.onCancel 'newArgumentGraphEditor'
       placeholderName: $translate.instant 'placeholder.name'
       placeholderTitle: $translate.instant 'placeholder.title'
       tooltipSave: $translate.instant 'tooltip.argumentgraph.save'
@@ -93,24 +96,25 @@ define [
 
     return @
 
-  .controller 'ProjectEditCtrl', ($scope, $state,
-  $stateParams, $translate, $cnBucket, metadata, Metadata,
-  editorService) ->
+  .controller 'ProjectEditCtrl', ($scope, $state, $previousState,
+    $stateParams, $translate, $cnBucket, metadata, Metadata,
+    editorService) ->
     _onSave = ->
       params = pid: $stateParams.pid, db: 'main', mid: 1
 
       # no put implemented yet
       Metadata.update(params, metadata).$promise.then((data) ->
-        url = 'home.projects.project'
-        $state.transitionTo url, $stateParams, reload: true
         $cnBucket.remove $state.$current
+        state = $previousState.get 'newMetadataEditor'
+        $state.go state.state.name, state.params, reload: true
+        $previousState.forget 'newMetadataEditor'
       )
 
     $scope = extend $scope,
       metadata: metadata
       languages: editorService.getLanguages()
       onSave: _onSave
-      onCancel: editorService.onCancel
+      onCancel: -> editorService.onCancel 'newMetadataEditor'
       tooltipSave: $translate.instant 'tooltip.ag.save'
       tooltipCancel: $translate.instant 'tooltip.cancel'
 

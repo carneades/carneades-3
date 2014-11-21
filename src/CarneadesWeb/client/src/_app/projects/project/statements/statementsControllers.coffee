@@ -14,8 +14,9 @@ define [
     'pascalprecht.translate'
   ])
 
-  .controller 'StatementNewCtrl', ($scope, $translate, $state, $cnBucket
-  $stateParams, $q, $timeout, breadcrumbService, editorService, Statement) ->
+  .controller 'StatementNewCtrl', ($scope, $translate, $state, $cnBucket,
+  $stateParams, $q, $timeout, $previousState, breadcrumbService, editorService,
+  Statement) ->
     _statement =
       text:
         en: ""
@@ -46,7 +47,8 @@ define [
       ).$promise.then((s) ->
         url = 'home.projects.project.statements.statement'
         params = pid: pid, db: db, sid: s.id
-        $state.transitionTo url, params
+        $state.go url, params
+        $previousState.forget 'newStatementEditor'
         $cnBucket.remove $state.$current
       )
 
@@ -64,7 +66,7 @@ define [
       standards: editorService.fillWithPrefixSuffixes(
         [], 'projects.', ['pe', 'dv', 'cce', 'brd'])
       onSave: _onSave
-      onCancel: editorService.onCancel
+      onCancel: -> editorService.onCancel 'newStatementEditor'
       languages: editorService.getLanguages()
       tabModel: true
       tabMetadata: false

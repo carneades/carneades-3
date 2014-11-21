@@ -19,8 +19,9 @@ define [
   ])
 
   .factory 'editorService', ($state,
-  $stateParams, $translate, breadcrumbService, markdownConverter,
-  $cnBucket) ->
+    $stateParams, $translate, breadcrumbService, markdownConverter,
+    $cnBucket, $previousState) ->
+
     # add a new premise to argument.premise
     @addPremise = ({premises}) ->
       premises.push {
@@ -35,18 +36,16 @@ define [
     @deletePremise = (argument, index) ->
       argument.premises.splice index,1
 
-    @onCancel = ->
-      url = 'home.projects.project'
-      params = $stateParams
-
+    @onCancel = (name) ->
+      previous = $previousState.get name
       $cnBucket.remove $state.$current
-      top = $cnBucket.getLastVisitedBucket()
-      if top?.name
-        item = $cnBucket.getBucketItemByName top.name
-        url = item.name
-        params = item.params
-
-      $state.transitionTo url, params
+      if previous.state?.name
+        $previousState.go name
+        $previousState.forget name
+      else
+        url = 'home.projects.project'
+        params = $stateParams
+        $state.go url, name
 
     @getLanguages = () ->
       return [
@@ -287,7 +286,14 @@ define [
         getSchemesName: propertiesCtrl.getSchemesName
         getSchemesProject: propertiesCtrl.getSchemesProject
 
-  .directive 'hallo', ($parse, $timeout, editorService) ->
+  .directive 'hallo', ($parse, $timeout, markdownConverter) ->
+    markdownize = (content) ->
+      html = content.split('\n').map($.trim).filter((line) ->
+        return line isnt ''
+      ).join '\n'
+      return toMarkdown html
+
+
     restrict: 'AC'
     scope: true
     require: '?ngModel'
@@ -300,7 +306,7 @@ define [
 
         $timeout(() ->
           contents = if bound then scope.$eval(attr.ngModel) else elm.html()
-          contents = editorService.htmlize(contents or '')
+          contents = markdownConverter.makeHtml(contents or '')
           elm.hallo(params).html(contents).addClass 'editable'
         , 100)
 
@@ -308,12 +314,12 @@ define [
           model = $parse attr.ngModel
           elm.bind 'halloactivated', () ->
             scope.$apply(() ->
-              elm.html(editorService.htmlize elm.html())
+              elm.html(markdownConverter.makeHtml elm.html())
           )
 
           elm.bind 'hallodeactivated', () ->
             scope.$apply(() ->
-              data = editorService.markdownize elm.html()
+              data = markdownize elm.html()
               model.assign scope, data
           )
 

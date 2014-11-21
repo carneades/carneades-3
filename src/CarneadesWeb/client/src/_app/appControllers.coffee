@@ -191,12 +191,16 @@ define [
     constructor: (
       @scope, @location, @state, @stateParams, @cnBucket
     ) ->
+      @scope.$on '$stateChangeStart', (
+        event, toState, toParams, fromState, fromParams
+      ) =>
+        @cnBucket.setLastVisitedBucket fromState
+
       @scope.$on '$stateChangeSuccess', (
         event, toState, toParams, fromState, fromParams
       ) =>
         @cnBucket.append @state
         @.update()
-        @cnBucket.setLastVisitedBucket fromState
 
         data = @state.$current.self.data
         _isSubNavDisplayed = data and data.commands and data.commands.length > 0

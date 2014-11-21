@@ -66,7 +66,7 @@ define [
     return @
 
   .controller 'ArgumentViewCtrl', ($scope, $state, $stateParams, $translate,
-    $modal, argument, Argument, project, editorService) ->
+    $modal, $previousState, argument, Argument, project, editorService) ->
 
     _remove = () ->
       modalInstance = $modal.open(
@@ -117,12 +117,14 @@ define [
 
     _edit = () ->
       url = 'home.projects.project.arguments.argument.edit'
-      $state.transitionTo url, $stateParams
+      $state.go url, $stateParams
+      $previousState.memo 'newArgumentEditor'
 
     _openStatement = (sid) ->
       url = 'home.projects.project.statements.statement'
       params = pid: $stateParams.pid, db: $stateParams.db, sid: sid
-      $state.transitionTo url, params
+      $state.go url, params
+      $previousState.memo 'newStatementEditor'
 
     argument.valueText = _getValueText argument
     $scope = extend $scope,
@@ -146,7 +148,7 @@ define [
 
   .controller 'ArgumentEditCtrl', ($scope, $state, $stateParams, $translate,
     statements, argument, Argument, theory, breadcrumbService,
-    editorService, $cnBucket) ->
+    editorService, $cnBucket, $previousState) ->
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -166,9 +168,10 @@ define [
         argument.scheme = "(#{argument.scheme})"
       argument.conclusion = $scope.argument.conclusion.id
       Argument.update($stateParams, argument).$promise.then((data) ->
-        url = 'home.projects.project.arguments.argument'
-        $state.transitionTo url, $stateParams, reload: true
-        $cnBucket.remove $state.$current)
+        $cnBucket.remove $state.$current
+        state = $previousState.get 'newArgumentEditor'
+        $state.go state.state.name, state.params, reload: true
+        $previousState.forget 'newArgumentEditor')
 
     _addPremise = () ->
       editorService.addPremise $scope.argument
@@ -277,7 +280,7 @@ define [
       addPremise: _addPremise
       deletePremise: _deletePremise
       onSave: _onSave
-      onCancel: editorService.onCancel
+      onCancel: -> editorService.onCancel 'newArgumentEditor'
       tabModel: true
       tabMetadata: false
       showModel: _showModel

@@ -41,6 +41,7 @@ define [
   'angular-ui-codemirror'
   'angular-selectize'
   'utils'
+  'ui-router-extras'
 ], (require, angular, cn) ->
   window.CodeMirror = require 'codemirror'
 
@@ -133,6 +134,7 @@ define [
     'angular-capitalize-filter'
     'resources.themes'
     'selectize'
+    'ct.ui.router.extras'
   ]
 
   module = angular.module 'app', modules

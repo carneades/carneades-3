@@ -35,7 +35,8 @@ define [
     return @
 
   .controller 'StatementViewCtrl', ($scope, $state, $stateParams,
-  $translate, $modal, statement, Statement, project, editorService) ->
+    $previousState, $translate, $modal, statement, Statement, project,
+    editorService) ->
     _remove = () ->
       modalInstance = $modal.open(
         templateUrl: 'projects/project/statements/statement/modalStatementRemove.jade'
@@ -79,21 +80,23 @@ define [
 
     _edit = () ->
       url = 'home.projects.project.statements.statement.edit'
-      $state.transitionTo url, $stateParams
+      $state.go url, $stateParams
+      $previousState.memo 'newStatementEditor'
 
     _openArgumentEditor = () ->
       url = 'home.projects.project.arguments.new.withConclusion'
-      $state.transitionTo url, $stateParams
+      $state.go url, $stateParams
+      $previousState.memo 'newArgumentEditor'
 
     _openArgument = (id) ->
       url = 'home.projects.project.arguments.argument'
       params = pid: $stateParams.pid, db: $stateParams.db, aid: id
-      $state.transitionTo url, params
+      $state.go url, params
 
     _openStatement = (id) ->
       url = 'home.projects.project.statements.statement'
       params = pid: $stateParams.pid, db: $stateParams.db, sid: id
-      $state.transitionTo url, params
+      $state.go url, params
 
     statement.valueText = _getValueText statement
     $scope = extend $scope,
@@ -120,7 +123,8 @@ define [
     return @
 
   .controller 'StatementEditCtrl', ($scope, $translate, $state, $stateParams,
-    statement, Statement, project, breadcrumbService, editorService, $cnBucket) ->
+    $previousState, statement, Statement, project, breadcrumbService,
+    editorService, $cnBucket) ->
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -131,9 +135,10 @@ define [
 
     _onSave = () ->
       Statement.update($stateParams, statement).$promise.then((data) ->
-        url = 'home.projects.project.statements.statement'
-        $state.transitionTo url, $stateParams, reload: true
-        $cnBucket.remove $state.$current)
+        $cnBucket.remove $state.$current
+        state = $previousState.get 'newStatementEditor'
+        $state.go state.state.name, state.params, reload: true
+        $previousState.forget 'newStatementEditor')
 
     $scope = extend $scope,
       standards: editorService.fillWithPrefixSuffixes(
@@ -147,7 +152,7 @@ define [
       showModel: _showModel
       showMetadata: _showMetadata
       onSave: _onSave
-      onCancel: editorService.onCancel
+      onCancel: -> editorService.onCancel 'newStatementEditor'
       editorOptions: editorService.getCodeMirrorOptions()
       tooltipSave: $translate.instant 'tooltip.statement.save'
       tooltipCancel: $translate.instant 'tooltip.cancel'

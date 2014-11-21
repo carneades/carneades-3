@@ -7,7 +7,7 @@ define [
 ], (angular) ->
   return angular.module('outline.controllers', [])
 
-  .controller 'OutlineRootCtrl', ($scope, $state, $stateParams,
+  .controller 'OutlineRootCtrl', ($scope, $state, $stateParams, $previousState,
     $translate, $location, $window, ag, tproject, scroll, tpid, markos) ->
 
     $stateParams.tpid = tpid
@@ -28,8 +28,18 @@ define [
         console.log 'share on twitter'
         _url = escape($scope.currentUrl)
         _text = escape(ag.title)
-        $window.open("https://twitter.com/intent/tweet?url=#{_url}&text=#{_text}");
+        link = "https://twitter.com/intent/tweet?url=#{_url}&text=#{_text}"
+        $window.open link
         return true
+      openMetadataEditor: ->
+        $state.go 'home.projects.project.edit', $stateParams
+        $previousState.memo 'newMetadataEditor'
+      openArgumentEditor: ->
+        $state.go 'home.projects.project.arguments.new', $stateParams
+        $previousState.memo 'newArgumentEditor'
+      openStatementEditor: ->
+        $state.go 'home.projects.project.statements.new', $stateParams
+        $previousState.memo 'newStatementEditor'
 
     return @
 

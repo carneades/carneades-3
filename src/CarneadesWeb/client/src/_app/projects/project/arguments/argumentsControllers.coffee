@@ -140,6 +140,7 @@ define [
       '$state'
       '$stateParams'
       '$translate'
+      '$previousState'
       '$cnBucket'
       '$cnPremise'
       'Argument'
@@ -149,7 +150,7 @@ define [
       'conclusion'
     ]
 
-    constructor: (@scope, @state, @stateParams, @translate,
+    constructor: (@scope, @state, @stateParams, @translate, @previousState
       @cnBucket, @cnPremise, @Argument, @editorService, @statements,
       @theory, @conclusion
     ) ->
@@ -201,7 +202,8 @@ define [
       }).$promise.then((a) =>
         url = 'home.projects.project.arguments.argument'
         params = pid: pid, db: db, aid: a.id
-        @state.transitionTo url, params
+        @state.go url, params
+        @previousState.forget 'newArgumentEditor'
         @cnBucket.remove @state.$current
       )
 
@@ -219,7 +221,7 @@ define [
         showMetadata: @.showMetadata
         onSave: @.save
 
-        onCancel: @editorService.onCancel
+        onCancel: => @editorService.onCancel 'newArgumentEditor'
         languages: @editorService.getLanguages()
         getSchemeTitle: @.getSchemeTitle
 

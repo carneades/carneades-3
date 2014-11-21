@@ -7,11 +7,23 @@
 require.config
   shim:
     "angular":
-      deps: ['jquery', 'jquery-ui', 'jquery-htmlclean', 'rangy-core', 'hallo']
+      deps: [
+        'jquery'
+        'jquery-ui'
+        'jquery-htmlclean'
+        'rangy-core'
+        'hallo'
+      ]
       exports: "angular"
 
     "angular-ui-router":
       deps: ["angular"]
+
+    "ui-router-extras":
+      deps: [
+        'angular',
+        'angular-ui-router'
+      ]
 
     "angular-ui-select":
       deps: ["angular"]
@@ -71,7 +83,6 @@ require.config
     "classes":
       deps: ['root']
 
-
   paths:
     "angular": "./libs/angular"
     'perfect-scrollbar': './libs/perfect-scrollbar/perfect-scrollbar.min'
@@ -85,6 +96,7 @@ require.config
     'angular-resource': './libs/angular-resource'
     'angular-markdown': './libs/angular-markdown'
     'angular-translate': './libs/angular-translate'
+    'ui-router-extras': './libs/ui-router-extras'
     'angular-ui-codemirror': './libs/angular-ui-codemirror'
     'angular-capitalize-filter': './libs/angular-capitalize-filter'
     'angular-translate-loader-static-files': './libs/angular-translate-loader-static-files'
