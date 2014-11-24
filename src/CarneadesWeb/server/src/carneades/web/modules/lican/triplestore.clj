@@ -13,16 +13,38 @@
             [taoensso.timbre :as timbre :refer [debug info spy error]]))
 
 
-(defn get-licenses
-  "Returns the template licenses for a given entity"
-  [entity endpoint repo-name markos-namespaces]
-  (let [conn (triplestore/make-conn endpoint repo-name markos-namespaces)
-        query (list (list 'lic:licenseTemplate entity '?tpl))
+(defn- get-licenses-of-entity
+  "Returns the template licenses for an entity."
+  [entity conn markos-namespaces]
+  (let [query (list (list 'lic:licenseTemplate entity '?tpl))
         query (namespace/to-absolute-literal query markos-namespaces)
         bindings (triplestore/sparql-query conn query markos-namespaces)
         tpls (set (map #(get % '?/tpl) bindings))
         tpls (map #(namespace/to-absolute-literal % markos-namespaces) tpls)]
     tpls))
+
+(defn- get-derived-licenses
+  "Returns the derived licenses of an entity."
+  [entity conn markos-namespaces]
+  (let [query (list (list 'soft:releasedSoftware '?p entity)
+                    (list 'lic:licenseTemplate '?p '?tpl))
+        query (namespace/to-absolute-literal query markos-namespaces)
+        bindings (triplestore/sparql-query conn query markos-namespaces)
+        tpls (set (map #(get % '?/tpl) bindings))
+        tpls (map #(namespace/to-absolute-literal % markos-namespaces) tpls)]
+    tpls))
+
+(defn get-licenses
+  "Returns the template licenses for a given entity, inclusive the derivated ones."
+  [entity endpoint repo-name markos-namespaces]
+  (let [conn (triplestore/make-conn endpoint repo-name markos-namespaces)
+        tpls (get-licenses-of-entity entity conn markos-namespaces)
+        derived-tpls (get-derived-licenses entity conn markos-namespaces)]
+    (info "templates: " tpls)
+    (info "derived templates: " derived-tpls)
+    (concat tpls derived-tpls)))
+
+
 
 (defn get-entity-name
   [endpoint repo-name markos-namespaces uri]
