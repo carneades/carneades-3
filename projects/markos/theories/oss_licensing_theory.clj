@@ -263,9 +263,10 @@ project."})
                 that dynamic linking creates a derivative work."})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
        :premises [;; (a/pm '(soft:dynamicallyLinkedEntity ?R1 ?E1))
-                  (a/pm '(dynamicallyLinked ?R1 ?E1))
-                  (a/pm '(soft:Library ?E1))
-                  (a/pm '(soft:provenanceRelease ?E1 ?R2))])
+                  (a/pm '(dynamicallyLinked ?R1 ?R2))
+                  ;; (a/pm '(soft:Library ?E1))
+                  ;; (a/pm '(soft:provenanceRelease ?E1 ?R2))
+                  ])
 
       (t/make-scheme
        :id 'statically-linked-library-rule
@@ -275,8 +276,9 @@ project."})
                 that static linking creates a derivative work."})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
        :premises [(a/pm '(staticallyLinkedEntity ?R1 ?E1))
-                  (a/pm '(soft:Library ?E1))
-                  (a/pm '(soft:provenanceRelease ?E1 ?R2))])
+                  ;; (a/pm '(soft:Library ?E1))
+                  ;; (a/pm '(soft:provenanceRelease ?E1 ?R2))
+                  ])
 
       (t/make-scheme
        :id 'oracle-v-google
