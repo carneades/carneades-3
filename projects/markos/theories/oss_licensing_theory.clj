@@ -275,7 +275,7 @@ project."})
                 :description {:en "The Free Software Foundation claims
                 that static linking creates a derivative work."})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [(a/pm '(staticallyLinkedEntity ?R1 ?E1))
+       :premises [(a/pm '(staticallyLinked ?R1 ?R2))
                   ;; (a/pm '(soft:Library ?E1))
                   ;; (a/pm '(soft:provenanceRelease ?E1 ?R2))
                   ])
