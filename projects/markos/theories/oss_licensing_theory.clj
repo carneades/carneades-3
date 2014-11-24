@@ -147,7 +147,7 @@ project."})
                                     :question "Was %s compiled using %s?")})
 
          (t/make-role
-           :symbol 'http://www.markosproject.eu/ontologies/software#implementedAPI
+          :symbol 'http://www.markosproject.eu/ontologies/software#implementedAPI
            :forms {:en (t/make-form :positive "%s is an implementation of the %s API."
                                     :negative "%s is not an implementation of the %s API."
                                     :question "Is %s an implementation of the %s API?")})
@@ -274,7 +274,7 @@ project."})
                 :description {:en "The Free Software Foundation claims
                 that static linking creates a derivative work."})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [(a/pm '(soft:staticallyLinkedEntity ?R1 ?E1))
+       :premises [(a/pm '(staticallyLinkedEntity ?R1 ?E1))
                   (a/pm '(soft:Library ?E1))
                   (a/pm '(soft:provenanceRelease ?E1 ?R2))])
 
@@ -286,11 +286,13 @@ project."})
                 Inc., United States Court of Appeals for the Federal
                 Circuit, 2013-1021, -1022, May 9, 2014"})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [(a/pm '(soft:provenanceRelease ?E1 ?R1))
-                  (a/pm '(soft:directImplementedInterface ?E1 ?I1))
-                  (a/pm '(top:containedEntity ?A1 ?I1))
-                  (a/pm '(soft:ownedAPI ?O1 ?A1))
-                  (a/pm '(soft:provenanceRelease ?O1 ?R2))])
+       :premises [;; (a/pm '(soft:provenanceRelease ?E1 ?R1))
+                  ;; (a/pm '(soft:directImplementedInterface ?E1 ?I1))
+                  ;; (a/pm '(top:containedEntity ?A1 ?I1))
+                  ;; (a/pm '(soft:ownedAPI ?O1 ?A1))
+                  ;; (a/pm '(soft:provenanceRelease ?O1 ?R2))
+                  (a/pm '(implementedAPI ?R1 ?R2))
+                  ])
 
     (t/make-scheme
        :id 'derivation-by-forking
@@ -309,9 +311,11 @@ project."})
               :description {:en "A work created by modifying a work is
               derived from it. "})
      :conclusion '(copyright:derivedFrom ?R1 ?R2)
-     :premises [(a/pm '(soft:provenanceRelease ?E1 ?R1))
-                (a/pm '(top:previousVersion ?E1 ?E2))
-                (a/pm '(soft:provenanceRelease ?E2 ?R2))])
+     :premises [;; (a/pm '(soft:provenanceRelease ?E1 ?R1))
+                ;; (a/pm '(top:previousVersion ?E1 ?E2))
+                ;; (a/pm '(soft:provenanceRelease ?E2 ?R2))
+                (a/pm '(modificationOf ?R1 ?R2))
+                ])
 
       ])]))
 
