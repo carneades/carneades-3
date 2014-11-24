@@ -42,7 +42,7 @@
         derived-tpls (get-derived-licenses entity conn markos-namespaces)]
     (info "templates: " tpls)
     (info "derived templates: " derived-tpls)
-    (concat tpls derived-tpls)))
+    (set (concat tpls derived-tpls))))
 
 
 
