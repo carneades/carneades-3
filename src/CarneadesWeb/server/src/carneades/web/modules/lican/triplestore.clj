@@ -52,7 +52,7 @@
         query (list 'top:name uri '?name)
         query (namespace/to-absolute-literal query markos-namespaces)
         bindings (triplestore/sparql-query conn query markos-namespaces)]
-    (prn "bindings =" bindings)
+    ;; (prn "bindings =" bindings)
     (when-not (empty? bindings)
       (let [name (first (vals (first bindings)))
             name (namespace/to-relative-atom name markos-namespaces)]

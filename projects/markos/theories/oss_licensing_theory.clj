@@ -262,7 +262,8 @@ project."})
                 :description {:en "The Free Software Foundation claims
                 that dynamic linking creates a derivative work."})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [(a/pm '(soft:dynamicallyLinkedEntity ?R1 ?E1))
+       :premises [;; (a/pm '(soft:dynamicallyLinkedEntity ?R1 ?E1))
+                  (a/pm '(dynamicallyLinked ?R1 ?E1))
                   (a/pm '(soft:Library ?E1))
                   (a/pm '(soft:provenanceRelease ?E1 ?R2))])
 

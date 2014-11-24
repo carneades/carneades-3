@@ -11,8 +11,8 @@
          {:name "Policies"
           :description "View the proposed policies and see how they would work in the cases that interest you."
           :link "home.projects"}]
- :triplestore "http://node-1.markos.psnc.pl/openrdf-sesame"
- :repo-name "markos_test_08_07_2014"
+ :triplestore "http://markos-n1.man.poznan.pl/openrdf-sesame"
+ :repo-name "markos_test_14_11_2014"
  :description
  {:en
   "The [MARKOS project](http://www.markosproject.eu/) is aimed to realize the prototype of a service and an interactive application providing an integrated view on the Open Source projects available the on web, focusing on functional, structural and licenses aspects of software code.
