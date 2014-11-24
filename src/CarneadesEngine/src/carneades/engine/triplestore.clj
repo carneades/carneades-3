@@ -254,7 +254,8 @@ The IRI is returned with its last slash doubled."
           (variables->sparqlvariables ,,,)
           (strings->xsd-strings ,,,)
           (transform-sexp ,,,)
-          (envelop-sexp ,,,)))))
+          ;; (envelop-sexp ,,,)
+          ))))
 
 (defn make-scheme
   "Returns an s-exp representing a scheme."
