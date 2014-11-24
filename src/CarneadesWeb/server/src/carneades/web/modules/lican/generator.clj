@@ -104,8 +104,10 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
 (defn make-response
   [translator kbconn goal subs namespaces]
   (let [query (translator kbconn goal subs namespaces)
-        query (namespace/to-absolute-literal query namespaces)]
-   (tp/responses-from-query kbconn query subs namespaces)))
+        query (namespace/to-absolute-literal query namespaces)
+        res (tp/responses-from-query kbconn query subs namespaces)]
+    (debug " generator res: " res)
+    res))
 
 (defn responses-from-goal
   [kbconn goal subs namespaces]
