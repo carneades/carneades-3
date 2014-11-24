@@ -33,7 +33,7 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
         _ (debug "r2: " r2)
         ;; TODO: here namespaces are hardcoded
         query (list
-               (list 'soft:dynamicallyLinkedEntity r1 r2)
+               (list 'soft:dynamicallyLinkedEntity r1 '?e1)
                (list 'soft:Library '?e1)
                (list 'soft:provenanceRelease '?e1 r2)
                (list 'soft:releaseSoftware '?p1 r1)
@@ -48,7 +48,7 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
         r2 (second terms)
         ;; TODO: here namespaces are hardcoded
         query (list
-               (list 'soft:staticallyLinkedEntity r1 r2)
+               (list 'soft:staticallyLinkedEntity r1 '?e1)
                (list 'soft:Library '?e1)
                (list 'soft:provenanceRelease '?e1 r2)
                (list 'soft:releaseSoftware '?p1 r1)
@@ -64,7 +64,7 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
         ;; TODO: here namespaces are hardcoded
         query (list
                (list 'soft:provenanceRelease '?e1 r1)
-               (list 'soft:directImplementedInterface '?i1)
+               (list 'soft:directImplementedInterface '?e1 '?i1)
                (list 'top:containedEntity 'a1 '?i1)
                (list 'soft:ownedAPI '?o1 '?a1)
                (list 'soft:provenanceRelease '?o1 r2)
@@ -81,7 +81,7 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
         ;; TODO: here namespaces are hardcoded
         query (list
                (list 'soft:provenanceRelease '?e1 r1)
-               (list 'top:previousVersion '?e2)
+               (list 'top:previousVersion '?e1 '?e2)
                (list 'soft:provenanceRelease '?e2 r2)
                (list 'soft:releaseSoftware '?p1 r1)
                (list 'soft:releaseSoftware '?p2 r2))]
