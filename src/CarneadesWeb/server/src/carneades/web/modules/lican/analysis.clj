@@ -204,7 +204,8 @@
   (comp (tr/make-default-translator)
         (ttr/make-language-translator theories)
         (ttr/make-uri-shortening-translator namespaces)
-        (tp/make-uri-translator triplestore repo-name namespaces)))
+        (tp/make-uri-translator triplestore repo-name namespaces)
+        ))
 
 (defn start-engine
   [entity legalprofileid]
@@ -217,6 +218,7 @@
                                   triplestore
                                   repo-name
                                   markos-namespaces)
+        _ (when (empty? licenses) (throw (ex-info "No licenses found" {:entity entity})))
         licenses-statements (map #(unserialize-atom
                                    (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
                                            entity
