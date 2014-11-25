@@ -23,7 +23,7 @@ define [
       onShare: ->
         $scope.isSharing = !$scope.isSharing
       shareOnMarkos: ->
-        markos.share()
+        markos.share($scope.currentUrl)
       shareOnTwitter: ->
         console.log 'share on twitter'
         _url = escape($scope.currentUrl)

@@ -394,3 +394,6 @@ Returns a set of questions for the frontend."
     (filter-software-entities goal the-entity use-property-uris sw-entity-uris generators profile)))
 
 
+(defn post-analysis
+  [analysis]
+  (debug "posting analysis: " analysis))
