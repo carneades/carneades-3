@@ -68,7 +68,7 @@ define [
       if solution.db?
         $scope.viewLoading = false
         console.log 'solution found!'
-        $state.transitionTo 'home.projects.project.outline', {pid: 'markos', db: solution.db}
+        $state.go 'home.projects.project.outline', {pid: 'markos', db: solution.db}
       ), true
 
     undefined
