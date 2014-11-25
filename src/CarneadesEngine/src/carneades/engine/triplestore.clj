@@ -281,9 +281,21 @@ argument if is the case."
         ;; (prn "negative answer")
         []))))
 
+(defn mk-argument
+  [conclusion goal query scheme]
+  (let [premises (if (and (not= goal query) (seq? query))
+                   ;; if we are dealing with a multi query 
+                   (map argument/pm query)
+                   ())]
+    (argument/make-argument
+     :conclusion conclusion
+     :scheme scheme
+     :strict true
+     :premises premises)))
+
 (defn make-response-from-binding
   "Creates a response for a binding returned by the triplestore."
-  [kbconn goal subs binding]
+  [kbconn goal query subs binding]
   (debug "make-response-from-binding")
   (let [returned-subs (sparqlvariables->variables binding)
         _ (debug "sparqlvariables->variables finished")
@@ -292,16 +304,8 @@ argument if is the case."
         _ (debug "goal:" goal)
         _ (debug "new-subs:" new-subs)
         conclusion (doall (unify/apply-substitutions new-subs goal))
-        _ (debug "calling make-scheme")
         scheme  (make-scheme kbconn "query")
-        _ (debug "calling make-argument")
-        _ (debug "conclusion: " conclusion)
-        _ (debug "scheme:" scheme)
-        arg (argument/make-argument
-             :conclusion conclusion
-             :scheme scheme
-             :strict true)]
-    (debug "apply-substitutions is finished")
+        arg (mk-argument conclusion goal query scheme)]
     (generator/make-response new-subs [] arg)))
 
 (defn to-absolute-bindings
@@ -344,7 +348,7 @@ argument if is the case."
   [kbconn goal query subs namespaces]
   (let [bindings (sparql-query kbconn query namespaces)]
     (debug "bindings:" bindings)
-    (doall (map #(make-response-from-binding kbconn goal subs %) bindings))))
+    (doall (map #(make-response-from-binding kbconn goal query subs %) bindings))))
 
 (defn responses-from-goal
   "Generates responses for a given goal."
