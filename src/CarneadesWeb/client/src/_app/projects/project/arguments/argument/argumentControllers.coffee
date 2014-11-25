@@ -77,7 +77,7 @@ define [
       modalInstance.result.then((m) ->
         Argument.delete($stateParams, argument).$promise.then((data) ->
           url = 'home.projects.project.outline'
-          $state.transitionTo url, $stateParams, reload: true
+          $state.go url, $stateParams, reload: true
         )
       )
 
