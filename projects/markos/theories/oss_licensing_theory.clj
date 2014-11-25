@@ -48,61 +48,61 @@ project."})
 
    :language
    (into (t/make-language
-          (t/make-role 
+          (t/make-role
            :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#linked
            :forms {:en (t/make-form :positive "%s is linked to %s."
                                     :negative "%s is not linked to %s."
                                     :question "Is %s linked to %s?")})
-          (t/make-role 
+          (t/make-role
            :symbol 'http://www.markosproject.eu/ontologies/licenses#licenseTemplate
            :forms {:en (t/make-form :positive "%s is licensed using %s."
                                     :negative "%s is not licensed using %s."
                                     :question "Is %s licensed using %s?")})
-          (t/make-concept 
+          (t/make-concept
            :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#ReciprocalLicenseTemplate
            :forms {:en (t/make-form :positive "%s is a reciprocal license."
                                     :negative "%s is not reciprocal license."
                                     :question "Is %s a reciprocal license?")})
-          (t/make-role 
+          (t/make-role
            :symbol 'http://www.markosproject.eu/ontologies/licenses#coveringLicense
            :forms {:en (t/make-form :positive "%s has a license: %s."
                                     :negative "%s does not have a license: %s."
                                     :question "Does %s have %s as its license?")})
-          (t/make-role 
+          (t/make-role
            :symbol 'http://www.markosproject.eu/ontologies/licenses#template
            :forms {:en (t/make-form :positive "The template license of %s is %s."
                                     :negative "The template license of %s is not %s."
                                     :question "Is the template license of %s the %s?")})
-          (t/make-role 
+          (t/make-role
            :symbol 'http://www.markosproject.eu/ontologies/top#containedEntity
            :forms {:en (t/make-form :positive "%s contains %s."
                                     :negative "%s does not contain %s."
                                     :question "Does %s contain %s?")})
-          (t/make-concept 
+          (t/make-concept
            :symbol 'http://www.markosproject.eu/ontologies/software#Library
            :forms {:en (t/make-form :positive "%s is a library."
                                     :negative "%s is not a library."
                                     :question "Is %s a library?")})
-          (t/make-concept 
+          (t/make-concept
            :symbol 'http://www.markosproject.eu/ontologies/software#SoftwareRelease
            :forms {:en (t/make-form :positive "%s is a software release."
                                     :negative "%s is not a software release."
                                     :question "Is %s a software release?")})
-          (t/make-concept 
+          (t/make-concept
            :symbol 'http://www.markosproject.eu/ontologies/licenses#CopyrightLicenseTemplate
            :forms {:en (t/make-form :positive "%s is a license."
                                     :negative "%s is not a license."
                                     :question "Is %s a license?")})
-          (t/make-role 
+          (t/make-role
            :symbol 'http://www.markosproject.eu/ontologies/copyright#compatibleWith
            :forms {:en (t/make-form :positive "%s is compatible with %s."
                                     :negative "%s is not compatible with %s."
-                                    :question "Is %s compatible with %s?")}) 
+                                    :question "Is %s compatible with %s?")})
           (t/make-role
            :symbol 'http://www.markosproject.eu/ontologies/software#provenanceRelease
-           :forms {:en (t/make-form :positive "%s is a the provenance release of %s."
-                                    :negative "%s is not the provenance releaes of %s."
-                                    :question "Is %s the provenance release of %s?")})
+           :forms {:en (t/make-form :positive "The provenance release of %s is %s."
+                                    :negative "The provenance release of %s is not %s."
+                                    :question "Is the provenance release of %s %s?")})
 
           (t/make-role
            :symbol 'http://www.markosproject.eu/ontologies/software#releasedSoftware
@@ -147,10 +147,10 @@ project."})
                                     :question "Was %s compiled using %s?")})
 
          (t/make-role
-           :symbol 'http://www.markosproject.eu/ontologies/software#implementedAPI
-           :forms {:en (t/make-form :positive "%s is an implementation of the %s API."
-                                    :negative "%s is not an implementation of the %s API."
-                                    :question "Is %s an implementation of the %s API?")})
+          :symbol 'http://www.markosproject.eu/ontologies/software#implementedAPI
+          :forms {:en (t/make-form :positive "%s is an implementation of the %s API."
+                                   :negative "%s is not an implementation of the %s API."
+                                   :question "Is %s an implementation of the %s API?")})
 
          (t/make-role
           :symbol 'http://www.markosproject.eu/ontologies/software#previousVersion
@@ -162,7 +162,7 @@ project."})
 
           ) ; end of make-language
 
-          
+
          (:language copyright-theory))
 
    :sections
@@ -206,7 +206,7 @@ project."})
        :premises [(a/pm '(soft:releasedSoftware ?P ?R))
                   (a/pm '(lic:licenseTemplate ?P ?T))])
 
- 
+
       (t/make-scheme
        :id 'default-licensing-rule
        :weight 0.25
@@ -232,7 +232,7 @@ project."})
                   (a/pm '(ReciprocalLicenseTemplate ?T2))]
        :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
 
-      ;; 
+      ;;
       ;; (t/make-scheme
       ;;  :id 'default-derivative-work-rule
       ;;  :weight 0.25
@@ -257,59 +257,66 @@ project."})
 
       (t/make-scheme
        :id 'dynamically-linked-library-rule
-       :header (dc/make-metadata 
+       :header (dc/make-metadata
                 :title "Dynamic linking"
                 :description {:en "The Free Software Foundation claims
                 that dynamic linking creates a derivative work."})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [(a/pm '(soft:dynamicallyLinkedEntity ?R1 ?E1))
-                  (a/pm '(soft:provenanceRelease ?E1 ?R2))])
+       :premises [;; (a/pm '(soft:dynamicallyLinkedEntity ?R1 ?E1))
+                  (a/pm '(dynamicallyLinked ?R1 ?R2))
+                  ;; (a/pm '(soft:Library ?E1))
+                  ;; (a/pm '(soft:provenanceRelease ?E1 ?R2))
+                  ])
 
       (t/make-scheme
        :id 'statically-linked-library-rule
-       :header (dc/make-metadata 
+       :header (dc/make-metadata
                 :title "Static linking"
                 :description {:en "The Free Software Foundation claims
                 that static linking creates a derivative work."})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [(a/pm '(soft:staticallyLinkedEntity ?R1 ?E1))
-                  (a/pm '(soft:provenanceRelease ?E1 ?R2))])
+       :premises [(a/pm '(staticallyLinked ?R1 ?R2))
+                  ;; (a/pm '(soft:Library ?E1))
+                  ;; (a/pm '(soft:provenanceRelease ?E1 ?R2))
+                  ])
 
       (t/make-scheme
        :id 'oracle-v-google
-       :header (dc/make-metadata 
+       :header (dc/make-metadata
                 :title "Derivation by Implementing an API"
                 :description {:en "Oracle America, Inc. v. Google,
                 Inc., United States Court of Appeals for the Federal
                 Circuit, 2013-1021, -1022, May 9, 2014"})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [(a/pm '(soft:provenanceRelease ?E1 ?R1))
-                  (a/pm '(soft:directImplementedInterface ?E1 ?I1))
-                  (a/pm '(top:containedEntity ?A1 ?I1))
-                  (a/pm '(soft:ownedAPI ?O1 ?A1))
-                  (a/pm '(soft:provenanceRelease ?O1 ?R2))])
+       :premises [;; (a/pm '(soft:provenanceRelease ?E1 ?R1))
+                  ;; (a/pm '(soft:directImplementedInterface ?E1 ?I1))
+                  ;; (a/pm '(top:containedEntity ?A1 ?I1))
+                  ;; (a/pm '(soft:ownedAPI ?O1 ?A1))
+                  ;; (a/pm '(soft:provenanceRelease ?O1 ?R2))
+                  (a/pm '(implementedAPI ?R1 ?R2))
+                  ])
 
     (t/make-scheme
        :id 'derivation-by-forking
-       :header (dc/make-metadata 
+       :header (dc/make-metadata
                 :title "Derivation by Forking"
                 :description {:en "A fork of a software release is a
                 work derived from the release."})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
        :premises [(a/pm '(soft:softwareFork ?R2 ?R1))])
-      
+
 
     (t/make-scheme
      :id 'derivation-by-modification
-     :header (dc/make-metadata 
+     :header (dc/make-metadata
               :title "Derivation by Modification"
               :description {:en "A work created by modifying a work is
               derived from it. "})
      :conclusion '(copyright:derivedFrom ?R1 ?R2)
-     :premises [(a/pm '(soft:provenanceRelease ?E1 ?R1))
-                (a/pm '(top:previousVersion ?E1 ?E2))
-                (a/pm '(soft:provenanceRelease ?E2 ?R2))])
+     :premises [;; (a/pm '(soft:provenanceRelease ?E1 ?R1))
+                ;; (a/pm '(top:previousVersion ?E1 ?E2))
+                ;; (a/pm '(soft:provenanceRelease ?E2 ?R2))
+                (a/pm '(modificationOf ?R1 ?R2))
+                ])
 
       ])]))
-
-

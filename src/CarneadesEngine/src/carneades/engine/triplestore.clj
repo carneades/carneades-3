@@ -46,8 +46,8 @@
   (require '[edu.ucdenver.ccp.kr.rdf :as rdf])
   (require '[edu.ucdenver.ccp.kr.sparql :as sparql])
 
-  (def markos-conn (make-conn "http://markos.man.poznan.pl/openrdf-sesame"
-                              "markos_test_26-07-2013"
+  (def markos-conn (make-conn "http://markos-n1.man.poznan.pl/openrdf-sesame"
+                              "markos_test_14_11_2014"
                               [["top" "http://www.markosproject.eu/ontologies/top#"]
                                ["reif" "http://www.markosproject.eu/ontologies/reification#"]
                                ["soft" "http://www.markosproject.eu/ontologies/software#"]
@@ -67,6 +67,28 @@
    (binding [sparql/*select-limit* 100]
      (sparql/query (:kb markos-conn) '((?/x soft/name ?/z)))))
 
+  (pprint
+   (binding [kb/*kb* (:kb markos-conn)
+                                        ;; sparql/*select-limit* 100
+             ]
+     (sparql/sparql-query-body
+                   (unserialize-atom "((http:///www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity http:///markosproject.eu/kb/SoftwareRelease/3770 ?/53455)
+ (http:///www.markosproject.eu/ontologies/software#Library ?/e1)
+ (http:///www.markosproject.eu/ontologies/software#provenanceRelease ?/e1 ?/53455)
+ (http:///www.markosproject.eu/ontologies/software#releaseSoftware ?/p1 http:///markosproject.eu/kb/SoftwareRelease/3770)
+ (http:///www.markosproject.eu/ontologies/software#releaseSoftware ?/p2 ?/53455))"))))
+
+  (pprint
+   (binding [kb/*kb* (:kb markos-conn)
+             ;; sparql/*select-limit* 100
+             ]
+     (sparql/sparql-query-body
+      (unserialize-atom "(
+ (http:///www.markosproject.eu/ontologies/software#Library ?/e1)
+ 
+ 
+ )"))))
+  
   (pprint
    (binding [sparql/*select-limit* 100]
      (sparql/query (:kb markos-conn) '((?/x soft/name ("org.apache.log4j" xsd/string))))))
@@ -225,12 +247,15 @@ The IRI is returned with its last slash doubled."
 (defn sexp->sparqlquery
   "Converts a Carneades sexpression encoding a query to a Clojure/SPARQL query."
   [sexp]
-  (let [sexp (iris->owllib-iris sexp)]
-    (-> sexp
-        (variables->sparqlvariables ,,,)
-        (strings->xsd-strings ,,,)
-        (transform-sexp ,,,)
-        (envelop-sexp ,,,))))
+  (if (some seq? sexp)
+    (map sexp->sparqlquery sexp)
+    (let [sexp (iris->owllib-iris sexp)]
+      (-> sexp
+          (variables->sparqlvariables ,,,)
+          (strings->xsd-strings ,,,)
+          (transform-sexp ,,,)
+          ;; (envelop-sexp ,,,)
+          ))))
 
 (defn make-scheme
   "Returns an s-exp representing a scheme."
@@ -290,7 +315,9 @@ argument if is the case."
 
 (defn sparql-query
   [kbconn sexp namespaces]
+  (debug "sparql-query")
   (let [query (sexp->sparqlquery sexp)
+        _ (debug "sparql query: " query)
         bindings (binding [sparql/*select-limit* select-limit]
                    (sparql/query (:kb kbconn) query))
         bindings (map sparqlbindings->bindings bindings)

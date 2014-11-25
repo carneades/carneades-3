@@ -410,13 +410,13 @@
 
 (defn theory? [x] (instance? Theory x))
 
-(defn load-theory*
+(defn load-theory
   "Dynamically loads the theory at url and returns it."
   [filepath]
   (deref (load-file filepath)))
 
 ;; ensure we don't load twice the same namespace
-(def load-theory (memoize load-theory*))
+;; (def load-theory (memoize load-theory*))
 
 (defn- scheme-index-key
   "term -> symbol

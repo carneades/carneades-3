@@ -45,7 +45,8 @@
   :ring {:handler carneades.web.handler/war-handler
          :init carneades.web.handler/init
          :destroy carneades.web.handler/destroy
-         :servlet-name "carneades"}
+         :servlet-name "carneades"
+         :web-xml "web.xml"}
 
   :resource-paths ["../client/dist"]
 
