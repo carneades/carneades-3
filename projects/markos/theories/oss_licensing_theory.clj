@@ -198,6 +198,9 @@ project."})
 
       (t/make-scheme
        :id 'use-by-derivation
+       :header (dc/make-metadata
+                :title "Use by derivation"
+                :description {:en "Some description."})
        :conclusion '(copyright:workUsed (derivation ?W1 ?W2) ?w2)
        :premises [(a/pm '(copyright:derivedFrom ?W1 ?W2))])
 
@@ -256,8 +259,7 @@ project."})
        :id 'compatible-reflexive-rule
        :header (dc/make-metadata
                 :title "Reflexivity of compatible"
-                :description {:en "A license template is compatible
-                with itself."})
+                :description {:en "A license template is compatible with itself."})
        :conclusion '(copyright:compatibleWith ?T1 ?T1)
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))])
 
