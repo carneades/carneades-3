@@ -45,7 +45,8 @@
             [carneades.engine.aspic :refer [aspic-grounded]]
             [carneades.web.modules.common.dialog.utils :refer [store-ag]]
 
-            [carneades.engine.unify :refer [unify]]))
+            [carneades.engine.unify :refer [unify]]
+            [clj-http.client :as http]))
 
 (defn initial-state
   []
@@ -396,4 +397,14 @@ Returns a set of questions for the frontend."
 
 (defn post-analysis
   [analysis]
-  (debug "posting analysis: " analysis))
+  (debug "posting analysis: " analysis)
+  (let [project "markos"
+        properties (project/load-project-properties project)
+        in-production (:in-production properties)
+        triplestore-api-url (:triplestore-api-url properties)
+        url (if in-production
+              (str triplestore-api-url "/storeLicenceAnalysisResult")
+              (str triplestore-api-url "/storeLicenceAnalysisResult/dev"))
+        url (str url "?entityURI=" (:entityuri analysis) "&resultGraphLink=" (:url analysis))]
+    (debug "url:" url)
+    (http/post url)))
