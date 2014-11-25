@@ -4,5 +4,5 @@
 div(
   ng-show="section.schemes.length > 0",
   ng-include="'projects/project/theory/theory-schemes.jade'")
-    // div(ng-repeat='section in section.sections')
-    //   div(ng-include="'projects/project/theory/theory-subsection.jade'")
+div(ng-repeat='section in section.sections')
+div(ng-include="'projects/project/theory/theory-subsection.jade'")

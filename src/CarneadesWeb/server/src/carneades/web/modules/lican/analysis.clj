@@ -20,7 +20,7 @@
             [carneades.engine.uuid :as uuid]
             [edu.ucdenver.ccp.kr.sparql :as sparql]
             [carneades.web.modules.common.dialog.reconstruction :as recons]
-            [carneades.engine.triplestore :as triplestore]
+            [carneades.web.modules.lican.generator :as licgen]
             [carneades.database.db :as db]
             [carneades.database.argument-graph :as ag-db]
             [carneades.engine.utils :refer [unserialize-atom]]
@@ -130,7 +130,7 @@
         markos-namespaces (:namespaces properties)
         engine (shell/make-engine ag 3000 #{}
                                   (list
-                                   (triplestore/generate-arguments-from-triplestore endpoint
+                                   (licgen/generate-arguments-from-triplestore endpoint
                                                                                     repo-name
                                                                                     markos-namespaces)
                                    (theory/generate-arguments-from-theory loaded-theories)
@@ -168,7 +168,7 @@
         markos-namespaces (:namespaces properties)
         engine (shell/make-engine ag 3000 #{}
                                   (list
-                                   (triplestore/generate-arguments-from-triplestore endpoint
+                                   (licgen/generate-arguments-from-triplestore endpoint
                                                                                     repo-name
                                                                                     markos-namespaces)
                                    (theory/generate-arguments-from-theory loaded-theories)
@@ -204,7 +204,8 @@
   (comp (tr/make-default-translator)
         (ttr/make-language-translator theories)
         (ttr/make-uri-shortening-translator namespaces)
-        (tp/make-uri-translator triplestore repo-name namespaces)))
+        (tp/make-uri-translator triplestore repo-name namespaces)
+        ))
 
 (defn start-engine
   [entity legalprofileid]
@@ -217,6 +218,7 @@
                                   triplestore
                                   repo-name
                                   markos-namespaces)
+        _ (when (empty? licenses) (throw (ex-info "No licenses found" {:entity entity})))
         licenses-statements (map #(unserialize-atom
                                    (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
                                            entity
@@ -233,7 +235,7 @@
         [argument-from-user-generator questions send-answer]
         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
         ag (get-ag project "")
-        triplestore-generator (triplestore/generate-arguments-from-triplestore triplestore
+        triplestore-generator (licgen/generate-arguments-from-triplestore triplestore
                                                                                repo-name
                                                                                markos-namespaces)
         profile (load-profile project legalprofileid)
@@ -303,7 +305,7 @@ Returns a set of questions for the frontend."
         ag (ag/make-argument-graph)
         engine (shell/make-engine ag 500 #{}
                                   (list
-                                   (triplestore/generate-arguments-from-triplestore triplestore
+                                   (licgen/generate-arguments-from-triplestore triplestore
                                                                                     repo-name
                                                                                     markos-namespaces)
                                    (theory/generate-arguments-from-theory loaded-theories')))
@@ -382,7 +384,7 @@ Returns a set of questions for the frontend."
                                     markos-namespaces)
         profile (load-profile project legal-profile-id)
         loaded-theories' (extend-theory loaded-theories profile)
-        triplestore-generator (triplestore/generate-arguments-from-triplestore
+        triplestore-generator (licgen/generate-arguments-from-triplestore
                                triplestore
                                repo-name
                                markos-namespaces)
