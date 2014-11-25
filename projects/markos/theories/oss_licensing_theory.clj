@@ -200,7 +200,8 @@ project."})
        :id 'use-by-derivation
        :header (dc/make-metadata
                 :title "Use by derivation"
-                :description {:en "Some description."})
+                :description {:en "One way to use a copyrighted work
+                is to derive a new work from it."})
        :conclusion '(copyright:workUsed (derivation ?W1 ?W2) ?w2)
        :premises [(a/pm '(copyright:derivedFrom ?W1 ?W2))])
 
