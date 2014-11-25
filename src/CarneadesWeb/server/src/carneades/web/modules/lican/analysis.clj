@@ -404,7 +404,7 @@ Returns a set of questions for the frontend."
         triplestore-api-url (:triplestore-api-url properties)
         url (if in-production
               (str triplestore-api-url "/storeLicenceAnalysisResult")
-              (str triplestore-api-url "/storeLicenceAnalysisResult/dev"))
-        url (str url "?entityURI=" (:entityuri analysis) "&resultGraphLink=" (:url analysis))]
+              (str triplestore-api-url "/storeLicenceAnalysisResult/dev"))]
     (debug "url:" url)
-    (http/post url)))
+    (http/post url {:form-params {:entityURI (:entityuri analysis)
+                                  :resultGraphLink (:url analysis)}})))
