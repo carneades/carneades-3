@@ -23,11 +23,7 @@ define [
   ])
 
   # Example of call http://localhost:8080/carneades/#/lican?entity=http:%2F%2Fmarkosproject.eu%2Fkb%2FSoftwareRelease%2F1970&legalprofile=1
-  .controller('IntroCtrl', ($scope, $state, $stateParams, $translate, $q, entity, markos) ->
-    $scope.viewLoading = true
-    $q.all([entity]).then((data) ->
-      $scope.viewLoading = false
-    )
+  .controller('IntroCtrl', ($scope, $state, $stateParams, $translate, $q, $cnBucket, entity, markos) ->
 
     sEntity = entity.get uri: $stateParams.entity, ->
       $scope.title = $translate.instant 'lican.title', {entity: sEntity.name}
@@ -38,10 +34,11 @@ define [
       $state.go 'lican.questions'
 
     $scope.startAnalysis = () ->
+      $cnBucket.remove $state.$current
       $state.go 'lican.questions'
   )
 
-  .controller('QuestionsCtrl', ($scope, $state, $stateParams, questions) ->
+  .controller('QuestionsCtrl', ($scope, $state, $stateParams, $cnBucket, questions) ->
     $scope.viewLoading = true
 
     questions.analyse $stateParams.entity, $stateParams.legalprofile
@@ -68,7 +65,8 @@ define [
       if solution.db?
         $scope.viewLoading = false
         console.log 'solution found!'
-        $state.transitionTo 'home.projects.project.outline', {pid: 'markos', db: solution.db}
+        $cnBucket.remove $state.$current
+        $state.go 'home.projects.project.outline', {pid: 'markos', db: solution.db}
       ), true
 
     undefined
