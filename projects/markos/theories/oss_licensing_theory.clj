@@ -129,6 +129,12 @@ project."})
                                     :question "Is %s dynamically linked to  %s?")})
 
           (t/make-role
+           :symbol 'http://www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity
+           :forms {:en (t/make-form :positive "%s is dynamically linked to %s."
+                                    :negative "%s is not dynamically linked to %s."
+                                    :question "Is %s dynamically linked to  %s?")})
+
+          (t/make-role
            :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#staticallyLinked
            :forms {:en (t/make-form :positive "%s is statically linked to %s."
                                     :negative "%s is not statically linked to %s."
