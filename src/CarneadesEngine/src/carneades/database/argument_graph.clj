@@ -398,7 +398,6 @@
    statement for the literal is first created and its id is
    returned."
   [literal]
-  (debug "get-statement")
   (cond (uuid/urn-symbol? literal)
         (str literal)
 
