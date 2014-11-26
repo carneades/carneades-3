@@ -99,6 +99,8 @@ define [
       $state.go url, params
 
     statement.valueText = _getValueText statement
+    for s in statement.pro
+      console.log s
     $scope = extend $scope,
       statement: statement
       project: project
