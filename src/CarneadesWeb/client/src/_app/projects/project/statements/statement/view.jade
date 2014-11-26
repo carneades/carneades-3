@@ -60,29 +60,29 @@
                 ng-model='statement.text')
 
             .form-control-static#pro(ng-hide="statement.pro.length == 0")
-              .span.argument-indication(translate='projects.statement.pro_arguments')
-                ul(ng-repeat='arg in statement.pro')
-                  li
-                    a(ng-click='openArgument(arg.id)', ng-bind='argumentName(arg, $index)')
-                    ul(ng-repeat='p in arg.premises')
-                      li
-                        span(ng-show="!p.positive")
-                          span(translate='projects.negative_premise')
-                        a(ng-click='openStatement(p.id)', ng-bind='p.text')
-                           
-            .form-control-static#con(ng-hide="statement.con.length == 0")
-              .span.argument-indication(translate='projects.statement.con_arguments')
-                ul(ng-repeat='arg in statement.con')
-                  li
-                    a(ng-click='openArgument(arg.id)', ng-bind='argumentName(arg, $index)')
-                    ul(ng-repeat='p in arg.premises')
-                      li
-                        span(ng-show="!p.positive")
-                          span(translate='projects.negative_premise')
+              span.argument-indication(translate='projects.statement.pro_arguments')
+              ul(ng-repeat='arg in statement.pro')
+                li
+                  a(ng-click='openArgument(arg.id)', ng-bind='argumentName(arg, $index)')
+                  ul(ng-repeat='p in arg.premises')
+                    li
+                      span(ng-show="!p.positive")
+                        span(translate='projects.negative_premise')
                       a(ng-click='openStatement(p.id)', ng-bind='p.text')
+                         
+          .form-control-static#con(ng-hide="statement.con.length == 0")
+              span.argument-indication(translate='projects.statement.con_arguments')
+              ul(ng-repeat='arg in statement.con')
+                li
+                  a(ng-click='openArgument(arg.id)', ng-bind='argumentName(arg, $index)')
+                  ul(ng-repeat='p in arg.premises')
+                    li
+                      span(ng-show="!p.positive")
+                        span(translate='projects.negative_premise')
+                    a(ng-click='openStatement(p.id)', ng-bind='p.text')
 
-            .form-control-static#premises(ng-hide="statement['premise-of'].length == 0")
-              .span.premise-of-indication(translate='projects.statement.premise_of')
+          .form-control-static#premises(ng-hide="statement['premise-of'].length == 0")
+              span.premise-of-indication(translate='projects.statement.premise_of')
               ul(ng-repeat="arg in statement['premise-of']")
                 li
                   a(ng-click='openArgument(arg.id)',ng-bind='argumentName(arg, $index)')
