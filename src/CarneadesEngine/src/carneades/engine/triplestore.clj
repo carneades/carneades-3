@@ -18,7 +18,8 @@
             [carneades.engine.argument-generator :as generator]
             [carneades.engine.argument :as argument]
             [carneades.engine.unify :as unify]
-            [carneades.engine.theory.namespace :as namespace])
+            [carneades.engine.theory.namespace :as namespace]
+            [carneades.engine.unify :refer [apply-substitutions]])
   (:import java.net.URL))
 
 (def select-limit 1500)
@@ -72,22 +73,19 @@
                                         ;; sparql/*select-limit* 100
              ]
      (sparql/sparql-query-body
-                   (unserialize-atom "((http:///www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity http:///markosproject.eu/kb/SoftwareRelease/3770 ?/53455)
- (http:///www.markosproject.eu/ontologies/software#Library ?/e1)
- (http:///www.markosproject.eu/ontologies/software#provenanceRelease ?/e1 ?/53455)
- (http:///www.markosproject.eu/ontologies/software#releaseSoftware ?/p1 http:///markosproject.eu/kb/SoftwareRelease/3770)
- (http:///www.markosproject.eu/ontologies/software#releaseSoftware ?/p2 ?/53455))"))))
+      (unserialize-atom "((http:///markosproject.eu/kb/SoftwareRelease/3770 http:///www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity ?/e1)
+ (?/e1 rdf/type http:///www.markosproject.eu/ontologies/software#Library)
+ (?/e1 http:///www.markosproject.eu/ontologies/software#provenanceRelease ?/25530)
+ (?/p1 http:///www.markosproject.eu/ontologies/software#releaseSoftware http:///markosproject.eu/kb/SoftwareRelease/3770)
+ (?/p2 http:///www.markosproject.eu/ontologies/software#releaseSoftware ?/25530))
+"))))
 
   (pprint
    (binding [kb/*kb* (:kb markos-conn)
              ;; sparql/*select-limit* 100
              ]
      (sparql/sparql-query-body
-      (unserialize-atom "(
- (http:///www.markosproject.eu/ontologies/software#Library ?/e1)
- 
- 
- )"))))
+      (unserialize-atom "((http:///markosproject.eu/kb/SoftwareRelease/3770 http:///www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity ?/e1) (?/e1 rdf/type http:///www.markosproject.eu/ontologies/software#Library) (?/e1 http:///www.markosproject.eu/ontologies/software#provenanceRelease ?/25530) (?/p1 http:///www.markosproject.eu/ontologies/software#releaseSoftware http:///markosproject.eu/kb/SoftwareRelease/3770) (?/p2 http:///www.markosproject.eu/ontologies/software#releaseSoftware ?/25530))"))))
   
   (pprint
    (binding [sparql/*select-limit* 100]
@@ -254,7 +252,7 @@ The IRI is returned with its last slash doubled."
           (variables->sparqlvariables ,,,)
           (strings->xsd-strings ,,,)
           (transform-sexp ,,,)
-          ;; (envelop-sexp ,,,)
+          (envelop-sexp ,,,)
           ))))
 
 (defn make-scheme
@@ -266,8 +264,8 @@ The IRI is returned with its last slash doubled."
   "Generates responses for a grounded goal. Asks the triplestore if
 the goal exists and builds a list containing one response with an
 argument if is the case."
-  [kbconn goal subs]
-  (let [query (sexp->sparqlquery goal)]
+  [kbconn goal query subs]
+  (let [query (sexp->sparqlquery query)]
     ;; (prn "issuing ask= " query)
     ;; (debug "ask ")
     ;; (spy query)
@@ -283,15 +281,31 @@ argument if is the case."
         ;; (prn "negative answer")
         []))))
 
+(defn mk-argument
+  [conclusion goal query scheme]
+  (let [premises (if (and (not= goal query) (seq? query))
+                   ;; if we are dealing with a multi query 
+                   (map argument/pm query)
+                   ())]
+    (argument/make-argument
+     :conclusion conclusion
+     :scheme scheme
+     :strict true
+     :premises premises)))
+
 (defn make-response-from-binding
   "Creates a response for a binding returned by the triplestore."
-  [kbconn goal subs binding]
+  [kbconn goal query subs binding]
+  (debug "make-response-from-binding")
   (let [returned-subs (sparqlvariables->variables binding)
+        _ (debug "sparqlvariables->variables finished")
         new-subs (merge subs returned-subs)
-        arg (argument/make-argument
-             :conclusion (unify/apply-substitutions new-subs goal)
-             :scheme (make-scheme kbconn "query")
-             :strict true)]
+        _ (debug "calling make-argument")
+        _ (debug "goal:" goal)
+        _ (debug "new-subs:" new-subs)
+        conclusion (doall (unify/apply-substitutions new-subs goal))
+        scheme  (make-scheme kbconn "query")
+        arg (mk-argument conclusion goal query scheme)]
     (generator/make-response new-subs [] arg)))
 
 (defn to-absolute-bindings
@@ -315,38 +329,34 @@ argument if is the case."
 
 (defn sparql-query
   [kbconn sexp namespaces]
-  (debug "sparql-query")
   (let [query (sexp->sparqlquery sexp)
         _ (debug "sparql query: " query)
+        _ (debug "SPARQL:")
+        _ (debug 
+           (binding [kb/*kb* (:kb kbconn)]
+             (sparql/sparql-query-body query)))
         bindings (binding [sparql/*select-limit* select-limit]
                    (sparql/query (:kb kbconn) query))
         bindings (map sparqlbindings->bindings bindings)
-        ;; _ (prn "[triplestore] relative bindings size= " (count bindings))
-        ;; _ (pprint bindings)
         bindings (map #(to-absolute-bindings % namespaces) bindings)]
-    ;; (prn "[triplestore] absolute bindings size= " (count bindings))
-    ;; (pprint bindings)
-    ;; (debug "SPARQL:")
-    ;; (debug 
-    ;;  (binding [kb/*kb* (:kb kbconn)]
-    ;;    (sparql/sparql-query-body query)))
     bindings))
 
 (defn responses-from-query
   "Generates responses from non-grounded goal. Asks the triplestore
   with the goal as a query, if some new bindings are returned we
   construct one argument for each binding."
-  [kbconn goal subs namespaces]
-  (let [bindings (sparql-query kbconn goal namespaces)]
-    (map #(make-response-from-binding kbconn goal subs %) bindings)))
+  [kbconn goal query subs namespaces]
+  (let [bindings (sparql-query kbconn query namespaces)]
+    (debug "bindings:" bindings)
+    (doall (map #(make-response-from-binding kbconn goal query subs %) bindings))))
 
 (defn responses-from-goal
   "Generates responses for a given goal."
   [kbconn goal subs namespaces]
   (try
     (if (stmt/ground? goal)
-      (responses-from-ask kbconn goal subs)
-      (responses-from-query kbconn goal subs namespaces))
+      (responses-from-ask kbconn goal goal subs)
+      (responses-from-query kbconn goal goal subs namespaces))
     (catch Exception e
       (debug "Invalid query " goal)
       (debug "Error:")
@@ -362,7 +372,8 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
        (reify generator/ArgumentGenerator
          (generate [this goal subs]
            (when (and (stmt/literal-pos? goal) (>= (count goal) 2))
-             (let [res (responses-from-goal kbconn goal subs namespaces)]
+             (let [goal' (apply-substitutions subs goal)
+                   res (responses-from-goal kbconn goal' subs namespaces)]
                ;; (prn "responses from triplestore")
                ;; (pprint res)
                res))))))

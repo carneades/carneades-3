@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 define ['angular'], (angular) ->
-  angular.module('services.markos', []).service 'markos', [() ->
+  angular.module('services.markos', []).service 'markos', ["$http", "urlService", ($http, urlService) ->
     class Markos
         
       setUserId: (id) ->
@@ -13,8 +13,19 @@ define ['angular'], (angular) ->
       getUserId: () ->
         @userId
 
-      share: () ->
-        console.log 'share on markos NYI, userId=', @userId
+      setEntityUri: (uri) ->
+        @entityUri = uri
+
+      getEntityUri: (uri) ->
+        @entityUri
+
+      share: (url) ->
+        console.log "share on markos NYI, userId=#{@userId} entityUri=#{@entityUri} url=#{url}"
+        resource = urlService.$resource "/lican/analyses"
+        resource.save({}, {entityuri: @entityUri, url: url})
+          .$promise.then((a) ->
+            console.log "successfully sent analysis to the triplestore"
+        )
 
     new Markos
     ]

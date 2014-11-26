@@ -46,9 +46,11 @@ corresponding value v. This premise acts as a kind of switch to
   (let [set-values (fn [g rules]
                      (reduce (fn [g {:keys [value ruleid]}]
                                (let [stmt (list 'valid ruleid)]
-                                 (cond (in-value? value) (ag/accept g [stmt])
-                                       (out-value? value) (ag/reject g [stmt])
-                                       :else (ag/enter-statement g stmt))))
+                                 (if (ag/get-statement-node g stmt)
+                                   (cond (in-value? value) (ag/accept g [stmt])
+                                         (out-value? value) (ag/reject g [stmt])
+                                         :else (ag/enter-statement g stmt))
+                                   g)))
                              g
                              rules))] 
     (evaluate evaluator (set-values g (:rules profile)))))

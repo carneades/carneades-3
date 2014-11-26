@@ -88,9 +88,19 @@
            (let [{:keys [legalprofile softwareentity]} params]
              {::body (analysis/find-compatible-licenses legalprofile softwareentity)})))
 
+(defresource analyses-resource
+  [analysis]
+  :available-media-types ["application/json"]
+  :allowed-methods [:post]
+  :available-charsets ["utf-8"]
+  :post! (fn [_]
+           (analysis/post-analysis analysis)))
+
 (defroutes carneades-lican-api-routes
   (GET "/analyse" [entity legalprofile] (entry-analyse-resource entity legalprofile))
 
+  (ANY "/analyses" req (analyses-resource (:body req)))
+  
   (ANY "/findcompatiblelicenses"
        req
        (entry-findcompatiblelicenses (:body req)))

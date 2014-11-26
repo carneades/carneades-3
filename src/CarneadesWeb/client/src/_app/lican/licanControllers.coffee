@@ -29,6 +29,7 @@ define [
       $scope.title = $translate.instant 'lican.title', {entity: sEntity.name}
 
     markos.setUserId $stateParams.userId
+    markos.setEntityUri $stateParams.entity
 
     if not $stateParams.debug
       $state.go 'lican.questions'

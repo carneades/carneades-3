@@ -123,13 +123,19 @@ project."})
                                     :question "Does %s use %s?")})
 
           (t/make-role
+           :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#dynamicallyLinked
+           :forms {:en (t/make-form :positive "%s is dynamically linked to %s."
+                                    :negative "%s is not dynamically linked to %s."
+                                    :question "Is %s dynamically linked to  %s?")})
+
+          (t/make-role
            :symbol 'http://www.markosproject.eu/ontologies/software#dynamicallyLinkedEntity
            :forms {:en (t/make-form :positive "%s is dynamically linked to %s."
                                     :negative "%s is not dynamically linked to %s."
                                     :question "Is %s dynamically linked to  %s?")})
 
           (t/make-role
-           :symbol 'http://www.markosproject.eu/ontologies/software#staticallyLinkedEntity
+           :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#staticallyLinked
            :forms {:en (t/make-form :positive "%s is statically linked to %s."
                                     :negative "%s is not statically linked to %s."
                                     :question "Is %s statically linked to  %s?")})
@@ -192,6 +198,10 @@ project."})
 
       (t/make-scheme
        :id 'use-by-derivation
+       :header (dc/make-metadata
+                :title "Use by derivation"
+                :description {:en "One way to use a copyrighted work
+                is to derive a new work from it."})
        :conclusion '(copyright:workUsed (derivation ?W1 ?W2) ?w2)
        :premises [(a/pm '(copyright:derivedFrom ?W1 ?W2))])
 
@@ -250,8 +260,7 @@ project."})
        :id 'compatible-reflexive-rule
        :header (dc/make-metadata
                 :title "Reflexivity of compatible"
-                :description {:en "A license template is compatible
-                with itself."})
+                :description {:en "A license template is compatible with itself."})
        :conclusion '(copyright:compatibleWith ?T1 ?T1)
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))])
 

@@ -17,14 +17,14 @@ define [
     
     _edit = ->
       url = 'home.projects.project.legalprofiles.legalprofile.edit'
-      $state.transitionTo url, $stateParams
+      $state.go url, $stateParams
 
     _delete = ->
       legalprofile.pid = $stateParams.pid      
       legalprofile.lpid = $stateParams.lpid      
       legalprofile.$delete({}, () ->
         url = 'home.projects.project.legalprofiles'
-        $state.transitionTo url, $stateParams, reload: true)
+        $state.go url, $stateParams, reload: true)
       
     $scope.title = _title
     $scope.section = theory
@@ -48,11 +48,11 @@ define [
     _save = ->
       Legalprofile.update($stateParams, legalprofile).$promise.then((data) ->
         url = 'home.projects.project.legalprofiles.legalprofile'
-        $state.transitionTo url, $stateParams, reload: true)
+        $state.go url, $stateParams, reload: true)
 
     _cancel = ->
       url = 'home.projects.project.legalprofiles.legalprofile'
-      $state.transitionTo url, $stateParams
+      $state.go url, $stateParams
 
     _getRuleIndex = (scheme) ->
       for rule, idx in legalprofile.rules

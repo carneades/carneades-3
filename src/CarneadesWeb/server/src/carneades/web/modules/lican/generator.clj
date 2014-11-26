@@ -19,7 +19,8 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
             [carneades.engine.unify :as unify]
             [carneades.engine.theory.namespace :as namespace]
             [carneades.engine.triplestore :as tp]
-            [carneades.engine.utils :refer [unserialize-atom]])
+            [carneades.engine.utils :refer [unserialize-atom]]
+            [carneades.engine.unify :refer [apply-substitutions]])
   (:import java.net.URL))
 
 (defn dynamically-linked-translator
@@ -31,13 +32,12 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
         r2 (second terms)
         _ (debug "r1: " r1)
         _ (debug "r2: " r2)
-        ;; TODO: here namespaces are hardcoded
         query (list
                (list 'soft:dynamicallyLinkedEntity r1 '?e1)
                (list 'soft:Library '?e1)
                (list 'soft:provenanceRelease '?e1 r2)
-               (list 'soft:releaseSoftware '?p1 r1)
-               (list 'soft:releaseSoftware '?p2 r2))]
+               (list 'soft:releasedSoftware '?p1 r1)
+               (list 'soft:releasedSoftware '?p2 r2))]
     query))
 
 (defn statically-linked-translator
@@ -46,13 +46,12 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
         terms (stmt/term-args atom)
         r1 (first terms)
         r2 (second terms)
-        ;; TODO: here namespaces are hardcoded
         query (list
                (list 'soft:staticallyLinkedEntity r1 '?e1)
                (list 'soft:Library '?e1)
                (list 'soft:provenanceRelease '?e1 r2)
-               (list 'soft:releaseSoftware '?p1 r1)
-               (list 'soft:releaseSoftware '?p2 r2))]
+               (list 'soft:releasedSoftware '?p1 r1)
+               (list 'soft:releasedSoftware '?p2 r2))]
     query))
 
 (defn implemented-api-translator
@@ -61,15 +60,14 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
         terms (stmt/term-args atom)
         r1 (first terms)
         r2 (second terms)
-        ;; TODO: here namespaces are hardcoded
         query (list
                (list 'soft:provenanceRelease '?e1 r1)
                (list 'soft:directImplementedInterface '?e1 '?i1)
                (list 'top:containedEntity 'a1 '?i1)
                (list 'soft:ownedAPI '?o1 '?a1)
                (list 'soft:provenanceRelease '?o1 r2)
-               (list 'soft:releaseSoftware '?p1 r1)
-               (list 'soft:releaseSoftware '?p2 r2))]
+               (list 'soft:releasedSoftware '?p1 r1)
+               (list 'soft:releasedSoftware '?p2 r2))]
     query))
 
 (defn modification-of-translator
@@ -78,13 +76,12 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
         terms (stmt/term-args atom)
         r1 (first terms)
         r2 (second terms)
-        ;; TODO: here namespaces are hardcoded
         query (list
                (list 'soft:provenanceRelease '?e1 r1)
                (list 'top:previousVersion '?e1 '?e2)
                (list 'soft:provenanceRelease '?e2 r2)
-               (list 'soft:releaseSoftware '?p1 r1)
-               (list 'soft:releaseSoftware '?p2 r2))]
+               (list 'soft:releasedSoftware '?p1 r1)
+               (list 'soft:releasedSoftware '?p2 r2))]
     query))
 
 (def query-translators
@@ -105,22 +102,20 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
   [translator kbconn goal subs namespaces]
   (let [query (translator kbconn goal subs namespaces)
         query (namespace/to-absolute-literal query namespaces)
-        res (tp/responses-from-query kbconn query subs namespaces)]
+        res (tp/responses-from-query kbconn goal query subs namespaces)]
     (debug " generator res: " res)
     res))
 
 (defn responses-from-goal
   [kbconn goal subs namespaces]
   (debug "goal:" goal)
-  (if (stmt/ground? goal)
-    (tp/responses-from-goal kbconn goal subs namespaces)
-    (if-let [translator (query-translators (stmt/term-functor (stmt/literal-atom goal)))]
-      (make-response translator kbconn goal subs namespaces)
-      ;; ()
-      (do
-        (warn " goal not being dispatched: " goal)
-        (tp/responses-from-goal kbconn goal subs namespaces))
-      )))
+  (if-let [translator (query-translators (stmt/term-functor (stmt/literal-atom goal)))]
+    (let [goal' (apply-substitutions subs goal)]
+     (make-response translator kbconn goal' subs namespaces))
+    (do
+      (warn "Goal not being dispatched: " goal)
+      (tp/responses-from-goal kbconn goal subs namespaces))
+    ))
 
 (defn generate-arguments-from-triplestore
   "Creates a generator generating arguments from facts in a triplestore.
