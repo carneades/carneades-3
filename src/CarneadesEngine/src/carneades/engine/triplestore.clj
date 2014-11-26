@@ -303,6 +303,7 @@ argument if is the case."
         scheme  (make-scheme kbconn "query" subs)
         arg (mk-argument conclusion goal query scheme new-subs)]
     (if (not= goal query)
+      ;; HACK, TODO
       (generator/make-response new-subs [goal] nil)
       (generator/make-response new-subs [] arg))))
 
