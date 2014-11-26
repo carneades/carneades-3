@@ -25,13 +25,10 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
 
 (defn dynamically-linked-translator
   [kbconn goal subs namespaces]
-  (debug "dynamically-linked dispatcher")
   (let [atom (stmt/literal-atom goal)
         terms (stmt/term-args atom)
         r1 (first terms)
         r2 (second terms)
-        _ (debug "r1: " r1)
-        _ (debug "r2: " r2)
         query (list
                (list 'soft:dynamicallyLinkedEntity r1 '?e1)
                (list 'soft:Library '?e1)
@@ -81,7 +78,9 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
                (list 'top:previousVersion '?e1 '?e2)
                (list 'soft:provenanceRelease '?e2 r2)
                (list 'soft:releasedSoftware '?p1 r1)
-               (list 'soft:releasedSoftware '?p2 r2))]
+               (list 'soft:releasedSoftware '?p2 r2)
+               ;; (list '!= '?p1 '?p2)
+               )]
     query))
 
 (def query-translators
@@ -103,7 +102,7 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
   (let [query (translator kbconn goal subs namespaces)
         query (namespace/to-absolute-literal query namespaces)
         res (tp/responses-from-query kbconn goal query subs namespaces)]
-    (debug " generator res: " res)
+    (debug " generator res " res)
     res))
 
 (defn responses-from-goal

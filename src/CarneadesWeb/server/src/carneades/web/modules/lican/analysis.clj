@@ -307,8 +307,8 @@ Returns a set of questions for the frontend."
         engine (shell/make-engine ag 500 #{}
                                   (list
                                    (licgen/generate-arguments-from-triplestore triplestore
-                                                                                    repo-name
-                                                                                    markos-namespaces)
+                                                                               repo-name
+                                                                               markos-namespaces)
                                    (theory/generate-arguments-from-theory loaded-theories')))
         ag (shell/argue engine aspic-grounded query profile)
         ag (ag/set-main-issues ag query)
@@ -322,7 +322,9 @@ Returns a set of questions for the frontend."
   [goal the-entity use-property-uris generators profile sw-entity-uri]
   (let [g (ag/make-argument-graph)
         use-facts (map (fn [usage]
-                         (unserialize-atom (str "(" usage " " the-entity " " sw-entity-uri ")")))
+                         ;; hack
+                         (let [usage "http://www.markosproject.eu/ontologies/oss-licenses#dynamicallyLinked"]
+                          (unserialize-atom (str "(" usage " " the-entity " " sw-entity-uri ")"))))
                        use-property-uris)
         engine (shell/make-engine g 500 use-facts generators)
         g (shell/argue engine aspic-grounded goal profile)
