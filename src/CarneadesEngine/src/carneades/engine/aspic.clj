@@ -261,6 +261,16 @@
                              (not-any? in-node? (pro-argument-nodes ag2 stmt)))
                         0.0
 
+                        (and (empty? (pro-argument-nodes ag2 stmt))
+                             (empty? (con-argument-nodes ag2 stmt))
+                             (and (:weight stmt) (>= (:weight stmt) 0.75)))
+                        1.0
+                        
+                        (and (empty? (pro-argument-nodes ag2 stmt))
+                             (empty? (con-argument-nodes ag2 stmt))
+                             (and (:weight stmt) (<= (:weight stmt) 0.25)))
+                        0.0
+
                         :else 0.5)]
               (update-statement-node ag2 stmt :value conclusion-value)))
           (initialize-statement-values ag)
