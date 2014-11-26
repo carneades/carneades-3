@@ -554,7 +554,7 @@
   [arg]
   (let [arg-id (str (:id arg)),
         scheme-id (str (serialize-atom (:scheme arg)))
-        conclusion-id (spy (get-statement (:conclusion arg))),
+        conclusion-id (get-statement (:conclusion arg)),
         header-id (if (:header arg) (create-metadata (:header arg)))]
     (jdbc/insert-record
       :argument
