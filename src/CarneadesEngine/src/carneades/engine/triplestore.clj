@@ -298,15 +298,13 @@ argument if is the case."
   [kbconn goal query subs binding]
   (debug "make-response-from-binding")
   (let [returned-subs (sparqlvariables->variables binding)
-        _ (debug "sparqlvariables->variables finished")
         new-subs (merge subs returned-subs)
-        _ (debug "calling make-argument")
-        _ (debug "goal:" goal)
-        _ (debug "new-subs:" new-subs)
-        conclusion (doall (unify/apply-substitutions new-subs goal))
-        scheme  (make-scheme kbconn "query")
-        arg (mk-argument conclusion goal query scheme)]
-    (generator/make-response new-subs [] arg)))
+        conclusion (unify/apply-substitutions new-subs goal)
+        scheme  (make-scheme kbconn "query" subs)
+        arg (mk-argument conclusion goal query scheme new-subs)]
+    (if (not= goal query)
+      (generator/make-response new-subs [goal] nil)
+      (generator/make-response new-subs [] arg))))
 
 (defn to-absolute-bindings
   "Converts the values of bindings to absolute literals."
