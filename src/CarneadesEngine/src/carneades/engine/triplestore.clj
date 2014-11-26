@@ -301,7 +301,7 @@ argument if is the case."
         new-subs (merge subs returned-subs)
         conclusion (unify/apply-substitutions new-subs goal)
         scheme  (make-scheme kbconn "query" subs)
-        arg (mk-argument conclusion goal query scheme new-subs)]
+        arg (mk-argument conclusion goal query scheme)]
     (if (not= goal query)
       ;; HACK, TODO
       (generator/make-response new-subs [goal] nil)
