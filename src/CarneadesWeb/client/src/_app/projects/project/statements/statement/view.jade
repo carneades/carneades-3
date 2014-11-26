@@ -70,7 +70,7 @@
                         span(translate='projects.negative_premise')
                       a(ng-click='openStatement(p.id)', ng-bind='p.text')
                          
-          .form-control-static#con(ng-hide="statement.con.length == 0")
+            .form-control-static#con(ng-hide="statement.con.length == 0")
               span.argument-indication(translate='projects.statement.con_arguments')
               ul(ng-repeat='arg in statement.con')
                 li
@@ -81,7 +81,7 @@
                         span(translate='projects.negative_premise')
                     a(ng-click='openStatement(p.id)', ng-bind='p.text')
 
-          .form-control-static#premises(ng-hide="statement['premise-of'].length == 0")
+            .form-control-static#premises(ng-hide="statement['premise-of'].length == 0")
               span.premise-of-indication(translate='projects.statement.premise_of')
               ul(ng-repeat="arg in statement['premise-of']")
                 li
