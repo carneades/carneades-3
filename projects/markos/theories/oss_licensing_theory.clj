@@ -216,7 +216,20 @@ project."})
        :premises [(a/pm '(soft:releasedSoftware ?P ?R))
                   (a/pm '(lic:licenseTemplate ?P ?T))])
 
-
+      ;; 
+      ;; (t/make-scheme
+      ;;  :id 'entity-license-template-rule
+      ;;  :header (dc/make-metadata
+      ;;           :title "Entity License Template"
+      ;;           :description {:en "Presumably, the license template
+      ;;           applied to an entity is the same as the
+      ;;           project of its release."})
+      ;;  :conclusion '(lic:licenseTemplate ?E ?T)
+      ;;  :premises [(a/pm '(soft:SoftwareEntity ?E))
+      ;;             (a/pm '(soft:provenanceRelease ?E ?R))
+      ;;             (a/pm '(soft:releasedSoftware ?P ?R))
+      ;;             (a/pm '(lic:licenseTemplate ?P ?T))])
+      
       (t/make-scheme
        :id 'default-licensing-rule
        :weight 0.25
@@ -237,7 +250,27 @@ project."})
                 unless T1 is compatible with T2."})
        :pro false
        :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
-       :premises [(a/pm '(copyright:derivedFrom ?W1 ?W2))
+       :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
+                  (a/pm '(copyright:derivedFrom ?W1 ?W2))
+                  (a/pm '(lic:licenseTemplate ?W2 ?T2))
+                  (a/pm '(ReciprocalLicenseTemplate ?T2))]
+       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
+       )
+
+      ;;
+      (t/make-scheme
+       :id 'entity-reciprocity-rule
+       :header (dc/make-metadata
+                :title "Reciprocity"
+                :description {:en "A work W1 may not use a license
+                template T1 if the work is derived from a work W2
+                licensed using a reciprocal license template T2,
+                unless T1 is compatible with T2."})
+       :pro false
+       :conclusion '(copyright:mayBeLicensedUsing ?E1 ?T1)
+       :premises [(a/pm '(soft:SoftwareEntity ?E1))
+                  (a/pm '(soft:provenanceRelease ?E1 ?W1))
+                  (a/pm '(copyright:derivedFrom ?W1 ?W2))
                   (a/pm '(lic:licenseTemplate ?W2 ?T2))
                   (a/pm '(ReciprocalLicenseTemplate ?T2))]
        :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
