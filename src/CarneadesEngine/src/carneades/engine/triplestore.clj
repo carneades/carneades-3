@@ -257,7 +257,7 @@ The IRI is returned with its last slash doubled."
 
 (defn make-scheme
   "Returns an s-exp representing a scheme."
-  [kbconn suffix]
+  [kbconn suffix subs]
   (list (symbol (str "triplestore:" (:host kbconn) ":" suffix))))
 
 (defn responses-from-ask
@@ -273,7 +273,7 @@ argument if is the case."
       (do
         ;; (prn "positive answer")
         (let [arg (argument/make-argument :conclusion goal
-                                          :scheme (make-scheme kbconn "ask")
+                                          :scheme (make-scheme kbconn "ask" subs)
                                           :strict true)]
           ;; (debug "responses-from-ask" subs)
           [(generator/make-response subs [] arg)]))
