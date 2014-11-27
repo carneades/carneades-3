@@ -6,24 +6,29 @@
     #description, #issues, #references, #outline {
         font-size: 12px;
     }
-    
+
     #outline {
         ul {
-            padding: 5px;  
+            padding: 5px;
         }
     }
 }
 
 @media (min-width: $grid-float-breakpoint) {
     #outline {
-        ul {
-            padding: 12px;  
+      ul {
+        padding: 12px 12px 6px 12px;
         }
     }
 }
 
 #outline ul {
   list-style-type: none;
+  line-height: 3px;
+
+  li {
+    line-height: 3px;
+  }
 }
 
 #outline a {
