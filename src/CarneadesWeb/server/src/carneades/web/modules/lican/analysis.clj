@@ -310,7 +310,7 @@ Returns a set of questions for the frontend."
                                                                                repo-name
                                                                                markos-namespaces)
                                    (theory/generate-arguments-from-theory loaded-theories')))
-        ag (shell/argue engine aspic-grounded query profile)
+        ag (shell/argue engine caes query profile)
         ag (ag/set-main-issues ag query)
         in-main-issues (get-in-main-issues ag)]
     (into [] (map str (get-compatible-licenses query in-main-issues)))))
@@ -327,7 +327,7 @@ Returns a set of questions for the frontend."
                           (unserialize-atom (str "(" usage " " the-entity " " sw-entity-uri ")"))))
                        use-property-uris)
         engine (shell/make-engine g 500 use-facts generators)
-        g (shell/argue engine aspic-grounded goal profile)
+        g (shell/argue engine caes goal profile)
         goal-node (ag/get-statement-node g goal)]
     (evaluation/in-node? goal-node)))
 
