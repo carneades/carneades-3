@@ -248,7 +248,7 @@
                                     (theory/generate-arguments-from-theory loaded-theories')
                                     argument-from-user-generator))
         future-ag (future (shell/argue+
-                           engine aspic-grounded licenses-statements profile))
+                           engine caes licenses-statements profile))
         entity (entity/get-software-entity project (unserialize-atom entity))
         analysis {:ag nil
                   :project project

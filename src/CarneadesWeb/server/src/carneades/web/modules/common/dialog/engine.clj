@@ -10,6 +10,7 @@
             [carneades.web.modules.common.dialog.questions :refer :all]
             [taoensso.timbre :as timbre :refer [debug info warn error]]
             [carneades.engine.aspic :refer :all]
+            [carneades.engine.caes :refer [caes]]
             [carneades.engine.argument-evaluation :refer :all]
             [carneades.engine.argument-graph :refer :all]
             [carneades.engine.ask :refer :all]
@@ -70,7 +71,7 @@
         _ (debug "translate")
         ag (tr/translate-ag ag (:translator session))
         _ (debug "evaluate")
-        ag (evaluate aspic-grounded ag)
+        ag (evaluate caes ag)
         _ (debug "post-build")
         ag (if (fn? (:post-build session))
              ((:post-build session) ag)
