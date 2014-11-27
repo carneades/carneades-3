@@ -79,7 +79,7 @@
                     li
                       span(ng-show="!p.positive")
                         span(translate='projects.negative_premise')
-                    a(ng-click='openStatement(p.id)', ng-bind='p.text')
+                      a(ng-click='openStatement(p.id)', ng-bind='p.text')
 
             .form-control-static#premises(ng-hide="statement['premise-of'].length == 0")
               span.premise-of-indication(translate='projects.statement.premise_of')
