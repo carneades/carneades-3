@@ -21,6 +21,7 @@ define [
         method: 'GET'
         params:
           context: 'edit'
+        cache: true
       'newArgumentGraph':
         method: 'POST'
         params:

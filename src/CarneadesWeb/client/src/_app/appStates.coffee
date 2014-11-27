@@ -9,26 +9,20 @@ define [
   "angular-bootstrap"
 ], (angular) ->
   "use strict"
-  angular.module("app.states", [
-    "ui.bootstrap.buttons"
-  ])
 
-  .config(($stateProvider) ->
+  configure = ($stateProvider) ->
     states = [
       name: "home"
       label: "home.label"
       url: "/"
       abstract: true
-      onEnter: () ->
-        console.log 'entered home state'
-      onExit: () ->
-        console.log 'left home state'
       views:
         "content@":
           templateUrl: 'home.jade'
         "header@":
           templateUrl: 'header.jade'
           controller: 'HeaderCtrl'
+          controllerAs: 'header'
         "subnav@":
           template: '<page-navigation ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation>'
           controller: 'SubnavController'
@@ -36,7 +30,13 @@ define [
 
     angular.forEach states, (state) ->
       $stateProvider.state state
-      undefined
 
-    undefined
-  )
+
+
+  modules = [
+    "ui.bootstrap.buttons"
+    ]
+
+  module = angular.module "app.states", modules
+
+  module.config configure

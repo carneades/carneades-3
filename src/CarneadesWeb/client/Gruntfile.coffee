@@ -171,6 +171,8 @@ module.exports = (grunt) ->
           'open-sans/fonts': 'open-sans/fonts'
           'selectize.js': 'selectize/dist/js/standalone/selectize.min.js'
           'angular-selectize.js': 'angular-selectize2/dist/selectize.js'
+          'angular-cache.js': 'angular-cache/dist/angular-cache.js'
+
     jade:
       compile:
         options:

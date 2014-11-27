@@ -130,9 +130,6 @@ define [
     constructor: (@scope, @state) ->
       super()
 
-    doStuff: ->
-
-
   module.controller 'BucketnavController', BucketnavController
 
 
