@@ -25,6 +25,8 @@ define ['angular'], (angular) ->
         resource.save({}, {entityuri: @entityUri, url: url})
           .$promise.then((a) ->
             console.log "successfully sent analysis to the triplestore"
+            window.alert "Thanks for sharing."
+            undefined
         )
 
     new Markos
