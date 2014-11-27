@@ -33,7 +33,7 @@ define [
               return new MultiLegalprofilesLoader $stateParams
     ,
       name: "home.projects.project.legalprofiles.new"
-      url: "/new"
+      url: "/new?copyFrom"
       views:
         'content@':
           templateUrl: 'projects/project/legalprofiles/legalprofile/edit.jade'
@@ -51,7 +51,12 @@ define [
           $stateParams.tpid = tpid
           $stateParams.tid = tid
           return new TheoryLoader $stateParams
-
+        copiedLegalProfile: ($stateParams, LegalprofileLoader) ->
+          console.log "copyFrom=", $stateParams.copyFrom
+          if $stateParams.copyFrom?
+            return new LegalprofileLoader {pid: $stateParams.pid, lpid: $stateParams.copyFrom}
+          else
+            undefined
       ]
       
     angular.forEach states, (state) ->
