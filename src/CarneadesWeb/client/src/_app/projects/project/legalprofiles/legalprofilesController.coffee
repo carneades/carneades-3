@@ -16,12 +16,25 @@ define [
     $scope.legalprofiles = legalprofiles
     $scope.new = _new
 
-  .controller 'LegalprofilesNewCtrl', ($scope, $state, $stateParams, $translate, project, theory, legalprofileInfo, Legalprofile) ->
+  .controller 'LegalprofilesNewCtrl', ($scope, $state, $stateParams, $translate, project, theory, legalprofileInfo, Legalprofile, copiedLegalProfile) ->
 
+    _createLegalProfileTemplate = (copy) ->
+      if copy?
+        copy.metadata.title = copy.metadata.title + " " + ($translate.instant 'projects.legalprofile.copy')
+        delete copy.id
+        copy
+      else
+        metadata:
+          title: $translate.instant 'projects.legalprofile.new'
+        default: false
+        rules: ({ruleid: id, value: 1.0} for id in legalprofileInfo.getTheoryIds theory)
+      
     _title = $translate.instant 'projects.legalprofile.new'
 
+    _legalprofile = _createLegalProfileTemplate(copiedLegalProfile)
+    
     _save = ->
-      Legalprofile.save($stateParams, legalprofile).$promise.then((l) ->
+      Legalprofile.save($stateParams, _legalprofile).$promise.then((l) ->
         url = 'home.projects.project.legalprofiles.legalprofile'
         params = pid: $stateParams.pid, db: $stateParams.db, lpid: l.id
         $state.go url, params, reload: true)
@@ -29,15 +42,9 @@ define [
     _cancel = ->
       url = 'home.projects.project.legalprofiles'
       $state.go url, $stateParams
-
-    legalprofile =
-      metadata:
-        title: $translate.instant 'projects.legalprofile.new'
-      default: false
-      rules: ({ruleid: id, value: 1.0} for id in legalprofileInfo.getTheoryIds theory)
-
+    
     _getRuleIndex = (scheme) ->
-      for rule, idx in legalprofile.rules
+      for rule, idx in _legalprofile.rules
         if rule.ruleid == scheme.id
           return idx
 
@@ -50,7 +57,7 @@ define [
     $scope.title = _title
     $scope.section = theory
     $scope.project = project
-    $scope.legalprofile = legalprofile
+    $scope.legalprofile = _legalprofile
     
     $scope.valueOptions = [
       {value: 1.0, name: "in"},
@@ -58,4 +65,6 @@ define [
       {value: 0.5, name: "undecided"},
     ]
 
+    console.log "copiedFrom=", copiedLegalProfile
+    
     return undefined
