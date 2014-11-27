@@ -2,6 +2,7 @@
  :creation-date "June 2013",
  :policies "oss_licensing_theory",
  :schemes "oss_licensing_theory",
+ ;; :schemes "default/walton_schemes",
  :tools [{:name "Arguments"
           :description "View outlines and maps of the arguments put forward in the comments on the green paper."
           :link "home.projects.project.outline({pid: project.id, db: 'main', nid: 1})"}
@@ -15,7 +16,7 @@
  :repo-name "markos_test_14_11_2014"
  :triplestore-api-url "http://markos-n1.man.poznan.pl/repository-store"
  :in-production false
- 
+
  :description
  {:en
   "The [MARKOS project](http://www.markosproject.eu/) is aimed to realize the prototype of a service and an interactive application providing an integrated view on the Open Source projects available the on web, focusing on functional, structural and licenses aspects of software code.
