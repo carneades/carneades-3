@@ -16,7 +16,8 @@
         carneades.engine.shell
         carneades.maps.lacij)
   (:require [clojure.pprint :refer [pprint]]
-            [midje.sweet :refer :all :exclude [facts]]))
+            [midje.sweet :refer :all :exclude [facts]]
+            [carneades.engine.caes :refer [caes]]))
 
 ;; Example argument graphs to test whether arguments are being evaluated properly.
 ;; Henry Prakken suggested the following sources:
@@ -280,3 +281,43 @@
                        (accept [S])
                        (enter-arguments [A1, A2, A3])))]
            (expect (undecided? g P) => true)))
+
+(fact "Caes. Pro and con with equal weights."
+      (let [bachelor (make-statement :text {:en "Fred is a bachelor."})
+            wears-ring (make-statement :text {:en "Fred wears a ring."})
+            party-animal (make-statement :text {:en "Fred is a party animal."})
+            A1 (make-argument :id 'A1 :conclusion bachelor :premises [(pm party-animal)])
+            A2 (make-argument :id 'A2 :conclusion bachelor :pro false :premises [(pm wears-ring)])
+            bachelor-graph
+            (-> (make-argument-graph)
+                (enter-arguments [A2, A1])
+                (accept [wears-ring, party-animal]))
+            ag (evaluate caes bachelor-graph)]
+        (undecided? ag (literal-atom bachelor)) => true))
+
+(fact "Caes. Con weight greater than pro weight."
+      (let [bachelor (make-statement :text {:en "Fred is a bachelor."})
+            wears-ring (make-statement :text {:en "Fred wears a ring."})
+            party-animal (make-statement :text {:en "Fred is a party animal."})
+            A1 (make-argument :id 'A1 :conclusion bachelor :premises [(pm party-animal)])
+            A2 (make-argument :id 'A2 :conclusion bachelor :pro false :weight 0.6 :premises [(pm wears-ring)])
+            bachelor-graph
+            (-> (make-argument-graph)
+                (enter-arguments [A2, A1])
+                (accept [wears-ring, party-animal]))
+            ag (evaluate caes bachelor-graph)]
+        (out? ag (literal-atom bachelor)) => true))
+
+(fact "Caes. Pro arg with lower weight and con argument out."
+      (let [bachelor (make-statement :text {:en "Fred is a bachelor."})
+            wears-ring (make-statement :text {:en "Fred wears a ring."})
+            party-animal (make-statement :text {:en "Fred is a party animal."})
+            A1 (make-argument :id 'A1 :conclusion bachelor :weight 0.25 :premises [(pm party-animal)])
+            A2 (make-argument :id 'A2 :conclusion bachelor :weight 0.5 :pro false :premises [(pm wears-ring)])
+            bachelor-graph
+            (-> (make-argument-graph)
+                (enter-arguments [A2, A1])
+                (accept [party-animal])
+                (reject [wears-ring]))
+            ag (evaluate caes bachelor-graph)]
+        (in? ag (literal-atom bachelor)) => true))

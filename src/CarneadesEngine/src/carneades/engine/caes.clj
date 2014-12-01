@@ -189,8 +189,7 @@
         con (set (map (fn [arg] (if (applicable? ag arg) arg nil))
                       (con-argument-nodes ag sn))),
         app-con (filter #(not (nil? %)) con)]
-    (cond (or (contains? pro nil) (contains? con nil)) nil,
-          (and (not (empty? app-pro) (empty? app-con))) true,
+    (cond (and (not (empty? app-pro) (empty? app-con))) true,
           (and (not (empty? app-con) (empty? app-pro))) false, 
           :else nil)))
 
@@ -202,11 +201,9 @@
         con (set (map (fn [arg] (if (applicable? ag arg) arg nil))
                       (con-argument-nodes ag sn))),
         app-con (filter #(not (nil? %)) con)]
-    (cond 
-      (or (contains? pro nil) (contains? con nil)) nil,
-      (> (max-weight app-pro) (max-weight app-con)) true,
-      (> (max-weight app-con) (max-weight app-pro)) false,
-      :else nil)))
+    (cond (> (max-weight app-pro) (max-weight app-con)) true,
+          (> (max-weight app-con) (max-weight app-pro)) false,
+          :else nil)))
 
 ;; clear-and-convincing-evidence?
 (defmethod satisfies-proof-standard? :cce [ag sn]
@@ -220,8 +217,7 @@
         max-app-con (max-weight app-con),
         alpha 0.5
         beta 0.3]
-    (cond (or (contains? pro nil) (contains? con nil)) nil,
-          (and (> max-app-pro max-app-con)
+    (cond (and (> max-app-pro max-app-con)
                (> max-app-pro alpha)
                (> (- max-app-pro max-app-con) beta)) true,
           (and (> max-app-con max-app-pro)
@@ -242,8 +238,7 @@
         alpha 0.5
         beta 0.3
         gamma 0.2]
-    (cond (or (contains? pro nil) (contains? con nil)) nil,
-          (and (> max-app-pro max-app-con)
+    (cond (and (> max-app-pro max-app-con)
                (> max-app-pro alpha)
                (> (- max-app-pro max-app-con) beta)
                (< max-app-con gamma)) true,
