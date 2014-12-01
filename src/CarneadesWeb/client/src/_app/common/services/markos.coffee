@@ -27,6 +27,10 @@ define ['angular'], (angular) ->
             console.log "successfully sent analysis to the triplestore"
             window.alert "Thanks for sharing."
             undefined
+          ,
+          (reason) ->
+            window.alert reason.statusText
+            undefined
         )
 
     new Markos
