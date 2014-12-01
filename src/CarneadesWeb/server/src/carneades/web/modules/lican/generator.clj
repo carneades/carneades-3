@@ -112,7 +112,7 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
     (let [goal' (apply-substitutions subs goal)]
      (make-response translator kbconn goal' subs namespaces))
     (do
-      (warn "Goal not being dispatched: " goal)
+      (debug "Goal not being dispatched: " goal)
       (tp/responses-from-goal kbconn goal subs namespaces))
     ))
 
