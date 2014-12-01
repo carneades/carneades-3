@@ -303,6 +303,10 @@ Returns a set of questions for the frontend."
         loaded-theories (project/load-theory project theories)
         profile (load-profile project legal-profile-id)
         loaded-theories' (extend-theory loaded-theories profile)
+        translator (make-translator triplestore
+                                    repo-name
+                                    (:language loaded-theories)
+                                    markos-namespaces)
         ag (ag/make-argument-graph)
         engine (shell/make-engine ag 500 #{}
                                   (list
@@ -312,6 +316,7 @@ Returns a set of questions for the frontend."
                                    (theory/generate-arguments-from-theory loaded-theories')))
         ag (shell/argue engine caes query profile)
         ag (ag/set-main-issues ag query)
+        ag (tr/translate-ag ag translator)
         in-main-issues (get-in-main-issues ag)]
     (debug "storing ag:" (store-ag project ag))
     (into [] (map str (get-compatible-licenses query in-main-issues)))))
