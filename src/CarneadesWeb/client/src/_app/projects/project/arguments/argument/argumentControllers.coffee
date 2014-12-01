@@ -67,6 +67,7 @@ define [
 
   .controller 'ArgumentViewCtrl', ($scope, $state, $stateParams, $translate,
     $modal, $previousState, argument, Argument, project, editorService) ->
+    console.log 'argument', argument
 
     _remove = () ->
       modalInstance = $modal.open(
@@ -149,6 +150,10 @@ define [
   .controller 'ArgumentEditCtrl', ($scope, $state, $stateParams, $translate,
     statements, argument, Argument, theory, breadcrumbService,
     editorService, $cnBucket, $previousState) ->
+
+    console.log 'argument', argument
+
+    callbackScheme = argument.scheme
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -166,6 +171,9 @@ define [
       if typeof $scope.argument.scheme is 'object'
         argument.scheme = $scope.argument.scheme.id
         argument.scheme = "(#{argument.scheme})"
+      else if $scope.argument.scheme is undefined
+        argument.scheme = callbackScheme
+
       argument.conclusion = $scope.argument.conclusion.id
       Argument.update($stateParams, argument).$promise.then((data) ->
         $cnBucket.remove $state.$current
@@ -190,7 +198,11 @@ define [
       return editorService.getStatement model, statements
 
     _getSchemeId = ({scheme}) ->
-      return scheme.slice 1, -1
+      val = ''
+      scheme.replace /[(]([a-z\-]*)[\ )]/g, (match) ->
+        val = match.slice 1, -1
+
+      return val
 
     _getConclusionId = ({conclusion}) ->
       return conclusion.slice 1, -1
