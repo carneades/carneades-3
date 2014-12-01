@@ -208,6 +208,17 @@
         (tp/make-uri-translator triplestore repo-name namespaces)
         ))
 
+(defn- get-licenses-statement
+  [entity licenses]
+  (if (empty? licenses)
+    [(unserialize-atom
+      (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s ?tpl)" entity))]
+    (map #(unserialize-atom
+           (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
+                   entity
+                   %))
+         licenses)))
+
 (defn start-engine
   [entity legalprofileid]
   (let [project "markos"
@@ -219,12 +230,8 @@
                                   triplestore
                                   repo-name
                                   markos-namespaces)
-        _ (when (empty? licenses) (throw (ex-info "No licenses found" {:entity entity})))
-        licenses-statements (map #(unserialize-atom
-                                   (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
-                                           entity
-                                           %))
-                                 licenses)
+        ;; _ (when (empty? licenses) (throw (ex-info "No licenses found" {:entity entity})))
+        licenses-statements (get-licenses-statement entity licenses)
         theories (:policies properties)
         query (first licenses-statements)
         _ (info "licenses-statements: " licenses-statements)
