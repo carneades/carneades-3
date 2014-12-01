@@ -70,7 +70,7 @@
    Tomcat. Put any initialization code here."
   []
   (timbre/merge-config! logger-config)
-  ;; (service/start)
+  (timbre/set-level! :info)
   (system/start)
   (info "Carneades started successfully.")
   (info "Properties will be read from " config/configfilename))
