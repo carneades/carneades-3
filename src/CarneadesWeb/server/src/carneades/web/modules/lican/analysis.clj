@@ -313,6 +313,7 @@ Returns a set of questions for the frontend."
         ag (shell/argue engine caes query profile)
         ag (ag/set-main-issues ag query)
         in-main-issues (get-in-main-issues ag)]
+    (debug "storing ag:" (store-ag project ag))
     (into [] (map str (get-compatible-licenses query in-main-issues)))))
 
 
