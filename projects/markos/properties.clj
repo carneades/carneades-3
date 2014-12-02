@@ -15,7 +15,7 @@
  :triplestore "http://markos-n1.man.poznan.pl/openrdf-sesame"
  :repo-name "markos_test_14_11_2014"
  :triplestore-api-url "http://markos-n1.man.poznan.pl/repository-store"
- :in-production false
+ :in-production true
 
  :description
  {:en
