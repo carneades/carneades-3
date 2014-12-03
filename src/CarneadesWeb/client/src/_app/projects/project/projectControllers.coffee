@@ -64,7 +64,7 @@ define [
     _onSave = () ->
       _description = {}
       for k, v of $scope.ag.header.description
-        _description[k] = editor.htmlize v
+        _description[k] = editorService.htmlize v
 
       $scope.ag.header.description = _description
       project = {
