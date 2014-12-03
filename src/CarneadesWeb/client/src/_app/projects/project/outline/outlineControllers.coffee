@@ -60,4 +60,6 @@ define [
     $scope = angular.extend $scope,
       outline: outline
 
+    console.log outline
+
     return @
