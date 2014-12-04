@@ -47,7 +47,8 @@ define [
     return @
 
   .controller 'ProjectNewArgGraphCtrl', ($scope, $state, $cnBucket,
-    $stateParams, $translate, Project, breadcrumbService, editorService) ->
+    $stateParams, $translate, $previousState,Project, breadcrumbService,
+    editorService) ->
 
     ag =
       name: ""
@@ -74,15 +75,14 @@ define [
       }
 
       Project.newArgumentGraph(
-        {pid: $stateParams.pid},
+        pid: $stateParams.pid,
         project
-      ).$promise.then((data) ->
+      ).$promise.then (data) ->
         $cnBucket.remove $state.$current
         state = $previousState.get 'newArgumentGraphEditor'
         params = pid: $stateParams.pid, db: $scope.ag.name
         $state.go state.state.name, params, reload: true
         $previousState.forget 'newArgumentGraphEditor'
-      )
 
     $scope = extend $scope,
       ag: ag
