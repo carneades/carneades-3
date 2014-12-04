@@ -98,17 +98,41 @@
               ng-model='statement.standard',
               ng-options="standard.value as standard.name for standard in standards")
 
-          form-group(label-key='projects.weight')
-            .col-sm-1
-              .form-control-static: span(ng-bind='statement.weight | doublePrecision')
-            .col-sm-11(
-              style='margin: 12px 0px 0px !important;',
-              ui-slider,
-              min='0.00',
-              max='1.00',
-              step='0.05',
-              use-decimals,
-              ng-model='statement.weight')
+          .row.form-group
+            label.control-label.col-sm-2(translate='projects.weight')
+            .col-sm-10
+              .col-lg-2(style='padding-left:0;')
+                .form-control-static
+                  span(ng-bind='statement.weight | doublePrecision')
+              .col-lg-10(
+                style='margin: 12px 0px 0px !important;',
+                ui-slider,
+                min='0.00',
+                max='1.00',
+                step='0.05',
+                use-decimals,
+                ng-model='statement.weight')
+          
             
         .col-lg-6
           metadata-edit-tab(ng-model='statement.header')
+
+      .row
+        .col-lg-12
+          form-group-no-label
+            button.btn.btn-default.btn-xs(
+              type='button',
+              ng-click='onSave()',
+              tooltip="{{tooltipSave}}",
+              tooltip-append-to-body="true",
+              tooltip-placement="top",
+              ng-disabled="form.$invalid")
+              i.fa.fa-floppy-o: span(translate='projects.save')
+        
+            button.btn.btn-default.btn-xs(
+              type='button',
+              ng-click='onCancel()',
+              tooltip="{{tooltipCancel}}",
+              tooltip-append-to-body="true",
+              tooltip-placement="top")
+              i.fa.fa-times: span(translate='projects.cancel')

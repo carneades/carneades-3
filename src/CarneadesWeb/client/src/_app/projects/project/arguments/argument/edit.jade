@@ -1,4 +1,4 @@
-.col-lg-offset-1.col-lg-10.argument-editor
+.col-lg-offset-1.col-lg-10.argument-editor#editor-md
   .row
     .col-sm-11
       .row
@@ -22,7 +22,7 @@
               ui-select-choices(repeat="scheme in theory.schemes | propsFilter: {title: $select.search, id: $select.search}")
                 div(ng-bind-html="scheme.header.title | highlight: $select.search")
                 small id: {{scheme.id}}
-                
+            
             form-group-source(
               label-key='projects.source',
               ng-repeat='s in theory.schemes | selectedById:argument.scheme.id')
@@ -100,3 +100,107 @@
             tooltip-append-to-body="true", 
             tooltip-placement="top")
             i.fa.fa-times: span(translate='projects.cancel')
+
+
+.col-lg-offset-1.col-lg-10.argument-editor#editor-lg
+  .row
+    .col-lg-12
+      .row
+        .col-lg-offset-1.col-lg-11
+          .section
+            .page-header: h1(ng-bind='title')
+
+      .row
+        .col-lg-6
+          form-group(label-key='projects.scheme')
+            ui-select(
+              ng-model="argument.scheme",
+              theme="select2",
+              style='width: 100%;')
+              ui-select-match(placeholder="{{argument.scheme.header.title}}") {{$select.selected.header.title}}
+              ui-select-choices(repeat="scheme in theory.schemes | propsFilter: {title: $select.search, id: $select.search}")
+                div(ng-bind-html="scheme.header.title | highlight: $select.search")
+                small id: {{scheme.id}}
+
+            .row.control-label.col-lg-12(ng-repeat="s in theory.schemes | selectedById:argument.scheme.id")
+              label.col-lg-2(translate='projects.source', style='padding-top: 8px;')
+              .col-lg-10
+                p.form-control-static(ng-bind="s.header.source")
+  
+          form-group(label-key='projects.premises')
+            premise-editor-sm(
+              model='p',
+              statements='statements',
+              on-delete="deletePremise($index)",
+              ng-repeat="p in argument.premises",
+              roles='premiseRoles')
+            
+            button.btn.btn-default.btn-xs(
+              type='button',
+              ng-click='addPremise()',
+              tooltip="{{tooltipPremise}}",
+              tooltip-append-to-body="true",
+              tooltip-placement="top")
+              i.fa.fa-plus: span(translate='projects.addpremise')
+
+              
+          form-group(label-key='projects.strict')
+            radio-buttons(model='argument.strict')
+          
+              
+          form-group(label-key='projects.dir')
+            radio-buttons-dir(model='argument.pro')
+
+          .row.form-group
+            label.control-label.col-sm-2(translate='projects.weight')
+            .col-sm-10
+              .col-lg-2(style='padding-left:0;')
+                .form-control-static
+                  span(ng-bind='argument.weight | doublePrecision')
+              .col-lg-10(
+                style='margin: 12px 0px 0px !important;',
+                ui-slider,
+                min='0.00',
+                max='1.00',
+                step='0.05',
+                use-decimals,
+                ng-model='argument.weight')
+                
+          
+          form-group(label-key='projects.conclusion')
+            ui-select(
+              ng-model="argument.conclusion",
+              theme="select2",
+              style='width: 100%;')
+              ui-select-match(placeholder="{{argument.conclusion}}") {{$select.selected.text}}
+              ui-select-choices(repeat="statement in statements | propsFilter: {text: $select.search, id: $select.search}")
+                div(ng-bind-html="statement.text | highlight: $select.search")
+
+            .row.control-label.col-lg-12(ng-repeat="s in statements | selectedById:argument.conclusion.id")
+              label.col-lg-2(translate='projects.fulltext', style='padding-top: 8px;')
+              .col-lg-10
+                p.form-control-static(ng-bind="s.text")
+
+        .col-lg-6
+          metadata-edit-tab(ng-model='argument.header')
+
+      .row
+        .col-lg-12
+          form-group-no-label
+            button.btn.btn-default.btn-xs(
+              type='button',
+              ng-click='onSave()',
+              tooltip="{{tooltipSave}}",
+              tooltip-append-to-body="true",
+              tooltip-placement="top",
+              ng-disabled="form.$invalid")
+              i.fa.fa-floppy-o: span(translate='projects.save')
+  
+            button.btn.btn-default.btn-xs(
+              type='button',
+              ng-click='onCancel()', 
+              tooltip="{{tooltipCancel}}",
+              tooltip-append-to-body="true", 
+              tooltip-placement="top")
+              i.fa.fa-times: span(translate='projects.cancel')
+

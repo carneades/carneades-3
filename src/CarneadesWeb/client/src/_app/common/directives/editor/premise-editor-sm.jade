@@ -1,0 +1,56 @@
+.row.form-group
+  .col-lg-6
+    .row
+      label.control-label.col-lg-4(
+        ng-bind="'projects.positive' | translate | capitalize:'first'")
+      .col-lg-8
+        radio-buttons(model='model.positive')
+  .col-lg-6
+    .row
+      label.control-label.col-lg-4(
+        ng-bind="'projects.implicit' | translate | capitalize:'first'")
+      .col-lg-8
+        radio-buttons(model='model.implicit')
+        
+.row.form-group
+  label.control-label.col-lg-2(
+    ng-bind="'projects.role' | translate | capitalize:'first'")
+  .col-lg-10
+    div.form-control(selectize='selectizeConfig',
+      options='roles',
+      ng-model="model.role",
+      style='width: 100%;')
+          
+.row.form-group
+  label.control-label.col-lg-2(
+    ng-bind="'projects.statement' | translate | capitalize:'first'")
+  .col-lg-10
+    ui-select(
+      ng-model="model.statement",
+      theme="select2",
+      style='width: 100%;')
+      ui-select-match(placeholder="{{model.statement}}") {{$select.selected.text}}
+      ui-select-choices(repeat="statement in statements | propsFilter: {text: $select.search, id: $select.search}")
+        div(ng-bind-html="statement.text | highlight: $select.search")
+
+    .row.control-label.col-lg-12(ng-repeat="s in statements | selectedById:model.statement.id")
+      label.col-lg-2(translate='projects.fulltext', style='padding-top: 8px;')
+      .col-lg-10
+        p.form-control-static(ng-bind="s.text")
+         
+    // form-group-source(
+    //   label-key='projects.fulltext',
+    //   ng-repeat='s in statements | selectedById:model.statement.id')
+    //   p.form-control-static(ng-bind='s.text')
+            
+.row.form-group
+  .col-lg-offset-1.col-lg-11
+    button.btn.btn-default.btn-xs(
+      type='button',
+      ng-click='onDeletePremise()',
+      tooltip="Remove this premise",
+      tooltip-append-to-body="true",
+      tooltip-placement="top")
+      i.fa.fa-times: span(translate='projects.premise.remove')
+    
+.row(style='border: 1px solid; margin-bottom: 15px;')

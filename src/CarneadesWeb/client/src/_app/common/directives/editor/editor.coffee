@@ -158,6 +158,54 @@ define [
       scope.onDeletePremise = ->
         scope.onDelete()
 
+  .directive 'premiseEditorSm', ->
+    restrict: "E"
+    templateUrl: "common/directives/editor/premise-editor-sm.jade"
+    scope:
+      model: '=',
+      statements: '=',
+      onDelete: '&'
+      roles: '='
+    controller: ($scope) ->
+      $scope.selectizeConfig =
+        create: true
+        valueField: 'id'
+        labelField: 'title'
+        delimiter: '|'
+        placeholder: 'Pick something'
+        maxItems: 1
+
+      _setIsPositive = (value) ->
+        isPositiveLabel = ['positive', 'negative']
+        iSelector = if value then 0 else 1
+        $scope.positive = isPositiveLabel[iSelector]
+
+      _setIsImplicit = (value) ->
+        isImplicitLabel = ['implicit', 'explicit']
+        iSelector = if value then 0 else 1
+        $scope.implicit = isImplicitLabel[iSelector]
+
+      $scope.$watch 'model.positive', (value) ->
+        _setIsPositive value
+
+      $scope.$watch 'model.implicit', (value) ->
+        _setIsImplicit value
+
+      _setIsImplicit $scope.model.positive
+      _setIsImplicit $scope.model.implicit
+
+      $scope.formatStatement = (model) ->
+        for statement in $scope.statements
+          if model is statement.id
+            return statement.text
+
+      return @
+
+    link: (scope, elem, attrs) ->
+      scope.onDeletePremise = ->
+        scope.onDelete()
+
+
   .controller 'EditorController', () ->
     @getLanguages = () ->
       return [
@@ -226,7 +274,6 @@ define [
     link: (scope, element, attrs) ->
       scope.activate = (val) ->
         scope.model = val
-
 
   .directive 'radioButtonsDir', () ->
     restrict: "E"
