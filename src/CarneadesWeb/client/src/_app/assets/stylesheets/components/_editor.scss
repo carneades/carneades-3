@@ -138,3 +138,26 @@ button.blockselector, button.blockselector:focus{
 .editor-nav-tab {
   border: 0;
 }
+
+@media (max-width: 1199px) {
+    #editor-md {
+        visibility: visible;
+        display: inline;
+    }
+
+    #editor-lg {
+        visibility: hidden;
+        display: none;
+    }
+}
+
+@media (min-width: 1200px) {
+    #editor-md {
+        visibility: hidden;
+        display: none;
+    }
+    #editor-lg {
+        visibility: visible;
+        display: inline;
+    }
+}
