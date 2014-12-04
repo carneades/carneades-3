@@ -3,16 +3,17 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 define [
-  'angular',
-  '../../../common/resources/projects',
-  '../../../common/resources/metadata',
-  '../../../common/resources/references',
-  '../../../common/resources/outline',
+  'angular'
+  './outlineMainCtrl'
+  '../../../common/resources/projects'
+  '../../../common/resources/metadata'
+  '../../../common/resources/references'
+  '../../../common/resources/outline'
   '../../../common/resources/issues'
-  '../../../common/services/scroll',
-  '../../../common/services/projectInfo',
+  '../../../common/services/scroll'
+  '../../../common/services/projectInfo'
   './outlineControllers'
-], (angular) ->
+], (angular, OutlineMainCtrl) ->
   angular.module('outline.states', [
     'resources.projects',
     'resources.metadata',
@@ -39,21 +40,9 @@ define [
           "content@":
             templateUrl: 'projects/project/outline/outline-main.jade'
             controller: 'OutlineRootCtrl'
-            resolve:
-              tproject: (ProjectLoader, $stateParams) ->
-                return new ProjectLoader $stateParams
-              ag: (MetadataLoader, $stateParams) ->
-                $stateParams.mid = 1
-                return new MetadataLoader $stateParams
-              scroll: 'scroll'
-              tpid: (projectInfo, $stateParams, tproject) ->
-                tpid = projectInfo.getSchemesProject tproject
-                $stateParams.tpid = tpid
-                return tpid
-              tid: (projectInfo, $stateParams, tproject) ->
-                tid = projectInfo.getSchemesName tproject
-                $stateParams.tid = tid
-                return tid
+            controllerAs: 'outline'
+            resolve: OutlineMainCtrl.$resolve
+
 
           "issues@home.projects.project.outline":
             templateUrl: 'projects/project/outline/issues.jade'

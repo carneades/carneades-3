@@ -8,6 +8,7 @@ define [
   'require'
   "angular"
   'root'
+  'angular-cache'
   "angular-bootstrap"
   "angular-ui-router"
   "angular-ui-utils"
@@ -53,7 +54,8 @@ define [
     $translateProvider,
     $uiViewScrollProvider,
     markdownConverterProvider,
-    $locationProvider
+    $locationProvider,
+    $stickyStateProvider
   ) ->
     carneades = (converter) ->
       return [
@@ -82,7 +84,7 @@ define [
       window.Showdown.extensions.carneades = carneades
 
     markdownConverterProvider.config(extensions: ['carneades'])
-
+    # $stickyStateProvider.enableDebug true
     $translateProvider.useStaticFilesLoader(
       prefix: '/carneades/languages/',
       suffix: '.json'
@@ -139,24 +141,6 @@ define [
 
   module = angular.module 'app', modules
 
+  module.config configure
 
-  module.config [
-    '$urlRouterProvider'
-    '$cssProvider'
-    '$stateProvider'
-    '$provide'
-    '$translateProvider'
-    '$uiViewScrollProvider'
-    'markdownConverterProvider'
-    '$locationProvider'
-    configure
-  ]
-
-
-  module.run [
-    '$rootScope'
-    '$state'
-    '$stateParams'
-    'ThemeLoader'
-    init
-  ]
+  module.run init

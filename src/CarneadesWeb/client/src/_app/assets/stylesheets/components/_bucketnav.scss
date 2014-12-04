@@ -1,41 +1,17 @@
 .bucketnav {
   height: 36px;
 
-  > ul {
-    @include inline-list;
-    font-size: 13px;
-    letter-spacing: 1px;
+  .nav-tabs > li.active > a,
+  .nav-tabs > li.active > a:hover,
+  .nav-tabs > li.active > a:focus {
+    border-color: $breadcrumbs-border $breadcrumbs-border transparent;
+  }
 
-    > li {
-      padding: 0px;
-      margin-right: -6px;
-      float: left;
-      button {
-        color: $text-color;
-        cursor: pointer;
-        height: 36px;
-        border-width: 1px;
-        border-radius: 18px;
-        border-style: solid;
-        border-color: $breadcrumbs-border $breadcrumbs-border $breadcrumbs-bg;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-        background-color: $breadcrumbs-bg;
-        padding: 0 15px;
+  .nav-tabs {
+      border-bottom-color: $breadcrumbs-border;
+  }
 
-        &.active {
-            color: $breadcrumbs-link-color;
-            text-decoration: underline;
-            background-color: $breadcrumbs-bg-hover;
-            border-bottom: 1px solid $breadcrumbs-bg-hover;
-        }
-
-        &:hover {
-          background-color:$breadcrumbs-bg-hover;
-          border-bottom: 1px solid $breadcrumbs-bg-hover;
-          color: darken($breadcrumbs-border,50%);
-        }
-      }
-    }
+  .nav-tabs > li > a:hover {
+      border-bottom-color: $breadcrumbs-border;
   }
 }

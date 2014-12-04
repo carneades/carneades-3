@@ -3,21 +3,21 @@
     .col-md-9(role='main')
       .section#overview
         .page-header
-          .h1.highlight {{project.title}}
+          .h1.highlight {{detail.project.title}}
           
       .commands
         button.btn.btn-default.btn-small(
           type='button',
-          tooltip="{{tooltipNew}}",
+          tooltip="{{detail.tooltipNew}}",
           tooltip-append-to-body="true",
           tooltip-placement="right",
-          ng-click="newArgumentGraph()")
-          i.fa.fa-plus-square-o: span {{ 'projects.newag' | translate}}
+          ng-click="detail.newArgumentGraph()")
+          i.fa.fa-plus-square-o: span(translate='projects.newag')
 
         button.btn.btn-default.btn-small(
           type='button',
-          ng-click='copyLink()')
-          i.fa.fa-copy: span {{ 'projects.copylink' | translate}}
+          ng-click='detail.getLink()')
+          i.fa.fa-copy: span(translate='projects.copylink')
 
       .section#description
-        markdown(strip='true',ng-model='project.description')
+        markdown(strip='true',ng-model='detail.project.description')

@@ -4,18 +4,40 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 define [
-  'angular',
-  'angular-translate',
-  './projectControllers',
+  'angular'
+  './projectDetailCtrl'
+  './projectEditCtrl'
+  './newArgumentGraphCtrl'
+  'angular-translate'
   '../../common/resources/projects'
-], (angular) ->
-  angular.module('project.states', [
-    'project.controllers',
+], (angular, ProjectViewController, ProjectEditController, NewArgumentGraphController) ->
+
+  modules = [
     'resources.projects'
     'pascalprecht.translate'
-  ])
+    ]
 
-  .config ($stateProvider) ->
+  module = angular.module 'project.states', modules
+
+  module.controller 'ProjectNewArgGraphCtrl', NewArgumentGraphController
+
+  module.controller 'ProjectEditCtrl', ProjectEditController
+
+  module.controller 'ProjectViewCtrl', ProjectViewController
+
+  configure = ($stateProvider) ->
+    tplProjectNew = """
+    <page-navigation-sm-offset-2 ng-show="commands.length > 0">
+      <page-navigation-item cmd="c" ng-repeat="c in commands">
+    </page-navigation-item></page-navigation-sm-offset-2>
+    """
+
+    tplProjectEdit = """
+    <page-navigation-sm-offset-2 ng-show="commands.length > 0">
+      <page-navigation-item cmd="c" ng-repeat="c in commands">
+    </page-navigation-item></page-navigation-sm-offset-2>
+    """
+
     states = [
       name: "home.projects.project"
       url: '/:pid'
@@ -24,9 +46,8 @@ define [
         "content@":
           templateUrl: 'projects/project/project.jade'
           controller: 'ProjectViewCtrl'
-          resolve:
-            project: ($stateParams, ProjectLoader) ->
-              return new ProjectLoader $stateParams
+          controllerAs: 'detail'
+          resolve: ProjectViewController.$resolve
     ,
       name: 'home.projects.project.new'
       url: '/new'
@@ -36,7 +57,7 @@ define [
           templateUrl: 'projects/project/newArgGraph.jade'
           controller: 'ProjectNewArgGraphCtrl'
         "subnav@":
-          template: '<page-navigation-sm-offset-2 ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
+          template: tplProjectNew
           controller: 'SubnavController'
     ,
       name: 'home.projects.project.edit'
@@ -46,17 +67,13 @@ define [
         "content@":
           templateUrl: 'projects/project/edit.jade'
           controller: 'ProjectEditCtrl'
-          resolve:
-            metadata: ($stateParams, MetadataRawLoader) ->
-              $stateParams.db = 'main'
-              $stateParams.mid = 1
-              return new MetadataRawLoader $stateParams
+          resolve: ProjectEditController.$resolve
         "subnav@":
-          template: '<page-navigation-sm-offset-2 ng-show="commands.length > 0"><page-navigation-item cmd="c" ng-repeat="c in commands"></page-navigation-item></page-navigation-sm-offset-2>'
+          template: tplProjectEdit
           controller: 'SubnavController'
     ]
 
     angular.forEach states, (state) ->
       $stateProvider.state state
-      undefined
-    undefined
+
+  module.config configure

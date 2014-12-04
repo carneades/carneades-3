@@ -4,44 +4,11 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 define [
   'angular'
-], (angular) ->
+  './outlineMainCtrl'
+], (angular, OutlineMainCtrl) ->
   return angular.module('outline.controllers', [])
 
-  .controller 'OutlineRootCtrl', ($scope, $state, $stateParams, $previousState,
-    $translate, $location, $window, ag, tproject, scroll, tpid, markos) ->
-
-    $stateParams.tpid = tpid
-    $scope = angular.extend $scope,
-      project: ag
-      scrollTo: scroll.scrollTo
-      tooltipEdit: $translate.instant 'tooltip.outline.edit'
-      tooltipNewStatement: $translate.instant 'tooltip.statement.new'
-      tooltipNewArgument: $translate.instant 'tooltip.argument.new'
-      tooltipShare: $translate.instant 'tooltip.share'
-      currentUrl: $location.absUrl()
-      isSharing: false
-      onShare: ->
-        $scope.isSharing = !$scope.isSharing
-      shareOnMarkos: ->
-        markos.share($scope.currentUrl)
-      shareOnTwitter: ->
-        console.log 'share on twitter'
-        _url = escape($scope.currentUrl)
-        _text = escape(ag.title)
-        link = "https://twitter.com/intent/tweet?url=#{_url}&text=#{_text}"
-        $window.open link
-        return true
-      openMetadataEditor: ->
-        $state.go 'home.projects.project.edit', $stateParams
-        $previousState.memo 'newMetadataEditor'
-      openArgumentEditor: ->
-        $state.go 'home.projects.project.arguments.new', $stateParams
-        $previousState.memo 'newArgumentEditor'
-      openStatementEditor: ->
-        $state.go 'home.projects.project.statements.new', $stateParams
-        $previousState.memo 'newStatementEditor'
-
-    return @
+  .controller 'OutlineRootCtrl', OutlineMainCtrl
 
   .controller 'OutlineIssuesCtrl', ($scope, issues) ->
     $scope = angular.extend $scope,

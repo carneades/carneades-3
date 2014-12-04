@@ -1,16 +1,16 @@
 .col-lg-12
   .row.border-bottom#mobheader
     .col-md-1
-      #mobnav(ng-show='isSubNavDisplayed')
+      #mobnav(ng-show='header.bSubNavDisplayed')
         button.navbar-toggle(
           type='button',
-          ng-init='navCollapsed = true',
-          ng-click='navCollapsed = !navCollapsed; navBcCollapsed = true')
+          ng-init='header.navCollapsed = true',
+          ng-click='header.navCollapsed = !header.navCollapsed; header.navBcCollapsed = true')
           span.sr-only Toggle navigation
           span.icon-bar
           span.icon-bar
           span.icon-bar
-      #mobnav(ng-show='!isSubNavDisplayed')
+      #mobnav(ng-show='!header.bSubNavDisplayed')
         button.navbar-toggle.disabled(type='button')
           span.sr-only Toggle navigation
           span.icon-bar
@@ -22,33 +22,30 @@
           ul
             li.bc-default-a
               a(
-                ng-click='openView(bcTop.name, top.params)',
-                tooltip='{{bcTop.tooltip}}',
+                ng-click='header.openView(header.topItem.name, header.topItem.params)',
+                tooltip='{{header.topItem.tooltip}}',
                 tooltip-append-to-body='true',
                 tooltip-placement='bottom',
-                ng-bind='bcTop.label')
-            li(ng-show='hasHistory')
+                ng-bind='header.topItem.label')
+            li(ng-show='header.hasHistory')
               a
                 i.fa.fa-chevron-down.font-inc-130(
-                  ng-init='navBcCollapsed = true',
-                  ng-click='navBcCollapsed = !navBcCollapsed; navCollapsed = true')
-  
-  // .row.collapse#mobnavdetails(collapse='navCollapsed')
-  //   .container
-  //     ul
-  //       li(cmd='c' ng-repeat='c in commands')
-  //         a(ng-click='navOpen(c.state, $stateParams)', ng-bind='c.label | translate')
-
-  // .row.collapse#mobbcnavdetails(
-  //   collapse='navBcCollapsed')
-  //   ul
-  //     li(ng-repeat='navigatedState in subNavStatesReversed')
-  //       a(
-  //         ng-click='openView(navigatedState.name, navigatedState.params)',
-  //         ng-bind='navigatedState.label')
+                  ng-init='header.navBcCollapsed = true',
+                  ng-click='header.navBcCollapsed = !header.navBcCollapsed; header.navCollapsed = true')
 
   .row#global
     .col-lg-12
       .row: banner-loader(theme='$stateParams.pid')
-      .row.montserrat.pagenav-adjusted: bucketnav(states='navigatedStates')
-    
+      .row.montserrat.bucketnav
+        div: ul.nav.nav-tabs
+          li(
+            ng-repeat='s in header.navigatedStates',
+            index='$index',
+            ng-class="{active: $state.$current.name === s.name}")
+            a(
+              ng-bind='s.label|translate',
+              style='cursor: pointer;'
+              ng-click='header.openView(s.name, s.params)',
+              tooltip='{{s.tooltip}}',
+              tooltip-append-to-body='true',
+              tooltip-placement='bottom')

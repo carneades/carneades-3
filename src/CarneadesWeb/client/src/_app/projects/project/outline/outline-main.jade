@@ -1,58 +1,58 @@
 .col-lg-offset-1.col-lg-10.outline
   .row
     .col-md-12
-      #overview: .page-header: h1(ng-bind='project.title')
+      #overview: .page-header: h1(ng-bind='outline.project.title')
 
   .row
     .col-md-12(role='main')
       .commands
-        a(ng-click='openMetadataEditor()')
+        a(ng-click='outline.openMetadataEditor()')
           button.btn.btn-default.btn-small(
             type='button',
-            tooltip="{{tooltipEdit}}",
+            tooltip="{{outline.tooltipEdit}}",
             tooltip-append-to-body="true",
             tooltip-placement="top")
             i.fa.fa-edit: span(translate='state.home.projects.project.edit.label')
 
-        a(ng-click='openStatementEditor()')
+        a(ng-click='outline.openStatementEditor()')
           button.btn.btn-default.btn-small(
             type='button',
-            tooltip="{{tooltipNewStatement}}" ,
+            tooltip="{{outline.tooltipNewStatement}}" ,
             ooltip-append-to-body="true",
             tooltip-placement="top")
             i.fa.fa-plus-square-o: span(translate='state.home.projects.project.statements.new.label')
 
-        a(ng-click='openArgumentEditor()')
+        a(ng-click='outline.openArgumentEditor()')
           button.btn.btn-default.btn-small(
             type='button',
-            tooltip="{{tooltipNewArgument}}",
+            tooltip="{{outline.tooltipNewArgument}}",
             tooltip-append-to-body="true",
             tooltip-placement="top")
             i.fa.fa-plus-square-o: span(translate='state.home.projects.project.arguments.new.label')
 
         button.btn.btn-default.btn-small(
           type='button',
-          tooltip="{{tooltipShare}}",
+          tooltip="{{outline.tooltipShare}}",
           tooltip-append-to-body="true",
           tooltip-placement="top",
-          ng-click="onShare()")
+          ng-click="outline.onShare()")
           i.fa.fa-plus-square-o: span(translate='projects.share')
 
          
       #share(ng-show="isSharing")
         div
-          button.markos(type='button', ng-click='shareOnMarkos()')
-          button.twitter(type='button', ng-click='shareOnTwitter()')
+          button.markos(type='button', ng-click='outline.shareOnMarkos()')
+          button.twitter(type='button', ng-click='outline.shareOnTwitter()')
 
         .shareInput
-          input(type='text', value="{{currentUrl}}", readonly)
+          input(type='text', value="{{outline.currentUrl}}", readonly)
 
   .row
     .col-md-12(role='main')
       #description
         markdown(
           strip='true',
-          ng-model='project.description')
+          ng-model='outline.project.description')
 
   .row
     .col-md-12(role='main')

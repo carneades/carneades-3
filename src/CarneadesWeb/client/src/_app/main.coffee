@@ -43,6 +43,9 @@ require.config
     "angular-touch":
       deps: ["angular"]
 
+    "angular-cache":
+      deps: ["angular"]
+
     "angular-capitalize-filter":
       deps: ["angular"]
 
@@ -85,6 +88,7 @@ require.config
 
   paths:
     "angular": "./libs/angular"
+    "angular-cache": "./libs/angular-cache"
     'perfect-scrollbar': './libs/perfect-scrollbar/perfect-scrollbar.min'
     'angular-perfect-scrollbar': './libs/angular-perfect-scrollbar/angular-perfect-scrollbar'
     'angular-sanitize': './libs/angular-sanitize'

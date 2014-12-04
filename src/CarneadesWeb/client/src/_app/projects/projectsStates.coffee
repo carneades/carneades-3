@@ -5,15 +5,21 @@
 
 #global define
 define [
-  'angular',
+  'angular'
+  'root'
   '../common/resources/projects'
-], (angular) ->
+], (angular, cn) ->
   "use strict"
-  angular.module('projects.states', [
-    'resources.projects'
-  ])
 
-  .config ($stateProvider) ->
+  carneades = cn.carneades
+
+  modules = [
+    'resources.projects'
+    ]
+
+  module = angular.module 'projects.states', modules
+
+  configure = ($stateProvider) ->
     states = [
       name: 'home.projects'
       label: 'state.home.projects.label'
@@ -21,19 +27,43 @@ define [
       views:
         "content@":
           templateUrl: 'projects/list.jade'
-          controller: ($scope, $location, projects) ->
-            $scope.projects = projects
+          controller: 'ProjectController'
+          resolve: ProjectController.$resolve
+      ]
 
-            $scope.copyLink = (pid) ->
-              window.prompt("Copy to clipboard: Ctrl+C, Enter", $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/" + $scope.$state.href 'home.projects.project', pid: pid)
+    angular.forEach states, (state) -> $stateProvider.state(state)
 
-          resolve:
-            projects: (MultiProjectLoader) ->
-              return new MultiProjectLoader()
-    ]
+  module.config configure
 
-    angular.forEach states, (state) ->
-      $stateProvider.state(state)
-      undefined
 
-    undefined
+  class ProjectController extends carneades.Controller
+    @.$inject = [
+      "$scope"
+      "$location"
+      "projects"
+      ]
+
+    @.$resolve =
+      projects: (MultiProjectLoader) ->
+        return new MultiProjectLoader()
+
+
+    constructor: (@scope, @location, @projects) ->
+      @scope.copyLink = @.copyLink
+      @scope.projects = @projects
+
+    copyLink: (pid) ->
+      window.prompt(
+        "Copy to clipboard: Ctrl+C, Enter",
+        [
+          @location.protocol()
+          "://"
+          @location.host()
+          ":"
+          @location.port()
+          "/carneades/"
+          $scope.$state.href 'home.projects.project', pid: pid
+        ].join ''
+      )
+
+  module.controller 'ProjectController', ProjectController

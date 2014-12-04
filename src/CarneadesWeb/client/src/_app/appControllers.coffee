@@ -202,35 +202,38 @@ define [
         @cnBucket.append @state
         @.update()
 
-        data = @state.$current.self.data
-        _isSubNavDisplayed = data and data.commands and data.commands.length > 0
+        @.topItem = @.getTopItem()
+        @.navigatedStates = @.getNavigatedStates()
+        @.hasHistory = @.isVisitedStatesEmpty()
+        @.navBcCollapsed = true
+        @.navCollapsed = true
+        @.bSubNavDisplayed = @.isSubNavDisplayed()
 
-        # In order to update the list passed to ng-repeat properly
-        _navigatedStates = angular.copy @cnBucket.getRenderedBucketItems()
-        _subNavStatesReversed = @._getReversedNavigationStates _navigatedStates
-
-        @scope = carneades.extend @scope,
-          navigatedStates: _navigatedStates
-          bcTop: @cnBucket._build @state.$current
-          subNavStatesReversed: _subNavStatesReversed
-          navBcCollapsed: true
-          navCollapsed: true
-          hasHistory: @cnBucket.size() > 1
-          isSubNavDisplayed: _isSubNavDisplayed
-
-      @scope = carneades.extend @scope,
-        openView: @.openView
-        navOpen: @.navOpen
-        hasHistory: false
-
+      @.navigatedStates = @.getNavigatedStates()
+      @.navBcCollapsed = true
+      @.navCollapsed = true
+      @.openView = @.openView
+      @.navOpen = @.navOpen
+      @.hasHistory = false
       @.update()
 
-    openView: (name, params) => @state.go name, params
+    getTopItem: -> @cnBucket._build @state.$current
 
-    navOpen: (name, params) => @state.go name, params
+    getNavigatedStates: -> angular.copy @cnBucket.getRenderedBucketItems()
 
-    _getReversedNavigationStates: (states) ->
-      return states.slice(0, states.length-1).reverse()
+    getNavigationStatesyReversed: ->
+      s = @.getNavigatedStates()
+      return s.slice(0, s.length-1).reverse()
+
+    isVisitedStatesEmpty: -> @cnBucket.size() > 1
+
+    openView: (name, params) -> @state.go name, params
+
+    navOpen: (name, params) -> @state.go name, params
+
+    isSubNavDisplayed: ->
+      data = @state.$current.self.data
+      return data and data.commands and data.commands.length > 0
 
     update: ->
       builder = (params...) =>
