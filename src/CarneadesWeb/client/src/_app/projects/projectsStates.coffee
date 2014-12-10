@@ -93,6 +93,7 @@ define [
       @scope.onCancel = @editorService.onCancel
       @scope.placeholderName = @translate.instant 'placeholder.name'
       @scope.placeholderTitle = @translate.instant 'placeholder.title'
+      @scope.placeholderTheory = @translate.instant 'placeholder.theory'
       @scope.tooltipSave = @translate.instant 'tooltip.argumentgraph.save'
       @scope.tooltipCancel = @translate.instant 'tooltip.cancel'
       @scope.tooltipNewProject = @translate.instant 'tooltip.projects.new'
@@ -102,6 +103,7 @@ define [
           title: ""
           description:
             en: ""
+          theory: "default/walton_schemes"
       
     onSave: () =>
       @Project.save({}, @scope.projectContent).$promise.then((s) =>

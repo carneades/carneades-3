@@ -25,6 +25,13 @@
             ng-model="projectContent.properties.title"
             ng-pattern="/^(.+)$/",)
 
+        form-group(label-key='projects.metadata.theory')
+          input.form-control.input-md(
+            name="theory",
+            placeholder="{{placeholderTheory}}",
+            type="text",
+            ng-model="projectContent.properties.theory")
+
         form-group(label-key='projects.metadata.description')
           multilang-hallo-editor(
             ng-model='projectContent.properties.description', 
