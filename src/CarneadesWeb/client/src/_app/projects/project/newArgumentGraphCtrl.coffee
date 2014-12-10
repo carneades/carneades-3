@@ -40,10 +40,10 @@ define [
         tooltipSave: @translate.instant 'tooltip.argumentgraph.save'
         tooltipCancel: @translate.instant 'tooltip.cancel'
 
-    save: ->
+    save: =>
       _description = {}
       for k, v of @scope.ag.header.description
-        _description[k] = editor.htmlize v
+        _description[k] = @editorService.htmlize v
 
       @scope.ag.header.description = _description
 
@@ -54,12 +54,11 @@ define [
       }
 
       @Project.newArgumentGraph(
-        {pid: $stateParams.pid},
+        {pid: @stateParams.pid},
         project
-      ).$promise.then((data) =>
+      ).$promise.then (data) =>
         @cnBucket.remove @state.$current
         state = @previousState.get 'newArgumentGraphEditor'
-        params = pid: @stateParams.pid, db: @scope.ag.name
-        @state.go state.state.name, params, reload: true
+        params = pid: @stateParams.pid, db: data.id
+        @state.go 'home.projects.project.outline', params, reload: true
         @previousState.forget 'newArgumentGraphEditor'
-      )

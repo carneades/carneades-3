@@ -305,15 +305,32 @@ module.exports = (grunt) ->
     watch:
       coffee:
         files: ["<%= src.base %>/**/*.coffee"]
-        tasks: ["coffee", "timestamp"]
+        tasks: [
+          "coffee"
+          'ngAnnotate'
+          "requirejs"
+          "timestamp"
+          ]
         options:
           livereload: true
       css:
-        files: ["<%= comp.base %>/*.css"]
-        tasks: ["compass", "cssmin"]
+        files: ["<%= src.scss %>/**/*.sass"]
+        tasks: [
+          "compass"
+          "concat_css"
+          "copy"
+          "timestamp"
+          ]
         options:
           livereload: true
-
+      jade:
+        files: ['<%= src.base %>/**/*.jade']
+        tasls: [
+          'jade'
+          "timestamp"
+          ]
+        options:
+          livereload: true
      requirejs:
       compile:
         options:
@@ -364,7 +381,8 @@ module.exports = (grunt) ->
     "concat_css",
     "requirejs",
     "copy",
-    "jade"
+    "jade",
+    "watch"
   ]
 
   grunt.registerTask 'css-only', [
