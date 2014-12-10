@@ -292,13 +292,13 @@ define [
       keys: "=",
       model: "="
     controller: ($scope, $translate, projectInfo) ->
-      @getSchemesProject = (project) ->
-        schemes = project.schemes
-        res = schemes.split '/'
+      @getTheoryProject = (project) ->
+        theory = project.theory
+        res = theory.split '/'
         if res.length is 1 then project.id else res[0]
 
-      @getSchemesName = (project) ->
-        res = project.schemes.split '/'
+      @getTheoryName = (project) ->
+        res = project.theory.split '/'
         if res.length is 1 then res[0] else res[1]
 
       @getTypeOfDisplay = (k, v) ->
@@ -313,11 +313,11 @@ define [
 
       @getStandardName = (s) -> return $translate.instant "projects.#{s}"
 
-      @schemesProject = ({project}) ->
-        return projectInfo.getSchemesProject project
+      @theoryProject = ({project}) ->
+        return projectInfo.getTheoryProject project
 
-      @schemesName = ({project}) ->
-        return projectInfo.getSchemesName project
+      @theoryName = ({project}) ->
+        return projectInfo.getTheoryName project
 
       return @
 
@@ -327,8 +327,8 @@ define [
         pid: scope.$parent.pid
         db: scope.$parent.db
         standardName: propertiesCtrl.getStandardName
-        schemesProject: propertiesCtrl.schemesProject scope.$parent
-        schemesName: propertiesCtrl.schemesName scope.$parent
+        theoryProject: propertiesCtrl.theoryProject scope.$parent
+        theoryName: propertiesCtrl.theoryName scope.$parent
         typeOfDisplay: propertiesCtrl.getTypeOfDisplay
         getSchemesName: propertiesCtrl.getSchemesName
         getSchemesProject: propertiesCtrl.getSchemesProject

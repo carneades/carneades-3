@@ -19,11 +19,11 @@ define [
         return new MetadataLoader $stateParams
       scroll: 'scroll'
       tpid: (projectInfo, $stateParams, tproject) ->
-        tpid = projectInfo.getSchemesProject tproject
+        tpid = projectInfo.getTheoryProject tproject
         $stateParams.tpid = tpid
         return tpid
       tid: (projectInfo, $stateParams, tproject) ->
-        tid = projectInfo.getSchemesName tproject
+        tid = projectInfo.getTheoryName tproject
         $stateParams.tid = tid
         return tid
 

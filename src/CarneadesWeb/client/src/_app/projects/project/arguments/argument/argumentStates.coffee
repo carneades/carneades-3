@@ -50,8 +50,8 @@ define [
             statements: (MultiStatementLoader, $stateParams) ->
               return new MultiStatementLoader $stateParams
             theory: (TheoryLoader, $stateParams, project, projectInfo) ->
-              $stateParams.tpid = projectInfo.getSchemesProject project
-              $stateParams.tid = projectInfo.getSchemesName project
+              $stateParams.tpid = projectInfo.getTheoryProject project
+              $stateParams.tid = projectInfo.getTheoryName project
               return new TheoryLoader $stateParams
     ]
 
