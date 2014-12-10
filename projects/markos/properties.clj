@@ -1,7 +1,6 @@
 {:title "MARKOS",
  :creation-date "June 2013",
- :theory "default/walton_schemes",
- ;; :schemes "default/walton_schemes",
+ :theory "oss_licensing_theory",
  :triplestore "http://markos-n1.man.poznan.pl/openrdf-sesame"
  :repo-name "markos_test_14_11_2014"
  :triplestore-api-url "http://markos-n1.man.poznan.pl/repository-store"

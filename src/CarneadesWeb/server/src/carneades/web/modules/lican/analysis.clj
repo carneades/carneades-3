@@ -232,7 +232,7 @@
                                   markos-namespaces)
         ;; _ (when (empty? licenses) (throw (ex-info "No licenses found" {:entity entity})))
         licenses-statements (get-licenses-statement entity licenses)
-        theories (:policies properties)
+        theories (:theory properties)
         query (first licenses-statements)
         _ (info "licenses-statements: " licenses-statements)
         loaded-theories (project/load-theory project theories)
