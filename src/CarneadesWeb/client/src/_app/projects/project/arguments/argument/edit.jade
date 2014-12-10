@@ -19,13 +19,13 @@
               theme="select2",
               style='width: 100%;')
               ui-select-match(placeholder="{{argument.scheme.header.title}}") {{$select.selected.header.title}}
-              ui-select-choices(repeat="scheme in theory.schemes | propsFilter: {title: $select.search, id: $select.search}")
+              ui-select-choices(repeat="scheme in allSchemes | propsFilter: {title: $select.search, id: $select.search}")
                 div(ng-bind-html="scheme.header.title | highlight: $select.search")
                 small id: {{scheme.id}}
             
             form-group-source(
               label-key='projects.source',
-              ng-repeat='s in theory.schemes | selectedById:argument.scheme.id')
+              ng-repeat='s in allSchemes | selectedById:argument.scheme.id')
               p.form-control-static(ng-bind='s.header.source')
 
           form-group(label-key='projects.premises')
@@ -118,11 +118,11 @@
               theme="select2",
               style='width: 100%;')
               ui-select-match(placeholder="{{argument.scheme.header.title}}") {{$select.selected.header.title}}
-              ui-select-choices(repeat="scheme in theory.schemes | propsFilter: {title: $select.search, id: $select.search}")
+              ui-select-choices(repeat="scheme in allSchemes | propsFilter: {title: $select.search, id: $select.search}")
                 div(ng-bind-html="scheme.header.title | highlight: $select.search")
                 small id: {{scheme.id}}
 
-            .row.control-label.col-lg-12(ng-repeat="s in theory.schemes | selectedById:argument.scheme.id")
+            .row.control-label.col-lg-12(ng-repeat="s in allSchemes | selectedById:argument.scheme.id")
               label.col-lg-2(translate='projects.source', style='padding-top: 8px;')
               .col-lg-10
                 p.form-control-static(ng-bind="s.header.source")

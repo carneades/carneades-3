@@ -85,6 +85,14 @@ define [
         if model is scheme.id
           return scheme.header.title
 
+    # retrieve all schemes recursively
+    @getAllSchemes = (theory) ->
+      schemes = []
+      for section in theory.sections
+        schemes = schemes.concat @getAllSchemes(section)
+      schemes = schemes.concat(theory.schemes)
+      schemes
+
     @getStatementText = (model, statements) ->
       for statement in statements
         if model is statement.id
@@ -330,8 +338,8 @@ define [
         theoryProject: propertiesCtrl.theoryProject scope.$parent
         theoryName: propertiesCtrl.theoryName scope.$parent
         typeOfDisplay: propertiesCtrl.getTypeOfDisplay
-        getSchemesName: propertiesCtrl.getSchemesName
-        getSchemesProject: propertiesCtrl.getSchemesProject
+        getTheoryName: propertiesCtrl.getTheoryName
+        getTheoryProject: propertiesCtrl.getTheoryProject
 
   .directive 'hallo', ($parse, $timeout, markdownConverter) ->
     markdownize = (content) ->

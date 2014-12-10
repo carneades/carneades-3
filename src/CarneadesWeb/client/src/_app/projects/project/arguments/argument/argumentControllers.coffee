@@ -154,6 +154,9 @@ define [
     console.log 'argument', argument
 
     callbackScheme = argument.scheme
+
+    _allSchemes = editorService.getAllSchemes theory
+      
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -282,6 +285,7 @@ define [
     _initRolesPremises argument
 
     $scope = extend $scope,
+      allSchemes: _allSchemes
       statements: statements
       title: $translate.instant 'projects.editargument'
       argument: argument
