@@ -210,6 +210,7 @@ define [
 
     defineScope: =>
       @scope = carneades.extend @scope,
+        allSchemes: @editorService.getAllSchemes @theory
         statements: @statements
         theory: @theory
         argument: @.getArgumentTemplate()
