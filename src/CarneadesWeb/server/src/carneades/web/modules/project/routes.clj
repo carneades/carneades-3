@@ -200,14 +200,16 @@
 ;;   :post! (fn [{{{host "host"} :headers} :request}]
 ;;            (post-project-archive :file file :host host)))
 
-(defresource list-project-resource []
-  :allowed-methods [:get]
+(defresource projects-resource [content]
+  :allowed-methods [:get :post]
   :available-charsets ["utf-8"]
   :available-media-types ["application/json"]
   :exists? (fn [_]
              (session-put-language nil)
              {::entry (get-projects :lang (get-lang))})
-  :handle-ok ::entry)
+  :handle-ok ::entry
+  :post! (fn [_]
+           {::id (post-project content)}))
 
 (defresource list-theories-resource [pid]
   :allowed-methods [:get]
@@ -279,7 +281,7 @@
   :handle-ok ::entry)
 
 (defroutes carneades-projects-api-routes
-  (ANY "/" [] (list-project-resource))
+  (ANY "/" req (projects-resource (:body req)))
 
   (context "/:pid" [pid]
     (ANY "/" req (project-resource pid

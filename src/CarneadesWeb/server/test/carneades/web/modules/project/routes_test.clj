@@ -1,7 +1,7 @@
 (ns carneades.web.modules.project.routes-test
   (:require [midje.sweet :refer :all]
             [ring.mock.request :refer :all]
-            [taoensso.timbre :as timbre :refer [debug info spy]]
+            [taoensso.timbre :as timbre :refer [debug info spy warn]]
             [carneades.web.handler :refer [app]]
             [cheshire.core :refer [parse-string encode]]
             [carneades.engine.utils :as utils]
@@ -29,9 +29,18 @@
   (p/create-project (:project-name @state) user password)
   (system/start))
 
+(defn assign-project
+  "Assigns the project data to the state without creating the project."
+  []
+  (reset! state (initial-state-value))
+  (system/start))
+
 (defn delete-project
   []
-  (project/delete-project (:project-name @state))
+  (try
+    (project/delete-project (:project-name @state))
+    (catch Exception e
+      (warn (.getMessage e))))
   (system/stop))
 
 (defn parse
@@ -467,3 +476,17 @@
                        (str "/projects/" project "/mydb/metadata/1"))
               metadatum (parse (:body request))]
           (:title metadatum) => "New title")))
+
+(with-state-changes [(before :facts (assign-project))
+                     ;; (after :facts (delete-project))
+                     ]
+ (fact "New projects can be created."
+       (let [project (:project-name @state)
+             desc {:en "A nice description of the project"}
+             response (post-request (str "/projects")
+                                    {:name project
+                                     :properties {:description desc}})
+             response2 (get-request (str "/projects/" project))
+             properties (parse (:body response2))]
+         (:status response) => 201
+         (:description properties) => (:en desc))))

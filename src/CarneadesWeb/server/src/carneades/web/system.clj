@@ -23,10 +23,13 @@
   {:projects (p/list-projects)
    :projects-data (init-projects-data!)})
 
-(defn start
+(defn init-data
   []
   (reset! state (init-projects-data)))
 
-(defn stop
+(defn start
   []
-  )
+  (init-data))
+
+(defn stop
+  [])
