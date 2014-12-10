@@ -1,17 +1,7 @@
 {:title "MARKOS",
  :creation-date "June 2013",
- :policies "oss_licensing_theory",
- :schemes "oss_licensing_theory",
+ :theory "default/walton_schemes",
  ;; :schemes "default/walton_schemes",
- :tools [{:name "Arguments"
-          :description "View outlines and maps of the arguments put forward in the comments on the green paper."
-          :link "home.projects.project.outline({pid: project.id, db: 'main', nid: 1})"}
-         {:name "Guided Tour"
-          :description "Take part in a guided tour of the arguments, forming your own opinion of the issues, and find authors of comments who share your opinions."
-          :link "home.projects"}
-         {:name "Policies"
-          :description "View the proposed policies and see how they would work in the cases that interest you."
-          :link "home.projects"}]
  :triplestore "http://markos-n1.man.poznan.pl/openrdf-sesame"
  :repo-name "markos_test_14_11_2014"
  :triplestore-api-url "http://markos-n1.man.poznan.pl/repository-store"

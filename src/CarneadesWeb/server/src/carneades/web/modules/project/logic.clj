@@ -107,6 +107,11 @@
   [& {:keys [lang]}]
   (map (partial augment-project lang) (s/get-projects)))
 
+(defn post-project
+  [content]
+  (let [{:keys [name properties]} content]
+    (s/post-project name properties)))
+
 (defn post-ag
   [pid name metadata]
   (s/post-ag pid name metadata))
@@ -231,8 +236,8 @@
   [project arg lang]
   (let [pcontent (s/get-project project)
         schemestr (str (first (unserialize-atom (:scheme arg))))
-        schemes-project (theory/get-schemes-project project (:schemes pcontent))
-        schemes-name (theory/get-schemes-name (:schemes pcontent))
+        schemes-project (theory/get-theory-project project (:theory pcontent))
+        schemes-name (theory/get-theory-name (:theory pcontent))
         scheme (get-theory {:tpid schemes-project :tid schemes-name :scheme schemestr :lang lang})]
     (if (nil? scheme)
       ;; no scheme found in the theory? fake one
@@ -277,9 +282,6 @@
 
 (defn post-argument
   [project db arg]
-  (debug "post-argument")
-  (info "db " db)
-  (info "argument " arg)
   (s/post-argument project db arg))
 
 (defn delete-argument

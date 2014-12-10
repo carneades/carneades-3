@@ -95,6 +95,7 @@
 
     "projects.metadata.title": "Title",
     "projects.metadata.description": "Description",
+    "projects.metadata.theory": "Theory",
 
     "projects.createstatement": "New statement",
     "projects.editstatement": "Edit statement",
@@ -128,7 +129,9 @@
     "projects.cancel": "Cancel",
     "projects.yes": "Yes",
     "projects.share": "Share",
-
+    "projects.new": "New project",
+    "projects.new.name": "Name",
+    
     "projects.legalprofiles": "Legal Profiles",
     "projects.legalprofile": "Legal Profile",
     "projects.legalprofile.edit": "Edit Legal Profile",
@@ -190,11 +193,13 @@
     "tooltip.legalprofile.cancel": "Cancel the creation of the current legal profile",
     "tooltip.legalprofile.edit": "Edit this legal profile",
     "tooltip.legalprofile.delete": "Delete this legal profile",
-
+    "tooltip.projects.new": "Create a new project",
+    
     "placeholder.title": "type title here",
     "placeholder.policy": "type the name of the policy",
     "placeholder.scheme": "type the name of the scheme",
     "placeholder.name": "type the name here, without spaces and special characters",
+    "placeholder.theory": "default/walton_schemes",
 
     "outline.info": "This outline provides an overview of the main arguments. Click on an item in the outline for more information, including further arguments.",
 

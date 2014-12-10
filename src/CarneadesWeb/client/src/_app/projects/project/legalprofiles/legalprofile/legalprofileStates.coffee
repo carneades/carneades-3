@@ -39,8 +39,8 @@ define [
             legalprofile: (LegalprofileLoader, $stateParams) ->
               return new LegalprofileLoader $stateParams
             theory: (TheoryLoader, projectInfo, tproject, $stateParams) ->
-              tpid = projectInfo.getSchemesProject tproject
-              tid = projectInfo.getSchemesName tproject
+              tpid = projectInfo.getTheoryProject tproject
+              tid = projectInfo.getTheoryName tproject
               $stateParams.tpid = tpid
               $stateParams.tid = tid
               return new TheoryLoader $stateParams
@@ -66,8 +66,8 @@ define [
               legalprofile: (LegalprofileLoader, $stateParams) ->
                 return new LegalprofileLoader $stateParams
               theory: (TheoryLoader, projectInfo, tproject, $stateParams) ->
-                tpid = projectInfo.getSchemesProject tproject
-                tid = projectInfo.getSchemesName tproject
+                tpid = projectInfo.getTheoryProject tproject
+                tid = projectInfo.getTheoryName tproject
                 $stateParams.tpid = tpid
                 $stateParams.tid = tid
                 return new TheoryLoader $stateParams

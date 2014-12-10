@@ -10,13 +10,16 @@
    [carneades.web.modules.project.pack :as p]
    [carneades.database.argument-graph :as ag-db]
    [carneades.web.modules.project.outline :refer [create-outline]]
-   [carneades.project.fs :as project]
+   [carneades.admin.project :as project]
    [carneades.engine.utils :as f]
    [clojure.java.io :as io]
    [carneades.web.system :as s]
    [carneades.config.config :refer [properties]]
    [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]
    [carneades.database.evaluation :as eval]))
+
+(def default-user "root")
+(def default-password "pw1")
 
 (defn- get-project-properties
   [id]
@@ -47,9 +50,15 @@
   [id]
   (get-project-properties id))
 
+(defn post-project
+  [name properties]
+  (project/create-project name default-user default-password properties)
+  (s/init-data)
+  name)
+
 (defn post-ag
   [pid name metadata]
-  (ag-db/create-argument-database pid name "root" "pw1" metadata)
+  (ag-db/create-argument-database pid name default-user default-password metadata)
   name)
 
 (defn get-statement
@@ -66,21 +75,21 @@
 
 (defn put-statement
   [project db id update]
-  (let [dbconn (db/make-connection project db "root" "pw1")]
+  (let [dbconn (db/make-connection project db default-user default-password)]
     (db/with-db dbconn
       (with-evaluation
         (ag-db/update-statement id update)))))
 
 (defn post-statement
   [project db statement]
-  (let [dbconn (db/make-connection project db "root" "pw1")]
+  (let [dbconn (db/make-connection project db default-user default-password)]
     (db/with-db dbconn
       (with-evaluation
         (ag-db/create-statement (p/unpack-statement statement))))))
 
 (defn delete-statement
   [project db id]
-  (let [dbconn (db/make-connection project db "root" "pw1")]
+  (let [dbconn (db/make-connection project db default-user default-password)]
     (db/with-db dbconn
       (with-evaluation
         (ag-db/delete-statement id)))))
@@ -89,11 +98,11 @@
   [project db id]
   (let [dbconn (db/make-connection project db "guest" "")]
     (db/with-db dbconn
-      (spy (ag-db/read-metadata id)))))
+      (ag-db/read-metadata id))))
 
 (defn put-metadatum
   [project db id update]
-  (let [dbconn (db/make-connection project db "root" "pw1")]
+  (let [dbconn (db/make-connection project db default-user default-password)]
     (db/with-db dbconn
       (ag-db/update-metadata id update))))
 
@@ -117,21 +126,21 @@
 
 (defn put-argument
   [project db id update]
-  (let [dbconn (db/make-connection project db "root" "pw1")]
+  (let [dbconn (db/make-connection project db default-user default-password)]
     (db/with-db dbconn
       (with-evaluation
         (ag-db/update-argument id update)))))
 
 (defn post-argument
   [project db arg]
-  (let [dbconn (db/make-connection project db "root" "pw1")]
+  (let [dbconn (db/make-connection project db default-user default-password)]
     (db/with-db dbconn
       (with-evaluation
         (ag-db/create-argument (p/unpack-argument arg))))))
 
 (defn delete-argument
   [project db id]
-  (let [dbconn (db/make-connection project db "root" "pw1")]
+  (let [dbconn (db/make-connection project db default-user default-password)]
     (db/with-db dbconn
       (with-evaluation
         (ag-db/delete-argument id)))))

@@ -514,14 +514,14 @@
                          (iterate z/next (tz/theory-zip theory)))]
     (first (filter #(= scheme (:id %)) (mapcat (comp :schemes z/node) locs)))))
 
-(defn get-schemes-project
+(defn get-theory-project
   "Returns the project from the :schemes field of a project properties."
   [pid schemes]
   (let [res (re-find #"(?:(.+)/)?(.+)" schemes)
         maybe-project (nth res 1)]
     (or maybe-project pid)))
 
-(defn get-schemes-name
+(defn get-theory-name
   "Returns the name of the :schemes field of a project properties."
   [schemes]
   (last (re-find #"(?:(.+)/)?(.+)" schemes)))
