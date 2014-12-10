@@ -3,12 +3,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 define [
-  "angular"
-], (angular) ->
+  'angular'
+  'svg-pan-zoom'
+], (angular,  svgPanZoom) ->
   "use strict"
-  angular.module("map.controllers", [
+  angular.module 'map.controllers', [
     'ui.carneades.share'
-  ])
+    ]
   .directive('bnMapClick', ($document, $parse) ->
     restrict: 'A'
     link: (scope, element, attrs) ->
@@ -39,9 +40,18 @@ define [
       )
   )
 
-  .controller 'MapCtrl', ($scope, $stateParams, map) ->
-    $scope.svg = map
+  .controller 'MapCtrl', ($scope, $stateParams, $compile, map) ->
+    pan = undefined
+    m = angular.element map
+    m.attr 'id', 'svg-map'
+    fn = $compile m
+    $scope.svg = m
+    fn $scope
+
     $scope.handleClick = (event) ->
+      unless pan
+        pan = svgPanZoom '#svg-map'
+
       element = event.target
       if element.farthestViewportElement?.localName is 'svg'
         nid = angular.element(element).parent().attr 'id'

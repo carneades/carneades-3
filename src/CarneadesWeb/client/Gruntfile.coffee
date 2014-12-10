@@ -172,6 +172,8 @@ module.exports = (grunt) ->
           'selectize.js': 'selectize/dist/js/standalone/selectize.min.js'
           'angular-selectize.js': 'angular-selectize2/dist/selectize.js'
           'angular-cache.js': 'angular-cache/dist/angular-cache.js'
+          'svg-pan-zoom.js': 'svg-pan-zoom/dist/svg-pan-zoom.js'
+          'angular-svg-pan-zoom.js': 'angular-svg-pan-zoom/dist/angular-svg-pan-zoom.js'
 
     jade:
       compile:

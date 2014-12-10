@@ -79,7 +79,6 @@ require.config
     "angular-selectize":
       deps: ["angular", "jquery", "jquery-ui", "selectize"]
 
-
     "utils":
       deps: ['root']
 
@@ -119,6 +118,7 @@ require.config
     'codemirror-addon': './libs/codemirror/addon'
     'selectize': './libs/selectize'
     'angular-selectize': './libs/angular-selectize'
+    'svg-pan-zoom': './libs/svg-pan-zoom'
     'root': './root'
     'utils': './utils'
     'classes': './classes'
