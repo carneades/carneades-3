@@ -150,13 +150,15 @@ define [
   .controller 'ArgumentEditCtrl', ($scope, $state, $stateParams, $translate,
     statements, argument, Argument, theory, breadcrumbService,
     editorService, $cnBucket, $previousState) ->
-
-    console.log 'argument', argument
-
-    callbackScheme = argument.scheme
+    # in case a scheme is selected that is not implemented in our theorydb yet,
+    # this one is cached in order to set the scheme in case the user left the
+    # field blank. avoids changing the argument in the acse the user opens the
+    # editor and saves the argument without changing it or without changing the
+    # scheme.
+    fallbackScheme = argument.scheme
 
     _allSchemes = editorService.getAllSchemes theory
-      
+
     _showModel = () ->
       $scope.tabModel = true
       $scope.tabMetadata = false
@@ -175,7 +177,7 @@ define [
         argument.scheme = $scope.argument.scheme.id
         argument.scheme = "(#{argument.scheme})"
       else if $scope.argument.scheme is undefined
-        argument.scheme = callbackScheme
+        argument.scheme = fallbackScheme
 
       argument.conclusion = $scope.argument.conclusion.id
       Argument.update($stateParams, argument).$promise.then((data) ->

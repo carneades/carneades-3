@@ -307,9 +307,9 @@ module.exports = (grunt) ->
       coffee:
         files: ["<%= src.base %>/**/*.coffee"]
         tasks: [
-          "coffee"
-          'ngAnnotate'
-          "requirejs"
+          "newer:coffee"
+          'newer:ngAnnotate'
+          "requirejs:build"
           "timestamp"
           ]
         options:
@@ -317,9 +317,9 @@ module.exports = (grunt) ->
       css:
         files: ["<%= src.scss %>/**/*.sass"]
         tasks: [
-          "compass"
+          "newer:compass"
           "concat_css"
-          "copy"
+          "newer:copy"
           "timestamp"
           ]
         options:
@@ -327,13 +327,42 @@ module.exports = (grunt) ->
       jade:
         files: ['<%= src.base %>/**/*.jade']
         tasls: [
-          'jade'
+          'newer:jade'
           "timestamp"
           ]
         options:
           livereload: true
      requirejs:
-      compile:
+      build:
+        options:
+          findNestedDependencies: true
+          mainConfigFile: "<%= gen.base %>/main.js"
+          include: 'main'
+          locale: "en-us"
+          optimize: 'none'
+          useStrict: true
+
+          # see: http://requirejs.org/docs/optimization.html#sourcemaps
+          generateSourceMaps: true
+          preserveLicenseComments: false
+
+          uglify2:
+            output:
+              beautify: false
+            compress:
+              sequences: false
+              dead_code: true
+              unused: true
+            warnings: false
+            mangle: false
+            inSourceMap: true
+
+          name: "app"
+          out: "<%= dist.base %>/main.min.js"
+          keepBuildDir: true
+          removeCombined: true
+          fileExclusionRegExp: /\.tpl\.html/
+      deploy:
         options:
           findNestedDependencies: true
           mainConfigFile: "<%= gen.base %>/main.js"
@@ -380,15 +409,23 @@ module.exports = (grunt) ->
     "bowercopy",
     "compass",
     "concat_css",
-    "requirejs",
+    "requirejs:build",
     "copy",
     "jade",
     "watch"
   ]
 
-  grunt.registerTask 'css-only', [
-    'compass'
-    'copy'
+  grunt.registerTask "deploy", [
+    "clean",
+    "chtml2js",
+    "coffee",
+    "ngAnnotate",
+    "bowercopy",
+    "compass",
+    "concat_css",
+    "requirejs:deploy",
+    "copy",
+    "jade"
   ]
 
   # # magic continues: test
