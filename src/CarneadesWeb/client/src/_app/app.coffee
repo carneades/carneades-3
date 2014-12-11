@@ -28,6 +28,7 @@ define [
   "common/directives/svg-include"
   "common/directives/markdown/markdown"
   "common/directives/share/share"
+  "common/directives/share/exportMap"
   'common/directives/editor/editor'
   'common/resources/themes'
   'showdown'
