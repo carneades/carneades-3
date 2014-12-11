@@ -43,12 +43,10 @@
               select='showMetadata()',
               ng-show='isMapInitialized(argument.header)')
         div(ng-show='tabModel')
-          form-group(
-            label-key='projects.argument.formalization',
-            ng-hide='argument.premises.length == 0')
+          form-group(label-key='projects.argument.formalization')
             .form-control-static
-              .premises-indication(translate='projects.premises_text')
-              ul(ng-repeat='p in argument.premises')
+              .premises-indication(translate='projects.premises_text', ng-hide='argument.premises.length == 0')
+              ul(ng-repeat='p in argument.premises', ng-hide='argument.premises.length == 0')
                 li
                   span(ng-hide="p.role == ''", ng-bind='p.role',style='padding-right: 8px;')
                   span(ng-show="!p.positive")
