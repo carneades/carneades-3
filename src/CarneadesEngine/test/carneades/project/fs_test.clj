@@ -8,7 +8,8 @@
             [me.raynes.fs :as fs]
             [carneades.engine.uuid :refer [make-uuid-str]]
             [carneades.engine.utils :refer [file-separator]]
-            [midje.sweet :refer :all]))
+            [midje.sweet :refer :all]
+            [carneades.config.config :as config]))
 
 (def state (atom nil))
 
@@ -25,6 +26,7 @@
   []
   (project/delete-project (:project-name @state)))
 
+;; failing. Should be fixed as part of issue #122
 (with-state-changes [(before :facts (create-tmp-project))
                      (after :facts (delete-tmp-project))]
   (fact "The relative-path functions works."
@@ -40,7 +42,7 @@
               project-name (:project-name @state)]
           (spit docfile (str "content-" (make-uuid-str)))
           (project/import-document project-name (.getPath docfile) (.getName docfile))
-          (expect (fs/exists? (str project/projects-directory file-separator
+          (expect (fs/exists? (str (:projects-directory config/properties) file-separator
                                project-name file-separator
                                project/documents-directory file-separator
                                (.getName docfile)))
