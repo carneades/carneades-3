@@ -12,6 +12,8 @@
              Naming convention: get-x operations return ids; read-x
              operations return a structure with properties of an
              object."}
+  ;; most of the bugs come from this namespace.
+  ;; it would be good to rewrite it. Maybe with korma.
   carneades.database.argument-graph
   (:use clojure.pprint
         [carneades.database.db :only [with-db make-connection]]
@@ -441,13 +443,17 @@
                    (standard->integer (keyword (:standard m)))
                    0)
         delta (cond (or (and updating-header updating-text)
-                        (and (:header m) text-id2)) {:header new-header
-                                                     :text text-id2
-                                                     :standard standard}
-                        (:header m) {:header new-header
-                                     :standard standard}
-                        text-id2 {:text text-id2
-                                  :standard standard})]
+                        (and (:header m) text-id2))
+                    {:header new-header
+                     :text text-id2
+                     :standard standard}
+                    
+                    (:header m)
+                    {:header new-header
+                     :standard standard}
+                    
+                    text-id2 {:text text-id2
+                              :standard standard})]
     (condp = (first (jdbc/update-values
                       :statement
                       ["id=?" id]
@@ -688,9 +694,9 @@
         header-id2 (if header-id1
                      (do (update-metadata header-id1 (:header m))
                          header-id1)
-                     (if (:header m)
+                     (when (:header m)
                        (create-metadata (merge (make-metadata) (:header m)))))
-        conclusion-id (if (:conclusion m)
+        conclusion-id (when (:conclusion m)
                         (get-statement (:conclusion m)))]
     (when (:premises m)
       ;; first delete existing premises
@@ -702,19 +708,23 @@
       (doseq [p (:premises m)]
         (create-premise p id)))
     (let [m (dissoc m :premises)
-          m (merge m (if (:conclusion m)
-                       {:header header-id2
-                        :conclusion conclusion-id}
-                       {:header header-id2}))
+          m (merge m (cond (and conclusion-id header-id2)
+                           {:header header-id2
+                            :conclusion conclusion-id}
+
+                           header-id2
+                           {:header header-id2}))
           m (if (:scheme m)
               (update-in m [:scheme] serialize-atom)
               m)]
-      (condp = (first (jdbc/update-values
-                       :argument
-                       ["id=?" id]
-                       m))
-        0 false
-        1 true))))
+      (if (empty? m)
+        true
+        (condp = (first (jdbc/update-values
+                         :argument
+                         ["id=?" id]
+                         m))
+          0 false
+          1 true)))))
 
 (defn delete-argument
   "Deletes an argument with the given the id.  The statements
