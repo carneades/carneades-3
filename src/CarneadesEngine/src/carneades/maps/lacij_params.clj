@@ -169,7 +169,7 @@
            :stroke-width 1
            :marker-end "url(#end-arrow-red)"}])
 
-(def undercutter-params {:style {:fill "white"} :width 230 :height 46 :rx 35 :ry 35})
+(def undercutter-params {:width 230 :height 46 :rx 35 :ry 35})
 
 (def undercutter-edge-params [:marker-end nil
                               :style {:stroke con-stroke-color
