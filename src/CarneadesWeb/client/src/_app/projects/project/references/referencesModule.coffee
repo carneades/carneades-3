@@ -5,8 +5,10 @@
 
 define [
   'angular',
-  './referencesStates'
+  './referencesStates',
+  './reference/referenceModule'
 ], (angular) ->
   angular.module 'references.module', [
-    'references.states'
+    'references.states',
+    'reference.module'
   ]

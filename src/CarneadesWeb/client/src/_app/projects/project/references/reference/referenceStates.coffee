@@ -14,11 +14,9 @@ define [
 
   .config ($stateProvider) ->
     states = [
-      name: 'home.projects.project.references.reference.edit'
+      name: 'home.projects.project.references.reference'
       label: 'Reference'
-      url: '/:rid'
-      data:
-        commands: ['home.projects.project.metadata.references']
+      url: '/:mid'
       views:
         'content@':
           templateUrl: 'projects/project/references/reference/edit.jade'

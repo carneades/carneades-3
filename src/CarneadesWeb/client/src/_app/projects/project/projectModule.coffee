@@ -11,7 +11,8 @@ define [
   './statements/statementsModule',
   './arguments/argumentsModule',
   './theory/theoryModule',
-  './legalprofiles/legalprofilesModule'
+  './legalprofiles/legalprofilesModule',
+  './references/referencesModule'
 ], (angular) ->
   "use strict"
   angular.module 'project.module', [
@@ -21,5 +22,6 @@ define [
     'statements.module',
     'arguments.module',
     'theory.module',
-    'legalprofiles.module'
+    'legalprofiles.module',
+    'references.module'
   ]
