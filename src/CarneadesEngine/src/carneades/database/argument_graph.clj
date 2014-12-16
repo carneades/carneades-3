@@ -222,8 +222,11 @@
                 nil
                 (dissoc (first res2) :id))))]
     (cond (nil? md) nil
-          d (assoc (map->metadata md) :description d)
-          :else (dissoc (map->metadata md) :description))))
+          d (-> (map->metadata md)
+                (assoc :description d :id id))
+          :else (-> (map->metadata md)
+                    (dissoc :description)
+                    (assoc :id id)))))
 
 (defn list-metadata
   "Returns a sequence of all the metadata records in the database"
