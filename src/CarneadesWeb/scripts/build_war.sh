@@ -17,7 +17,7 @@ build_webclient () {
     cd $SCRIPTPATH/../client
     npm install
     ./node_modules/bower/bin/bower install
-    ./node_modules/grunt-cli/bin/grunt build
+    ./node_modules/grunt-cli/bin/grunt deploy
     cd -
 }
 
