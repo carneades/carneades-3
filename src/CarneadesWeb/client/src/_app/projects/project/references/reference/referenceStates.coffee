@@ -17,6 +17,8 @@ define [
       name: 'home.projects.project.references.reference'
       label: 'Reference'
       url: '/:mid'
+      data:
+        commands: ['home.projects.project.references']
       views:
         'content@':
           templateUrl: 'projects/project/references/reference/edit.jade'
