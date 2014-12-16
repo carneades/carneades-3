@@ -142,6 +142,9 @@
     "projects.legalprofile.default": "Default",
     "projects.legalprofile.copy": "(copy)",
 
+    "projects.references": "References",
+    "projects.references.new": "New reference",
+
     "state.home.label": "Carneades",
 
     "state.home.about.label": "About",
@@ -194,6 +197,7 @@
     "tooltip.legalprofile.edit": "Edit this legal profile",
     "tooltip.legalprofile.delete": "Delete this legal profile",
     "tooltip.projects.new": "Create a new project",
+    "tooltip.references.new": "Create a new reference",
     
     "placeholder.title": "type title here",
     "placeholder.policy": "type the name of the policy",
