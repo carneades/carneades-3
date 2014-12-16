@@ -1,0 +1,20 @@
+.col-lg-offset-1.col-lg-10.references
+  .row
+    .col-sm-11
+      .section
+        .page-header
+          h1 {{ 'projects.references' | translate }}
+          .commands
+            button.btn.btn-default.btn-small(
+              type='button',
+              tooltip="{{'tooltip.reference.new' | translate}}",
+              tooltip-append-to-body="true",
+              tooltip-placement="right", 
+              ng-click="new()")
+              i.fa.fa-edit: span {{'projects.references.new' | translate}}
+
+    .row
+      .col-md-12
+        ul.references
+          li(ng-repeat='r in references', id='{{r.key}}') [{{r.key}}] {{ r.creator }}. {{ r.date }}.
+            a(href='{{ r.identifier }}') {{ r.title }}
