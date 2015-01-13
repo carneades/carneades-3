@@ -26,7 +26,8 @@
             [ring.middleware.json :refer [wrap-json-params wrap-json-body]]
             [carneades.project.fs :as p]
             [carneades.web.system :as system]
-            [carneades.config.config :as config])
+            [carneades.config.config :as config]
+            [clojure.java.browse :refer [browse-url]])
   (:import javax.servlet.ServletContextEvent
            javax.servlet.ServletContextListener))
 
@@ -75,6 +76,19 @@
   (system/start)
   (info "Carneades started successfully.")
   (info "Properties will be read from " config/configfilename))
+
+(defn init-jar
+  "Called when app is deployed as self-executable JAR
+.Put any initialization code here."
+  []
+  (timbre/merge-config! logger-config)
+  (timbre/set-level! :info)
+  (system/start)
+  (let [url "http://localhost:3000/carneades/"]
+    (info "Carneades started successfully.")
+    (info (str "Carneades is available at " url))
+    (info "Properties will be read from " config/configfilename)
+    (browse-url url)))
 
 (defn destroy
   "destroy will be called when your application
