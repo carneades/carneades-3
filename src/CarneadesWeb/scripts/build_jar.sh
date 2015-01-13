@@ -12,6 +12,10 @@ PROJECTS_DIR=`grep projects-directory ~/.carneades.clj | cut -d " " -f 3 | sed '
 
 source $SCRIPTPATH/helpers.sh
 
+cd $SCRIPTPATH/../../CarneadesExamples
+lein deps
+lein run -m carneades.examples.copyright-arguments &> /dev/null && true
+
 cd $SCRIPTPATH/../server
 
 lein clean
