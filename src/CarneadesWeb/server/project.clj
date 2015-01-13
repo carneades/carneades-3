@@ -61,7 +61,7 @@
 
              :jar {:ring {:handler carneades.web.handler/jar-handler
                           :init carneades.web.handler/init
-                          :destroy carneades.web.handler/destroy
+                              :destroy carneades.web.handler/destroy
                           :servlet-name "carneades"}}}
 
   :repl-options {:timeout 120000}

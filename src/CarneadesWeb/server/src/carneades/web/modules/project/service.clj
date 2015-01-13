@@ -14,7 +14,7 @@
    [carneades.engine.utils :as f]
    [clojure.java.io :as io]
    [carneades.web.system :as s]
-   [carneades.config.config :refer [properties]]
+   [carneades.config.config :refer [get-projects-directory]]
    [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]
    [carneades.database.evaluation :as eval]))
 
@@ -153,7 +153,7 @@
 
 (defn get-theme
   [project doc]
-  (let [path (str (@properties :projects-directory) f/file-separator project f/file-separator
+  (let [path (str (get-projects-directory) f/file-separator project f/file-separator
                   "theme" f/file-separator doc)]
     (when (f/exists? path)
       (io/input-stream path))))

@@ -8,7 +8,7 @@
   carneades.database.db
   (:require [clojure.java.jdbc.deprecated :as jdbc]
             [carneades.engine.uuid :as uuid]
-            [carneades.config.config :refer [properties]])
+            [carneades.config.config :refer [get-projects-directory]])
   (:import java.io.File))
 
 (defmacro with-db [db & body]
@@ -31,7 +31,7 @@
 (defn dbfilename
   "Returns the filename of a database."
   [project dbname]
-  (str (@properties :projects-directory) "/" project "/databases/" dbname ".h2.db"))
+  (str (get-projects-directory) "/" project "/databases/" dbname ".h2.db"))
 
 ;; (defn fetch-databases-names
 ;;   "Looks on the disk to find all existing databases. Returns their names"
@@ -46,7 +46,7 @@ true option to create a new database."
   ([project-name db-name username passwd & options]
      (let [options (apply hash-map options)
            db-protocol (:protocol options default-db-protocol) ;; "file|mem|tcp"
-           db-directory (str (@properties :projects-directory) File/separator
+           db-directory (str (get-projects-directory) File/separator
                              project-name File/separator "databases") ;; "path|host:port"
            db-host (str db-protocol "://" db-directory "/" db-name)
            db-host (if (:create options)

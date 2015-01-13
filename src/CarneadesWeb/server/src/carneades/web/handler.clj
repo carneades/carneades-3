@@ -39,7 +39,8 @@
   (route/not-found "Not Found"))
 
 (defroutes jar-app-routes
-  (route/resources "/" {:root "public"})
+  (context "/carneades" []
+    (route/resources "/" {:root "public/carneades"}))
   (route/not-found "Not Found"))
 
 (def logger-config
@@ -129,4 +130,4 @@
                  (wrap-params)
                  (wrap-multipart-params)))
 
-(def jar-handler (middleware/war-handler jar-app))
+(def jar-handler jar-app)
