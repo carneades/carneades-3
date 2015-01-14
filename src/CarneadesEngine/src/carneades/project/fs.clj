@@ -14,7 +14,7 @@
             [clojure.java.io :as io]
             [clojure.string :as s]
             [me.raynes.fs :as fs]
-            [carneades.config.config :as config :refer [properties]]
+            [carneades.config.config :as config :refer [get-projects-directory]]
             [carneades.engine.theory :as theory]
             [taoensso.timbre :as timbre :refer [debug info spy]]))
 
@@ -38,14 +38,14 @@
 (defn list-projects
   "Returns a list of project names. A read on the disk is performed."
   []
-  (let [dirs (into [] (.listFiles (clojure.java.io/file (@properties :projects-directory))))
+  (let [dirs (into [] (.listFiles (clojure.java.io/file (get-projects-directory))))
         projects (filter project? dirs)]
     (map (memfn getName) projects)))
 
 (defn get-project-path
   "Returns the absolute path of the project."
   [project]
-  (str (@properties :projects-directory) file-separator project))
+  (str (get-projects-directory) file-separator project))
 
 (defn- get-properties-path
   "Returns the path of the project's properties"
@@ -79,14 +79,14 @@ can be of the form \"theory\" or \"project/theory\". The former refers
 (defn absolute-theory-path
   "Returns the absolute path of a theory."
   [project theory]
-  (str (@properties :projects-directory) file-separator
+  (str (get-projects-directory) file-separator
        (relative-theory-path project theory)))
 
 (defn absolute-ontology-path
   "Returns the absolute path of an ontology. Ontologies are saved in
   the theories folder."
   [project ontology]
-  (str (@properties :projects-directory) file-separator
+  (str (get-projects-directory) file-separator
        project file-separator
        theories-directory file-separator
        ontology))
@@ -94,7 +94,7 @@ can be of the form \"theory\" or \"project/theory\". The former refers
 (defn absolute-theory-dir-path
   "Returns the path of the theory directory for a given a project."
   [project]
-  (str (@properties :projects-directory) file-separator
+  (str (get-projects-directory) file-separator
        project file-separator
        theories-directory))
 
@@ -124,7 +124,7 @@ can be of the form \"theory\" or \"project/theory\". The former refers
 (defn list-documents
   "Returns a list of the documents names"
   [project]
-  (fs/list-dir (str (@properties :projects-directory) file-separator project file-separator documents-directory)))
+  (fs/list-dir (str (get-projects-directory) file-separator project file-separator documents-directory)))
 
 (defn load-project
   "Loads the configuration of a project and its policy. Returns a map
@@ -157,7 +157,7 @@ representing the project."
 (defn import-theories
   "Imports the theories stored at pathname into project as name."
   [project pathname name]
-  (let [dest (str (@properties :projects-directory) file-separator
+  (let [dest (str (get-projects-directory) file-separator
                   project file-separator
                   theories-directory file-separator
                   name)]
@@ -166,7 +166,7 @@ representing the project."
 (defn delete-theories
   "Delete the theories of the project."
   [project theories]
-  (let [pathname (str (@properties :projects-directory) file-separator
+  (let [pathname (str (get-projects-directory) file-separator
                   project file-separator
                   theories-directory file-separator
                   (str theories ".clj"))]
@@ -175,7 +175,7 @@ representing the project."
 (defn document-path
   "Returns the path of a project's document."
   [project document]
-  (str (@properties :projects-directory) file-separator
+  (str (get-projects-directory) file-separator
        project file-separator
        documents-directory file-separator
        document))
@@ -195,10 +195,10 @@ representing the project."
 (defn create-project-files
   "Creates a new project in the projects' directory"
   [project props]
-  (let [docpath (str (@properties :projects-directory) file-separator
+  (let [docpath (str (get-projects-directory) file-separator
                      project file-separator
                      documents-directory)
-        theoriespath (str (@properties :projects-directory) file-separator
+        theoriespath (str (get-projects-directory) file-separator
                           project file-separator
                           theories-directory)
         properties-path (get-properties-path project)]
@@ -209,5 +209,5 @@ representing the project."
 (defn delete-project
   "Delete project from project's directory."
   [project]
-  (let [path (str (@properties :projects-directory) file-separator project)]
+  (let [path (str (get-projects-directory) file-separator project)]
     (delete-file-recursively (get-project-path project))))

@@ -43,3 +43,12 @@
                  configfilename)
          (throw (ex-info "Invalid or missing configuration file"
                          {:configfilename configfilename})))))))
+
+(defn get-projects-directory
+  "Returns the absolute pathname of the project's directory.
+If the projects-directory key is not specified in the config file, the current
+  'projects' directory is used ; this is useful when packaging Carneades a
+  self-executable JAR."
+  []
+  (or (@properties :projects-directory)
+      (str (System/getProperty "user.dir") file-separator "projects")))

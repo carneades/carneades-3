@@ -60,7 +60,7 @@
                              :servlet-name "carneades"}}
 
              :jar {:ring {:handler carneades.web.handler/jar-handler
-                          :init carneades.web.handler/init
+                          :init carneades.web.handler/init-jar
                           :destroy carneades.web.handler/destroy
                           :servlet-name "carneades"}}}
 
