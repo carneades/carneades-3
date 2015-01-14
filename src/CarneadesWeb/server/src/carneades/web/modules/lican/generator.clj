@@ -84,16 +84,16 @@ Generation of arguments from a triplestore. Aggregated SPARQL queries are execut
     query))
 
 (def query-translators
-  {(unserialize-atom "http://www.markosproject.eu/ontologies/oss-licenses#dynamicallyLinked")
+  {(unserialize-atom "http://www.markosproject.eu/ontologies/oss-licenses#dynamicallyLinkedSoftwareRelease")
    dynamically-linked-translator
 
-   (unserialize-atom "http://www.markosproject.eu/ontologies/oss-licenses#staticallyLinked")
+   (unserialize-atom "http://www.markosproject.eu/ontologies/oss-licenses#staticallyLinkedSoftwareRelease")
    statically-linked-translator
 
-   (unserialize-atom "http://www.markosproject.eu/ontologies/oss-licenses#implementedAPI")
+   (unserialize-atom "http://www.markosproject.eu/ontologies/oss-licenses#implementedAPIOfSoftwareRelease")
    implemented-api-translator
 
-   (unserialize-atom "http://www.markosproject.eu/ontologies/oss-licenses#modificationOf")
+   (unserialize-atom "http://www.markosproject.eu/ontologies/oss-licenses#modificationOfSoftwareRelease")
    modification-of-translator
    })
 

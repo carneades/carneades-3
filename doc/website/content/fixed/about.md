@@ -4,8 +4,9 @@
   "weight": 1
 }
 
+
 The Carneades argumentation system provides web-based, collaborative
-software tools for:
+software tools for: 
 
 - (re)constructing arguments using a rulebase of argumentation schemes
 - visualizing, browsing, navigating and editing argument graphs
