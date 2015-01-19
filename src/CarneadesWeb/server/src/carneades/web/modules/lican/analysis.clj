@@ -302,7 +302,7 @@ Returns a set of questions for the frontend."
   (let [query-string (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s ?x)" software-entity)
         project "markos"
         properties (project/load-project-properties project)
-        theories (:policies properties)
+        theories (:theory properties)
         triplestore (:triplestore properties)
         repo-name (:repo-name properties)
         markos-namespaces (:namespaces properties)
@@ -385,7 +385,7 @@ Returns a set of questions for the frontend."
         triplestore (:triplestore properties)
         repo-name (:repo-name properties)
         markos-namespaces (:namespaces properties)
-        theories (:policies properties)
+        theories (:theory properties)
         loaded-theories (project/load-theory project theories)
         the-entity "http://www.markosproject.eu/ontologies/software#theSoftware"
         goal (unserialize-atom
