@@ -154,20 +154,6 @@
              (set-fields {:default false})
              (where {:id [not= id]})))))
 
-(defn delete-profile+
-  "Delete a profile in the database and its associated metadata."
-  [id]
-  (transaction
-   (let [profile (read-profile id)
-         m (:metadata profile)]
-     (when (:default profile)
-       (throw (ex-info "Deleting the default profile is forbidden."
-                       {:profile profile})))
-     (delete rules (where {:profile [= id]}))
-     (delete profiles (where {:id [= id]}))
-     (when m
-       (delete-metadatum+ m)))))
-
 (defn pack-rule
   [rule]
   (-> rule
@@ -364,3 +350,18 @@
            (create-rule id r))))
      (when-not (empty? change')
        (update-profile id change')))))
+
+(defn delete-profile+
+  "Delete a profile in the database and its associated metadata."
+  [id]
+  (transaction
+   (let [profile (read-profile id)
+         m (:metadata profile)]
+     (when (:default profile)
+       (throw (ex-info "Deleting the default profile is forbidden."
+                       {:profile profile})))
+     (delete rules (where {:profile [= id]}))
+     (delete profiles (where {:id [= id]}))
+     (when m
+       (delete-metadatum+ m)))))
+
