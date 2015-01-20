@@ -1,7 +1,7 @@
 ======================
 # CarneadesWeb
 
-> Web application front-end for argument mapping and evaluation application.
+> Web application for argument mapping and evaluation application.
 
 ## Configuration
 

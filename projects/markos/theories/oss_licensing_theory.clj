@@ -5,6 +5,7 @@
   (:require  [carneades.engine.dublin-core :as dc]
              [carneades.engine.theory :as t]
              [carneades.engine.argument :as a]
+             [carneades.engine.statement :as s]
              [carneades.owl.import :as owl]
              [carneades.project.fs :as project]
              [taoensso.timbre :as timbre :refer [debug error spy]]))
@@ -31,9 +32,9 @@
 project."})
 
    ;; :imports [copyright-theory]
-
+   
    :namespaces
-   { ""   "http://www.markosproject.eu/ontologies/oss-licenses#",
+   { "oss"   "http://www.markosproject.eu/ontologies/oss-licenses#",
      "copyright" "http://www.markosproject.eu/ontologies/copyright#",
      "owl" "http://www.w3.org/2002/07/owl#",
      "rdf" "http://www.w3.org/1999/02/22-rdr-syntax-ns#"
@@ -240,7 +241,7 @@ project."})
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
                   (a/pm '(copyright:derivedFrom ?W1 ?W2))
                   (a/pm '(lic:licenseTemplate ?W2 ?T2))
-                  (a/pm '(StrongReciprocalLicenseTemplate ?T2))]
+                  (a/pm '(oss:StrongReciprocalLicenseTemplate ?T2))]
        :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
 
       (t/make-scheme
@@ -255,9 +256,9 @@ project."})
        :pro false
        :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
-                  (a/pm '(derivedFromOtherThanByLinking ?W1 ?W2))
+                  (a/pm '(oss:derivedFromOtherThanByLinking ?W1 ?W2))
                   (a/pm '(lic:licenseTemplate ?W2 ?L2))
-                  (a/pm '(LinkingExceptionReciprocalLicenseTemplate ?L2))]
+                  (a/pm '(oss:LinkingExceptionReciprocalLicenseTemplate ?L2))]
        :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
 
       (t/make-scheme
@@ -274,7 +275,7 @@ project."})
        :pro false
        :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
-                  (a/pm '(derivedFromOtherThanByLinking ?W1 ?W2))
+                  (a/pm '(oss:derivedFromOtherThanByLinking ?W1 ?W2))
                   (a/pm '(lic:licenseTemplate ?W2 EPL-1.0))]
        :exceptions [(a/pm '(copyright:compatibleWith ?T1 EPL-1.0))
                     (a/pm '(valid derivation-by-linking))])
@@ -297,7 +298,9 @@ project."})
                   (a/pm '(copyright:derivedFrom ?W1 ?W2))
                   (a/pm '(lic:licenseTemplate ?W2 EPL-1.0))]
        :exceptions [(a/pm '(copyright:compatibleWith ?T1 EPL-1.0))
-                    (a/pm :positive false '(valid derivation-by-linking))])
+                    (a/make-premise :positive false
+                                    :statement
+                                    (s/make-statement :atom '(valid derivation-by-linking)))])
 
       ;; To do: check how to properly namespace "valid" 
 
@@ -309,8 +312,8 @@ project."})
                 derivative work of an API, but need not involve linking to
                 the object code of interface definitions."})
        :pro true
-       :conclusion '(derivedFromOtherThanByLinking ?R1 ?R2)
-       :premises [(a/pm '(implementedAPIOfSoftwareRelease ?R1 ?R2))])
+       :conclusion '(oss:derivedFromOtherThanByLinking ?R1 ?R2)
+       :premises [(a/pm '(oss:implementedAPIOfSoftwareRelease ?R1 ?R2))])
 
       
       (t/make-scheme
@@ -322,8 +325,8 @@ project."})
                 necessarily require linking to the binary code from
                 the original version."})
        :pro true
-       :conclusion '(derivedFromOtherThanByLinking ?R1 ?R2)
-       :premises [ (a/pm '(modificationOf ?R1 ?R2))])
+       :conclusion '(oss:derivedFromOtherThanByLinking ?R1 ?R2)
+       :premises [ (a/pm '(oss:modificationOf ?R1 ?R2))])
 
       (t/make-scheme
        :id 'entity-reciprocity
@@ -340,7 +343,7 @@ project."})
                   (a/pm '(soft:provenanceRelease ?E1 ?W1))
                   (a/pm '(copyright:derivedFrom ?W1 ?W2))
                   (a/pm '(lic:licenseTemplate ?W2 ?T2))
-                  (a/pm '(ReciprocalLicenseTemplate ?T2))]
+                  (a/pm '(oss:ReciprocalLicenseTemplate ?T2))]
        :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
 
       (t/make-scheme
@@ -356,9 +359,9 @@ project."})
        :pro false
        :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
-                  (a/pm '(modificationOfSoftwareRelease ?W1 ?W2))
+                  (a/pm '(oss:modificationOfSoftwareRelease ?W1 ?W2))
                   (a/pm '(lic:licenseTemplate ?W2 ?T2))
-                  (a/pm '(ModificationsOnlyReciprocalLicenseTemplate ?T2))]
+                  (a/pm '(oss:ModificationsOnlyReciprocalLicenseTemplate ?T2))]
        :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
 
       (t/make-scheme
@@ -422,7 +425,7 @@ project."})
                 :title "Linking Creates a Derivative Work"
                 :description {:en "Linking creates a derivative work."})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [ (a/pm '(linkedSoftwareRelease ?R1 ?R2)) ])
+       :premises [ (a/pm '(oss:linkedSoftwareRelease ?R1 ?R2)) ])
 
       (t/make-scheme
        :id 'static-linking
@@ -430,7 +433,7 @@ project."})
                 :title "Static Linking"
                 :description {:en "Static linking is a form of linking."})
        :conclusion '(copyright:linkedSoftwareRelease ?R1 ?R2)
-       :premises [(a/pm '(staticallyLinkedSoftwareRelease ?R1 ?R2)) ])
+       :premises [(a/pm '(oss:staticallyLinkedSoftwareRelease ?R1 ?R2)) ])
 
       (t/make-scheme
        :id 'dynamic-linking
@@ -438,7 +441,7 @@ project."})
                 :title "Dynamic Linking"
                 :description {:en "Dynamic linking is a form of linking."})
        :conclusion '(copyright:linkedSoftwareRelease ?R1 ?R2)
-       :premises [(a/pm '(dynamicallyLinkedSoftwareRelease ?R1 ?R2)) ])
+       :premises [(a/pm '(oss:dynamicallyLinkedSoftwareRelease ?R1 ?R2)) ])
 
       (t/make-scheme
        :id 'oracle-v-google
@@ -448,7 +451,7 @@ project."})
                 Inc., United States Court of Appeals for the Federal
                 Circuit, 2013-1021, -1022, May 9, 2014"})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [(a/pm '(implementedAPIOfSoftwareRelease ?R1 ?R2))])
+       :premises [(a/pm '(oss:implementedAPIOfSoftwareRelease ?R1 ?R2))])
 
     (t/make-scheme
      :id 'derivation-by-modification
@@ -457,7 +460,7 @@ project."})
               :description {:en "A work created by modifying a work is
               derived from it. "})
      :conclusion '(copyright:derivedFrom ?R1 ?R2)
-     :premises [ (a/pm '(modificationOfSoftwareRelease ?R1 ?R2)) ]) 
+     :premises [ (a/pm '(oss:modificationOfSoftwareRelease ?R1 ?R2)) ]) 
 
     (t/make-scheme
        :id 'modification-by-forking
@@ -465,7 +468,7 @@ project."})
                 :title "Modification by Forking"
                 :description {:en "A fork of a software release presumably
                 includes modifications of the original version."})
-       :conclusion '(modificationOfSoftwareRelease ?R1 ?R2)
+       :conclusion '(oss:modificationOfSoftwareRelease ?R1 ?R2)
        :premises [(a/pm '(soft:softwareFork ?R2 ?R1))])
 
     ])]))

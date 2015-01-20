@@ -41,7 +41,7 @@
       (str atom))))
 
 (defn to-absolute-atom
-  "Converts this atom to an absolute atom. Throws an exception if a
+  "Converts this atom to an absolute atom. Logs a warning if a
   namespace is missing but necessary for the transformation."
   [atom namespaces]
   (cond (st/variable? atom) atom
