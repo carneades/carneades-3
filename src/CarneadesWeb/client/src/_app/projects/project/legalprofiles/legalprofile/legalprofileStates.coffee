@@ -63,8 +63,8 @@ define [
               scroll: 'scroll'
               tproject: (ProjectLoader, $stateParams) ->
                 return new ProjectLoader $stateParams
-              legalprofile: (LegalprofileLoader, $stateParams) ->
-                return new LegalprofileLoader $stateParams
+              legalprofile: (Legalprofile, $stateParams) ->
+                return new Legalprofile.getRaw {}, $stateParams
               theory: (TheoryLoader, projectInfo, tproject, $stateParams) ->
                 tpid = projectInfo.getTheoryProject tproject
                 tid = projectInfo.getTheoryName tproject

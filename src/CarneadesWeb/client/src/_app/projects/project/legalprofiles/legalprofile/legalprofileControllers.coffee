@@ -17,7 +17,7 @@ define [
     
     _edit = ->
       url = 'home.projects.project.legalprofiles.legalprofile.edit'
-      $state.go url, $stateParams
+      $state.go url, $stateParams, reload: true
 
     _delete = ->
       legalprofile.pid = $stateParams.pid      

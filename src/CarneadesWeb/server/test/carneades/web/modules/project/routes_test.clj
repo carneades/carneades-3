@@ -19,6 +19,10 @@
 
 (def state (atom nil))
 
+(defn parse
+  [s]
+  (parse-string s true))
+
 (defn initial-state-value
   []
   {:project-name (str "testproject-" (make-uuid-str))})
@@ -554,3 +558,36 @@
           (spy argraw)
           (-> arg' :conclusion :text) => (-> arg :conclusion :text :en)
           (-> (:header argraw) :description :en) => (-> (:header arg) :description :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "It is possible to create a legal profile with a description."
+       (let [project (:project-name @state)
+             profile {:rules '[{:ruleid id1 :value 1.0}
+                               {:ruleid id2 :value 0.0}]
+                      :metadata {:title "Test profile"
+                                 :description {:en "A test profile"}}
+                      :default false}
+             baseu (str "/projects/" project "/legalprofiles/")
+             res (post-request baseu profile)
+             id (:id (parse (:body res)))
+             res (get-request (str baseu id))
+             profile' (parse (:body res))]
+         (-> profile' :metadata :title) => (-> profile :metadata :title)
+         (-> profile' :metadata :description :en) => (-> profile :metadata :description :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "It is possible to create a legal profile without a description."
+        (let [project (:project-name @state)
+              profile {:rules '[{:ruleid id1 :value 1.0}
+                                {:ruleid id2 :value 0.0}]
+                       :metadata {:title "Test profile"}
+                       :default false}
+              baseu (str "/projects/" project "/legalprofiles/")
+              res (post-request baseu profile)
+              id (:id (parse (:body res)))
+              res (get-request (str baseu id))
+              profile' (parse (:body res))]
+          (-> profile' :metadata :title) => (-> profile :metadata :title)
+          (-> profile' :metadata :description) => nil)))

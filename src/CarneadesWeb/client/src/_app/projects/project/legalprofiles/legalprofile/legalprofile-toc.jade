@@ -20,8 +20,19 @@ h2 {{title}}
 div
   {{'projects.legalprofile.default' | translate}}: {{legalprofile.default}}
 
+div
+  form-group(
+    ng-repeat="(k,v) in legalprofile.metadata",
+    label-key='projects.{{k}}',
+    ng-show="v != null && k != 'description'")
+      .form-control-static
+        markdown(extensions='carneades',ng-model='v')
+  form-group(label-key='projects.description',ng-show="legalprofile.metadata.description")
+    .form-control-static
+      markdown(extensions='carneades',ng-model='legalprofile.metadata.description')
+
 ul
-  li(ng-repeat='scheme in section.schemes')
+li(ng-repeat='scheme in section.schemes')
     a(ui-sref='home.projects.project.legalprofiles.legalprofile.edit({pid: $stateParams.pid, scrollTo: scheme.id})', ng-class="{'schemeOut': isSchemeOut(legalprofile, scheme), 'schemeIn': isSchemeIn(legalprofile, scheme), 'schemeUndecided': isSchemeUndecided(legalprofile, scheme)}") {{scheme.header.title}}
 ul
   li(ng-repeat='section in section.sections','ng-include'="'projects/project/legalprofiles/legalprofile/legalprofile-subtoc.jade'")

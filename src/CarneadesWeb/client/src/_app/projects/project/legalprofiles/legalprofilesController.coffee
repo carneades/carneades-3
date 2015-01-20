@@ -26,6 +26,13 @@ define [
       else
         metadata:
           title: $translate.instant 'projects.legalprofile.new'
+          description:
+            en: ""
+            de: ""
+            fr: ""
+            it: ""
+            sp: ""
+            nl: ""
         default: false
         rules: ({ruleid: id, value: 1.0} for id in legalprofileInfo.getTheoryIds theory)
       
