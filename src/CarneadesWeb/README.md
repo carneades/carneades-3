@@ -7,7 +7,7 @@
 
 The `.carneades.clj` file in your home folder should look something like this:
 
-```clj
+```
 {
   :projects-directory "/home/[USERNAME]/dev/carneades/projects"
 }
@@ -17,11 +17,15 @@ The `.carneades.clj` file in your home folder should look something like this:
 
 ### Building a self-executable JAR
 
-```./scripts/build_jar.sh```
+```
+./scripts/build_jar.sh
+```
 
 ### Building a WAR for a Java application server
 
-```./scripts/build_war.sh```
+```
+./scripts/build_war.sh
+```
 
 ## Getting started for developers
 
