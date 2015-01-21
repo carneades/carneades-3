@@ -21,6 +21,8 @@ The `.carneades.clj` file in your home folder should look something like this:
 ./scripts/build_jar.sh
 ```
 
+A zip archive is created in the ```server/target``` directory.
+
 ### Building a WAR for a Java application server
 
 ```
