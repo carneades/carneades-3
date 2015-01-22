@@ -20,5 +20,6 @@ html(lang='en')
         .col-lg-12
           .row(id='subnav-section', ui-view='subnav')
           .row(ui-view='content')
-      footer-loader(theme='$stateParams.pid', ng-hide='viewLoading')
+      //div(cn-footer-loader='$stateParams.pid')
+      footer-loader(theme='$stateParams.pid')
       script(src='require.js', data-main='main.min.js')

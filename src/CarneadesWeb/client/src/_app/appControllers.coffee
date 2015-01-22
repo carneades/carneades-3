@@ -48,6 +48,15 @@ define [
 
   module.directive 'cssInject', cssDirective
 
+  footerDirective = ($state, $stateParams, $parse, ThemeLoader) ->
+    link = (scope, elm, attrs) ->
+      validate $attrs.cnFooterLoader
+
+      validate = (x) ->
+        msg = "CnFooterLoaderDirective: the directive needs a member"
+        return $log.error msg if not x?
+
+    link: link
 
   footerDirective = ($state, $stateParams, ThemeLoader) ->
     restrict: 'E'
