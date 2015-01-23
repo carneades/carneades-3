@@ -263,6 +263,18 @@ module.exports = (grunt) ->
           cwd: "<%= src.assets %>/languages"
         ]
 
+    karma:
+      options:
+        configFile: 'test/karma.conf.coffee'
+      unit:
+        singleRun: true
+      watch:
+        autoWatch: true
+      server:
+        background: true
+      continuous:
+        background: true
+
     coffee:
       scripts:
         files: [

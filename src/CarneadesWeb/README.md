@@ -18,7 +18,7 @@ The `.carneades.clj` file in your home folder should look something like this:
 ### Building a self-executable JAR
 
 ```
-./scripts/build_jar.sh
+./scripts/build_zip.sh
 ```
 
 A zip archive is created in the ```server/target``` directory.
