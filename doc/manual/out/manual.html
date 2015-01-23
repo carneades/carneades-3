@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Tom Gordon" />
-  <title>Carneades User Manual</title>
+  <title>Carneades WebApp 0.7 User Manual</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
@@ -29,13 +29,13 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </head>
 <body>
 <div id="header">
-<h1 class="title">Carneades User Manual</h1>
+<h1 class="title">Carneades WebApp 0.7 User Manual</h1>
 <h2 class="author">Tom Gordon</h2>
 </div>
 <div id="TOC">
 <ul>
-<li><a href="#getting-started"><span class="toc-section-number">1</span> Getting Started</a></li>
-<li><a href="#getting-started-1"><span class="toc-section-number">2</span> Getting Started</a><ul>
+<li><a href="#introduction"><span class="toc-section-number">1</span> Introduction</a></li>
+<li><a href="#getting-started"><span class="toc-section-number">2</span> Getting Started</a><ul>
 <li><a href="#downloading-carneades"><span class="toc-section-number">2.1</span> Downloading Carneades</a></li>
 <li><a href="#license"><span class="toc-section-number">2.2</span> License</a></li>
 <li><a href="#binary-installation"><span class="toc-section-number">2.3</span> Binary Installation</a><ul>
@@ -51,7 +51,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#metadata"><span class="toc-section-number">4.5</span> Metadata</a></li>
 </ul></li>
 <li><a href="#browsing-visualizing-and-evaluating-arguments"><span class="toc-section-number">5</span> Browsing, Visualizing and Evaluating Arguments</a><ul>
-<li><a href="#the-argument-graph-page"><span class="toc-section-number">5.1</span> The Argument Graph Page</a></li>
+<li><a href="#the-outline-page"><span class="toc-section-number">5.1</span> The Outline Page</a></li>
 <li><a href="#using-hypertext-to-browse-an-argument-graph"><span class="toc-section-number">5.2</span> Using Hypertext to Browse an Argument Graph</a><ul>
 <li><a href="#statement-pages"><span class="toc-section-number">5.2.1</span> Statement Pages</a></li>
 <li><a href="#argument-pages"><span class="toc-section-number">5.2.2</span> Argument Pages</a></li>
@@ -59,105 +59,69 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#visualizing-argument-graphs-in-argument-maps"><span class="toc-section-number">5.3</span> Visualizing Argument Graphs in Argument Maps</a></li>
 <li><a href="#evaluating-arguments"><span class="toc-section-number">5.4</span> Evaluating Arguments</a></li>
 </ul></li>
-<li><a href="#formulating-polling-and-comparing-opinions"><span class="toc-section-number">6</span> Formulating, Polling and Comparing Opinions</a><ul>
-<li><a href="#accessing-the-opinion-formation-and-polling-tool"><span class="toc-section-number">6.1</span> Accessing the Opinion Formation and Polling Tool</a></li>
-<li><a href="#question-types"><span class="toc-section-number">6.2</span> Question Types</a></li>
-<li><a href="#checking-and-changing-your-answers"><span class="toc-section-number">6.3</span> Checking and Changing Your Answers</a></li>
-<li><a href="#comparing-your-opinions-with-others"><span class="toc-section-number">6.4</span> Comparing Your Opinions with Others</a></li>
+<li><a href="#editing-argument-graphs"><span class="toc-section-number">6</span> Editing Argument Graphs</a><ul>
+<li><a href="#reconstructing-arguments"><span class="toc-section-number">6.1</span> Reconstructing Arguments</a></li>
+<li><a href="#entering-new-statements"><span class="toc-section-number">6.2</span> Entering New Statements</a><ul>
+<li><a href="#main-issue"><span class="toc-section-number">6.2.1</span> Main Issue</a></li>
+<li><a href="#statement-text"><span class="toc-section-number">6.2.2</span> Statement Text</a></li>
+<li><a href="#atom-formalizing-statements-using-predicate-logic"><span class="toc-section-number">6.2.3</span> Atom: Formalizing Statements using Predicate Logic</a></li>
+<li><a href="#proof-standard"><span class="toc-section-number">6.2.4</span> Proof Standard</a></li>
+<li><a href="#statement-weight"><span class="toc-section-number">6.2.5</span> Statement Weight</a></li>
+<li><a href="#statement-metadata"><span class="toc-section-number">6.2.6</span> Statement Metadata</a></li>
 </ul></li>
-<li><a href="#analysing-and-comparing-policies"><span class="toc-section-number">7</span> Analysing and Comparing Policies</a><ul>
-<li><a href="#selecting-an-issue-to-analyse"><span class="toc-section-number">7.1</span> Selecting an Issue to Analyse</a></li>
-<li><a href="#entering-case-facts"><span class="toc-section-number">7.2</span> Entering Case Facts</a></li>
-<li><a href="#viewing-the-arguments-constructed-from-the-policies"><span class="toc-section-number">7.3</span> Viewing the Arguments Constructed from the Policies</a></li>
-<li><a href="#viewing-the-policy-models"><span class="toc-section-number">7.4</span> Viewing the Policy Models</a></li>
-<li><a href="#evaluating-and-comparing-policies"><span class="toc-section-number">7.5</span> Evaluating and Comparing Policies</a></li>
-<li><a href="#finding-policies-with-desired-effects"><span class="toc-section-number">7.6</span> Finding Policies with Desired Effects</a></li>
-<li><a href="#sharing-cases"><span class="toc-section-number">7.7</span> Sharing Cases</a></li>
-<li><a href="#making-editable-copies-of-shared-cases"><span class="toc-section-number">7.8</span> Making Editable Copies of Shared Cases</a></li>
-<li><a href="#policy-opinion-polls"><span class="toc-section-number">7.9</span> Policy Opinion Polls</a></li>
-<li><a href="#generating-policy-reports"><span class="toc-section-number">7.10</span> Generating Policy Reports</a></li>
+<li><a href="#editing-statements"><span class="toc-section-number">6.3</span> Editing Statements</a></li>
+<li><a href="#deleting-statements"><span class="toc-section-number">6.4</span> Deleting Statements</a></li>
+<li><a href="#entering-new-arguments"><span class="toc-section-number">6.5</span> Entering New Arguments</a><ul>
+<li><a href="#using-argumentation-schemes"><span class="toc-section-number">6.5.1</span> Using Argumentation Schemes</a></li>
+<li><a href="#entering-and-deleting-premises"><span class="toc-section-number">6.5.2</span> Entering and Deleting Premises</a></li>
+<li><a href="#strict-or-defeasible-arguments"><span class="toc-section-number">6.5.3</span> Strict or Defeasible Arguments</a></li>
+<li><a href="#argument-direction"><span class="toc-section-number">6.5.4</span> Argument Direction</a></li>
+<li><a href="#argument-weight"><span class="toc-section-number">6.5.5</span> Argument Weight</a></li>
+<li><a href="#argument-metadata"><span class="toc-section-number">6.5.6</span> Argument Metadata</a></li>
 </ul></li>
-<li><a href="#editing-argument-graphs"><span class="toc-section-number">8</span> Editing Argument Graphs</a><ul>
-<li><a href="#reconstructing-arguments"><span class="toc-section-number">8.1</span> Reconstructing Arguments</a></li>
-<li><a href="#editing-the-metadata-and-reference-list-of-an-argument-graph"><span class="toc-section-number">8.2</span> Editing the Metadata and Reference List of an Argument Graph</a></li>
-<li><a href="#entering-new-statements"><span class="toc-section-number">8.3</span> Entering New Statements</a><ul>
-<li><a href="#statement-description"><span class="toc-section-number">8.3.1</span> Statement Description</a></li>
-<li><a href="#statement-metadata"><span class="toc-section-number">8.3.2</span> Statement Metadata</a></li>
-<li><a href="#atoms-formalizing-statements-using-predicate-logic"><span class="toc-section-number">8.3.3</span> Atoms: Formalizing Statements using Predicate Logic</a></li>
-<li><a href="#statement-text"><span class="toc-section-number">8.3.4</span> Statement Text</a></li>
-<li><a href="#proof-standard"><span class="toc-section-number">8.3.5</span> Proof Standard</a></li>
-<li><a href="#main-issue"><span class="toc-section-number">8.3.6</span> Main Issue</a></li>
-<li><a href="#statement-weight"><span class="toc-section-number">8.3.7</span> Statement Weight</a></li>
+<li><a href="#editing-arguments"><span class="toc-section-number">6.6</span> Editing Arguments</a></li>
+<li><a href="#deleting-arguments"><span class="toc-section-number">6.7</span> Deleting Arguments</a></li>
+<li><a href="#evaluating-argument-graphs"><span class="toc-section-number">6.8</span> Evaluating Argument Graphs</a></li>
 </ul></li>
-<li><a href="#editing-statements"><span class="toc-section-number">8.4</span> Editing Statements</a></li>
-<li><a href="#deleting-statements"><span class="toc-section-number">8.5</span> Deleting Statements</a></li>
-<li><a href="#entering-new-arguments"><span class="toc-section-number">8.6</span> Entering New Arguments</a><ul>
-<li><a href="#argument-description"><span class="toc-section-number">8.6.1</span> Argument Description</a></li>
-<li><a href="#argument-metadata"><span class="toc-section-number">8.6.2</span> Argument Metadata</a></li>
-<li><a href="#argument-direction"><span class="toc-section-number">8.6.3</span> Argument Direction</a></li>
-<li><a href="#strict-or-defeasible-arguments"><span class="toc-section-number">8.6.4</span> Strict or Defeasible Arguments</a></li>
-<li><a href="#argument-weight"><span class="toc-section-number">8.6.5</span> Argument Weight</a></li>
-<li><a href="#using-argumentation-schemes"><span class="toc-section-number">8.6.6</span> Using Argumentation Schemes</a></li>
-<li><a href="#entering-premises-and-exceptions"><span class="toc-section-number">8.6.7</span> Entering Premises and Exceptions</a></li>
+<li><a href="#argumentation-schemes"><span class="toc-section-number">7</span> Argumentation Schemes</a><ul>
+<li><a href="#modeling-argumentation-schemes"><span class="toc-section-number">7.1</span> Modeling Argumentation Schemes</a></li>
 </ul></li>
-<li><a href="#editing-arguments"><span class="toc-section-number">8.7</span> Editing Arguments</a></li>
-<li><a href="#validating-arguments"><span class="toc-section-number">8.8</span> Validating Arguments</a></li>
-<li><a href="#deleting-arguments"><span class="toc-section-number">8.9</span> Deleting Arguments</a></li>
-<li><a href="#using-polls-to-weigh-statements-and-arguments"><span class="toc-section-number">8.10</span> Using Polls to Weigh Statements and Arguments</a></li>
-<li><a href="#evaluating-argument-graphs"><span class="toc-section-number">8.11</span> Evaluating Argument Graphs</a></li>
-<li><a href="#importing-xml"><span class="toc-section-number">8.12</span> Importing XML</a></li>
+<li><a href="#system-administration"><span class="toc-section-number">8</span> System Administration</a><ul>
+<li><a href="#building-and-installing-from-source-code"><span class="toc-section-number">8.1</span> Building and Installing from Source Code</a></li>
+<li><a href="#system-configuration"><span class="toc-section-number">8.2</span> System Configuration</a></li>
+<li><a href="#project-structure-and-configuration"><span class="toc-section-number">8.3</span> Project Structure and Configuration</a></li>
 </ul></li>
-<li><a href="#argumentation-schemes"><span class="toc-section-number">9</span> Argumentation Schemes</a><ul>
-<li><a href="#modeling-argumentation-schemes"><span class="toc-section-number">9.1</span> Modeling Argumentation Schemes</a></li>
-<li><a href="#modeling-policies"><span class="toc-section-number">9.2</span> Modeling Policies</a></li>
-<li><a href="#installing-policy-models-and-argumentation-schemes"><span class="toc-section-number">9.3</span> Installing Policy Models and Argumentation Schemes</a></li>
-</ul></li>
-<li><a href="#system-administration"><span class="toc-section-number">10</span> System Administration</a><ul>
-<li><a href="#downloading-carneades-1"><span class="toc-section-number">10.1</span> Downloading Carneades</a></li>
-<li><a href="#license-1"><span class="toc-section-number">10.2</span> License</a></li>
-<li><a href="#binary-installation-1"><span class="toc-section-number">10.3</span> Binary Installation</a><ul>
-<li><a href="#using-the-web-application-locally-1"><span class="toc-section-number">10.3.1</span> Using the Web Application Locally</a></li>
-</ul></li>
-<li><a href="#source-code-installation"><span class="toc-section-number">10.4</span> Source Code Installation</a></li>
-<li><a href="#system-configuration"><span class="toc-section-number">10.5</span> System Configuration</a></li>
-<li><a href="#project-structure-and-configuration"><span class="toc-section-number">10.6</span> Project Structure and Configuration</a></li>
-</ul></li>
-<li><a href="#applications-scenarios"><span class="toc-section-number">11</span> Applications Scenarios</a><ul>
-<li><a href="#public-policy-deliberations"><span class="toc-section-number">11.1</span> Public Policy Deliberations</a></li>
-<li><a href="#claims-processing"><span class="toc-section-number">11.2</span> Claims Processing</a></li>
-</ul></li>
-<li><a href="#argumentation-schemes-1"><span class="toc-section-number">12</span> Argumentation Schemes</a><ul>
-<li><a href="#argument-from-position-to-know"><span class="toc-section-number">12.1</span> Argument from Position to Know</a></li>
-<li><a href="#argument-from-credible-source"><span class="toc-section-number">12.2</span> Argument from Credible Source</a></li>
-<li><a href="#argument-from-witness-testimony"><span class="toc-section-number">12.3</span> Argument from Witness Testimony</a></li>
-<li><a href="#argument-from-expert-opinion"><span class="toc-section-number">12.4</span> Argument from Expert Opinion</a></li>
-<li><a href="#argument-from-analogy"><span class="toc-section-number">12.5</span> Argument from Analogy</a></li>
-<li><a href="#argument-from-precedent"><span class="toc-section-number">12.6</span> Argument from Precedent</a></li>
-<li><a href="#argument-from-verbal-classification"><span class="toc-section-number">12.7</span> Argument from Verbal Classification</a></li>
-<li><a href="#argument-from-definition-to-verbal-classification"><span class="toc-section-number">12.8</span> Argument from Definition to Verbal Classification</a></li>
-<li><a href="#defeasible-modus-ponens"><span class="toc-section-number">12.9</span> Defeasible Modus Ponens</a></li>
-<li><a href="#argument-from-an-established-rule"><span class="toc-section-number">12.10</span> Argument from an Established Rule</a></li>
-<li><a href="#argument-from-positive-consequences"><span class="toc-section-number">12.11</span> Argument from Positive Consequences</a></li>
-<li><a href="#argument-from-negative-consequences"><span class="toc-section-number">12.12</span> Argument from Negative Consequences</a></li>
-<li><a href="#argument-from-practical-reasoning"><span class="toc-section-number">12.13</span> Argument from Practical Reasoning</a></li>
-<li><a href="#argument-from-cause-to-effect."><span class="toc-section-number">12.14</span> Argument from Cause to Effect.</a></li>
-<li><a href="#argument-from-correlation-to-cause"><span class="toc-section-number">12.15</span> Argument from Correlation to Cause</a></li>
-<li><a href="#argument-from-sunk-costs"><span class="toc-section-number">12.16</span> Argument from Sunk Costs</a></li>
-<li><a href="#argument-from-appearance"><span class="toc-section-number">12.17</span> Argument from Appearance</a></li>
-<li><a href="#argument-from-ignorance"><span class="toc-section-number">12.18</span> Argument from Ignorance</a></li>
-<li><a href="#argument-from-abduction"><span class="toc-section-number">12.19</span> Argument from Abduction</a></li>
-<li><a href="#ethotic-argument"><span class="toc-section-number">12.20</span> Ethotic Argument</a></li>
-<li><a href="#slippery-slope-argument"><span class="toc-section-number">12.21</span> Slippery Slope Argument</a><ul>
-<li><a href="#base-case"><span class="toc-section-number">12.21.1</span> Base Case</a></li>
-<li><a href="#inductive-step"><span class="toc-section-number">12.21.2</span> Inductive Step</a></li>
+<li><a href="#builtin-argumentation-schemes"><span class="toc-section-number">9</span> Builtin Argumentation Schemes</a><ul>
+<li><a href="#argument-from-position-to-know"><span class="toc-section-number">9.1</span> Argument from Position to Know</a></li>
+<li><a href="#argument-from-credible-source"><span class="toc-section-number">9.2</span> Argument from Credible Source</a></li>
+<li><a href="#argument-from-witness-testimony"><span class="toc-section-number">9.3</span> Argument from Witness Testimony</a></li>
+<li><a href="#argument-from-expert-opinion"><span class="toc-section-number">9.4</span> Argument from Expert Opinion</a></li>
+<li><a href="#argument-from-analogy"><span class="toc-section-number">9.5</span> Argument from Analogy</a></li>
+<li><a href="#argument-from-precedent"><span class="toc-section-number">9.6</span> Argument from Precedent</a></li>
+<li><a href="#argument-from-verbal-classification"><span class="toc-section-number">9.7</span> Argument from Verbal Classification</a></li>
+<li><a href="#argument-from-definition-to-verbal-classification"><span class="toc-section-number">9.8</span> Argument from Definition to Verbal Classification</a></li>
+<li><a href="#defeasible-modus-ponens"><span class="toc-section-number">9.9</span> Defeasible Modus Ponens</a></li>
+<li><a href="#argument-from-an-established-rule"><span class="toc-section-number">9.10</span> Argument from an Established Rule</a></li>
+<li><a href="#argument-from-positive-consequences"><span class="toc-section-number">9.11</span> Argument from Positive Consequences</a></li>
+<li><a href="#argument-from-negative-consequences"><span class="toc-section-number">9.12</span> Argument from Negative Consequences</a></li>
+<li><a href="#argument-from-practical-reasoning"><span class="toc-section-number">9.13</span> Argument from Practical Reasoning</a></li>
+<li><a href="#argument-from-cause-to-effect."><span class="toc-section-number">9.14</span> Argument from Cause to Effect.</a></li>
+<li><a href="#argument-from-correlation-to-cause"><span class="toc-section-number">9.15</span> Argument from Correlation to Cause</a></li>
+<li><a href="#argument-from-sunk-costs"><span class="toc-section-number">9.16</span> Argument from Sunk Costs</a></li>
+<li><a href="#argument-from-appearance"><span class="toc-section-number">9.17</span> Argument from Appearance</a></li>
+<li><a href="#argument-from-ignorance"><span class="toc-section-number">9.18</span> Argument from Ignorance</a></li>
+<li><a href="#argument-from-abduction"><span class="toc-section-number">9.19</span> Argument from Abduction</a></li>
+<li><a href="#ethotic-argument"><span class="toc-section-number">9.20</span> Ethotic Argument</a></li>
+<li><a href="#slippery-slope-argument"><span class="toc-section-number">9.21</span> Slippery Slope Argument</a><ul>
+<li><a href="#base-case"><span class="toc-section-number">9.21.1</span> Base Case</a></li>
+<li><a href="#inductive-step"><span class="toc-section-number">9.21.2</span> Inductive Step</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#credits"><span class="toc-section-number">13</span> Credits</a></li>
-<li><a href="#references"><span class="toc-section-number">14</span> References</a></li>
-<li><a href="#user-manual-license"><span class="toc-section-number">15</span> User Manual License</a></li>
+<li><a href="#credits"><span class="toc-section-number">10</span> Credits</a></li>
+<li><a href="#user-manual-license"><span class="toc-section-number">11</span> User Manual License</a></li>
 </ul>
 </div>
-<h1 id="getting-started"><span class="header-section-number">1</span> Getting Started</h1>
+<h1 id="introduction"><span class="header-section-number">1</span> Introduction</h1>
 <p>The Carneades argumentation system is open source software, freely available for downloading at <a href="http://carneades.github.com" class="uri">http://carneades.github.com</a>.</p>
 <p>Carneades provides web-based, collaborative software tools for:</p>
 <ul>
@@ -166,23 +130,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>critically evaluating arguments, using a formal model of structured argument based on argumentation schemes and Dung abstract argumentation frameworks</li>
 <li>serializing and interchanging arguments using our own Carneades Argument Format (CAF) as well as the Argument Interchange Format (AIF)</li>
 </ul>
-<p>The rest of this manual is organized in the following chapters:</p>
-<ul>
-<li>Getting Started</li>
-<li>Projects</li>
-<li>Argument Graphs</li>
-<li>Browsing, Visualizing and Evaluating Arguments <!--
-- Formulating, Polling and Comparing Opinions
-- Policy Analysis
---></li>
-<li>Editing Argument Graphs</li>
-<li>Argumentation Schemes</li>
-<li>System Administration</li>
-<li>Application Scenarios</li>
-<li>Walton's Argumentation Schemes</li>
-</ul>
-<p>The first chapter, Getting Started, explains how to download, install and rune the Carneades system locally on your personal computer. The projects chapter explains how to create and access projects, where each project can contain any number of argument graphs. The argument graph chapter provides an overview of the underlying data model used by all the tools. The browsing, visualization and evaluation chapter explains how to read and view argument graphs. The chapters on editing argument graphs and modeling argumentation schemes are somewhat more demanding and some basic prior knowledge of argumentation theory <span class="citation">[@Walton:2006]</span> is recommended. The system administration chapter describes how to build and install the system from its source files, as well as how to configure the system. The chapter on application scenarios suggests some ways Carneades can be used improve the quality of decision-making processes in business and government. The final chapter shows how some well-known argumentation schemes <span class="citation">[@Walton:2008]</span> can been represented using the system.</p>
-<h1 id="getting-started-1"><span class="header-section-number">2</span> Getting Started</h1>
+<p>The next chapter, Getting Started, explains how to download, install and run the Carneades system locally on your personal computer. The projects chapter explains how to create and access projects, where each project can contain any number of argument graphs. The argument graph chapter provides an overview of the underlying data model used by all the tools. The browsing, visualization and evaluation chapter explains how to read and view argument graphs. The chapters on editing argument graphs and modeling argumentation schemes are somewhat more demanding and some basic prior knowledge of argumentation theory <span class="citation">(Walton 2006)</span> is recommended. The system administration chapter describes how to build and install the system from its source files, as well as how to configure the system. The final chapter shows how some well-known argumentation schemes <span class="citation">(Walton, Reed, and Macagno 2008)</span> can been represented using the system.</p>
+<h1 id="getting-started"><span class="header-section-number">2</span> Getting Started</h1>
 <p>This chapter explains how to download, install and run the Carneades system locally on your personal computer. For information about how to build the system from source code and advanced configuration options see the &quot;System Administration&quot; chapter.</p>
 <h2 id="downloading-carneades"><span class="header-section-number">2.1</span> Downloading Carneades</h2>
 <p>The Carneades Argumentation System is open source software available at <a href="https://github.com/carneades" class="uri">https://github.com/carneades</a>.</p>
@@ -221,9 +170,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>To start the server to from a command line, for local use, type</p>
 <pre><code>$ java -jar carneades-webapp.0.7.0.jar</code></pre>
 <p>Either way, after the server starts it will open up the projects page of the Carneades web application in your default web browser.</p>
-<p>Depending on your operating system and how you started the server, the Carneades web application can be shut down by either quitting the Carneades application or, if you started the server from a command line, using a terminal application, by ending this process , typically by typing <code>control-c</code> in the terminal.</p>
+<p>Depending on your operating system and how you started the server, the Carneades web application can be shut down by either quitting the Carneades application or, if you started the server from a command line, using a terminal application, by ending this process, typically by typing <code>control-c</code> in the terminal.</p>
 <h1 id="the-projects-page"><span class="header-section-number">3</span> The Projects Page</h1>
-<p>The projects page lists example projects and the projects you have created, and provides a way to create new projects. This is the first page shown in your web browser when you start the Carneades server.</p>
+<p>The projects page is the first page shown in your Web browser when you start Carneades. It lists example projects and the projects you have created, and provides a way to create new projects.</p>
 <div class="figure">
 <img src="figs/projects.png" alt="Example Projects Page" /><p class="caption">Example Projects Page</p>
 </div>
@@ -299,24 +248,24 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h1 id="browsing-visualizing-and-evaluating-arguments"><span class="header-section-number">5</span> Browsing, Visualizing and Evaluating Arguments</h1>
 <p>This chapter of the Carneades user manual explains how to:</p>
 <ul>
-<li><p>Access the <a href="#the-argument-graph-page">argument graph page</a> to view the title, description, issues and outline of the top-level arguments of the argument graph.</p></li>
+<li><p>Access the <a href="#the-argument-graph-page">outline page</a> to view the title, description, issues and outline of the top-level arguments of the argument graph.</p></li>
 <li><p>Use hypertext in web pages to <a href="#using-hypertext-to-browse-an-argument-graph">browse an argument graph</a>.</p></li>
 <li><p><a href="#visualizing-argument-graphs-in-argument-maps">Visualizing argument graphs</a> in diagrams, called &quot;argument maps&quot;, and using these maps to navigate to more detailed views of statements and arguments.</p></li>
 <li><p><a href="#evaluating-arguments">Evaluate arguments</a> to reveal missing premises, check the form of arguments, ask critical questions and assess the acceptability of statements.</p></li>
 </ul>
 <!-- - [Export an argument graph to XML](#exporting-argument-graphs-to-xml),
   to archive the graph or process it using other software. -->
-<h2 id="the-argument-graph-page"><span class="header-section-number">5.1</span> The Argument Graph Page</h2>
+<h2 id="the-outline-page"><span class="header-section-number">5.1</span> The Outline Page</h2>
 <div class="figure">
-<img src="figs/graph1.png" alt="An Argument Graph Page" /><p class="caption">An Argument Graph Page</p>
+<img src="figs/graph1.png" alt="An Outline Page" /><p class="caption">An Outline Page</p>
 </div>
-<p>An argument graph page consists of the following parts:</p>
+<p>An outline page consists of the following parts:</p>
 <ul>
 <li><p>The <em>title</em> of the argument graph. This title usually includes the topic of the discussion or debate.</p></li>
 <li><p>A <em>menu bar</em> of commands.</p></li>
 <li><p>A <em>description</em> of the topic of the discussion modeled in the argument graph. The description can be arbitrarily long and include multiple sections, paragraphs, images, hyperlinks, lists and other content.</p></li>
 <li><p>A list of the <em>main issues</em> of the discussion. Each item in the list is linked to a page providing detailed information about the statement in the argument graph at issue.</p></li>
-<li><p>An <em>outline</em> of the top five levels of the arguments in the argument graph. The first level of the outline lists the main issues (again). The second level lists the arguments pro and con each issue. The third level lists the premises of each of these arguments. The fourth level lists the argument pro and con each premise. Finally, the fifth level lists the premises of these arguments. Deeper levels of the argument graph can be navigated to by first clicking on a statement or argument in the outline and then following the links on the next page. Since argument graphs may contain cycles and are not restricted to trees, some items may appear multiple times in the outline.</p></li>
+<li><p>The outline, which presents the top five levels of the arguments in the argument graph. The first level of the outline lists the main issues (again). The second level lists the arguments pro and con each issue. The third level lists the premises of each of these arguments. The fourth level lists the argument pro and con each premise. Finally, the fifth level lists the premises of these arguments. Deeper levels of the argument graph can be navigated to by first clicking on a statement or argument in the outline and then following the links on the next page. Since argument graphs may contain cycles and are not restricted to trees, some items may appear multiple times in the outline.</p></li>
 <li><p>A list of <em>references</em> to the source documents used to construct the argument graph. For documents available on the Web, the reference will include a hyperlink to the source document.</p></li>
 </ul>
 <div class="figure">
@@ -380,7 +329,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div class="figure">
 <img src="figs/scheme1.png" alt="A Scheme for Argument from Practical Reasoning" /><p class="caption">A Scheme for Argument from Practical Reasoning</p>
 </div>
-<p>Any time an argument graph is modified, it is automatically reevaluated to update the values of its arguments and statements. A computational model of argument is used to compute the values <span class="citation">[@GordonPrakkenWalton:2007a]</span>.</p>
+<p>Any time an argument graph is modified, it is automatically reevaluated to update the values of its arguments and statements. A computational model of argument is used to compute the values <span class="citation">(Gordon, Prakken, and Walton 2007)</span>.</p>
 <p>If you do not agree with the result of the evaluation, there are at least three reasons why you may be right and the system's evaluation wrong:</p>
 <ol style="list-style-type: decimal">
 <li><p>Not all relevant arguments have been included in the model, or put forward in the debate. If you are aware of some missing argument, consider adding it to the argument graph.</p></li>
@@ -408,245 +357,62 @@ or the generate reports or other kinds of visualisations..
 
 -->
 <!--
-<!-- This chapter is not included in the current manual, since the
-user interface of the polling tool has not been ported yet to the new user
-interface. -->
-<h1 id="formulating-polling-and-comparing-opinions"><span class="header-section-number">6</span> Formulating, Polling and Comparing Opinions</h1>
-<p>The opinion formation and polling tool of the Carneades system serves two purposes:</p>
-<ul>
-<li><p>It guides you step by step through the arguments on all sides of a complex policy debate, in a kind of simulated debate, providing you with an overview of the issues, positions and arguments in a systematic way. The tool can help you to form your own opinion, if you don't yet have one, or to critically evaluate and reconsider your current opinion, if you do. The tool also enables you to compare your responses with the published positions of some stakeholders, such as political parties, helping you to find persons and organizations which best represent or share your views and interests.</p></li>
-<li><p>At the same time the tool conducts a poll to collect your views and opinions on the issues, taking care to protect your privacy. You will not be asked or required to enter any personal data, such as your name or email address, which could be used to identify you or associate your answers to poll questions. The anonymous and aggregated results of the survey can provide valuable feedback to you as well as policy makers, going beyond the information provided by traditional surveys. It enables users to discover not only how much support policies enjoy, but also to learn precisely why particular aspects of the policies, or their underlying assumptions, are supported or not.</p></li>
-</ul>
-<h2 id="accessing-the-opinion-formation-and-polling-tool"><span class="header-section-number">6.1</span> Accessing the Opinion Formation and Polling Tool</h2>
-<p>Every page of the Carneades system includes the main menu. Click on the &quot;poll&quot; button of the main menu to access the opinion formation and polling tool.</p>
-<p>The first page of the opinion formation and polling tool provides an overview of the features of the tool and explains the following procedure for using the tool:</p>
-<ol style="list-style-type: decimal">
-<li><p>Log in using a pseudonym to protect your privacy. You can login again using this name to change your responses at any time. Choose a cryptic name, like a secure password, to make it difficult for others to access or change your answers. (The system will generate a username for you, which you can use or change, as you prefer.)</p></li>
-<li><p>Read an introduction to the topic of the debate and select an issue of interest.</p></li>
-<li><p>Answer a series of survey multiple-choice questions about the selected issue, asking you whether you agree or disagree with claims made in arguments. To help you to formulate or reconsider your opinion, you have the option to first view quotations of formulations of the arguments from the source documents. No information about the authors of the quotations will be shown during this phase, to allow the arguments to speak for themselves and avoid prejudicing your answers. (The authors will be revealed at the end, when comparing your opinions to theirs.) The system will inform you about your progress and estimate the remaining number of questions. The precise number of questions may vary, as the order and number of questions depends on your answers to prior questions. You decide how deep to delve into the issues and can control how much time to spend answering poll questions.</p></li>
-<li><p>View a summary of the questions and your responses. You are provided with an opportunity to change your answers.</p></li>
-<li><p>Compare your opinions with those of the authors of the source documents used to create the argument graph. Rank the authors of the source documents, such as political parties, by how much they agree or disagree with your opinions. You can click on the titles of the source documents to download and view their full text and check for yourself the extend to which your agree or disagree with the claims made.</p></li>
-</ol>
-<p>This procedure is flexible and you are in control. You are the moderator of the virtual debate. You can stop at any time, and continue later if you'd like, or jump backwards or forwards to any step in the procedure.</p>
-<h2 id="question-types"><span class="header-section-number">6.2</span> Question Types</h2>
-<p>Three types of questions are asked during the poll. The questions are generated automatically by traversing, in a systematic way<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>, the nodes of the argument graph. The first time you are asked for your opinion about some statement, you will be asked whether you</p>
-<ul>
-<li>agree with the statement</li>
-<li>disagree with the statement</li>
-<li>want to first see the arguments pro and con the statement before expressing an opinion, or finally</li>
-<li>want to skip this issue and go on the next.</li>
-</ul>
-<div class="figure">
-<img src="figs/ofpt1.png" alt="First Time Question About a Claim" /><p class="caption">First Time Question About a Claim</p>
-</div>
-<p>If you first want to see the arguments before answering, and thus choose the third alternative, then the question will be put aside and you will be shown questions about the arguments pro an con this statement. This second type of question shows you the argument, quoting the formulations of the argument in the source texts, and asks you whether you agree or disagree with its premsies.</p>
-<div class="figure">
-<img src="figs/ofpt2.png" alt="Questions About the Premises of an Argument" /><p class="caption">Questions About the Premises of an Argument</p>
-</div>
-<p>After you have seen the arguments, to the depth and level of detail you choose, you will be asked again for your opinion of the statement. This second time, however, the question is formulated somewhat differently. You will first be asked to weigh the arguments pro and con the statement which you have agreed are good arguments, that is arguments whose premises, in your opinion, are true. You can easily adjust the relative weights of these arguments, using sliders, as shown in the figure.</p>
-<div class="figure">
-<img src="figs/ofpt3.png" alt="Second Time Question About a Claim" /><p class="caption">Second Time Question About a Claim</p>
-</div>
-<p>After you have weighed the arguments, you will be asked, at the bottom of the same page, whether you</p>
-<ul>
-<li>agree with the statement</li>
-<li>disagree with the statement, or</li>
-<li>want to skip this issue and not express and opinion</li>
-</ul>
-<p>Please be careful to take your own assessment of the relative weights of the pro and arguments into consideration when answering the question, remembering that these are all arguments you agree with, even if they happen to conflict. Weigh the arguments to resolve the conflict and justify or explain your opinion.</p>
-<h2 id="checking-and-changing-your-answers"><span class="header-section-number">6.3</span> Checking and Changing Your Answers</h2>
-<p>To check or change your answers go to the &quot;summary&quot; page, by clicking on the &quot;summary&quot; menu item of the menu bar.</p>
-<div class="figure">
-<img src="figs/ofpt4.png" alt="A Summary Page" /><p class="caption">A Summary Page</p>
-</div>
-<p>The summary page lists all the statements with which you have agreed or disagreed, showing your opinion.<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a> To change your opinion about some statement, click on the &quot;change&quot; button next to the statement. This will reveal, inline on the same page, a summary of the pro and con arguments you agree with about the statement and give you an opportunity to adjust the weights of these arguments and change your opinion of the statement. Try to take care to make sure that your new opinion remains consistent with the relative weights you assign to the pro and con arguments.</p>
-<div class="figure">
-<img src="figs/ofpt5.png" alt="Changing Your Answer" /><p class="caption">Changing Your Answer</p>
-</div>
-<p>After you have changed your opinion, or cancelled the dialog, the arguments will be folded away, out of view, and you can continue checking your other answers where you left off.</p>
-<h2 id="comparing-your-opinions-with-others"><span class="header-section-number">6.4</span> Comparing Your Opinions with Others</h2>
-<p>To compare your opinions with those expressed in the source documents used by the analysts to build the argument graph, click on the &quot;compare&quot; button in the menu bar of the opinion formation and polling tool. This will take you to a page showing the source documents grouped into several categories, ordered by how much the opinions expressed in the documents have in common with your opinions, based on your answers to the poll questions.</p>
-<div class="figure">
-<img src="figs/ofpt6.png" alt="Opinion Comparison Page" /><p class="caption">Opinion Comparison Page</p>
-</div>
-<p>In each category, full references to the documents are provided (author, title, etc). The title includes a hyperlink to the source of the document on the Web. You can click on the title to download and read the original document, to judge for yourself how much you agree or disagree with the opinions expressed in the document.</p>
-<p>The rest of this section explains briefly how the comparison is computed.</p>
-<p>All of the arguments modeled in the argument graph are tagged with the keys of source documents in which the argument has been made, from the corpus of source documents used by the analysts to construct the graph.<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a> These documents do not merely cite or quote the argument. They express agreement with the argument, by claiming that the premises and the conclusion of the argument are true. Since the arguments are linked to their conclusion and premises in the argument graph, it is easy to compute from the source metadata of arguments the set of claims, i.e. statements claimed to be true or false, in each source document. These claims are then compared to your opinions, based on your answers to the poll questions.<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a></p>
-<h1 id="analysing-and-comparing-policies"><span class="header-section-number">7</span> Analysing and Comparing Policies</h1>
-<p>The Carneades argumentation system provides a tool to analyze the legal effects of specific policies on the facts of cases. The tool is useful for evaluating and comparing policies which formulate rules at a level of detail comparable to legislation or regulations.</p>
-<p>To access the tool, click on the &quot;policy analysis&quot; item in the main menu of the system, shown on every page. This will take you to introduction page of the tool, which briefly explains the purpose of the tool and the following steps for using it.</p>
-<ol style="list-style-type: decimal">
-<li>Select an issue of interest.</li>
-<li>Answer a series of questions to enter the facts of a case.</li>
-<li>View an argument graph automatically constructed by the system by applying the alternative policy models to the facts of the case.</li>
-<li>Select a policy to evaluate. This will take you back to the argument graph, with the effects of the selected policy highlighted.</li>
-<li>Repeat the last two steps to try another policy.</li>
-</ol>
-<div class="figure">
-<img src="figs/pmt1.png" alt="Policy Analysis Introduction" /><p class="caption">Policy Analysis Introduction</p>
-</div>
-<p>After reading the instructions on the first page, click on the &quot;start&quot; button at the bottom of the page to begin. This will take you to the &quot;issues&quot; page.</p>
-<h2 id="selecting-an-issue-to-analyse"><span class="header-section-number">7.1</span> Selecting an Issue to Analyse</h2>
-<div class="figure">
-<img src="figs/pmt2.png" alt="Selecting Issues to Analyze" /><p class="caption">Selecting Issues to Analyze</p>
-</div>
-<p>In the figure, only a single issue is shown but in general they may be several issues to choose form. Select an issue, by clicking on a radio button, and then click on the &quot;submit&quot; button to continue. This will take you to the &quot;facts&quot; page for entering the facts of a case.</p>
-<h2 id="entering-case-facts"><span class="header-section-number">7.2</span> Entering Case Facts</h2>
-<div class="figure">
-<img src="figs/pmt3.png" alt="Entering Case Facts" /><p class="caption">Entering Case Facts</p>
-</div>
-<p>The &quot;facts&quot; page asks a series of questions to gather the facts of the case. The process of asking questions is driven, in a goal-directed way, by the process of applying the rules of the model of the various policies to try to construct pro and con arguments about the chosen issue, using an inference engine. Only relevant questions will be asked, depending on the rules and your prior answers. Related questions will be grouped together, to faciliate a more coherent dialogue.</p>
-<p>Be careful not to enter any information which would enable you or or another person to be identified. Do not use real names, but rather pseudonyms or artificial identiers, such a P1, for persons and organizations.</p>
-<p>After sufficient facts have been entered to apply the rules of the policies, you will be taken to the &quot;analysis&quot; page of the tool. You can return to the facts page at any time to check or modify the facts of the case.<a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a> The analysis page displays the argument graph constructed when applying the rules of the policies to the facts entered for the case. The user interface is exactly the same as the one described in the chapter entitled <a href="#browsing-visualizing-and-evaluating-arguments">&quot;Browsing, Visualizing and Evaluating Arguments&quot;</a>. The only difference is the content of the argument graph being displayed. Here we are viewing arguments constructed by an inference engine when applying policy models to the facts of a case, rather than manual reconstructions by analysts of arguments in source documents.</p>
-<h2 id="viewing-the-arguments-constructed-from-the-policies"><span class="header-section-number">7.3</span> Viewing the Arguments Constructed from the Policies</h2>
-<div class="figure">
-<img src="figs/pmt4.png" alt="Arguments Constructed from the Policies" /><p class="caption">Arguments Constructed from the Policies</p>
-</div>
-<p>The argument graph can be viewed using both a hypertext interface as well as graphically, in an argument map. Click on the &quot;map&quot; item in the menu bar of the analysis page to generate and view the argument map.</p>
-<p>The next step is to select one or more policies to evaluate. Click on the &quot;Policies&quot; menu item in the menu bar of the policy analysis tool to view the available policies.</p>
-<h2 id="viewing-the-policy-models"><span class="header-section-number">7.4</span> Viewing the Policy Models</h2>
-<div class="figure">
-<img src="figs/pmt5.png" alt="Viewing the Policy Models" /><p class="caption">Viewing the Policy Models</p>
-</div>
-<p>All of the proposed policies which have been modeled are displayed. These can be alternative policies under consideration in a policy deliberation process. Alongside the model of each policy, using a rule language, there is a natural language description of the policy, possibly quoting and linking to the text of some document in which the policy was proposed. The descriptions will be shown in your preferred language, which can be selected on the home page of the Carneades system (<em>Note: The home page is not yet implemented</em>). The rules of the model are shown in an easy-to-read format, generated automatically from the source code of the model, not the source code itself.</p>
-<h2 id="evaluating-and-comparing-policies"><span class="header-section-number">7.5</span> Evaluating and Comparing Policies</h2>
-<p>To evaluate a policy to see how it would work given the facts of the case you have entered, click on the &quot;select&quot; button to the left of the title of the policy. This will take you back to the &quot;analysis&quot; page, again showing the argument graph, but this time visualizing what the legal consequences of the selected policy would be in the given case, if the policy were enacted and put in force. You can also view the results of the chosen policy in an argument map, by clicking on the &quot;map&quot; button in the menu bar.</p>
-<div class="figure">
-<img src="figs/pmt6.png" alt="Viewing the Effects of a Selected Policy" /><p class="caption">Viewing the Effects of a Selected Policy</p>
-</div>
-<p>To analyze the effects of other policies, go back to the policies page, by clicking on the &quot;policies&quot; button in the menu bar, and select another policy. Repeat this process to compare several policies.</p>
-<h2 id="finding-policies-with-desired-effects"><span class="header-section-number">7.6</span> Finding Policies with Desired Effects</h2>
-<p>Rather than manually trying out a number of policies, one at a time, it is possible to automatically search for the policies with the desired result in your case, as follows:</p>
-<ol style="list-style-type: decimal">
-<li>In the menu bar of the &quot;policies&quot; page, click on the &quot;find&quot; button.<br /></li>
-<li>You will be asked whether the main issue of the case should be &quot;in&quot; (true), &quot;out&quot; (false) or &quot;undecided&quot;. Select your preferred alternative.</li>
-<li>The system will then present a list of the policies, if any, which produce the preferred result in this case. This list has the same form and user interface as the policies page, but showing only the subset of the policies which achieve the desired result. You can now select from these policies, as before, to view the argument graph evaluated using the selected policy, to understand just why the policy leads to the desired result in this case.</li>
-</ol>
-<h2 id="sharing-cases"><span class="header-section-number">7.7</span> Sharing Cases</h2>
-<p>You can share the cases you have entered with others, to allow anyone to see how the various policies work in this case and make it unnecessary for others to have to reenter the facts of the case.</p>
-<p>Every case is stored in its own database on the server and assigned web address (URL) by the Carneades system. This URL can be used, by anyone, to view and browse the argument graph constructed for the case and to compare the effects of the different policies on the case.</p>
-<p>The URL to use for sharing cases is the URL of the argument graph view of the case. To copy the URL:</p>
-<ol style="list-style-type: decimal">
-<li>Click on the &quot;analysis&quot; button in the menu bar of the policy analysis tool.</li>
-<li>Copy the URL shown in the address bar of your Web browser, where you type in URLs to visit web sites.</li>
-</ol>
-<p>To share the case, paste this URL into an email, a blog or discussion forum article, or indeed anywhere else text can be entered. (<em>Note: Not yet implemented:</em>) The case will be read-only, not modifiable, by other users. (The case is editable only during the session in which it was created.) However, an editable copy of the case, with its own URL, can be created, as described in the next session.</p>
-<h2 id="making-editable-copies-of-shared-cases"><span class="header-section-number">7.8</span> Making Editable Copies of Shared Cases</h2>
-<p>(<em>Note: not yet implemented</em>)</p>
-<p>To make it easier to create variations of test cases, without having to reenter the facts they have in common, it is possible to creating a copy and then edit the facts of this copy. The copy will have its own URL, which can be shared with others on the Web, just like the original. The facts of the copy can be modified during the session in which the copy was created.</p>
-<p>To copy a shared case:</p>
-<ol style="list-style-type: decimal">
-<li>Enter the URL of the case in the address bar of your web browser, or just click on some link with this URL. This will take you to the analysis page for viewing the argument graph of the case.</li>
-<li>Click on the &quot;copy&quot; button in the menu bar of the analysis page. This will create the copy and then take you to the analysis page for viewing the argument graph of this copy. When you first visit this page, it will display a clear warning, so that you can be sure that the copy is being displayed, and not the original case.</li>
-</ol>
-<p>You can now edit the facts of this copy during this session, and also share this copy with others in the usual way, as described in the <a href="#sharing-cases">Sharing Cases</a> section of this manual.</p>
-<h2 id="policy-opinion-polls"><span class="header-section-number">7.9</span> Policy Opinion Polls</h2>
-<p>Opinions can differ of course about what the correct or best result is for a particular case. The policy analysis tool provides a way to poll users to gather their opinions about the claims of the case (its main issues in the argument graph). Any user can take part in the poll, not just the user who entered the facts of the case.</p>
-<p>To take part in the poll, click on the &quot;vote&quot; button in the menu bar of the policy analysis tool. The main issues of the case will be displayed, for example &quot;The work may be copied.&quot;, along with the following question for each claim:</p>
-<blockquote>
-<p>Given the facts of this case, should claim &quot;The work may be copied.&quot; be: 1) accepted, 2) rejected, or 3) undecided?</p>
-</blockquote>
-<p>It is not necessary to login to the system or provide a username to take part in the poll.</p>
-<p>After answering the questions, the current tally of the poll results will be displayed in a table, like this:</p>
-<table>
-<caption>Results of the Case Poll</caption>
-<thead>
-<tr class="header">
-<th align="left">Claim</th>
-<th align="right">Accepted</th>
-<th align="right">Rejected</th>
-<th align="right">Undecided</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">The work may be copied.</td>
-<td align="right">55%</td>
-<td align="right">25%</td>
-<td align="right">20%</td>
-</tr>
-</tbody>
-</table>
-<p>Notice that users are not asked to directly express their preferences regarding the polices under consideration, just what they think the correct result should be in particular cases. See the section of this manual entitled <a href="#generating-policy-reports">Generating Policy Reports</a> for further information.</p>
-<h2 id="generating-policy-reports"><span class="header-section-number">7.10</span> Generating Policy Reports</h2>
-<p>The policy analysis tool can generate a report ranking the policy proposals by the degree to which they achieve the results preferred by the majority of the users who took part in the poll.</p>
-<p>To generate the report, click on the &quot;report&quot; button in the menu bar of the policy analysis tool. This will cause the system to apply every modeled policy to all the cases and then compare the results with those preferred by the majority of the users who participated in the poll.</p>
-<p>The report will be presented in the form of a table, similar to the following:</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">Policy</th>
-<th align="right">Agreement</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Org 1 Proposal</td>
-<td align="right">55%</td>
-</tr>
-<tr class="even">
-<td align="left">Org 2 Proposal</td>
-<td align="right">35%</td>
-</tr>
-<tr class="odd">
-<td align="left">Org 3 Proposal</td>
-<td align="right">15%</td>
-</tr>
-</tbody>
-</table>
-<p>The policy names, such as &quot;Org 1 Proposal&quot; in the example, will be linked to the descriptions and models of the policies. The policies are ranked by the percentage of issues in all the cases (there may be more than one issue per case) which have the result preferred by the majority of poll participants. In the example report, the &quot;Org 1 Proposal&quot; obtains the results preferred by the majority for 55% of the issues.</p>
-<p>--&gt;</p>
-<h1 id="editing-argument-graphs"><span class="header-section-number">8</span> Editing Argument Graphs</h1>
-<p>Normally, argument graphs can be edited only after logging into the system with a password. (<em>Note: the login form has not yet been implemented. Currently all users are logged in automatically, sidestepping this protection.</em>) Interpreting source texts to reconstruct arguments using argumentation schemes requires some training. The editing functions of the system are intended for use by &quot;analysts&quot; with the required skills, not &quot;public users&quot;. See the <a href="#getting-started">Getting Started</a> chapter for a discussion of the different user roles supported by the system. System administrators can make the editing functions available to the public, if this is desired for some application. See the <a href="#system-administration">System Administration</a> chapter for further information.</p>
-<p>To edit an argument graph, first go to the argument graph page, as described in the Chapter entitled <a href="#browsing-visualizing-evaluating-arguments">Browsing, Visualizing and Evaluating Arguments</a>.</p>
+include "opinions.md" 
+include "policy_analysis.md"
+-->
+<h1 id="editing-argument-graphs"><span class="header-section-number">6</span> Editing Argument Graphs</h1>
+<p>To edit an argument graph, first go to its outline, as described in the Chapter entitled <a href="#browsing-visualizing-evaluating-arguments">Browsing, Visualizing and Evaluating Arguments</a>. An example argument graph page is shown in the figure below.</p>
 <div class="figure">
 <img src="figs/graph1.png" alt="An Argument Graph Page" /><p class="caption">An Argument Graph Page</p>
 </div>
-<p>You can add nodes to the graph by clicking on the &quot;New Statement&quot; or &quot;New Argument&quot; buttons in the menu bar. In both cases you will be presented with a form to enter the required information. The form will be inserted and displayed at the top of the current argument graph page, so that you can scroll down to view information about the argument graph, without having to toggle back and forth between two tabs or pages in your web browser. See the <a href="#entering-new-statements">Entering New Statements</a> or <a href="#entering-new-arguments">Entering New Arguments</a> sections for further information.</p>
-<p>To add a new argument pro or con some existing statement, go to the statement page and click on the &quot;New Argument&quot; button in its menu bar. The conclusion of the new argument will be set to the existing statement. Then complete the rest of the form as described in the <a href="#entering-new-arguments">Entering New Arguments</a> section.</p>
-<p>To edit or delete existing statements or arguments, first go to the page of the statement or argument and then click on the &quot;Edit&quot; or &quot;Delete&quot; button of its menu bar. Editing statements and arguments is done using the same forms used to create new statements and arguments. Deleting a statement will also delete the arguments pro or con the statement. Deleting an argument does not delete the conclusion or premises of the argument. This can leave some statements in the argument graph being unused in any argument.</p>
+<p>You can add nodes to the graph by clicking on the &quot;New Statement&quot; or &quot;New Argument&quot; buttons. In both cases you will be presented with a form to enter the required information. The form will be displayed in a new tab, so that you can toggle back and forth between different views of the argument graph will editing. (<strong>Warning</strong>: A known bug in the user interface causes your work to be lost if you change to another tab without first saving your work.) See the <a href="#entering-new-statements">Entering New Statements</a> or <a href="#entering-new-arguments">Entering New Arguments</a> sections for further information.</p>
+<p>To add a new argument pro or con some existing statement, go to the statement page and click on the &quot;New Argument&quot; button. The conclusion of the new argument will be set to the existing statement. Then complete the rest of the form as described in the <a href="#entering-new-arguments">Entering New Arguments</a> section.</p>
+<p>To edit or delete existing statements or arguments, first go to the page of the statement or argument and then click on the &quot;Edit&quot; or &quot;Remove&quot; button. Editing statements and arguments is done using the same forms used to create new statements and arguments. Deleting a statement will also delete the arguments pro or con the statement. Deleting an argument does not delete the conclusion or premises of the argument. This can leave some statements in the argument graph being unused in any argument.</p>
 <p><strong>Warning</strong>: There is no undo function, so all editing and delete operations are permanent. However, you will be asked to confirm all delete operations and have the option of cancelling or saving editing operations.</p>
-<h2 id="reconstructing-arguments"><span class="header-section-number">8.1</span> Reconstructing Arguments</h2>
-<p>To reconstruct a <em>new</em> argument in some source text, one which is not already in the argument graph, follow the procedure below. If instead the source text is <em>another formulation</em> of an argument already in the argument graph, you can modify the description of the existing argument to also quote this source.</p>
+<h2 id="reconstructing-arguments"><span class="header-section-number">6.1</span> Reconstructing Arguments</h2>
+<p>To reconstruct a <em>new</em> argument in some source text, one which is not already in the argument graph, follow the procedure below. If instead the source text is <em>another formulation</em> of an argument already in the argument graph, you can modify the description of the existing argument to also quote this as an additional source of the argument.</p>
 <ol style="list-style-type: decimal">
-<li>Optional: If the source text is not already in the list of references of the argument graph, you can add it by following the instructions in the <a href="#editing-the-metadata-and-reference-list-of-an-argument-graph">Editing the Metadata and Reference List of an Argument Graph</a> section of this manual. When doing so you will assign the source document a &quot;key&quot; (label). Remember or copy this key.</li>
-<li>Click on the &quot;New Argument&quot; button in menu bar of the argument graph page.</li>
-<li>Copy the text of the argument from the source document and paste it into the description field of the new argument form. You can quote the text of the argument, using <a href="http://daringfireball.net/projects/markdown/">Markdown</a>, by preceding each line with a &quot;&gt;&quot; symbol. Be careful not the reveal the authors of the quoted source texts if you are planning to use the <a href="#formulating-polling-and-comparing-opinions">opinion formation and polling tool</a>, to avoid prejudicing the opinions of the users taking part in the poll. At the end of the quotation, cite the source document, using the key you assigned it when adding it to the list of references, using the <a href="http://johnmacfarlane.net/pandoc/README.html#automatic-citations">Pandoc extension of Markdown for citations</a>. For example, if the key is &quot;BenchCapon:2011&quot; the cite would have the form <code>[@BenchCapon:2011, pg. 5]</code>. The page number or numbers are optional. See the <a href="http://johnmacfarlane.net/pandoc/README.html#automatic-citations">Pandoc</a> documentation for details.</li>
-<li>Optional: You can choose an argumentation scheme to apply, from the pull down list of schemes in the argument editor. If you choose a scheme, its documentation will be shown and the form will be customized, with fields intialized for each of the premises, exceptions and assumptions of the scheme. You can modify the argument however you want, unconstrained by the chosen scheme, for example by deleting or adding premises, or renaming premise roles. The schemes are there to help you, not constrain you. You can however check whether the argument complies with the given scheme. See the <a href="#vaidating-arguments">Validating Arguments</a> section for details. See the <a href="#argumentation-schemes">Argumentation Schemes</a> chapter for documentation of the schemes included in the Carneades. These schemes may be modified or extended, or replaced entirely, as described in the <a href="#modeling-policies-and-argumentation-schemes">Modeling Policies and Argumentation Schemes</a> chapter.</li>
-<li>Enter the conclusion of the argument, either by choosing a statement already in the graph with the same meaning as the conclusion of the argument in the source text or by creating a new statement, by clicking on the plus (+) button to the right of the &quot;select a statement&quot; message. (Move the move over the &quot;select a statement&quot; message to see the plus sign, which is otherwise hidden.) If you create a new statement, you can either quote the conclusion of the argument in the &quot;text&quot; field of this new statement, or reformulate the conclusion in your own words.</li>
-<li>Similarly, add the premises of the argument, either by choosing existing statements in the argument graph or by adding new statements.</li>
+<li>Click on the &quot;New Argument&quot; button on the outline page of the argument graph.</li>
+<li>Copy the text of the argument from the source document and paste it into the description field of the &quot;Metadata&quot;tab of new argument form. You can quote the text of the argument, using <a href="http://daringfireball.net/projects/markdown/">Markdown</a>, by preceding each line with a &quot;&gt;&quot; symbol.</li>
+<li>Go the &quot;Model&quot; tab of argument editor and choose an argumentation scheme to apply, from the pull down list of schemes. The documentation of the selected scheme will be shown and the form will be customized, with fields intialized for each of the premises of the scheme. You can modify the argument however you want, unconstrained by the chosen scheme, for example by deleting or adding premises, or renaming premise roles. The schemes are there to help you, not constrain you. See the <a href="#argumentation-schemes">Argumentation Schemes</a> chapter for documentation of the initial set of schemes provided with Carneades. These schemes may be modified or extended, or replaced entirely, as described in the <a href="#modeling-policies-and-argumentation-schemes">Modeling Policies and Argumentation Schemes</a> chapter.</li>
+<li>Enter the conclusion of the argument, by choosing a statement already in the graph with the same meaning as the conclusion of the argument in the source text. If the needed statement is not listed, create one first following the instructions for entering new statements below.</li>
+<li>Similarly, add the premises of the argument, by choosing existing statements in the argument graph from the pull-down lists below the role of each premise in the form. Negative premises can be entered by changing the &quot;Positive&quot; property of the premise to &quot;False&quot;. If the premise is implicit in the source text, you can note this by changing the &quot;Implicit&quot; property of the premise to &quot;True&quot;.</li>
 <li>At the bottom of the form, click the &quot;Save Argument&quot; or &quot;Cancel&quot; button. <strong>Warning:</strong> Any changes you make using the form will not be saved to the argument graph until you execute the &quot;Save Argument&quot; command by clicking on this button.</li>
 </ol>
-<h2 id="editing-the-metadata-and-reference-list-of-an-argument-graph"><span class="header-section-number">8.2</span> Editing the Metadata and Reference List of an Argument Graph</h2>
-<p>(<em>Note: Not yet implemented.</em>)</p>
-<h2 id="entering-new-statements"><span class="header-section-number">8.3</span> Entering New Statements</h2>
-<p>The form for entering new statements is shown when you click on the &quot;New Statement&quot; button in the menu bar of the argument graph page or on a plus sign (+) next to the conclusion or premise pull-down selection boxes for statements. (The plus sign allows you to enter a new statement if the statement you need is not listed in the pull-down menu.)</p>
+<h2 id="entering-new-statements"><span class="header-section-number">6.2</span> Entering New Statements</h2>
+<p>The form for entering new statements is shown when you click on the &quot;New Statement&quot; button on the outline page of the argument graph page.</p>
 <div class="figure">
 <img src="figs/editor1.png" alt="New Statement Form" /><p class="caption">New Statement Form</p>
 </div>
 <p>A new statement should not be entered into the argument graph if the negation of the statement is already in the argument graph. That is, for every proposition <span class="math"><em>P</em></span>, a single statement node should be entered into the graph to represent <em>both</em> <span class="math"><em>P</em></span> and <span class="math">¬<em>P</em></span>. It doesn't matter whether the positive or negative form of the statement is included explictly in the argument graph. Typically the positive form is used, but in some cases you may prefer the negative form. For example, you may prefer to include the sentence &quot;The payment was illegal&quot; explicitly in the argument graph and then represent arguments pro the legality of the payment as argument con the claim the payment was illegal. The best choice may depend on the procedural context of the debate.</p>
 <p>Only one form of the statement is required, since arguments pro the negation of the statement are equivalent to arguments con the statement. And premises of arguments can be explicitly negated in argument graphs, and in the forms for entering and editing arguments. This approach has the advantage of reducing the number of statements in the graph up to 50%.</p>
-<h3 id="statement-description"><span class="header-section-number">8.3.1</span> Statement Description</h3>
-<p>You can use the <em>description</em> field to provide whatever background information you want about the statement. Unlike the mandatory &quot;text&quot; field (see below), this information is optional. You can structure and format the description, including headers, lists, quotations, hypertext links and other elements, using the <a href="http://daringfireball.net/projects/markdown/">Markdown</a> wiki language. The form includes a Markdown editor to make this easier for you. You can enter translations of the description. There is a tab of the description form for each available language. (The set of languages can be configured by system administrators, on a project by project bases. <em>Note: not yet implemented.</em>) The system is preconfigured for the following languages:</p>
+<p>The new statement form is divided into two sections, named &quot;Model&quot; and &quot;Metadata&quot;. On smaller screens these two sections are shown in separate tabs, labelled accordingly. The &quot;model&quot; consists of the text of the statement, in one or more languages, along with some additional properties, described in detail below. The &quot;metadata&quot; consists of generic properties, not specific to statements, such as a title and description. Be careful not to confuse the description of the statement with the text of the statement. The text is a formulation of the statement, whereas as the description provides further information about the statement.</p>
+<h3 id="main-issue"><span class="header-section-number">6.2.1</span> Main Issue</h3>
+<p>An argument graph should have at least one main issue. These are the issues which are central to the debate. All the other issues are subsidiary issues only important to the extent that they are relevant for resolving one of the main issues.</p>
+<h3 id="statement-text"><span class="header-section-number">6.2.2</span> Statement Text</h3>
+<p>The &quot;text&quot; property of a statement node of an argument graph is for expressing the statement concisely in natural language. You should always provide such a text. As for descriptions, translations of the text in several languages may be included in the model and the statment may be structured using <a href="http://daringfireball.net/projects/markdown/">Markdown</a>. This is the text that will appear in statement boxes in argument maps and in hypertext views of the argument graph. Whereas descriptions are optional and part of the <em>metadata</em> about the statement, this text is the content representing the statement itself.</p>
+<p>Translations of the text can be entered in several natural languages:</p>
 <dl>
 <dt>En</dt>
-<dd>English De
+<dd>English
 </dd>
-<dd>German Fr
+<dt>De</dt>
+<dd>German
 </dd>
-<dd>French It
+<dt>Fr</dt>
+<dd>French
 </dd>
-<dd>Italian Nl
+<dt>It</dt>
+<dd>Italian
 </dd>
-<dd>Dutch Sp
+<dt>Nl</dt>
+<dd>Dutch
 </dd>
+<dt>Sp</dt>
 <dd>Spanish
 </dd>
 </dl>
-<h3 id="statement-metadata"><span class="header-section-number">8.3.2</span> Statement Metadata</h3>
-<p>Statements can be annotated with metadata properties, using the <a href="http://en.wikipedia.org/wiki/Dublin_Core">Dublin Core</a> metadata elements. The Dublin Core elements are briefly summarized in the <a href="#metadata">Metadata</a> section of this manual.</p>
-<p>To add a metadata element to a statement, select the element from the pull-down menu and click on the &quot;Add&quot; button. A text box for entering the value of the element will be added to the form. Multiple values of an element can be added by clicking on the &quot;Add&quot; button as often as needed. A value can be deleted by clicking on the &quot;x&quot; icon to the right of the value.</p>
-<h3 id="atoms-formalizing-statements-using-predicate-logic"><span class="header-section-number">8.3.3</span> Atoms: Formalizing Statements using Predicate Logic</h3>
+<h3 id="atom-formalizing-statements-using-predicate-logic"><span class="header-section-number">6.2.3</span> Atom: Formalizing Statements using Predicate Logic</h3>
 <p>Optionally, statements can be formalized in predicate logic, by providing a value for the &quot;atom&quot; property in the form. This is an advanced feature that may be needed only for more specialized application scenarios.</p>
 <p>Atoms are formalized in Carneades using the prefix notation of <a href="http://en.wikipedia.org/wiki/S-expression">s-expressions</a> (&quot;symbolic expressions&quot;), as in the Lisp family of programming languages.</p>
 <p>For example, Socrates is a man could be formalized as <code>(man Socrates)</code>. Here, <code>man</code> is a unary predicate symbol. The fact that Socrates died in 399 B.C. could be represented using a binary predicate, for example as <code>(died Socrates -399)</code>.</p>
@@ -654,58 +420,55 @@ interface. -->
 <ul>
 <li>The arity of atoms can be 0 or more, as in predicate logic, not restricted to unary and binary predicates, as in description logic, RDF and OWL. Examples: <code>(good)</code>, <code>(between 0 1 2)</code>.</li>
 <li>Compound terms may be used. For example <code>(= 2 (+ 1 1))</code>. The is, the atom language is not restricted to Datalog.</li>
-<li>Atoms can be higher-order. Example: <code>(believes Gerald (and (made-of Moon green-cheese) (really-exists Yeti)))</code>. Notice that compound propositions can be reified as terms, as in this example.</li>
+<li>Atoms can be higher-order. Example: <code>(believes Gerald (and (made-of   Moon green-cheese) (really-exists Yeti)))</code>. Notice that compound propositions can be reified as terms, as in this example.</li>
 </ul>
-<p>If you choose an argumentation schemes to use as a template when editing arguments, the statements of the argument will be initialized with atom schemas. These are atoms with schema variables, represented by strings starting with a question mark, such as <code>?x</code>. If your application does not make use of atoms, you can simply ignore the atoms, or delete them, as you prefer. If your application does use atoms, you need to substitute the variables in the schemas with constants from your application domain, where constants are represented by symbols not beginning with a question mark, such as <code>work1</code>, or numbers.</p>
-<h3 id="statement-text"><span class="header-section-number">8.3.4</span> Statement Text</h3>
-<p>The &quot;text&quot; property of a statement node of an argument graph is for expressing the statement concisely in natural language. You should always provide such a text. As for descriptions, translations of the text in several languages may be included in the model and the statment may be structured using <a href="http://daringfireball.net/projects/markdown/">Markdown</a>. (<em>Note: the tabs for entering the text is more than one language is not yet implemented. Update the screenshots when this has been fixed.</em>) This is the text that will appear in statement boxes in argument maps and in hypertext views of the argument graph. Whereas descriptions are optional and part of the <em>metadata</em> about the statement, this text is the <em>data</em> representing the statement itself.</p>
-<h3 id="proof-standard"><span class="header-section-number">8.3.5</span> Proof Standard</h3>
+<h3 id="proof-standard"><span class="header-section-number">6.2.4</span> Proof Standard</h3>
 <p>The proof standard of a statement determines how much proof is required for the statement to be deemed acceptable (presumably true). The proof standard is used by the computational model to argument to compute the acceptability of the statement. Several proof standards are available:</p>
 <dl>
-<dt>Preponderance of Evidence (pe)</dt>
-<dd>This standard is meet if at least one pro argument is <em>in</em> that weighs more than any <em>in</em> con argument. (Only arguments pro or con this statement are compared.)
-</dd>
-<dt>Clear and Convincing Evidence (ce)</dt>
-<dd>This standard is satisfied if the preponderance of evidence standard is meet and, in additional, the difference between the strongest <em>in</em> pro argument and the strongest <em>in</em> con argument is above a certain threshold.
-</dd>
-<dt>Beyond Reasonable Doubt (brd)</dt>
-<dd>This standard is meet if the clear and convincing evidence standard is meet and, in addition, the weight of the weakest <em>in</em> con argument is below a certain threshold.
-</dd>
-<dt>Dialectical Validity (dv)</dt>
+<dt>Dialectical Validity (DV)</dt>
 <dd>This standard is the only one that does not make use of arugment weights. It is satisfied if at least one pro argument is <em>in</em> and no con argument is <em>in</em>.
 </dd>
+<dt>Preponderance of Evidence (PE)</dt>
+<dd>This standard is met if at least one pro argument is <em>in</em> that weighs more than any <em>in</em> con argument.
+</dd>
+<dt>Clear and Convincing Evidence (CE)</dt>
+<dd>This standard is satisfied if the preponderance of evidence standard is met and, in additional, the difference between the strongest <em>in</em> pro argument and the strongest <em>in</em> con argument is above a certain threshold.
+</dd>
+<dt>Beyond Reasonable Doubt (BRD)</dt>
+<dd>This standard is met if the clear and convincing evidence standard is meet and, in addition, the weight of the weakest <em>in</em> con argument is below a certain threshold.
+</dd>
 </dl>
-<p>The default proof standard is preponderance of the evidence, and for most applications this proof standard should be sufficient. Note that the preponderance of evidence standard is meet whenever the dialectical validity standard is met. If arguments are not weighed, the dialectical validity and preponderance of evidence standards will give the same results. The preponderance of evidence, clear and convincing evidence and beyond reasonable doubt standards are ordered by the amount of proof required, with beyond reasonable doubt requiring the most proof. Whenever one of these standards is meet, any weaker standards are also meet.</p>
-<h3 id="main-issue"><span class="header-section-number">8.3.6</span> Main Issue</h3>
-<p>An argument graph should have at least one main issue. These are the issues which are central to the debate. All the other issues are subsidiary issues only important to the extent that they are relevant for resolving one of the main issues.</p>
-<p>The main issues are offered as entry points on the argument graph page and by the &quot;guided tours&quot; of the opinion formation and polling tool.</p>
-<p>The make the statement a main issue, click on the &quot;Yes&quot; radio button next to the &quot;Main&quot; label in the statement editor.</p>
-<h3 id="statement-weight"><span class="header-section-number">8.3.7</span> Statement Weight</h3>
-<p>The weight of a statement encodes the extent to which users agree or disagree with the statement, on a scale of 0.0 to 1.0, where 0.0 represents disagree (reject), 0.5 means no opinion and to 1.0 is denotes agree (accept).</p>
-<p>The weight can be entered directly in the statement editor, using a slider. This can be useful for exploring interactions among the arguments given various assumptions. Alternatively the public users can be polled for their opinions and the results of the poll can be averaged to compute the weights. See the <a href="#using-polls-to-weight-statements-and-arguments">Using Polls to Weight Statements and Arguments</a> section of this chapter for further information.</p>
-<h2 id="editing-statements"><span class="header-section-number">8.4</span> Editing Statements</h2>
-<p>To edit an existing statement in an argument graph, first navigate to the statement, using either the hypertext view of the graph, beginning on the argument graph page, or the argument map. In the map view, click on the box containing the statement you want to edit.</p>
-<p>Either way you will now be viewing the statement page. Click of the &quot;Edit&quot; button in the menu bar of the page. This will reveal, on the same page, a form for modifying the statement. This is the same form used to enter new statements, described in the <a href="#entering-new-statements">Entering New Statements</a> section of this chapter, but with the fields of the form filled in with the current values of the properties of the statement. After making changes, click on the &quot;Save Statement&quot; button at the bottom of the form, to have the changes stored in the argument graph database, or the &quot;Cancel&quot; button to abort the editing process and retain the prior values of the properties of the statement.</p>
+<p>The default proof standard is preponderance of the evidence, and for most applications this proof standard should be sufficient. Note that the preponderance of evidence standard is met whenever the dialectical validity standard is met. If arguments are not weighed, the dialectical validity and preponderance of evidence standards will give the same results. The preponderance of evidence, clear and convincing evidence and beyond reasonable doubt standards are ordered by the amount of proof required, with beyond reasonable doubt requiring the most proof. Whenever one of these standards is met, all of weaker standards are also meet.</p>
+<h3 id="statement-weight"><span class="header-section-number">6.2.5</span> Statement Weight</h3>
+<p>The weight of a statement encodes the extent to which users agree or disagree with the statement, on a scale of 0.0 to 1.0, where 0.0 represents disagree (reject), 0.5 means no opinion and to 1.0 is denotes agree (accept). Statements with a weight greater then or equal to 0.75 and less than 1.0 are <em>assumed</em> to be true, until an argument pro or con the statement has been added to the argument graph. Conversely, statements with a weight less than or equal to 0.5 and greater than 0.0 are assumed to be false, until an argument pro or con the statement has been added to the graph.</p>
+<h3 id="statement-metadata"><span class="header-section-number">6.2.6</span> Statement Metadata</h3>
+<p>Statements can be annotated with metadata properties, using the <a href="http://en.wikipedia.org/wiki/Dublin_Core">Dublin Core</a> metadata elements. The Dublin Core elements are briefly summarized in the <a href="#metadata">Metadata</a> section of this manual.</p>
+<p>To add metadata to a statement, go to the &quot;Metadata&quot; tab of the statement editor and complete the form. Multiple values of an element can be entered by listing. Separate the items in the list with semicolon (&quot;;&quot;) characters.</p>
+<p>You can use the <em>description</em> field of the &quot;Metadata&quot; tab of the statement editor to provide whatever background information you want about the statement. You can structure and format the description, including headers, lists, quotations, hypertext links and other elements, using the <a href="http://daringfireball.net/projects/markdown/">Markdown</a> wiki language. The form includes a Markdown editor to make this easier for you.</p>
+<p>As for the statement text, translations of descriptions can be entered in several natural languages.</p>
+<h2 id="editing-statements"><span class="header-section-number">6.3</span> Editing Statements</h2>
+<p>To edit an existing statement in an argument graph, first navigate to the statement page and click &quot;Edit Statement&quot; button. This will reveal a form for modifying the statement. This is the same form used to enter new statements, described in the <a href="#entering-new-statements">Entering New Statements</a> section of this chapter, but with the fields of the form filled in with the current values of the properties of the statement. After making changes, click on the &quot;Save&quot; button at the bottom of the form, to have the changes stored in the argument graph database, or the &quot;Cancel&quot; button to abort the editing process and retain the prior values of the properties of the statement.</p>
 <p><strong>Warning</strong>: The changes cannot be undone after saving them.</p>
-<h2 id="deleting-statements"><span class="header-section-number">8.5</span> Deleting Statements</h2>
-<p>To delete a statement from an argument graph, first navigate to the statement, using either the hypertext view of the graph, beginning on the argument graph page, or the argument map. In the map view, click on the box containing the statement you want to delete.</p>
-<p>Either way you will now be viewing the statement page. Click of the &quot;Delete&quot; button in the menu bar of the page. You will be asked to confirm or cancel the deletion.</p>
+<h2 id="deleting-statements"><span class="header-section-number">6.4</span> Deleting Statements</h2>
+<p>To delete a statement from an argument graph, first navigate to the statement page and click of the &quot;Remove Statement&quot; button. You will be asked to confirm or cancel the deletion.</p>
 <p><strong>Warning</strong>: The deletion cannot be undone after it has been confirmed. Deleting a statement also deletes all arguments pro or con this statement, i.e. with this statement as the conclusion of the argument. The statements for the premises of these arguments are not deleted.</p>
-<h2 id="entering-new-arguments"><span class="header-section-number">8.6</span> Entering New Arguments</h2>
+<h2 id="entering-new-arguments"><span class="header-section-number">6.5</span> Entering New Arguments</h2>
 <p>The form for entering new arguments is shown when you click on the &quot;New Argument&quot; button in the menu bar of the argument graph page or a statement page. When used on a statement page, the form for entering the new argument will be initialized with the statement as the conclusion of the argument.</p>
 <div class="figure">
 <img src="figs/editor2.png" alt="New Argument Form" /><p class="caption">New Argument Form</p>
 </div>
 <p>See the section on <a href="#reconstructing-arguments">Reconstructing Arguments</a> for tips about how to proceed when interpreting and modeling arguments in source texts.</p>
-<h3 id="argument-description"><span class="header-section-number">8.6.1</span> Argument Description</h3>
-<p>You can use the <em>description</em> field of the argument to provide whatever background information you want about the argument, including quotations of formulations of the argument in source texts, along with hyperlinks to the sources.</p>
-<p>You have the same possibilities for structuring the text of the description, using the <a href="http://daringfireball.net/projects/markdown/">Markdown</a> wiki language, and entering translations of the description as you have for statement descriptions. See the <a href="#statement-description">Statement Description</a> section of this chapter for further information.</p>
-<p>If you plan to use the argument graph with the <a href="#formulating-polling-and-comparing-opinions">opinion formation and polling tool</a>, be careful to formulate the descriptions in a way which does not risk prejudicing the answers by revealing the authors of quotations. Reference the source of the quotation using using a citation key. See the section on <a href="#reconstructing-arguments">Reconstructing Arguments</a> for further information.</p>
-<h3 id="argument-metadata"><span class="header-section-number">8.6.2</span> Argument Metadata</h3>
-<p>Arguments can be annotated with metadata properties, using the <a href="http://en.wikipedia.org/wiki/Dublin_Core">Dublin Core</a> metadata elements, in the same way as statements. See the <a href="#statement-metadata">Statement Metadata</a> section for further instructions.</p>
-<h3 id="argument-direction"><span class="header-section-number">8.6.3</span> Argument Direction</h3>
-<p>Arguments can be <em>pro</em> or <em>con</em> their conclusion. An argument con a statement is semantically equivalent to an argument pro the negation of the statement. Select the direction of the argument in the form using the radio buttons.</p>
-<h3 id="strict-or-defeasible-arguments"><span class="header-section-number">8.6.4</span> Strict or Defeasible Arguments</h3>
+<h3 id="using-argumentation-schemes"><span class="header-section-number">6.5.1</span> Using Argumentation Schemes</h3>
+<p>Arguments can be entered into the system, without using argumentation schemes. Their use is entirely optional. That said, argumentation schemes can be helpful for interpreting source texts when trying to reconstruct arguments. They serve as templates which can guide you in your task of understanding the source text. For example, if the argument looks like it might be an argument from expert opinion, using the expert opinion scheme will help you to remember the conventional form of this kind of argument. Can the text reasonably be understood as including all the premises of the expert witness scheme? Were any missing premises left implicit by the author, or would this be reading too much between the lines? Does the argument perhaps better fit some other scheme?</p>
+<p>See the section on <a href="#reconstructing-arguments">Reconstructing Arguments</a> for tips about how to proceed when interpreting and modeling arguments in source texts.</p>
+<p>You can view a list of the available argumentation schemes using the pull-down menu. Type in a string, such as &quot;expert&quot;, to display the schemes containing the string in the title. Then select the desired scheme from the list. This will display a description of the scheme, perhaps with example arguments, along with references to publications about the scheme. You can go back and select another scheme at any time.</p>
+<p>Whenever a scheme is selected, the form will customized to include premises and exceptions fields for the chosen scheme. The roles of the premises and exceptions will be modified to match the selected scheme. The premise roles can be edited. You are not constrained by the scheme.</p>
+<p>If you change your mind and select another scheme, any statements you have selected for the conclusion and premises of the argument will remain, but you will need to check whether they are still appropriate and add, modifiy or delete premises as necessary.</p>
+<p>Again, the argumentation schemes are meant to be helpful, not get in your way. They do not constrain you to enter arguments matching the schemes. You can, however, check whether arguments correctly instantiate the schemes they have been assigned. See the <a href="#validating-arguments">Validating Arguments</a> section for further information.</p>
+<h3 id="entering-and-deleting-premises"><span class="header-section-number">6.5.2</span> Entering and Deleting Premises</h3>
+<p>In the premise of the argument editor, you can choose an existing statement in the argument graph from the pull down list. You can filter the statements in the list by typing some text in the text field at the top of the list.</p>
+<p>You can additional premises by clicking on the &quot;Add Premise&quot; button. Premises can be deleted by clicking on the &quot;Remove this premise&quot; button immediately below each premise.</p>
+<h3 id="strict-or-defeasible-arguments"><span class="header-section-number">6.5.3</span> Strict or Defeasible Arguments</h3>
 <p>An argument may be <em>strict</em> or <em>defeasible</em> (not strict). An argument is strict if and only if its conclusion must be true, with no exceptions, if its premises are true, whether or not its premises are in fact true. For example the following arguments are strict:</p>
 <ul>
 <li>The moon is made of green cheese since the moon is made of green cheese and unicorns have horns.</li>
@@ -720,47 +483,59 @@ interface. -->
 <p>The object may look red because, for example, if is being illuminated by a red light. And Tweety the bird may be a penguin, or have a broken wing, and so on.</p>
 <p>The conclusion of a defeasible argument need not be <em>probably</em> true, in some statistical sense. It is not necessary to have good empirical data allowing us to draw conclusions about what is probably the case in order to make a defeasible argument. The argument only needs to give us some good reason to believe the conclusion, at least until we have heard arguments giving us reasons to the contrary.</p>
 <p>Select whether the argument is strict in the form using the radio buttons. By default, arguments are defeasible.</p>
-<h3 id="argument-weight"><span class="header-section-number">8.6.5</span> Argument Weight</h3>
+<h3 id="argument-direction"><span class="header-section-number">6.5.4</span> Argument Direction</h3>
+<p>Arguments can be <em>pro</em> or <em>con</em> their conclusion. An argument con a statement is semantically equivalent to an argument pro the negation of the statement.</p>
+<h3 id="argument-weight"><span class="header-section-number">6.5.5</span> Argument Weight</h3>
 <p>Argument weights only become important when two or more arguments with contradictory conclusions, that is arguments pro and con some conclusion, come into play. Such arguments are called &quot;rebuttals&quot;. The conflict between the rebuttals is resolved by weighing the arguments and applying proof standards. See the <a href="#proof-standard">Proof Standard</a> of this chapter for further information.</p>
-<p>The weight can be entered directly in the argument editor, using a slider. This can be useful for exploring interactions among the arguments and experimenting with the effects of different proof standards. Alternatively the public users can be polled for their opinions and the results of the poll can be averaged to compute the weights. See the <a href="#using-polls-to-weight-statements-and-arguments">Using Polls to Weight Statements and Arguments</a> section of this chapter for further information.</p>
-<h3 id="using-argumentation-schemes"><span class="header-section-number">8.6.6</span> Using Argumentation Schemes</h3>
-<p>Arguments can be entered into the system, without using argumentation schemes. Their use is entirely optional. That said, argumentation schemes can be helpful for interpreting source texts when trying to reconstruct arguments. They serve as templates which can guide you in your task of understanding the source text. For example, if the argument looks like it might be an argument from expert opinion, using the expert opinion scheme will help you to remember the conventional form of this kind of argument. Can the text reasonably be understood as including all the premises of the expert witness scheme? Were any missing premises left implicit by the author, or would this be reading too much between the lines? Does the argument perhaps better fit some other scheme?</p>
-<p>See the section on <a href="#reconstructing-arguments">Reconstructing Arguments</a> for tips about how to proceed when interpreting and modeling arguments in source texts.</p>
-<p>You can view a list of the available argumentation schemes using the pull-down menu. Type in a string, such as &quot;expert&quot;, to display the schemes containing the string in the title. Then select the desired scheme from the list. This will display a description of the scheme, perhaps with example arguments, along with references to publications about the scheme. You can go back and select another scheme at any time.</p>
-<p>Whenever a scheme is selected, the form will customized to include premises and exceptions fields for the chosen scheme. The roles of the premises and exceptions will be modified to match the selected scheme. The premise roles can be edited. You are not constrained by the scheme.</p>
-<p>If you change your mind and select another scheme, any statements you have selected for the conclusion, premises and exceptions of the argument will remain selected, but you will need to check whether they are still appropriate and select or add other statements if necessary.</p>
-<p>Again, the argumentation schemes are meant to be helpful, not get in your way. They do not constrain you to enter arguments matching the schemes. You can, however, check whether arguments correctly instantiate the schemes they have been assigned. See the <a href="#validating-arguments">Validating Arguments</a> section for further information.</p>
-<h3 id="entering-premises-and-exceptions"><span class="header-section-number">8.6.7</span> Entering Premises and Exceptions</h3>
-<p>In the premise and exception fields of the form, you can choose an existing statement in the argument graph or click on the + icon shown on the right-hand side of the field, when you move the mouse cursor over the field, to open up a form for entering a new statement. When you add a new statement, its &quot;atom&quot; property will be initialized with a predicate logic formula. If you are interested in formalizing the statements, you can use this formula as a template, replacing its schema variables with constants, or edit the formula to meet your own requirements. If you don't need to formalize statements, you can either delete the atoms or just ignore them.</p>
-<p>You can additional premises or exception by clicking on the &quot;Add a premise&quot; and &quot;Add an exception&quot; buttons. Premises and exceptions can be deleted by clicking on the X icon shown on the right-hand side of the premise or exception field, when you move the mouse cursor over the field.</p>
-<h2 id="editing-arguments"><span class="header-section-number">8.7</span> Editing Arguments</h2>
-<p>To edit an existing argument in an argument graph, first navigate to the argument, using either the hypertext view of the graph, beginning on the argument graph page, or the argument map. In the map view, click on the circle or rounded box containing the argument you want to edit.</p>
-<p>Either way you will now be viewing the argument page. Click of the &quot;Edit&quot; button in the menu bar of the page. This will reveal, on the same page, a form for modifying the argument. This is the same form used to enter new arguments, described in the <a href="#entering-new-arguments">Entering New Arguments</a> section of this chapter, but with the fields of the form filled in with the current values of the properties of the argument. After making changes, click on the &quot;Save Argument&quot; button at the bottom of the form, to have the changes stored in the argument graph database, or the &quot;Cancel&quot; button to abort the editing process and retain the prior values of the properties of the statement.</p>
+<p>The weight can be entered directly in the argument editor, using the slider.</p>
+<h3 id="argument-metadata"><span class="header-section-number">6.5.6</span> Argument Metadata</h3>
+<p>Arguments can be annotated with metadata properties, using the <a href="http://en.wikipedia.org/wiki/Dublin_Core">Dublin Core</a> metadata elements, in the same way as statements. See the <a href="#statement-metadata">Statement Metadata</a> section for further instructions.</p>
+<p>You can use the <em>description</em> field of the argument to provide whatever background information you want about the argument, including quotations of formulations of the argument in source texts, along with hyperlinks to the sources.</p>
+<p>You have the same possibilities for structuring the text of the description, using the <a href="http://daringfireball.net/projects/markdown/">Markdown</a> wiki language, and entering translations of the description as you have for statement descriptions. See the <a href="#statement-description">Statement Description</a> section of this chapter for further information.</p>
+<h2 id="editing-arguments"><span class="header-section-number">6.6</span> Editing Arguments</h2>
+<p>To edit an existing argument in an argument graph, first navigate to the argument page and then click on the &quot;Edit Argument&quot; button. This will open a new tab with an editor for modifying the argument. This is the same form used to enter new arguments, described in the <a href="#entering-new-arguments">Entering New Arguments</a> section of this chapter, but with the fields of the form filled in with the current values of the properties of the argument. After making changes, click on the &quot;Save&quot; button at the bottom of the form, to have the changes stored in the argument graph database, or the &quot;Cancel&quot; button to abort the editing process and retain the prior values of the properties of the statement.</p>
 <p><strong>Warning</strong>: The changes cannot be undone after saving them.</p>
-<h2 id="validating-arguments"><span class="header-section-number">8.8</span> Validating Arguments</h2>
-<p>(<em>Note: not yet implemented</em>)</p>
-<p>By argument &quot;validation&quot; here we mean checking whether an argument correctly instantiates the argumentation scheme it has been assigned, if any. (The validation process does <em>not</em> check whether the premises or conclusion of the argument are true or acceptable.) The argument passes this validity test if it matches its scheme. If it does not match the scheme, a report is displayed showing how the argument fails to match the scheme.</p>
-<p>Arguments can be validated at your choice of different levels of granularity. From the least to the most fine-grained, these levels are:</p>
-<ol style="list-style-type: decimal">
-<li>The argument matches the scheme if and only if it has the same number of premises as the scheme, and these premises also have the same &quot;role&quot; labels.</li>
-<li>In addition to the above test, the text of the statements in the conclusion and premises of the argument match the statements in the conclusion and premises of the scheme, for each natural language representation of the text in the argument. The natural language templates defined in the scheme are used to test the matches, by trying to replace variables in the templates with substrings in the text of the statements in the argument.</li>
-<li>In addition to the above test, the atoms (predicate logic formulas) of the conclusion and premises of the argument match the atoms of the scheme.</li>
-</ol>
-<p>Exceptions in argumentation schemes are represented as undercutting arguments in argument graphs and are validated a bit differently. Each exception of an argumentation scheme is used to construct a separate undercutter argument, with a single premise matching the exception in the scheme. Thus, an undercutter is valid if its premise matches one of the exceptions of the scheme.</p>
-<p>Undercutters are not validating automatically when validating the argument they undercut.</p>
-<p>To validate an argument, go to the argument page and click on the &quot;Validate&quot; button in the menu bar. You will be asked to select the level of granularity to check. The command will then generate and display a validation report either confirming that the argument is valid or listing all the mismatches so that you can repair them using the <a href="#editing-arguments">argument editing</a> tool.</p>
-<p>You can also validate all of the arguments in the argument graph, in one step, by going to the argument graph page and clicking on the &quot;validate&quot; button of its menu bar.</p>
-<h2 id="deleting-arguments"><span class="header-section-number">8.9</span> Deleting Arguments</h2>
-<p>To delete an argument from an argument graph, first navigate to the argument, using either the hypertext view of the graph, beginning on the argument graph page, or the argument map. In the map view, click on the circle or rounded box containing the argument you want to delete.</p>
-<p>Either way you will now be viewing the argument page. Click of the &quot;Delete&quot; button in the menu bar of the page. You will be asked to confirm or cancel the deletion.</p>
-<p>Deleting an the argument does not delete the statements used in its conclusion, premises or exceptions.</p>
+<!--
+## Validating Arguments
+
+(*Note: not yet implemented*)
+
+By argument "validation" here we mean checking whether an argument
+correctly instantiates the argumentation scheme it has been assigned,
+if any. (The validation process does *not* check whether the premises
+or conclusion of the argument are true or acceptable.) The argument
+passes this validity test if it matches its scheme.  If it does not
+match the scheme, a report is displayed showing how the argument fails
+to match the scheme.
+
+Arguments can be validated at your choice of different levels of granularity. From the least to the most fine-grained, these levels are:
+
+1. The argument matches the scheme if and only if it has the same number of premises as the scheme, and these premises also have the same "role" labels. 
+2. In addition to the above test, the text of the statements in the conclusion and premises of the argument match the statements in the conclusion and premises of the scheme, for each natural language representation of the text in the argument.  The natural language templates defined in the scheme are used to test the matches, by trying to replace variables in the templates with substrings in the text of the statements in the argument.
+3. In addition to the above test, the atoms (predicate logic formulas) of the conclusion and premises of the argument match the atoms of the scheme.
+
+Exceptions in argumentation schemes are represented as undercutting arguments in argument graphs and are validated a bit differently. Each exception of an argumentation scheme is used to construct a separate undercutter argument, with a single premise matching the exception in the scheme. Thus, an undercutter is valid if its premise matches one of the exceptions of the scheme.
+
+Undercutters are not validating automatically when validating the argument they undercut.
+
+To validate an argument, go to the argument page and click on the "Validate" button in the menu bar. You will be asked to select the level of granularity to check. The command will then generate and display a validation report either confirming that the argument is valid or listing all the mismatches so that you can repair them using the [argument editing](#editing-arguments) tool.
+
+You can also validate all of the arguments in the argument graph, in one step, by going to the argument graph page and clicking on the "validate" button of its menu bar.
+-->
+<h2 id="deleting-arguments"><span class="header-section-number">6.7</span> Deleting Arguments</h2>
+<p>To delete an argument from an argument graph, first navigate to the argument page and then click of the &quot;Remove Argument&quot; button. You will be asked to confirm or cancel the deletion.</p>
+<p>Deleting an the argument does not delete the statements used in its conclusion or premises.</p>
 <p>Any arguments undercutting this argument will also be deleted, since the conclusion of such an undercutter refers to this argument specifically and can serve no function once the argument has been deleted.</p>
 <p><strong>Warning</strong>: The deletion cannot be undone after it has been confirmed.</p>
-<h2 id="using-polls-to-weigh-statements-and-arguments"><span class="header-section-number">8.10</span> Using Polls to Weigh Statements and Arguments</h2>
-<p>Public users can be polled for their opinions and the results of the poll can be averaged to compute the weights of statements and arguments. See the <a href="#formulating-polling-and-comparing-opinions">Formulating, Polling and Comparing Opinions</a> chapter for further information about polls.</p>
-<p>To compute the weights of statements and arguments from the poll results, go to the argument graph page and click on the &quot;Weigh&quot; button in the menu bar. (<em>Note: not yet implemented.</em>) Afterwards you may also want to re-evaluate the argument graph to update the acceptability labels of the statement and argument nodes, as explained in the <a href="#evaluating-argument-graphs">Evaluating Argument Graphs</a> section.</p>
-<h2 id="evaluating-argument-graphs"><span class="header-section-number">8.11</span> Evaluating Argument Graphs</h2>
-<p>The term &quot;argument evaluation&quot; has two different but related meanings in this manual. The broader meaning, described in the <a href="#evaluating-arguments">Evaluating Arguments</a> section of this manual, concerns the process of critically assessing the validity of arguments, by</p>
+<!--
+## Using Polls to Weigh Statements and Arguments
+
+Public users can be polled for their opinions and the results of the poll can be averaged to compute the weights of statements and arguments. See the [Formulating, Polling and Comparing Opinions](#formulating-polling-and-comparing-opinions) chapter for further information about polls. 
+
+To compute the weights of statements and arguments from the poll results, go to the argument graph page and click on the "Weigh" button in the menu bar. (*Note: not yet implemented.*)  Afterwards you may also want to re-evaluate the argument graph to update the acceptability labels of the statement and argument nodes, as explained in the [Evaluating Argument Graphs](#evaluating-argument-graphs) section.
+-->
+<h2 id="evaluating-argument-graphs"><span class="header-section-number">6.8</span> Evaluating Argument Graphs</h2>
+<p>The term &quot;argument evaluation&quot; has two different but related meanings. The broader meaning, described in the <a href="#evaluating-arguments">Evaluating Arguments</a> section of this manual, concerns the process of critically assessing the validity of arguments, by</p>
 <ol style="list-style-type: decimal">
 <li>revealing implicit premises</li>
 <li>validating whether the arguments are formally correct, by instantiating accepted argumentation schemes</li>
@@ -770,52 +545,108 @@ interface. -->
 <p>The final step of this process, determining which claims are acceptable, is what we mean by argument evaluation in this section. Perhaps a better term for this narrower conception of argument evaluation, to avoid confusion, would be &quot;argument labeling&quot;, since the result of this kind of argument evaluation is to label the statement and argument nodes of an argument graph as being &quot;in&quot;, &quot;out&quot; or &quot;undecided&quot;, where:</p>
 <dl>
 <dt>in</dt>
-<dd>means the statement is <em>acceptable</em> (presumably true) or the argument is <em>applicable</em>, because all of its premises are in and it has not been undercut by an in argument. out
+<dd>means the statement is <em>acceptable</em> (presumably true) or the argument is <em>applicable</em>, because all of its premises are in and it has not been undercut by an in argument.
 </dd>
-<dd>means the negation of the statement is acceptable (i.e. the statement itself is presumably false) or the argument is not applicable. undecided
+<dt>out</dt>
+<dd>means the negation of the statement is acceptable (equivalently: the statement itself is not acceptable) or the argument is not applicable.
 </dd>
+<dt>undecided</dt>
 <dd>means the statement or argument is neither in nor out.
 </dd>
 </dl>
-<p>The latest verison of the Carneades computational model of argument labels statement and argument nodes in an argument graph by mapping the argument graph to a Dung abstract argumentation framework <span class="citation">[@Dung1995]</span>, using the ASPIC+ model of structured argument <span class="citation">[@Prakken:2010a]</span> in a way which preserves the features of the original version of Carneades, in particular its support for proof standards <span class="citation">[@GordonPrakkenWalton:2007a]</span>. Carneades uses grounded semantics for the resulting Dung argumentation framework, which is the most cautious (skeptical) semantics with regard to the claims it finds acceptable.</p>
-<p>To have all the statements and arguments in the argument graph automatically labelled, using the Carneades computational model of argument, go to the argument graph page and click on the &quot;Evaluate&quot; button in the menu bar. This will cause the argument graph to be labelled using the weights currently assigned to the statement and argument nodes.</p>
-<p>The labels are not updated automatically when changes are made to the argument graph. So you will need to manually re-evaluate the argument graph whenever any changes are made which might affect the acceptability of some statement. This includes not only changes to the weights of the statements and arguments, but also changes to the assigned proof standards and, the addition or deletion of any arguments. (Additional arguments, not only deletions, can cause the labels to change, since acceptability is a <em>nonmonotonic</em> inference relation.)</p>
-<p>To evaluate the arguments using the (latest) poll results to weight the statements and arguments, first update the weights by clicking on the &quot;Weigh&quot; button in the menu bar of the argument graph page, before executing the &quot;Evaluate&quot; command. See the <a href="#using-polls-to-weigh-statements-and-arguments">Using Polls to Weigh Statements and Arguments</a> section for further information.</p>
-<h2 id="importing-xml"><span class="header-section-number">8.12</span> Importing XML</h2>
-<p>(<em>Note: XML import, unlike XML export, is not yet implemented.</em>)</p>
-<p>The Carneades Argument Format (CAF) is an XML schema for storing argument graphs in files, in a structured but plain text form which can be read or edited by humans, using any text editor, that is also suitable for machine processing.</p>
-<p>To facilitate moving statements and arguments between argument graphs, across installations of the Carneades system, every statement and argument is assigned an <a href="http://en.wikipedia.org/wiki/Uniform_resource_name">Uniform Resource Name</a> (URN). URNs are identifiers which are extremely likely to be unique, world-wide.</p>
-<p>(<em>Note: Write a reference manual describing the CAF format.</em>)</p>
-<p>For information about how to <em>export</em> argument graphs to XML, see the <a href="#exporting-argument-graphs-to-XML">Exporting Argument Graphs to XML</a> section of this user manual.</p>
-<p>To import a CAF file, navigate to the argument graph page and click on the &quot;Import&quot; button in the menu bar. You be asked to select a file from your file system. The selected filed will be validated to make sure that it is a valid CAF file. It if it is valid, it will be used to update the argument graph, as follows.</p>
-<ol style="list-style-type: decimal">
-<li>First, you will be asked if you want to <em>merge</em> or <em>overwrite</em> the data in the argument graph in the database with the data in the CAF file.</li>
-<li>If you choose to <em>merge</em> the data:
-<ul>
-<li>The properties of statements or arguments in the argument graph will be <em>replaced</em> by the values of the same properties in the CAF file but the values of properties undefined in the CAF file will retain their current values in the database. (<strong>Note</strong>: all values of a multivalued metadata property will be <em>replaced</em> by the values of the property in the CAF file. The values of individual properties are not merged.)</li>
-<li>Any new statements or arguments in the CAF file will be added to the database, without deleting statements or arguments in the database which are not in the CAF file.</li>
-<li>The metadata of the argument graph as a whole will be updated using the metadata in the CAF file. Properties of the argument graph will be replaced by the values of the same properties in the CAF file. (<strong>Note</strong>: If a property has multipled values, they will all be replaced, not merged.) Properties not in the CAF file will retain their current values in the database.</li>
-<li>References of the argument graph in the database will be replaced by references with the same keys in the CAF file, but references in the database which are not in the CAF file will be retained, not deleted.<br /></li>
-</ul></li>
-<li>If instead you choose to <em>overwrite</em> the data:
-<ul>
-<li>The properties of statements or arguments in the argument graph will be <em>replaced</em> by the values of the same properties in the CAF file and properties undefined in the CAF file will be deleted in the database. (<strong>Note</strong>: all values of a multivalued metadata property will be <em>replaced</em> by the values of the property in the CAF file. The values of individual properties are not merged.)</li>
-<li>Any new statements or arguments in the CAF file will be added to the database, without deleting statements or arguments in the database which are not in the CAF file.</li>
-<li>The metadata of the argument graph as a whole will be updated using the metadata in the CAF file. Properties of the argument graph will be replaced by the values of the same properties in the CAF file. (<strong>Note</strong>: If a property has multipled values, they will all be replaced, not merged.) Properties not in the CAF file will be deleted in the database.</li>
-<li>References of the argument graph in the database will be replaced by references with the same keys in the CAF file and references in the database which are not in the CAF file will be deleted.</li>
-</ul></li>
-</ol>
-<p>(<em>Note: Look for a simpler solution.</em>)</p>
-<h1 id="argumentation-schemes"><span class="header-section-number">9</span> Argumentation Schemes</h1>
-<p>Argumentation schemes and policies are both represented using the same high-level scheme (rule) language. We use the term &quot;policy&quot; here very broadly, to cover any kind of rule, norm, law, or regulation, whether or not the policy is currently valid and in force or proposed and under discussion.</p>
+<p>Argument graphs are evaluated using the computational model of structured argument presented in <span class="citation">(Gordon, Prakken, and Walton 2007)</span>. The argument graph is automatically re-evaluated, updating the labels of the argument and statement nodes, whenever the argument graph is modified. This includes not only changes to the weights of the statements and arguments, but also changes to the assigned proof standards and, the addition or deletion of any arguments. (Additional arguments, not only deletions, can cause the labels to change, since acceptability is a <em>nonmonotonic</em> inference relation.)</p>
+<!--
+Argument graphs are labelled by mapping the graph to a Dung abstract
+argumentation framework [@Dung1995], using the ASPIC+ model of
+structured argument [@Prakken:2010a] in a way which preserves the
+features of the original version of Carneades, in particular its
+support for proof standards [@GordonPrakkenWalton:2007a]. Carneades
+uses grounded semantics for the resulting Dung argumentation
+framework, which is the most cautious (skeptical) semantics with
+regard to the claims it finds acceptable.
+-->
+<!--
+## Importing XML
+
+(*Note: Not yet implemented.*)
+
+The Carneades Argument Format (CAF) is an XML schema for storing
+argument graphs in files, in a structured but plain text form which
+can be read or edited by humans, using any text editor, that is also
+suitable for machine processing.
+
+To facilitate moving statements and arguments between argument graphs,
+across installations of the Carneades system, every statement and
+argument is assigned an
+[Uniform Resource Name](http://en.wikipedia.org/wiki/Uniform_resource_name)
+(URN).  URNs are identifiers which are extremely likely to be unique,
+world-wide.
+
+(*Note: Write a reference manual describing the CAF format.*) 
+
+For information about how to *export* argument graphs to XML, see the
+[Exporting Argument Graphs to XML](#exporting-argument-graphs-to-XML)
+section of this user manual.
+
+To import a CAF file, navigate to the argument graph page and click on the "Import" button in the menu bar. You be asked to select a file from your file system.  The selected filed will be validated to make sure that it is a valid CAF file. It if it is valid, it will be used to update the argument graph, as follows.  
+
+1. First, you will be asked if you want to *merge* or *overwrite* the
+   data in the argument graph in the database with the data in the CAF
+   file.
+2. If you choose to *merge* the data:
+    - The properties of statements or arguments in the argument graph
+      will be *replaced* by the values of the same properties in the
+      CAF file but the values of properties undefined in the CAF file
+      will retain their current values in the database. (**Note**: all
+      values of a multivalued metadata property will be *replaced* by
+      the values of the property in the CAF file. The values of
+      individual properties are not merged.)
+    - Any new statements or arguments in the CAF file will be added to
+      the database, without deleting statements or arguments in the
+      database which are not in the CAF file.
+    - The metadata of the argument graph as a whole will be updated
+      using the metadata in the CAF file. Properties of the argument
+      graph will be replaced by the values of the same properties in
+      the CAF file. (**Note**: If a property has multipled values,
+      they will all be replaced, not merged.) Properties not in the
+      CAF file will retain their current values in the database.
+    - References of the argument graph in the database will be
+      replaced by references with the same keys in the CAF file, but
+      references in the database which are not in the CAF file will be
+      retained, not deleted.
+3. If instead you choose to *overwrite* the data:
+    - The properties of statements or arguments in the argument graph
+      will be *replaced* by the values of the same properties in the
+      CAF file and properties undefined in the CAF file will be
+      deleted in the database. (**Note**: all values of a multivalued
+      metadata property will be *replaced* by the values of the
+      property in the CAF file. The values of individual properties
+      are not merged.)
+    - Any new statements or arguments in the CAF file will be added to
+      the database, without deleting statements or arguments in the
+      database which are not in the CAF file.
+    - The metadata of the argument graph as a whole will be updated
+      using the metadata in the CAF file. Properties of the argument
+      graph will be replaced by the values of the same properties in
+      the CAF file. (**Note**: If a property has multipled values,
+      they will all be replaced, not merged.) Properties not in the
+      CAF file will be deleted in the database.
+    - References of the argument graph in the database will be
+      replaced by references with the same keys in the CAF file and
+      references in the database which are not in the CAF file will be
+      deleted.
+-->
+<h1 id="argumentation-schemes"><span class="header-section-number">7</span> Argumentation Schemes</h1>
+<p>Argumentation schemes are represented using a high-level scheme (rule) language embedded in the Clojure programming language.</p>
 <p>Argumentation schemes generalize the notion of an inference rule to cover defeasible as well as strict reasoning patterns. We use the term &quot;scheme&quot; instead of &quot;rule&quot; to emphasize that the rules are usually defeasible. The scheme language is expressive enough to represent axiomatizations (i.e. axioms and inferences rules) of theories in many domains, including laws, regulations and policies, in addition to argumentation schemes per se.</p>
-<p>Computational models of theories have been called many things in computer science, including &quot;knowledge bases&quot; and &quot;deep conceptual&quot; or &quot;semantic&quot; models. We prefer the term &quot;theory&quot; to &quot;knowledge-base&quot; because the latter may suggest that theory is true, while the theory may be controversial or contested.</p>
-<p>The scheme language is similar to logic programming languages such as Prolog. Any Prolog rule (&quot;clause&quot;) can be represented in Carneades in a straight-forward way. The rule language has some additional features for representing argumentation schemes, such as scheme variables ranging over atoms and a means to represent premise roles (e.g. &quot;major&quot;, &quot;minor&quot;). Moreover, schemes can be annotated with meta-data and documentation, in multiple natural languages.</p>
-<p>The inference engine of the policy modeling tool is able to automatically construct arguments from theories represented using the scheme language. Using a high-level declarative language for representing theories, and generating arguments from these theories, makes it easier for domain experts to represent and maintain domain theories.</p>
+<p>Computational models of theories have been called many things in computer science, including &quot;knowledge bases&quot; and &quot;deep conceptual&quot; or &quot;semantic&quot; models. We prefer the term &quot;theory&quot; to &quot;knowledge-base&quot; because &quot;knowledge&quot; may suggest consensus or truth, while it is clearer that theories may be controversial or contested.</p>
+<p>The scheme language is similar to logic programming languages such as Prolog. Any Prolog rule (&quot;clause&quot;) can be represented in Carneades in a straight-forward way. The rule language has some additional features for representing argumentation schemes, such as scheme variables ranging over atoms and a means to represent premise roles (e.g. &quot;major&quot;, &quot;minor&quot;). Moreover, schemes in this language can be annotated with meta-data and documentation, in multiple natural languages.</p>
+<p>Carneades includes an inference engine which is able to automatically apply theories to construct arguments. Using a high-level declarative language for representing theories, and generating arguments from these theories, makes it easier for domain experts to read and validate the theories.</p>
 <p>Theories may organized in a hierarchical structure of sections and subsections, with schemes included at any level. Like schemes, the theory as a whole and each of its sections can be annotated with its own meta-data and natural language description. These features facilitate self-documenting and &quot;isomorphic&quot; modeling. The source text of the schemes, policies or legislation can be included within the model, in the same files, in such as way as to preserve the hierarchical structure of the sources. This makes it easier to maintain the model as the source documents are modified, since there can be a one-to-one correspondance between sections of the source text and sections of the model.</p>
-<p>Theories are represented in text files, using the scheme language. The scheme language is an executable knowledge-representation language, with its own well-defined semantics and an inference engine implementing this semantics. It is not intended to be used as an &quot;interchange format&quot; for exporting and importing theories among diverse formalisms with varied semantics.</p>
-<p>The semantics of argumentation schemes are formally defined by mapping instantiations of argumentation schemes to argument graphs and, in turn, mapping these graphs to Dung abstract argumentation frameworks <span class="citation">[@Dung1995]</span>, inspired by Prakken's ASPIC+ model of structured argument <span class="citation">[@Prakken:2010a]</span>, in a way which preserves the Carneades model of proof standards <span class="citation">[@GordonPrakkenWalton:2007a]</span>.</p>
-<h2 id="modeling-argumentation-schemes"><span class="header-section-number">9.1</span> Modeling Argumentation Schemes</h2>
+<p>Theories are represented in Clojure source code files. Clojure packages can be used to modularize, combine and reuse theories.</p>
+<p>The theory language is an executable knowledge-representation language, with its own semantics and an inference engine implementing this semantics. It is not intended to be used as an &quot;interchange format&quot; for exporting and importing theories among diverse formalisms with varied semantics.</p>
+<p>The semantics of theories are defined by mapping instantiations of argumentation schemes to argument graphs and, in turn, evaluating these graphs using the computational model of structured argument presented in <span class="citation">(Gordon, Prakken, and Walton 2007)</span>.</p>
+<h2 id="modeling-argumentation-schemes"><span class="header-section-number">7.1</span> Modeling Argumentation Schemes</h2>
 <p>In this section we illustrate how to use the language to represent a version of the scheme for arguments from practical reasoning.</p>
 <p>A domain theory is represented by first defining a <em>language</em> (dictionary) of symbols, denoting predicates and terms, and then a set of inference rules, called <em>schemes</em>, using this language.</p>
 <p>The language is represented as a map from symbols to predicates and individuals, in the Clojure programming language. Each symbol of the language is mapped to a structure with fields for the symbol of the predicate (redundantly), the arity of the predicate (i.e. the number of columns in a tabular representation of the relation denoted by the predicate) and an optional number of forms for expressing statements and questions about this predicate in one or more natural languages.</p>
@@ -903,8 +734,14 @@ interface. -->
    })</code></pre>
 <p>An argumentation scheme is represented as a structure with six fields:</p>
 <ol style="list-style-type: decimal">
-<li>id, 2. header, 3. conclusion 4. premises, 5. exceptions, and 6. assumptions. The id is a term in the language used to reify argumentation schemes and represent statements about argumentation schemes in domain models. The header enables metadata about the scheme to be represented (e.g. title, description). Descriptions can be represented in multiple natural languages. The conclusion is a formula schema, which may contain schema variables. Schema variables are represented by symbols beginning with a question mark, e.g <code>?Ag</code>, <code>?A</code>, and <code>?G</code>, and range over both terms and propositions. Thus, the conclusion of an argumentation scheme can be a schema variable. This feature is needed for representing schemes, such as arguments from expert witness testimony, whose conclusion may be any proposition whatsoever.</li>
+<li>id</li>
+<li>header</li>
+<li>conclusion</li>
+<li>premises</li>
+<li>exceptions, and</li>
+<li>assumptions.</li>
 </ol>
+<p>The id is a term in the language used to reify argumentation schemes and represent statements about argumentation schemes in domain models. The header enables metadata about the scheme to be represented (e.g. title, description). Descriptions can be represented in multiple natural languages. The conclusion is a formula schema, which may contain schema variables. Schema variables are represented by symbols beginning with a question mark, e.g <code>?Ag</code>, <code>?A</code>, and <code>?G</code>, and range over both terms and propositions. Thus, the conclusion of an argumentation scheme can be a schema variable. This feature is needed for representing schemes, such as arguments from expert witness testimony, whose conclusion may be any proposition whatsoever.</p>
 <p>The premises, exceptions and assumptions fields of schemes are vectors of premise structures, where each premise has the following properties:</p>
 <dl>
 <dt>role</dt>
@@ -914,13 +751,10 @@ interface. -->
 <dd>Boolean. False if the premise is negated. Default: true.
 </dd>
 <dt>statement</dt>
-<dd>A formula schema.
-</dd>
-<dt>implicit</dt>
-<dd>True if the premise was not explicitly stated in the natural language text of the source document or documents. (Arguments with implicit premises are called &quot;enthymemes&quot;.)
+<dd>An atom formalizing the propositional content of the statement.
 </dd>
 </dl>
-<p>Next, using this language we formally define the positive and negative versions of a scheme for practical reasoning. Schemes may be organized in an hierarchy of <em>sections</em>, each section with its own metadata. But since there are only four schemes in this example, sections are not illustrated here.</p>
+<p>Next, using this language we formally define positive and negative versions of a scheme for practical reasoning. Schemes may be organized in an hierarchy of <em>sections</em>, each section with its own metadata. But since there are only four schemes in this example, sections are not illustrated here.</p>
 <pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="kw">def</span><span class="fu"> S </span>
   [(make-scheme                            
     <span class="kw">:id</span> &#39;pras1
@@ -946,11 +780,11 @@ interface. -->
      (make-premise <span class="kw">:role</span> <span class="st">&quot;goal&quot;</span> <span class="kw">:statement</span> &#39;(realizes ?S2 ?G))
      (make-premise <span class="kw">:role</span> <span class="st">&quot;value&quot;</span> <span class="kw">:statement</span> &#39;(demotes ?G ?V))])
    ])</code></pre>
-<p>Now, let's us package the language and schemes together in a theory. Conceptually, a theory is a set of propositions. Since the set may be infinite, theories are represented intensionally, as a set of axioms and strict and defeasible inference rules, called argumentation schemes.</p>
-<p>A theory is modelled as a structure with the following fields:</p>
+<p>Now, let's us package the language and schemes together in a theory. Conceptually, a theory is a set of propositions. But since the set may be infinite, it is more convenient to represent theories intensionally, as a set of axioms and inference rules. We call the inference rules &quot;argumentation schemes&quot;, because they may be defeasible, to distinguish them from the inference rules of classical logic, which are all non-defeasible (strict).</p>
+<p>A theory is modelled as a structure having the following fields:</p>
 <dl>
 <dt>header</dt>
-<dd>A header with metadata (e.g. title, description) about the theory. Descriptions can be in multiple languages and can be arbitrarily long, structured texts, represented using the Markdown wiki language.
+<dd>metadata (e.g. title, description) about the theory. Descriptions can be in multiple languages and can be arbitrarily long, structured texts, represented using the Markdown wiki language.
 </dd>
 <dt>language</dt>
 <dd>The formal language of the theory; a dictionary mapping symbols to terms and predicates.
@@ -988,319 +822,327 @@ interface. -->
      <span class="kw">:publisher</span> <span class="st">&quot;IMPACT&quot;</span>
      <span class="kw">:date</span> <span class="st">&quot;2012&quot;</span>)}))
 </code></pre>
-<h2 id="modeling-policies"><span class="header-section-number">9.2</span> Modeling Policies</h2>
-<p>Policies and argumentation schemes are modeled in the same way. This section illustrates how to use the language to model policies, with a copyright example.</p>
-<p>The policy issue in this example is whether so-called &quot;orphaned&quot; works may be published without a license for some purposes.</p>
-<p>We assume in this example that current copyright law in Germany requires a license, with no exceptions for orphaned works. This is the &quot;status quo&quot; policy. An alternative policy is proposed by a German non-profit organization, the Aktionsbündnisses &quot;Urheberrecht für Bildung und Wissenschaft&quot;, called the &quot;Action Alliance&quot; in the following. This policy would allow orphaned works to be published, with or without a license, under exceptional circumstances, for example when the work is published for non-commercial purposes and an effort has been made to search for the copyright owner.</p>
-<p>We begin by modeling the technical language (&quot;ontology&quot;) of the policies:</p>
-<pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="kw">def</span><span class="fu"> L</span>
+<!--
+## Modeling Policies
+
+Policies and argumentation schemes are modeled in the same way.  This
+section illustrates how to use the language to model policies, with a
+copyright example.
+
+The policy issue in this example is whether so-called "orphaned" works
+may be published without a license for some purposes.
+
+We assume in this example that current copyright law in Germany
+requires a license, with no exceptions for orphaned works. This is the
+"status quo" policy.  An alternative policy is proposed by a German
+non-profit organization, the Aktionsbündnisses "Urheberrecht für
+Bildung und Wissenschaft", called the "Action Alliance" in the
+following. This policy would allow orphaned works to be published,
+with or without a license, under exceptional circumstances, for
+example when the work is published for non-commercial purposes and an
+effort has been made to search for the copyright owner.
+
+We begin by modeling the technical language ("ontology") of the
+policies:
+
+~~~{.clojure }
+(def L
      (make-language 
-      (make-individual <span class="kw">:symbol</span> &#39;the-person 
-               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;the person&quot;</span> <span class="kw">:de</span> <span class="st">&quot;die Person&quot;</span>})
-      (make-individual <span class="kw">:symbol</span> &#39;the-work 
-               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;the work&quot;</span> <span class="kw">:de</span> <span class="st">&quot;das Werk&quot;</span>})
-      (make-individual <span class="kw">:symbol</span> &#39;commercial 
-               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;commercial&quot;</span>})
-      (make-individual <span class="kw">:symbol</span> &#39;purpose 
-               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;Purpose&quot;</span>})
-      (make-individual <span class="kw">:symbol</span> &#39;identifiers 
-               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;Identifiers&quot;</span>})
-      (make-individual <span class="kw">:symbol</span> &#39;non-commercial 
-               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;non-commercial&quot;</span>})
-      (make-individual <span class="kw">:symbol</span> &#39;none 
-               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;None&quot;</span>})
-      (make-individual <span class="kw">:symbol</span> &#39;professional 
-               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;professional documented search&quot;</span>})
-      (make-individual <span class="kw">:symbol</span> &#39;search 
-               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;Search&quot;</span>})
-      (make-individual <span class="kw">:symbol</span> &#39;standard 
-               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;standard documented search&quot;</span>})
-      (make-individual <span class="kw">:symbol</span> &#39;license 
-               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;License&quot;</span>})
+      (make-individual :symbol 'the-person 
+               :text {:en "the person" :de "die Person"})
+      (make-individual :symbol 'the-work 
+               :text {:en "the work" :de "das Werk"})
+      (make-individual :symbol 'commercial 
+               :text {:en "commercial"})
+      (make-individual :symbol 'purpose 
+               :text {:en "Purpose"})
+      (make-individual :symbol 'identifiers 
+               :text {:en "Identifiers"})
+      (make-individual :symbol 'non-commercial 
+               :text {:en "non-commercial"})
+      (make-individual :symbol 'none 
+               :text {:en "None"})
+      (make-individual :symbol 'professional 
+               :text {:en "professional documented search"})
+      (make-individual :symbol 'search 
+               :text {:en "Search"})
+      (make-individual :symbol 'standard 
+               :text {:en "standard documented search"})
+      (make-individual :symbol 'license 
+               :text {:en "License"})
 
       (make-function
-       <span class="kw">:symbol</span> &#39;the-search
-       <span class="kw">:arity</span> <span class="dv">2</span>
-       <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;the search by %s for the owner of %s&quot;</span>})
+       :symbol 'the-search
+       :arity 2
+       :text {:en "the search by %s for the owner of %s"})
 
       (make-function
-       <span class="kw">:symbol</span> &#39;the-use
-       <span class="kw">:arity</span> <span class="dv">2</span>
-       <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;the use by %s of %s&quot;</span>})
+       :symbol 'the-use
+       :arity 2
+       :text {:en "the use by %s of %s"})
       
       (make-role
-       <span class="kw">:category</span> &#39;license
-       <span class="kw">:symbol</span> &#39;license-to-publish
-       <span class="kw">:min</span> <span class="dv">0</span>
-       <span class="kw">:max</span> nil
-       <span class="kw">:type</span> <span class="kw">:symbol</span>
-       <span class="kw">:askable</span> true
-       <span class="kw">:forms</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s has a license to publish %s.&quot;</span>
-                  <span class="kw">:negative</span> <span class="st">&quot;%s does not have a license to publish %s.&quot;</span>
-                  <span class="kw">:question</span> <span class="st">&quot;Does %s have a license to publish %s?&quot;</span>)}
-       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;Information about an existing license.&quot;</span>}
-       <span class="kw">:followups</span> &#39;[])
+       :category 'license
+       :symbol 'license-to-publish
+       :min 0
+       :max nil
+       :type :symbol
+       :askable true
+       :forms {:en (make-form :positive "%s has a license to publish %s."
+                  :negative "%s does not have a license to publish %s."
+                  :question "Does %s have a license to publish %s?")}
+       :hint {:en "Information about an existing license."}
+       :followups '[])
       
       (make-role
-       <span class="kw">:symbol</span> &#39;may-publish
-       <span class="kw">:min</span> <span class="dv">0</span>
-       <span class="kw">:max</span> nil
-       <span class="kw">:type</span> <span class="kw">:symbol</span>
-       <span class="kw">:askable</span> false
-       <span class="kw">:forms</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s may publish  %s.&quot;</span>
-                  <span class="kw">:negative</span> <span class="st">&quot;%s may not publish %s.&quot;</span>
-                  <span class="kw">:question</span> <span class="st">&quot;May %s publish %s?&quot;</span>)})
+       :symbol 'may-publish
+       :min 0
+       :max nil
+       :type :symbol
+       :askable false
+       :forms {:en (make-form :positive "%s may publish  %s."
+                  :negative "%s may not publish %s."
+                  :question "May %s publish %s?")})
 
       (make-concept
-       <span class="kw">:symbol</span> &#39;person
-       <span class="kw">:askable</span> true
-       <span class="kw">:forms</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s is a person.&quot;</span>
-                  <span class="kw">:negative</span> <span class="st">&quot;%s is not a person.&quot;</span>
-                  <span class="kw">:question</span> <span class="st">&quot;Is %s a person?&quot;</span>)
+       :symbol 'person
+       :askable true
+       :forms {:en (make-form :positive "%s is a person."
+                  :negative "%s is not a person."
+                  :question "Is %s a person?")
            
-           <span class="kw">:de</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s ist ein Rechtsperson.&quot;</span>
-                  <span class="kw">:negative</span> <span class="st">&quot;%s ist nicht ein Rechtsperson.&quot;</span>
-                  <span class="kw">:question</span> <span class="st">&quot;Ist %s ein Rechtsperson?&quot;</span>)}
-       <span class="kw">:category</span> &#39;identifiers
-       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;Please provide an identifier for the person </span>
-<span class="st">                   interested in publishing the work, such as P1.&quot;</span>}
-       <span class="kw">:followups</span> &#39;[work])
+           :de (make-form :positive "%s ist ein Rechtsperson."
+                  :negative "%s ist nicht ein Rechtsperson."
+                  :question "Ist %s ein Rechtsperson?")}
+       :category 'identifiers
+       :hint {:en "Please provide an identifier for the person 
+                   interested in publishing the work, such as P1."}
+       :followups '[work])
 
       (make-concept
-       <span class="kw">:symbol</span> &#39;work
-       <span class="kw">:askable</span> true
-       <span class="kw">:forms</span> {<span class="kw">:de</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s ist ein Werk.&quot;</span>
-                  <span class="kw">:negative</span> <span class="st">&quot;%s is nicht ein Werk.&quot;</span>
-                  <span class="kw">:question</span> <span class="st">&quot;Ist %s ein Werk?&quot;</span>)
-           <span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s is a work.&quot;</span>
-                  <span class="kw">:negative</span> <span class="st">&quot;%s is not a work.&quot;</span>
-                  <span class="kw">:question</span> <span class="st">&quot;Is %s a work?&quot;</span>)}
-       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;Please provide an identifier for the </span>
-<span class="st">                   orphaned work, such as W1.&quot;</span>}
-       <span class="kw">:category</span> &#39;identifiers)
+       :symbol 'work
+       :askable true
+       :forms {:de (make-form :positive "%s ist ein Werk."
+                  :negative "%s is nicht ein Werk."
+                  :question "Ist %s ein Werk?")
+           :en (make-form :positive "%s is a work."
+                  :negative "%s is not a work."
+                  :question "Is %s a work?")}
+       :hint {:en "Please provide an identifier for the 
+                   orphaned work, such as W1."}
+       :category 'identifiers)
       
       (make-role
-       <span class="kw">:symbol</span> &#39;type-of-use
-       <span class="kw">:askable</span> true
-       <span class="kw">:min</span> <span class="dv">1</span>
-       <span class="kw">:max</span> <span class="dv">1</span>
-       <span class="kw">:type</span> &#39;#{non-commercial commercial}
-       <span class="kw">:forms</span> {<span class="kw">:de</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s ist für folgender Zwecken: %s.&quot;</span>
-                  <span class="kw">:negative</span> <span class="st">&quot;%s ist nicht für folgender Zwecken: %s.&quot;</span>
-                  <span class="kw">:question</span> <span class="st">&quot;Ist %s für folgender Zwecken: %s?&quot;</span>)
-           <span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s is for %s purposes.&quot;</span>
-                  <span class="kw">:negative</span> <span class="st">&quot;%s is not for %s purposes.&quot;</span>
-                  <span class="kw">:question</span> <span class="st">&quot;Is %s for %s purposes?&quot;</span>)}
-       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;Will the work be used for commercial or </span>
-<span class="st">                   non-commercial purposes?&quot;</span>}
-       <span class="kw">:category</span> &#39;purpose)
+       :symbol 'type-of-use
+       :askable true
+       :min 1
+       :max 1
+       :type '#{non-commercial commercial}
+       :forms {:de (make-form :positive "%s ist für folgender Zwecken: %s."
+                  :negative "%s ist nicht für folgender Zwecken: %s."
+                  :question "Ist %s für folgender Zwecken: %s?")
+           :en (make-form :positive "%s is for %s purposes."
+                  :negative "%s is not for %s purposes."
+                  :question "Is %s for %s purposes?")}
+       :hint {:en "Will the work be used for commercial or 
+                   non-commercial purposes?"}
+       :category 'purpose)
 
       (make-role
-       <span class="kw">:symbol</span> &#39;search-type
-       <span class="kw">:askable</span> true
-       <span class="kw">:min</span> <span class="dv">1</span>
-       <span class="kw">:max</span> <span class="dv">1</span>
-       <span class="kw">:type</span> &#39;#{standard professional none}
-       <span class="kw">:forms</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;The type of %s was a %s.&quot;</span>
-                  <span class="kw">:negative</span> <span class="st">&quot;The type of %s was not a %s.&quot;</span>
-                  <span class="kw">:question</span> <span class="st">&quot;Was the type of %s a %s?&quot;</span>)}
-       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;What type of search was performed to </span>
-<span class="st">                   try to find the copyright owner?&quot;</span>}
-       <span class="kw">:category</span> &#39;search
-       <span class="kw">:next</span> [&#39;announcement])
+       :symbol 'search-type
+       :askable true
+       :min 1
+       :max 1
+       :type '#{standard professional none}
+       :forms {:en (make-form :positive "The type of %s was a %s."
+                  :negative "The type of %s was not a %s."
+                  :question "Was the type of %s a %s?")}
+       :hint {:en "What type of search was performed to 
+                   try to find the copyright owner?"}
+       :category 'search
+       :next ['announcement])
 
       (make-concept
-       <span class="kw">:symbol</span> &#39;announcement
-       <span class="kw">:askable</span> true
-       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;Information about an announcement.&quot;</span>}
-       <span class="kw">:forms</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;The %s was publically announced.&quot;</span>
-                  <span class="kw">:negative</span> <span class="st">&quot;The %s was not publically announced.&quot;</span>
-                  <span class="kw">:question</span> <span class="st">&quot;Was the %s publically announced?&quot;</span>)}
-       <span class="kw">:category</span> &#39;search)
+       :symbol 'announcement
+       :askable true
+       :hint {:en "Information about an announcement."}
+       :forms {:en (make-form :positive "The %s was publically announced."
+                  :negative "The %s was not publically announced."
+                  :question "Was the %s publically announced?")}
+       :category 'search)
       
       (make-concept
-       <span class="kw">:symbol</span> &#39;valid
-       <span class="kw">:askable</span> false
-       <span class="kw">:form</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s is valid law.&quot;</span>
-                 <span class="kw">:negative</span> <span class="st">&quot;%s is not valid law.&quot;</span>
-                 <span class="kw">:question</span> <span class="st">&quot;Is %s valid law?&quot;</span>)
-          <span class="kw">:de</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s is gültiges Recht.&quot;</span>
-                 <span class="kw">:negative</span> <span class="st">&quot;%s ist nicht gültiges Recht.&quot;</span>
-                 <span class="kw">:question</span> <span class="st">&quot;Ist %s gültiges Recht?&quot;</span>)})))</code></pre>
-<p>This policy consists of a single scheme, modeling Section 31 of German copyright law. The symbol <code>UrhG-31</code> has been defined to refer to this scheme, so as to allow the scheme to be used in multiple policies, since it used both by the current German law and the policy proposed by the Action Alliance.</p>
-<pre class="sourceCode clojure"><code class="sourceCode clojure">
+       :symbol 'valid
+       :askable false
+       :form {:en (make-form :positive "%s is valid law."
+                 :negative "%s is not valid law."
+                 :question "Is %s valid law?")
+          :de (make-form :positive "%s is gültiges Recht."
+                 :negative "%s ist nicht gültiges Recht."
+                 :question "Ist %s gültiges Recht?")})))
+~~~
 
-(<span class="kw">def</span><span class="fu"> UrhG-31</span>
+This policy consists of a single scheme, modeling Section 31 of German
+copyright law. The symbol `UrhG-31` has been defined to refer to this
+scheme, so as to allow the scheme to be used in multiple policies,
+since it used both by the current German law and the policy proposed
+by the Action Alliance.
+
+~~~{.clojure }
+
+
+(def UrhG-31
   (make-scheme                            
-   <span class="kw">:id</span> &#39;UrhG<span class="dv">-31</span>
-   <span class="kw">:header</span> (make-metadata <span class="kw">:title</span> <span class="st">&quot;§ 31 UrhG de lege lata&quot;</span>
-                          <span class="kw">:description</span> {<span class="kw">:de</span> <span class="st">&quot;&gt; Einräumung von</span>
-<span class="st">                          Nutzungsrechten. (1) Der Urheber kann einem</span>
-<span class="st">                          anderen das Recht einräumen, das Werk auf</span>
-<span class="st">                          einzelne oder alle Nutzungsarten zu</span>
-<span class="st">                          nutzen (Nutzungsrecht) ... (3) Das</span>
-<span class="st">                          ausschließliche Nutzungsrecht berechtigt den</span>
-<span class="st">                          Inhaber, das Werk unter Ausschluss aller</span>
-<span class="st">                          anderen Personen auf die ihm erlaubte Art zu</span>
-<span class="st">                          nutzen *und Nutzungsrechte einzuräumen* [§</span>
-<span class="st">                          31 UrhG, Hervorhebung hinzugefügt] ...&quot;</span>
-                                        <span class="kw">:en</span> <span class="st">&quot;&gt; Licensing</span>
-<span class="st">                          copyrights. (1) The author can grant a</span>
-<span class="st">                          simple or exclusive license to others to use</span>
-<span class="st">                          the work … (3) Exclusive rights to use a</span>
-<span class="st">                          work give the licensee the sole right to use</span>
-<span class="st">                          the work in the ways stated by the license,</span>
-<span class="st">                          *along with the right to grant licenses to</span>
-<span class="st">                          third parties* [§ 31 UrhG, emphasis added]</span>
-<span class="st">                          …&quot;</span>})
-   <span class="kw">:conclusion</span> &#39;(may-publish ?P ?W)
-   <span class="kw">:premises</span> [(make-premise <span class="kw">:statement</span> &#39;(license-to-publish ?P ?W))
-              (make-premise <span class="kw">:statement</span> &#39;(valid UrhG<span class="dv">-31</span>)) ]))
+   :id 'UrhG-31
+   :header (make-metadata :title "§ 31 UrhG de lege lata"
+                          :description {:de "> Einräumung von
+                          Nutzungsrechten. (1) Der Urheber kann einem
+                          anderen das Recht einräumen, das Werk auf
+                          einzelne oder alle Nutzungsarten zu
+                          nutzen (Nutzungsrecht) ... (3) Das
+                          ausschließliche Nutzungsrecht berechtigt den
+                          Inhaber, das Werk unter Ausschluss aller
+                          anderen Personen auf die ihm erlaubte Art zu
+                          nutzen *und Nutzungsrechte einzuräumen* [§
+                          31 UrhG, Hervorhebung hinzugefügt] ..."
+                                        :en "> Licensing
+                          copyrights. (1) The author can grant a
+                          simple or exclusive license to others to use
+                          the work … (3) Exclusive rights to use a
+                          work give the licensee the sole right to use
+                          the work in the ways stated by the license,
+                          *along with the right to grant licenses to
+                          third parties* [§ 31 UrhG, emphasis added]
+                          …"})
+   :conclusion '(may-publish ?P ?W)
+   :premises [(make-premise :statement '(license-to-publish ?P ?W))
+              (make-premise :statement '(valid UrhG-31)) ]))
 
 (define german-copyright-law
   (make-section
-   <span class="kw">:id</span> &#39;UrhG
-   <span class="kw">:header</span> (make-metadata 
-        <span class="kw">:title</span> <span class="st">&quot;Urheberrechtsgesetz&quot;</span>
-        <span class="kw">:description</span> {<span class="kw">:de</span> <span class="st">&quot;Das deutsche Urheberrecht in der geltenden Fassung&quot;</span>
-              <span class="kw">:en</span> <span class="st">&quot;The current German copyright law&quot;</span>})
-   <span class="kw">:schemes</span>
-   [UrhG<span class="dv">-31</span>]))</code></pre>
-<p>Next, here is the model of the alternative, more liberal policy proposed by the Action Alliance:</p>
-<pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="kw">def</span><span class="fu"> action-alliance-policy</span>
-     (make-section
-      <span class="kw">:id</span> &#39;Q12-Aktionsbundnis
-      <span class="kw">:header</span> (make-metadata <span class="kw">:title</span> <span class="st">&quot;Orphaned Works Policy Proposed by</span>
-<span class="st">the Aktionsbündnisses Urheberrecht für Bildung und Wissenschaft&quot;</span>
-                 <span class="kw">:description</span> {<span class="kw">:en</span> <span class="st">&quot;The German Action</span>
-<span class="st">Alliance on copyright for education and science proposes the</span>
-<span class="st">following policies for handling orphaned works [@Aktionsbündnis,</span>
-<span class="st">pp. 6-7].&quot;</span>})
+   :id 'UrhG
+   :header (make-metadata 
+        :title "Urheberrechtsgesetz"
+        :description {:de "Das deutsche Urheberrecht in der geltenden Fassung"
+              :en "The current German copyright law"})
+   :schemes
+   [UrhG-31]))
+~~~
 
-      <span class="kw">:schemes</span>
-      [UrhG<span class="dv">-31</span>
+Next, here is the model of the alternative, more liberal policy
+proposed by the Action Alliance:
+
+~~~{.clojure }
+(def action-alliance-policy
+     (make-section
+      :id 'Q12-Aktionsbundnis
+      :header (make-metadata :title "Orphaned Works Policy Proposed by
+the Aktionsbündnisses Urheberrecht für Bildung und Wissenschaft"
+                 :description {:en "The German Action
+Alliance on copyright for education and science proposes the
+following policies for handling orphaned works [@Aktionsbündnis,
+pp. 6-7]."})
+
+      :schemes
+      [UrhG-31
 
        (make-scheme                            
-    <span class="kw">:id</span> &#39;AB-52c<span class="dv">-1</span>-a
-    <span class="kw">:header</span> (make-metadata <span class="kw">:title</span> <span class="st">&quot;§ 52c (1) (a)&quot;</span>
-                   <span class="kw">:description</span> {<span class="kw">:de</span> <span class="st">&quot;(1) Öffentliche</span>
-<span class="st">Zugänglichmachung für nicht-gewerbliche und private Zwecke,</span>
-<span class="st">insbesondere durch Nutzer für Zwecke der Archivierung und für</span>
-<span class="st">Forschung und Ausbildung ... (a) Zulässig ist die öffentliche</span>
-<span class="st">Zugänglichmachung von Werken, deren Urheber oder Rechteinhaber nach</span>
-<span class="st">einer dokumentierten Standardsuche [alternativ: einer zeitlich auf 30</span>
-<span class="st">Tage öffentlichen Bekanntmachung] nicht ermittelt werden können.&quot;</span>})
-    <span class="kw">:conclusion</span> &#39;(may-publish ?P ?W)
-    <span class="kw">:premises</span> 
-        [(make-premise <span class="kw">:statement</span> &#39;(type-of-use (the-use ?P ?W) non-commercial))
-     (make-premise <span class="kw">:statement</span> &#39;(search-type (the-search ?P ?W) standard))
-     (make-premise <span class="kw">:statement</span> &#39;(valid AB-52c<span class="dv">-1</span>-a)) ])
+    :id 'AB-52c-1-a
+    :header (make-metadata :title "§ 52c (1) (a)"
+                   :description {:de "(1) Öffentliche
+Zugänglichmachung für nicht-gewerbliche und private Zwecke,
+insbesondere durch Nutzer für Zwecke der Archivierung und für
+Forschung und Ausbildung ... (a) Zulässig ist die öffentliche
+Zugänglichmachung von Werken, deren Urheber oder Rechteinhaber nach
+einer dokumentierten Standardsuche [alternativ: einer zeitlich auf 30
+Tage öffentlichen Bekanntmachung] nicht ermittelt werden können."})
+    :conclusion '(may-publish ?P ?W)
+    :premises 
+        [(make-premise :statement '(type-of-use (the-use ?P ?W) non-commercial))
+     (make-premise :statement '(search-type (the-search ?P ?W) standard))
+     (make-premise :statement '(valid AB-52c-1-a)) ])
        
        (make-scheme
-    <span class="kw">:id</span> &#39;AB-52c<span class="dv">-2</span>-a
-    <span class="kw">:header</span> (make-metadata <span class="kw">:title</span> <span class="st">&quot;§ 52c (2) (a)&quot;</span>
-                   <span class="kw">:description</span> {<span class="kw">:de</span> <span class="st">&quot;(2) Öffentliche</span>
-<span class="st">Zugänglichmachung für gewerbliche Zwecke ... (a) Zulässig ist die</span>
-<span class="st">öffentliche Zugänglichmachung von Werken, deren Urheber oder</span>
-<span class="st">Rechteinhaber nach einer angemessenen professionellen und</span>
-<span class="st">dokumentierten Suche und einer öffentlichen Bekanntmachung nicht</span>
-<span class="st">ermittelt werden können.&quot;</span>})
-    <span class="kw">:conclusion</span> &#39;(may-publish ?P ?W)
-    <span class="kw">:premises</span> 
-        [(make-premise <span class="kw">:statement</span> &#39;(type-of-use (the-use ?P ?W) commercial))
-     (make-premise <span class="kw">:statement</span> &#39;(search-type (the-search ?P ?W) professional))
-     (make-premise <span class="kw">:statement</span> &#39;(announcement (the-search ?P ?W)))
-     (make-premise <span class="kw">:statement</span> &#39;(valid AB-52c<span class="dv">-2</span>-a))])]))
-</code></pre>
-<p>Notice how Section 31 of German copyright law is also a part of this policy proposal. The proposed policy extends German law with exceptions for orphaned works.</p>
-<p>Now, let's put this altogether is a &quot;theory&quot; containing both policies:</p>
-<pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="kw">ns</span> carneades.examples.copyright-policies
-  (<span class="kw">:use</span> carneades.engine.dublin-core
+    :id 'AB-52c-2-a
+    :header (make-metadata :title "§ 52c (2) (a)"
+                   :description {:de "(2) Öffentliche
+Zugänglichmachung für gewerbliche Zwecke ... (a) Zulässig ist die
+öffentliche Zugänglichmachung von Werken, deren Urheber oder
+Rechteinhaber nach einer angemessenen professionellen und
+dokumentierten Suche und einer öffentlichen Bekanntmachung nicht
+ermittelt werden können."})
+    :conclusion '(may-publish ?P ?W)
+    :premises 
+        [(make-premise :statement '(type-of-use (the-use ?P ?W) commercial))
+     (make-premise :statement '(search-type (the-search ?P ?W) professional))
+     (make-premise :statement '(announcement (the-search ?P ?W)))
+     (make-premise :statement '(valid AB-52c-2-a))])]))
+
+
+~~~
+
+Notice how Section 31 of German copyright law is also a part of this
+policy proposal. The proposed policy extends German law with
+exceptions for orphaned works.
+
+Now, let's put this altogether is a "theory" containing both policies:
+
+~~~{.clojure }
+(ns carneades.examples.copyright-policies
+  (:use carneades.engine.dublin-core
         carneades.engine.scheme
         carneades.engine.argument))
 
-(<span class="kw">def</span><span class="fu"> copyright-policies</span>
+(def copyright-policies
      (make-theory
-      <span class="kw">:header</span> 
-      (make-metadata <span class="kw">:title</span> <span class="st">&quot;Copyright in the Knowledge Economy&quot;</span>
-             <span class="kw">:description</span> {<span class="kw">:en</span> <span class="st">&quot;Current European copright policies </span>
-<span class="st">along with policy proposals submitted in comments on the European Green paper on</span>
-<span class="st">[Copyright in the Knowledge Economy](http://goo.gl/SjUXg).&quot;</span>}) 
+      :header 
+      (make-metadata :title "Copyright in the Knowledge Economy"
+             :description {:en "Current European copright policies 
+along with policy proposals submitted in comments on the European Green paper on
+[Copyright in the Knowledge Economy](http://goo.gl/SjUXg)."}) 
       
-      <span class="kw">:language</span>
+      :language
       L
 
-      <span class="kw">:sections</span>
+      :sections
       [(make-section
-    <span class="kw">:id</span> &#39;Q12
-    <span class="kw">:main-issue</span> &#39;(may-publish the-person the-work)
-    <span class="kw">:header</span> (make-metadata 
-         <span class="kw">:title</span> <span class="st">&quot;Q12. Cross-Border Aspects of Orphaned Works&quot;</span>
+    :id 'Q12
+    :main-issue '(may-publish the-person the-work)
+    :header (make-metadata 
+         :title "Q12. Cross-Border Aspects of Orphaned Works"
          
-         <span class="kw">:description</span> 
-         {<span class="kw">:en</span> <span class="st">&quot;Question 12 of the Green Paper on Copyright in</span>
-<span class="st">         the Knowledge Economy [@GreenPaper, p. 12] asks:</span>
+         :description 
+         {:en "Question 12 of the Green Paper on Copyright in
+         the Knowledge Economy [@GreenPaper, p. 12] asks:
 
-<span class="st">                 &gt; (12) How should the cross-border aspects</span>
-<span class="st">                 &gt; of the orphan works issue be tackled to</span>
-<span class="st">                 &gt; ensure EU-wide recognition of the</span>
-<span class="st">                 &gt; solutions adopted in different Member</span>
-<span class="st">                 &gt; States?&quot;</span>})
+                 > (12) How should the cross-border aspects
+                 > of the orphan works issue be tackled to
+                 > ensure EU-wide recognition of the
+                 > solutions adopted in different Member
+                 > States?"})
     
-    <span class="kw">:sections</span>  
+    :sections  
     [german-copyright-law,
-     action-alliance-policy])]))</code></pre>
-<h2 id="installing-policy-models-and-argumentation-schemes"><span class="header-section-number">9.3</span> Installing Policy Models and Argumentation Schemes</h2>
-<h1 id="system-administration"><span class="header-section-number">10</span> System Administration</h1>
-<h2 id="downloading-carneades-1"><span class="header-section-number">10.1</span> Downloading Carneades</h2>
-<p>The Carneades Argumentation System is open source software available at <a href="https://github.com/carneades" class="uri">https://github.com/carneades</a>.</p>
-<p>You can download binaries and source code of Carneades releases at from the <a href="https://github.com/carneades/carneades/releases">releases</a> page. To use the version of Carneades described in this manual, download the release named &quot;Carneades WebApp 0.7&quot;.</p>
-<h2 id="license-1"><span class="header-section-number">10.2</span> License</h2>
-<p>The source code of the Carneades system is licensed using the <a href="http://www.mozilla.org/MPL/">Mozilla Public License (MPL) version 2.0</a>. An English version of the license is distributed with the software, in the <code>/licenses</code> directory. The MPL license is certified by the <a href="http://opensource.org/">Open Source Initiative</a> (OSI).</p>
-<blockquote>
-<p>The MPL is a simple copyleft license. The MPL's &quot;file-level&quot; copyleft is designed to encourage contributors to share modifications they make to your code, while still allowing them to combine your code with code under other licenses (open or proprietary) with minimal restrictions.</p>
-</blockquote>
-<p>In particular, if you write an application which links to Carneades as a library, you are free to use any license you wish for your own code.</p>
-<p>See <a href="FAQ">http://www.mozilla.org/MPL/2.0/FAQ.html</a> for more information.</p>
-<h2 id="binary-installation-1"><span class="header-section-number">10.3</span> Binary Installation</h2>
-<p>Prerequisites:</p>
-<ul>
-<li>Version 7 or better of a <a href="https://www.java.com/">Java Runtime Environment</a>.</li>
-</ul>
-<p>Installation Procedure:</p>
+     action-alliance-policy])]))
+
+~~~
+
+## Installing Policy Models and Argumentation Schemes 
+-->
+<h1 id="system-administration"><span class="header-section-number">8</span> System Administration</h1>
+<h2 id="building-and-installing-from-source-code"><span class="header-section-number">8.1</span> Building and Installing from Source Code</h2>
 <ol style="list-style-type: decimal">
-<li>Download the <code>carneades-webapp.0.7.0.zip</code> file from Carneades WebApp 0.7 release on the <a href="https://github.com/carneades/carneades/releases">releases</a> page.</li>
-<li>Unzip the <code>carneades-webapp.0.7.0.zip</code> <a href="http://en.wikipedia.org/wiki/Zip_%28file_format%29">Zip</a> archive file using some Zip tool. This will create a directory (folder) with the following hierarchical structure</li>
+<li><p>Use a <a href="http://git-scm.com/">Git</a> client to clone a copy of the Carneades source code from the <a href="https://github.com/carneades/carneades">Carneades GitHub repository</a>.</p></li>
+<li><p>Follow the instructions in the following README file:</p></li>
 </ol>
-<p><em>TODO: update the file list below</em></p>
-<pre><code>- carneades-webapp
-    * carneades-webapp-0.7.0.jar
-    * config ** carneades.clj
-    * doc ** manual.pdf ** timestamp.txt
-    * projects
-    * README.txt
-    </code></pre>
-<p>You can move this directory to some other location on your file system, at any time.</p>
-<p>This creates a standard installation, with the default configuration.</p>
-<h3 id="using-the-web-application-locally-1"><span class="header-section-number">10.3.1</span> Using the Web Application Locally</h3>
-<p>To start the Carneades web application server double click on the <code>carneades-webapp-0.7.0.jar</code> file in your file system browser, for example the &quot;Finder&quot; on Mac OS X or the &quot;Windows Explorer&quot; on Windows PCs.</p>
-<p>To start the server to from a command line, for local use, type</p>
-<pre><code>$ java -jar carneades-webapp.0.7.0.jar</code></pre>
-<p>Either way, after the server starts it will open up the projects page of the Carneades web application in your default web browser.</p>
-<p>Depending on your operating system and how you started the server, the Carneades web application can be shut down by either quitting the Carneades application or, if you started the server from a command line, using a terminal application, by ending this process , typically by typing <code>control-c</code> in the terminal.</p>
-<h2 id="source-code-installation"><span class="header-section-number">10.4</span> Source Code Installation</h2>
-<p>Software developers who want to run the Carneades Webapp from the sources can follow the instructions contained in the <code>CarneadesWeb/README.md</code> file.</p>
-<h2 id="system-configuration"><span class="header-section-number">10.5</span> System Configuration</h2>
+<pre><code>carneades/src/CarneadesWeb/README.md</code></pre>
+<h2 id="system-configuration"><span class="header-section-number">8.2</span> System Configuration</h2>
 <p>To modify the configuration, edit the <code>config/carneades.clj</code> file in the installation directory.</p>
 <p>The configure files are Clojure source files, with the properties represented as a Clojure map.</p>
-<p>The following properties can be modified in the <code>config/carneades.clj</code> file.</p>
-<p><code>:projects</code></p>
-<p>: The full path name of the directory used to store Carneades projects. The default directory is the <code>projects</code> directory of the installation directory.</p>
-<pre><code>Example:
-
-`:projects &quot;/usr/local/carneades/projects&quot;</code></pre>
-<p>Additional properties can be configured for each project, as described next.</p>
-<h2 id="project-structure-and-configuration"><span class="header-section-number">10.6</span> Project Structure and Configuration</h2>
+<p>The <code>:projects</code> property provides the full path name of the directory used to store Carneades projects. The default directory is the <code>projects</code> directory of the installation directory.</p>
+<p>Example: <code>:projects &quot;/usr/local/carneades/projects</code></p>
+<p>Additional properties can be configured for each project, as described in the next section.</p>
+<h2 id="project-structure-and-configuration"><span class="header-section-number">8.3</span> Project Structure and Configuration</h2>
 <p>Carneades projects are stored in the directory stated in the <code>.carneades.clj</code> configuration file. Each project is a directory with the following structure:</p>
 <pre><code>properties.clj
 databases/
@@ -1327,48 +1169,15 @@ of statements and nodes of argument graphs using relative URLs.  For
 example, the URL "file://src/foo.pdf" would be resolved to the file
 `documents/src/foo.pdf` of the project.
 -->
-<h1 id="applications-scenarios"><span class="header-section-number">11</span> Applications Scenarios</h1>
-<p>This chapter presents a number of application scenarios illustrating <em>some</em> ways the Carneades argumentation system can be used in practice to:</p>
-<ul>
-<li>improve the quality, efficiency, inclusiveness and transparency of democratic public policy deliberations,</li>
-<li>improve the efficiency and correctness of claims processing procedures both in public administration and the private sector, for example with regard to social benefits or insurance claims,</li>
-<li>help companies to comply with regulations,</li>
-<li>better manage complex legal cases in law firms, by creating maps of relationships between claims, legal arguments, case and statute citations, and testimonial and documentary evidence, and</li>
-<li>facilitate the learning of critical thinking and analysis skills, particularly in law, philosophy, religion and other humanities fields, where competing theories are constructed by interpreting texts.</li>
-</ul>
-<h2 id="public-policy-deliberations"><span class="header-section-number">11.1</span> Public Policy Deliberations</h2>
-<p>For some years now there has been considerable discussion and research on &quot;e-democracy&quot; or &quot;e-participation&quot;, about ways to use the Internet and, in particular, the World-Wide Web to revitalize democracy, overcome political apathy and improve the quality, inclusiveness and transparency of governance and policy-making. The first generation of e-participation systems were customized versions of various kinds of collaborative software (&quot;groupware&quot;), such as discussion forums, polls, and wikis. More recently there have been attempts to leverage existing social networks, such as Facebook, Google+ and Twitter for e-participation purposes. While these approaches provide ways for citizens to voice their concerns and provide input to the policy-making process, they do not scale well as the level of participation increases. Imagine a EU-wide policy discussion, with 27 states, 23 official languages, and over 500 million citizens.</p>
-<p>Carneades complements existing e-participation and other social media platforms by helping citizens, and government officials, to obtain a concise overview of the substance of the policy debates taking place on these platforms. Carneades can make it easier to identify and understand the issues, proposed policies, the pros and cons of these policies and the collective assessment of stakeholders about the truth of claims and the relative importance or weight of conflicting considerations.</p>
-<p>Imagine the following application scenario, which uses Carneades to support wide-scale deliberations, such as the 2008 deliberations of the <a href="http://europa.eu/documentation/official-docs/green-papers/index_en.htm">European Green Paper</a> on <a href="http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=COM:2008:0466:FIN:EN:PDF">Copyright in the Knowledge Economy</a>:</p>
-<ol style="list-style-type: decimal">
-<li>The EU publishes the Green Paper, in PDF, on its web site and invites stakeholders, such as libraries and publishers, but also &quot;ordinary&quot; citizens, to submit comments by uploading a PDF file to the site.</li>
-<li>The EU publishes the comments on their web site, as they are received.</li>
-<li>In parallel, the issues raised in the Green Paper are discussed informally across the Internet, in discussion forums, on social networks, in online newspaper or blog articles, and in comments on these articles.</li>
-<li>As the discussion proceeds, trained analysts employed by the EU, either as regular staff or as free-lancers, use Carneades to reconstruct the arguments in a representive sample of the source documents, including both officially submitted comments and articles found elsewhere on the Internet, to build an argument graph.</li>
-<li>In parallel, <a href="http://en.wikipedia.org/wiki/Data_driven_journalism">data-driven journalists</a>, hired by media companies and NGOs, can use Carneades to construct their own, competing argument graphs of the debate to be offered as value-added content on the Web.</li>
-<li>The argument graphs constructed by the analysts and data-journalists are published on the Web, providing citizens with high-level overviews of the ongoing-debate along with references (links) to source documents. The references enable anyone to check the accuracy and completeness of the argument graphs and provide easy access to further, more detailed information.</li>
-<li>For policy proposals which are detailed enough to be modeled as rules, the EU analysts can use Carneades to create and publish policy models enabling stakeholders to evaluate the effects of each policy on the cases which interest them. Users could contribute, via the web site, benchmark cases they think require special consideration and share these cases with others on the Web.</li>
-<li>After sufficient time has passed to allow for an in-depth discussion of the issues and the reconstruction of the arguments in an argument graph, the opinion formation and polling tool of Carneades is use to obtain informed feedback from citizens about their opinions of the claims and arguments. The questions asked in the poll are generated automatically from the argument graph. Several polls can be conducted, at regular intervals, depending on the duration of the offical EU procedure for the public deliberation of the Green Paper.</li>
-<li>At the end of the discussion period, the EU analysts use Carneades to generate an outline of the results of the deliberation which can be processed further using word processing software.</li>
-</ol>
-<h2 id="claims-processing"><span class="header-section-number">11.2</span> Claims Processing</h2>
-<p>Every day, large public agencies and companies, for example in the banking and insurance industries, process thousands of transactions requiring the correct application of laws, regulations, court decisions, and internal policies to decide claims and justify these decisions.</p>
-<p>The bureaucracy costs of processing these claims is enormous. When decisions are incorrect or insufficiently transparent, further unnecessary and potentially high costs can be incurred due to long appeal processes and possibly court proceedings.</p>
-<!--
-## Regulatory Compliance
-
-## Legal Case Management
-
-## Humanities Education
--->
-<h1 id="argumentation-schemes-1"><span class="header-section-number">12</span> Argumentation Schemes</h1>
+<p>&lt;!-- include &quot;scenarios.md&quot; --!</p>
+<h1 id="builtin-argumentation-schemes"><span class="header-section-number">9</span> Builtin Argumentation Schemes</h1>
 <p>This chapter presents the argumentation schemes included with the distribution of the Carneades system. The system is pre-configured to use these schemes, but you can configure the system to use other schemes, or modify these schemes to meet your requirements.</p>
-<p>The argumentation schemes are shown here in pseudocode for readabililty. See the <a href="#modeling-policies-and-argumentation-schemes">Modeling Policies and Argumentation Schemes</a> chapter for a description of the syntax used to formally define the schemes.</p>
-<p>The schemes can be viewed online, using Carneades, by clicking on the &quot;Schemes&quot; button in the menu bar of the Carneades home page.</p>
-<p>Most of the schemes here are derived the book &quot;Argumentation Schemes&quot; <span class="citation">[@Walton:2008]</span>. The schemes for arguments from credible source and practical reasoning are based on <span class="citation">[@Wyner:2012]</span> and <span class="citation">[@Atkinson:2007]</span>, respectively.</p>
+<p>The argumentation schemes are shown here in pseudocode for readabililty. See the <a href="#modeling-argumentation-schemes">Modeling Argumentation Schemes</a> chapter for a description of the syntax used to formally define the schemes.</p>
+<p>The schemes can be viewed online, using Carneades, by clicking on the &quot;Theory&quot; link near the top of an argument outline page, if the project has not been configured to use some other schemes.</p>
+<p>Most of the schemes here are derived the book &quot;Argumentation Schemes&quot; <span class="citation">(Walton, Reed, and Macagno 2008)</span>. The schemes for arguments from credible source and practical reasoning are based on <span class="citation">(Wyner, Atkinson, and Bench-Capon 2012)</span> and <span class="citation">(Atkinson and Bench-Capon 2007)</span>, respectively.</p>
 <p>The schemes from these sources been modified to fit the Carneades computational model of argument. For example, generic critical questions which undermine premises, undercut the argument or rebut its conclusion, have been omitted, since these critical questions apply to all defeasible arguments in Carneades.</p>
 <p>All the argumentation schemes presented here are defeasible <em>unless</em> they have been explicitly declared to be strict.</p>
-<h2 id="argument-from-position-to-know"><span class="header-section-number">12.1</span> Argument from Position to Know</h2>
+<h2 id="argument-from-position-to-know"><span class="header-section-number">9.1</span> Argument from Position to Know</h2>
 <pre><code>id: position-to-know  
 
 conclusion: S
@@ -1381,7 +1190,7 @@ premises:
     
 exceptions:
     CQ1: W is dishonest.</code></pre>
-<h2 id="argument-from-credible-source"><span class="header-section-number">12.2</span> Argument from Credible Source</h2>
+<h2 id="argument-from-credible-source"><span class="header-section-number">9.2</span> Argument from Credible Source</h2>
 <pre><code>id:  credible-source
 
 conclusion: S
@@ -1395,7 +1204,7 @@ exceptions:
     CQ1: W is biased.
     CQ2: W is dishonest.
     CQ3: Other credible sources disagree with S.</code></pre>
-<h2 id="argument-from-witness-testimony"><span class="header-section-number">12.3</span> Argument from Witness Testimony</h2>
+<h2 id="argument-from-witness-testimony"><span class="header-section-number">9.3</span> Argument from Witness Testimony</h2>
 <pre><code>id: witness-testimony
 
 conclusion: A
@@ -1414,7 +1223,7 @@ exceptions:
     CQ3: A is inconsistent with the testimony of other witnesses.
     CQ4: W is biased.
     CQ5: A is implausible.</code></pre>
-<h2 id="argument-from-expert-opinion"><span class="header-section-number">12.4</span> Argument from Expert Opinion</h2>
+<h2 id="argument-from-expert-opinion"><span class="header-section-number">9.4</span> Argument from Expert Opinion</h2>
 <pre><code>id: expert-opinion
 
 conclusion: A
@@ -1428,7 +1237,7 @@ exceptions:
     CQ1: E is untrustworthy.
     CQ2: A is inconsistent with the testimony of other witnesses.
     CQ3: A is based on evidence.</code></pre>
-<h2 id="argument-from-analogy"><span class="header-section-number">12.5</span> Argument from Analogy</h2>
+<h2 id="argument-from-analogy"><span class="header-section-number">9.5</span> Argument from Analogy</h2>
 <pre><code>id: analogy
 
 conclusion: S
@@ -1443,7 +1252,7 @@ exceptions:
         current case.
     CQ2: S is false in case C1, which is more on point 
         than case   C2.</code></pre>
-<h2 id="argument-from-precedent"><span class="header-section-number">12.6</span> Argument from Precedent</h2>
+<h2 id="argument-from-precedent"><span class="header-section-number">9.6</span> Argument from Precedent</h2>
 <pre><code>id: precedent
 
 conclusion: S
@@ -1457,7 +1266,7 @@ exceptions:
     CQ1: There are relevant differences between case C1 and the 
         current case.
     CQ2: Rule R is inapplicable in this case.</code></pre>
-<h2 id="argument-from-verbal-classification"><span class="header-section-number">12.7</span> Argument from Verbal Classification</h2>
+<h2 id="argument-from-verbal-classification"><span class="header-section-number">9.7</span> Argument from Verbal Classification</h2>
 <pre><code>id: definition-to-verbal-classification
 
 strict: true
@@ -1468,7 +1277,7 @@ premises:
     individual: O satisfies definition D.
     classification: Objects which satisfy definition D are
         classified as instances of class G.</code></pre>
-<h2 id="argument-from-definition-to-verbal-classification"><span class="header-section-number">12.8</span> Argument from Definition to Verbal Classification</h2>
+<h2 id="argument-from-definition-to-verbal-classification"><span class="header-section-number">9.8</span> Argument from Definition to Verbal Classification</h2>
 <pre><code>id: definition-to-verbal-classification
 
 strict: true
@@ -1479,7 +1288,7 @@ premises:
    individual: O satisfies definition D.
    classification: Objects which satisfy definition D are
         classified as instances of class G.</code></pre>
-<h2 id="defeasible-modus-ponens"><span class="header-section-number">12.9</span> Defeasible Modus Ponens</h2>
+<h2 id="defeasible-modus-ponens"><span class="header-section-number">9.9</span> Defeasible Modus Ponens</h2>
 <pre><code>id: defeasible-modus-ponens
 
 conclusion: B
@@ -1487,7 +1296,7 @@ conclusion: B
 premises:
     major: If A is true then presumably B is also true.
     minor: A</code></pre>
-<h2 id="argument-from-an-established-rule"><span class="header-section-number">12.10</span> Argument from an Established Rule</h2>
+<h2 id="argument-from-an-established-rule"><span class="header-section-number">9.10</span> Argument from an Established Rule</h2>
 <pre><code>id: established-rule
 
 conclusion: C
@@ -1498,21 +1307,21 @@ premises:
 
 assumptions:
     CQ1: Rule R is valid.</code></pre>
-<h2 id="argument-from-positive-consequences"><span class="header-section-number">12.11</span> Argument from Positive Consequences</h2>
+<h2 id="argument-from-positive-consequences"><span class="header-section-number">9.11</span> Argument from Positive Consequences</h2>
 <pre><code>id: positive-consequences
 
 conclusion: Action A should be performed.
 
 premises:
     major: Performing action A would have positive consequences.</code></pre>
-<h2 id="argument-from-negative-consequences"><span class="header-section-number">12.12</span> Argument from Negative Consequences</h2>
+<h2 id="argument-from-negative-consequences"><span class="header-section-number">9.12</span> Argument from Negative Consequences</h2>
 <pre><code>id: negative-consequences
 
 conclusion: Action A should not be performed.
 
 premises:
     major: Performing action A would have negative consequences.</code></pre>
-<h2 id="argument-from-practical-reasoning"><span class="header-section-number">12.13</span> Argument from Practical Reasoning</h2>
+<h2 id="argument-from-practical-reasoning"><span class="header-section-number">9.13</span> Argument from Practical Reasoning</h2>
 <pre><code>id: practical-reasoning
 
 conclusion: A1 should be performed.
@@ -1537,7 +1346,7 @@ exceptions:
         promote V more effectively than A1.
     CQ7: Performing A1 in S1 would have side-effects 
         which demote V or some other value.</code></pre>
-<h2 id="argument-from-cause-to-effect."><span class="header-section-number">12.14</span> Argument from Cause to Effect.</h2>
+<h2 id="argument-from-cause-to-effect."><span class="header-section-number">9.14</span> Argument from Cause to Effect.</h2>
 <pre><code>id: cause-to-effect
 
 conclusion: Event E2 will occur.
@@ -1548,7 +1357,7 @@ premises:
 
 exceptions:
     CQ1: An event E3 interferred with E1.</code></pre>
-<h2 id="argument-from-correlation-to-cause"><span class="header-section-number">12.15</span> Argument from Correlation to Cause</h2>
+<h2 id="argument-from-correlation-to-cause"><span class="header-section-number">9.15</span> Argument from Correlation to Cause</h2>
 <pre><code>id: correlation-to-cause
 
 conclusion: Event E1 causes event E2.
@@ -1562,7 +1371,7 @@ assumptions:
 
 exceptions:
     CQ2: E3 causes E1 and E2.</code></pre>
-<h2 id="argument-from-sunk-costs"><span class="header-section-number">12.16</span> Argument from Sunk Costs</h2>
+<h2 id="argument-from-sunk-costs"><span class="header-section-number">9.16</span> Argument from Sunk Costs</h2>
 <pre><code>id: sunk-costs
 
 conclusion: Action A should be performed.
@@ -1573,14 +1382,14 @@ premises:
 
 assumptions:
     CQ1: Action A is feasible.</code></pre>
-<h2 id="argument-from-appearance"><span class="header-section-number">12.17</span> Argument from Appearance</h2>
+<h2 id="argument-from-appearance"><span class="header-section-number">9.17</span> Argument from Appearance</h2>
 <pre><code>id: appearance
 
 conclusion: O is an instance of class C.
 
 premises:
     minor: O looks like a C.</code></pre>
-<h2 id="argument-from-ignorance"><span class="header-section-number">12.18</span> Argument from Ignorance</h2>
+<h2 id="argument-from-ignorance"><span class="header-section-number">9.18</span> Argument from Ignorance</h2>
 <pre><code>id: ignorance
 
 conclusion: S
@@ -1591,7 +1400,7 @@ premises:
 
 exceptions:
     CQ1: The truth of S has not been investigated.</code></pre>
-<h2 id="argument-from-abduction"><span class="header-section-number">12.19</span> Argument from Abduction</h2>
+<h2 id="argument-from-abduction"><span class="header-section-number">9.19</span> Argument from Abduction</h2>
 <pre><code>id: abduction
 
 conclusion: H
@@ -1603,7 +1412,7 @@ premises:
 
 exceptions:
     CQ1: T2 is a more coherent explanation than T1 of S.</code></pre>
-<h2 id="ethotic-argument"><span class="header-section-number">12.20</span> Ethotic Argument</h2>
+<h2 id="ethotic-argument"><span class="header-section-number">9.20</span> Ethotic Argument</h2>
 <pre><code>id: ethotic
 
 conclusion: S
@@ -1611,10 +1420,10 @@ conclusion: S
 premises:
     assertion: P asserts that S is true.
     trustworthiness: P is trustworthy.</code></pre>
-<h2 id="slippery-slope-argument"><span class="header-section-number">12.21</span> Slippery Slope Argument</h2>
+<h2 id="slippery-slope-argument"><span class="header-section-number">9.21</span> Slippery Slope Argument</h2>
 <p>This version of the slippery slope scheme is intended to be used together with the argument from negative consequences schema, to derive the conclusion that the action should not be performed.</p>
 <p>Notice that the scheme is represented by <em>two</em> Carneades schemes, one for the base case and one for the inductive step.</p>
-<h3 id="base-case"><span class="header-section-number">12.21.1</span> Base Case</h3>
+<h3 id="base-case"><span class="header-section-number">9.21.1</span> Base Case</h3>
 <pre><code>id: slippery-slope-base-case
 
 conclusion: Performing action A would have negative consequences
@@ -1622,7 +1431,7 @@ conclusion: Performing action A would have negative consequences
 premises:
     realization: Performing A would realize event E.
     horrible costs: Event E would have horrible costs.</code></pre>
-<h3 id="inductive-step"><span class="header-section-number">12.21.2</span> Inductive Step</h3>
+<h3 id="inductive-step"><span class="header-section-number">9.21.2</span> Inductive Step</h3>
 <pre><code>id: slippery-slope-inductive-step
 
 conclusion: Event E1 would have horrible consequences
@@ -1630,7 +1439,7 @@ conclusion: Event E1 would have horrible consequences
 premises:
     causation: Event E1 causes E2.
     consequences: Event E2 would haves horrible consequences.</code></pre>
-<h1 id="credits"><span class="header-section-number">13</span> Credits</h1>
+<h1 id="credits"><span class="header-section-number">10</span> Credits</h1>
 <ul>
 <li><p>Conception and Design</p>
 <ul>
@@ -1658,21 +1467,20 @@ premises:
 <li>Enhanced Government Learning (EAGLE, FP7-ICT-619347), 2014-2017.</li>
 </ul></li>
 </ul>
-<h1 id="references"><span class="header-section-number">14</span> References</h1>
-<h1 id="user-manual-license"><span class="header-section-number">15</span> User Manual License</h1>
-<p>This user manual is licensed under a <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
-<div class="figure">
-<img src="https://i.creativecommons.org/l/by/4.0/88x31.png" alt="Creative Commons License" /><p class="caption">Creative Commons License</p>
+<h1 id="user-manual-license"><span class="header-section-number">11</span> User Manual License</h1>
+<p><img src="https://i.creativecommons.org/l/by/4.0/88x31.png" alt="Creative Commons License" /> This user manual is licensed under a <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
+<div class="references">
+<h1>References</h1>
+<p>Atkinson, Katie, and Trevor J. M. Bench-Capon. 2007. “Practical Reasoning as Presumptive Argumentation Using Action Based Alternating Transition Systems.” <em>Artificial Intelligence</em> 171 (10-15): 855–74.</p>
+<p>Gordon, Thomas F, Henry Prakken, and Douglas Walton. 2007. “The Carneades Model of Argument and Burden of Proof.” <em>Artificial Intelligence</em> 171 (10-11): 875–96.</p>
+<p>Walton, Douglas. 2006. <em>Fundamentals of Critical Argumentation</em>. Cambridge, UK: Cambridge University Press.</p>
+<p>Walton, Douglas, Chris Reed, and Fabrizio Macagno. 2008. <em>Argumentation Schemes</em>. Cambridge University Press.</p>
+<p>Wyner, Adam, Katie Atkinson, and Trevor Bench-Capon. 2012. “A Functional Perspective on Argumentation Schemes.” In <em>Proceedings of the 9th International Workshop on Argumentation in Multi-Agent Systems (ArgMAS 2012)</em>, edited by Peter McBurney, Simon Parsons, and Iyad Rahwan, 203–22.</p>
 </div>
 <div class="footnotes">
 <hr />
 <ol>
 <li id="fn1"><p><a href="http://en.wikipedia.org/wiki/BibTeX" class="uri">http://en.wikipedia.org/wiki/BibTeX</a><a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p>depth-first<a href="#fnref2">↩</a></p></li>
-<li id="fn3"><p>The statements you skipped, without expressing an opinion are not listed. (<em>Note: Not yet implemented: some way for the user to review and answer the skipped questions, including taking a tour of the arguments about the skipped questions.</em>)<a href="#fnref3">↩</a></p></li>
-<li id="fn4"><p>These keys are stored in the &quot;source&quot; property of the metadata of arguments. The keys are the identifiers of the metadata records for documents in the references section of the argument graph.<a href="#fnref4">↩</a></p></li>
-<li id="fn5"><p>The similarity of opinions is measured by the percentage of claims in the document with which you have expressed agreement. We may replace this with some other metric, such as &quot;Euclidean distance&quot; <span class="citation">[@Seagaran:2007, pp. 9-15]</span>, in a future version of the system.<a href="#fnref5">↩</a></p></li>
-<li id="fn6"><p>Note: currently the modifications you can make are rather limited. You can change the status of the fact, from accepted to rejected or vice versa, but it is not possible to add further facts or to delete facts.<a href="#fnref6">↩</a></p></li>
 </ol>
 </div>
 </body>
