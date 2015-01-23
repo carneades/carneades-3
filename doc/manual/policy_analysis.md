@@ -1,7 +1,10 @@
 
 # Analysing and Comparing Policies
 
-The Carneades argumentation system provides a tool to analyze the legal effects of specific policies on the facts of cases. The tool is useful for evaluating and comparing policies which formulate rules at a level of detail comparable to legislation or regulations.
+The Carneades argumentation system provides a tool to analyze the
+legal effects of specific policies on the facts of cases. The tool is
+useful for evaluating and comparing policies which formulate rules at
+a level of detail comparable to legislation or regulations.
 
 To access the tool, click on the "policy analysis" item in the main menu of the system, shown on every page.  This will take you to introduction page of the tool, which briefly explains the purpose of the tool and the following steps for using it.  
 

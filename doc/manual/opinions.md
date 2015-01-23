@@ -1,3 +1,6 @@
+<!-- This chapter is not included in the current manual, since the
+user interface of the polling tool has not been ported yet to the new user
+interface. -->
 
 # Formulating, Polling and Comparing Opinions
 

@@ -1,40 +1,31 @@
 
-# Getting Started
+# Introduction
 
-The Carneades argumentation system is open source software, freely available for downloading at <http://carneades.github.com>.
+The Carneades argumentation system is open source software, freely
+available for downloading at <http://carneades.github.com>.
 
 Carneades provides web-based, collaborative software tools for:
 
-- summarizing the arguments of a debate in an *argument graph*
-- visualizing, browsing and navigating argument graphs
-- critically evaluating arguments
-- forming opinions, participating in polls and ranking stakeholders by the degree to which they share your views 
-- obtaining clear explanations, using argument graphs, of the different effects of alternative policies in particular cases
-  
-In this manual, we distinguish three kinds of users:
+- (re)constructing arguments using a rulebase of argumentation schemes
+- visualizing arguments in diagrams (argument maps)
+- critically evaluating arguments, using a formal model of structured
+  argument based on argumentation schemes and Dung abstract
+  argumentation frameworks
+- serializing and interchanging arguments using our own Carneades
+  Argument Format (CAF) as well as the Argument Interchange Format
+  (AIF)
 
-Public Users
-:   Users interested in understanding arguments and policies, whom we assume have had *no specialist training* in argumentation or policy modeling.  
-Analysts
-:   Users who have had *specialist training* in argumentation or rule-based policy modeling.
-System Administrators
-:   Users with sufficient computer skills to install, configure and administer the Carneades software.
-  
-These are only roles. Some people may be able to use the system in more than one of these roles.  In particular, we aim to make the software simple to install and administer, so that ultimately anyone with basic computer skills will be able to serve as "system administrator".
-
-The rest of this manual is organized in the following chapters:
-
-- The Home Page
-- Argument Graphs
-- Browsing, Visualizing and Evaluating Arguments
-- Forming, Polling and Comparing Opinions
-- Analyzing and Comparing Policies
-- Editing Argument Graphs
-- Modeling Policies and Argumentation Schemes
-- System Administration
-- Application Scenarios
-- Built-in Argumentation Schemes
-
-The first two of these chapters, about the Carneades home page and  argument graphs, are recommended to be read first by all users. The home page chapter explains how to access and navigate among the various tools provided by the system. The argument graph chapter provides a concise overview of the underlying data model used by all the tools. The next three chapters are for public users and explain how to use the tools for argument browsing, opinion polls and policy analysis, respectively. The chapters on editing argument graphs and modeling policies and argumentation schemes are for analysts with some prior knowledge of argument reconstruction methods and rule-based systems. The system administration chapter is recommended reading for anyone wishing to install, configure and administer the Carneades software. The chapter on application scenarios may be of interest to managers and public administrators looking for ways to improve the quality of decision-making processes in their organizations. The final chapter presents the initial set of argumentation schemes distributed with the system, which you can modify to suit your needs. 
-
-
+The next chapter, Getting Started, explains how to download, install
+and run the Carneades system locally on your personal computer. The
+projects chapter explains how to create and access projects, where
+each project can contain any number of argument graphs. The argument
+graph chapter provides an overview of the underlying data model used
+by all the tools. The browsing, visualization and evaluation chapter
+explains how to read and view argument graphs. The chapters on editing
+argument graphs and modeling argumentation schemes are somewhat more
+demanding and some basic prior knowledge of argumentation theory
+[@Walton:2006] is recommended. The system administration chapter
+describes how to build and install the system from its source files,
+as well as how to configure the system. The final chapter shows how
+some well-known argumentation schemes [@Walton:2008] can been
+represented using the system.
