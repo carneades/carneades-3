@@ -96,7 +96,7 @@ source documents, documentary evidence, or any other project
 files.
 
 <!--
-These files can be referenced and linked to in the descriptions
+These files can be referenced and linked to in the desciptions
 of statements and nodes of argument graphs using relative URLs.  For
 example, the URL "file://src/foo.pdf" would be resolved to the file
 `documents/src/foo.pdf` of the project.
