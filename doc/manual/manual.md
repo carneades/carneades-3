@@ -1,5 +1,5 @@
 ---
-title: Carneades WebApp 0.7 User Manual
+title: Carneades 3.7 User Manual
 author: Tom Gordon
 bibliography: manual.bib
 rights: © 2015 Thomas F. Gordon, CC BY
@@ -19,7 +19,7 @@ include "policy_analysis.md"
 <#include "administration.md">
 <!--
 include "scenarios.md"
---!
+-->
 <#include "walton_schemes.md">
 
 # Credits
@@ -39,7 +39,7 @@ include "scenarios.md"
 
 - Funding and Support
 
-    - Canadian Social Science and Humanities Research Council, 2007-09
+    - Canadian Social Sciences and Humanities Research Council, 2007-09
       and 2012-2017, with Douglas Walton
 	- Standardized Transparent Representations in order to Extend
       Legal Accessibility (Estrella, FP6-IST-027655), 2006-2008.

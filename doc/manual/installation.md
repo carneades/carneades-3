@@ -10,10 +10,10 @@ see the "System Administration" chapter.
 The Carneades Argumentation System is open source software available
 at <https://github.com/carneades>.
 
-You can download binaries and source code of Carneades releases at
+You can download binaries and source code of Carneades releases 
 from the [releases](https://github.com/carneades/carneades/releases)
 page. To use the version of Carneades described in this manual,
-download the release named "Carneades WebApp 0.7".
+download the release named "Carneades 3.7".
 
 ## License
 
@@ -43,14 +43,16 @@ Prerequisites:
 
 Installation Procedure:
 
-1. Download the `carneades-webapp.0.7.0.zip` file from Carneades WebApp 0.7 release on the [releases](https://github.com/carneades/carneades/releases) page. 
-2. Unzip the `carneades-webapp.0.7.0.zip`
+1. Download the `carneades-3.7.zip` file from Carneades 3.7 release on
+   the [releases](https://github.com/carneades/carneades/releases)
+   page.
+2. Unzip the `carneades-3.7.zip`
    [Zip](http://en.wikipedia.org/wiki/Zip_%28file_format%29) archive
    file using some Zip tool. This will create a directory (folder)
    with the following hierarchical structure
 
-	- carneades-webapp
-        * carneades-webapp-0.7.0.jar
+	- carneades-3.7
+        * carneades-3.7.jar
         * config 
             ** carneades.clj
 		* doc 
@@ -67,13 +69,13 @@ This creates a standard installation, with the default configuration.
 ### Using the Web Application Locally
 
 To start the Carneades web application server double click on the
-`carneades-webapp-0.7.0.jar` file in your file system browser, for example
+`carneades-3.7.jar` file in your file system browser, for example
 the "Finder" on Mac OS X or the "Windows Explorer" on Windows PCs.
 
 To start the server to from a command line, for local use, type
 
 ~~~
-$ java -jar carneades-webapp.0.7.0.jar
+$ java -jar carneades-3.7.jar
 ~~~
 
 Either way, after the server starts it will open up the projects page

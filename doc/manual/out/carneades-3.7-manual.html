@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Tom Gordon" />
-  <title>Carneades WebApp 0.7 User Manual</title>
+  <title>Carneades 3.7 User Manual</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
@@ -29,7 +29,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </head>
 <body>
 <div id="header">
-<h1 class="title">Carneades WebApp 0.7 User Manual</h1>
+<h1 class="title">Carneades 3.7 User Manual</h1>
 <h2 class="author">Tom Gordon</h2>
 </div>
 <div id="TOC">
@@ -122,20 +122,24 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul>
 </div>
 <h1 id="introduction"><span class="header-section-number">1</span> Introduction</h1>
-<p>The Carneades argumentation system is open source software, freely available for downloading at <a href="http://carneades.github.com" class="uri">http://carneades.github.com</a>.</p>
-<p>Carneades provides web-based, collaborative software tools for:</p>
+<p>The Carneades argumentation system is series of open source, research prototypes freely available for downloading at <a href="http://carneades.github.com" class="uri">http://carneades.github.com</a>.</p>
+<p>The version of Carneades described in this user manual, Carneades 3.7, provides web-based, collaborative software tools for:</p>
 <ul>
 <li>(re)constructing arguments using a rulebase of argumentation schemes</li>
 <li>visualizing arguments in diagrams (argument maps)</li>
-<li>critically evaluating arguments, using a formal model of structured argument based on argumentation schemes and Dung abstract argumentation frameworks</li>
-<li>serializing and interchanging arguments using our own Carneades Argument Format (CAF) as well as the Argument Interchange Format (AIF)</li>
+<li>critically evaluating arguments, using a formal model of structured argument based on argumentation schemes and with support for variable proof standards <span class="citation">(Gordon, Prakken, and Walton 2007)</span>.</li>
 </ul>
+<!--
+- serializing and interchanging arguments using our own Carneades
+  Argument Format (CAF) as well as the Argument Interchange Format
+  (AIF)
+-->
 <p>The next chapter, Getting Started, explains how to download, install and run the Carneades system locally on your personal computer. The projects chapter explains how to create and access projects, where each project can contain any number of argument graphs. The argument graph chapter provides an overview of the underlying data model used by all the tools. The browsing, visualization and evaluation chapter explains how to read and view argument graphs. The chapters on editing argument graphs and modeling argumentation schemes are somewhat more demanding and some basic prior knowledge of argumentation theory <span class="citation">(Walton 2006)</span> is recommended. The system administration chapter describes how to build and install the system from its source files, as well as how to configure the system. The final chapter shows how some well-known argumentation schemes <span class="citation">(Walton, Reed, and Macagno 2008)</span> can been represented using the system.</p>
 <h1 id="getting-started"><span class="header-section-number">2</span> Getting Started</h1>
 <p>This chapter explains how to download, install and run the Carneades system locally on your personal computer. For information about how to build the system from source code and advanced configuration options see the &quot;System Administration&quot; chapter.</p>
 <h2 id="downloading-carneades"><span class="header-section-number">2.1</span> Downloading Carneades</h2>
 <p>The Carneades Argumentation System is open source software available at <a href="https://github.com/carneades" class="uri">https://github.com/carneades</a>.</p>
-<p>You can download binaries and source code of Carneades releases at from the <a href="https://github.com/carneades/carneades/releases">releases</a> page. To use the version of Carneades described in this manual, download the release named &quot;Carneades WebApp 0.7&quot;.</p>
+<p>You can download binaries and source code of Carneades releases from the <a href="https://github.com/carneades/carneades/releases">releases</a> page. To use the version of Carneades described in this manual, download the release named &quot;Carneades 3.7&quot;.</p>
 <h2 id="license"><span class="header-section-number">2.2</span> License</h2>
 <p>The source code of the Carneades system is licensed using the <a href="http://www.mozilla.org/MPL/">Mozilla Public License (MPL) version 2.0</a>. An English version of the license is distributed with the software, in the <code>/licenses</code> directory. The MPL license is certified by the <a href="http://opensource.org/">Open Source Initiative</a> (OSI).</p>
 <blockquote>
@@ -150,12 +154,12 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul>
 <p>Installation Procedure:</p>
 <ol style="list-style-type: decimal">
-<li>Download the <code>carneades-webapp.0.7.0.zip</code> file from Carneades WebApp 0.7 release on the <a href="https://github.com/carneades/carneades/releases">releases</a> page.</li>
-<li><p>Unzip the <code>carneades-webapp.0.7.0.zip</code> <a href="http://en.wikipedia.org/wiki/Zip_%28file_format%29">Zip</a> archive file using some Zip tool. This will create a directory (folder) with the following hierarchical structure</p>
+<li>Download the <code>carneades-3.7.zip</code> file from Carneades 3.7 release on the <a href="https://github.com/carneades/carneades/releases">releases</a> page.</li>
+<li><p>Unzip the <code>carneades-3.7.zip</code> <a href="http://en.wikipedia.org/wiki/Zip_%28file_format%29">Zip</a> archive file using some Zip tool. This will create a directory (folder) with the following hierarchical structure</p>
 <ul>
-<li>carneades-webapp
+<li>carneades-3.7
 <ul>
-<li>carneades-webapp-0.7.0.jar</li>
+<li>carneades-3.7.jar</li>
 <li>config ** carneades.clj</li>
 <li>doc ** manual.pdf ** timestamp.txt</li>
 <li>projects</li>
@@ -166,9 +170,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>You can move this directory to some other location on your file system, at any time.</p>
 <p>This creates a standard installation, with the default configuration.</p>
 <h3 id="using-the-web-application-locally"><span class="header-section-number">2.3.1</span> Using the Web Application Locally</h3>
-<p>To start the Carneades web application server double click on the <code>carneades-webapp-0.7.0.jar</code> file in your file system browser, for example the &quot;Finder&quot; on Mac OS X or the &quot;Windows Explorer&quot; on Windows PCs.</p>
+<p>To start the Carneades web application server double click on the <code>carneades-3.7.jar</code> file in your file system browser, for example the &quot;Finder&quot; on Mac OS X or the &quot;Windows Explorer&quot; on Windows PCs.</p>
 <p>To start the server to from a command line, for local use, type</p>
-<pre><code>$ java -jar carneades-webapp.0.7.0.jar</code></pre>
+<pre><code>$ java -jar carneades-3.7.jar</code></pre>
 <p>Either way, after the server starts it will open up the projects page of the Carneades web application in your default web browser.</p>
 <p>Depending on your operating system and how you started the server, the Carneades web application can be shut down by either quitting the Carneades application or, if you started the server from a command line, using a terminal application, by ending this process, typically by typing <code>control-c</code> in the terminal.</p>
 <h1 id="the-projects-page"><span class="header-section-number">3</span> The Projects Page</h1>
@@ -178,8 +182,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <p>To access a project, click on its name in the list of projects.</p>
 <p>To create a new project, click on the &quot;New Project&quot; button, complete the form and then click on the &quot;Save&quot; button.</p>
-<p>The &quot;theory&quot; field allows you to specify which argumentation schemes to use to construct and reconstruct arguments. It is initialized to use model of Walton's argumentation schemes distributed with the system, from the default project: &quot;default/walton_schemes&quot;.</p>
-<p>Projects are store in files on your file system the directory specified in the &quot;carneades.clj&quot; file in your home directory. See the System Administration chapter for further configuration details.</p>
+<p>The &quot;theory&quot; field allows you to specify which argumentation schemes to use to construct and reconstruct arguments. It is initialized to use the model of Walton's argumentation schemes distributed with the system, from the default project: &quot;default/walton_schemes&quot;.</p>
+<p>Projects are stored in files on your file system in the directory specified in the &quot;carneades.clj&quot; file in your home directory. See the System Administration chapter for further configuration details.</p>
 <p>You can change the theory to use other argumentation schemes, including ones you have written yourself. See the &quot;Argumentation Schemes&quot; chapter for information on how to write theories with your own argumentation schemes. Save or move the theory to the &quot;theories&quot; directory of your project, in the projects directory specified in your &quot;carneades.clj&quot; configuration file. Suppose you have named this theory &quot;my_schemes.clj&quot; and stored it in the theories directory of your project. To have this theory used by your project, instead of &quot;default/walton_schemes&quot;, edit the &quot;properties.clj&quot; file in the project directory and then change the theory to &quot;my_schemes&quot;. Notice that you need not name the project, since the theory is in this project, and you also should not add the &quot;.clj&quot; (Clojure) file extension. (Theories are implemented using a rule language embedded in the Clojure programming language.) This must be done locally on the computer running the Carneades server. There is currently no Web user interface for editing the properties of projects or managing the theories of projects.</p>
 <h1 id="argument-graphs"><span class="header-section-number">4</span> Argument Graphs</h1>
 <p>Argument graphs model relationships among arguments and statements (claims, propositions). The arguments represented in an argument graph can be new (invented) arguments <em>constructed</em> from knowledge, evidence and facts, or <em>reconstructed</em> from arguments in source documents, such as court opinions or newspaper commentaries.</p>
@@ -193,17 +197,17 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>The first example just reordered the premise and the conclusion of the argument, putting the premise first. The second example reveals some implicit premises of the original formulation of the argument. The third example is a German translation of the original formulation of the argument.</p>
 <p>All four of these texts, including the original formulation, express the <em>same</em> argument, but in different ways. In a large-scale debate, for example about European policy issues, the same argument might be expressed in <em>thousands</em> of different ways in many different languages. (The European Union has 23 official languages.)</p>
 <p>One of the purposes of argument graphs is to provide a way to summarize the arguments put forward in complex debates with exactly one node in the graph for each argument, no matter how often or in how many ways it has been expressed. A single argument graph is used to represent all the arguments put forward in a debate, from all participants. The nodes can quote one or more source documents, and include links to these source documents, so no information need be lost and all voices can still be heard, inclusively. Grouping the different formulations of an argument together into a single node in the graph, abstracting away details, makes it possible to quickly obtain an overview of the arguments and to obtain a clearer picture of relationships among arguments. A hypertext or map of the source documents directly, without an argument graph, would make it difficult to &quot;see the forest for the trees&quot;.</p>
-<p>Argument graphs are also useful as a decision-support tool when analysing problems and issues, such as legal issues, whether by an invidual or in a group. When used this way, the arguments in the graph represent inference steps and dependencies between propositions. Original arguments can be entered or edited directly by users, whether or not the arguments have first been formulated in some natural language text. If the relevant knowledge of the application domain has been formally represented, using a knowledge-based system, some arguments can be automatically found and entered into the graph. Carneades provides a knowledge representation language for argumentation schemes and an inference engine which can be used to find arguments in this way. Both methods can be used together. Carneades is an interactive argumentation assistent, not a fully automatic problem-solver. Arguments which have been found automatically can be manually edited by users.</p>
+<p>Argument graphs are also useful as a decision-support tool when analysing problems and issues, such as legal issues, whether by an invidual or in a group. When used this way, the arguments in the graph represent inference steps and dependencies between propositions. Original arguments can be entered or edited directly by users, whether or not the arguments have first been formulated in some natural language text. If the relevant knowledge of the application domain has been formally represented, using a knowledge-based system, some arguments can be automatically found and entered into the graph. Carneades provides a knowledge representation language for argumentation schemes and an inference engine which can be used to find arguments in this way. Both methods can be used together. Carneades is an interactive argumentation assistant, not a fully automatic problem-solver. Arguments which have been found automatically can be manually edited by users.</p>
 <h2 id="data-model"><span class="header-section-number">4.1</span> Data Model</h2>
 <div class="figure">
 <img src="figs/DataModel.png" alt="Entity-Relationship Diagram" /><p class="caption">Entity-Relationship Diagram</p>
 </div>
 <p>The entity-relationship diagram above shows the elements of argument graphs and their connections. (The figure does not visualize a particular argument graph, but rather relationships between the elements of argument graphs in general.)</p>
 <p>The two main elements of argument graphs are statements and arguments. Statements represent propositions, claims and assertions. Arguments represent simple inferences from one or more premises to a single conclusion. Again, there should be only one statement or argument in the graph for each statement and argument in the source documents, no matter how many different ways the statement or argument has been expressed in source documents. Some or all formulations of the statement or argument can be quoted or referenced in the metadata of the statement or argument node. See the discussion of metadata below for further information.</p>
-<p>As can be seen in the entity-relationship diagram, arguments are linked to statements in two ways in argument graphs. Each argument has exactly one conclusion, which is a statement, and zero or more premises, where each premise has exactly one statement node. A statement may the conclusion or premise of more than one argument.</p>
-<p>A statement may be both a conclusion and a premise, resulting in complex argument graphs, representing chains or trees of reasoning. Argument graphs may contain cycles. A simple cycle would result if a statement and a premise of the same argument. There are methods for resolving these cycles when evaluating argument graphs.</p>
+<p>As can be seen in the entity-relationship diagram, arguments are linked to statements in two ways in argument graphs. Each argument has exactly one conclusion, which is a statement, and zero or more premises, where each premise has exactly one statement node. A statement may be the conclusion or premise of more than one argument.</p>
+<p>A statement may be both a conclusion and a premise, resulting in complex argument graphs, representing chains or trees of reasoning. Argument graphs may contain cycles. A simple cycle would result if a statement is a premise and conlusion of the same argument. There are methods for resolving these cycles when evaluating argument graphs.</p>
 <p>A statement in an argument graph represents a propositional variable, whose value may be true (in), false (out) or unknown (undecided). To continue with our example, the sentences &quot;Johnny rode his skateboard in the park&quot; and &quot;Johnny did not ride his skateboard in the park&quot; would be represented by a single statement in an argument graph. Conclusions and premises of argument can negated using con arguments and negative premises, respectively. There are two kinds of arguments, pro and con. An argument is pro if its conclusion claims the statement is true and con if it claims the statement is false. Similarly, there are two kinds of premises, positive and negative. A positive premise holds if its statement is &quot;in&quot;. Conversely, a negative premise holds only if its statement is &quot;out&quot;.</p>
-<p>Prior models of argument graphs do not distinguish pro and con arguments or positive and negative premises. Rather, in these prior approaches all argument nodes are pro and all premises are positive. Our approach has the advantage of reducing the number of statements up to 50%, resulting in more compact summaries of the arguments.</p>
+<p>Prior models of argument graphs did not distinguish pro and con arguments or positive and negative premises. Rather, in these prior approaches all argument nodes are pro and all premises are positive. Our approach has the advantage of reducing the number of statements up to 50%, resulting in more compact summaries of the arguments.</p>
 <h2 id="statement-properties"><span class="header-section-number">4.2</span> Statement Properties</h2>
 <p>id : A Uniform Resource Name (URN) serving as a unique identifier for the statement, world-wide.</p>
 <p>text : A concise formulation of the statement, written by the analyst who reconstructed the arguments from the source documents. Paraphrases the various formulations of the statement in the sources. Translations of the text in several languages may be included in the model. Compare with the &quot;description&quot; property of the metadata of the statement, which can be used to quote some or all of the formulations of the statement in the sources and provide translations in several languages.</p>
@@ -211,7 +215,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>proof standard : The method used to combine pro and con arguments. Several proof standards are supported by the system. For most purposes, the &quot;preponderance of the evidence&quot; standard should suffice. See the <a href="#editing-argument-graphs">Editing Argument Graphs</a> Chapter for details.</p>
 <p>value : A real number in the range 0.0-1.0, storing the output of the argument evaluation process, where 0.0 means the statement is <em>out</em> (false or presumably false), 1.0 means the statement is <em>in</em> (true or presumably true) and all other values mean the arguments, facts and assumptions are insufficient for drawing any conclusions about the truth or falsity of the statement (undecided, unknown). (Real numbers are used to allow experimentation with other models of argument evaluation.)</p>
 <p>atom : An optional formal representation of the statement in predicate logic. (This feature is for analysts and need not interest public users.)</p>
-<p>main : A Boolean value (true or false) used to indicate whether the statement is one of the main issues modeled by the argument graph. (Since argument graphs can contain cycles and not limited to trees, we cannot use the roots of trees for this purpose.)</p>
+<p>main : A Boolean value (true or false) used to indicate whether the statement is one of the main issues modeled by the argument graph. (Since argument graphs can contain cycles and are not limited to trees, we cannot use the roots of trees for this purpose.)</p>
 <h2 id="argument-properties"><span class="header-section-number">4.3</span> Argument Properties</h2>
 <p>id : A Uniform Resource Name (URN) serving as a unique identifier for the argument, world-wide.</p>
 <p>direction : Pro or con.</p>
@@ -250,7 +254,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <ul>
 <li><p>Access the <a href="#the-argument-graph-page">outline page</a> to view the title, description, issues and outline of the top-level arguments of the argument graph.</p></li>
 <li><p>Use hypertext in web pages to <a href="#using-hypertext-to-browse-an-argument-graph">browse an argument graph</a>.</p></li>
-<li><p><a href="#visualizing-argument-graphs-in-argument-maps">Visualizing argument graphs</a> in diagrams, called &quot;argument maps&quot;, and using these maps to navigate to more detailed views of statements and arguments.</p></li>
+<li><p><a href="#visualizing-argument-graphs-in-argument-maps">Visualize argument graphs</a> in diagrams, called &quot;argument maps&quot;, and using these maps to navigate to more detailed views of statements and arguments.</p></li>
 <li><p><a href="#evaluating-arguments">Evaluate arguments</a> to reveal missing premises, check the form of arguments, ask critical questions and assess the acceptability of statements.</p></li>
 </ul>
 <!-- - [Export an argument graph to XML](#exporting-argument-graphs-to-xml),
@@ -288,17 +292,17 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <img src="figs/statement1.png" alt="A Statement Page" /><p class="caption">A Statement Page</p>
 </div>
 <p>The proof standards available are dialectical validity, preponderance of the evidence, clear and convincing evidence, and beyond reasonable doubt. See the section on <a href="#evaluating-arguments">Evaluating Arguments</a> for further details about proof standards.</p>
-<p>The next section displays the content of the statement in natural langauge. This formulation of the statement is written by the analyst or analysts who reconstructed the arguments to build the argument graph, or generated from a template in a theory, when arguments are constructed automatically using the Carneades inference engine.</p>
+<p>The next section displays the content of the statement in natural language. This formulation of the statement is written by the analyst or analysts who reconstructed the arguments to build the argument graph, or generated from a template in a theory, when arguments are constructed automatically using the Carneades inference engine.</p>
 <p>Next, arguments pro and con the statement are displayed, as well as arguments which use this statement (or its negation) as a premise. The premises of these arguments are also displayed. This makes it possible to navigate to nearby arguments and statements in the argument graph, by simply clicking on the links in these lists.</p>
 <p>The bottom of the statement page displays the properties of the statement: its value, proof standard (default value: preponderance of the evidence), weight, whether or not it is a main issue, its formal representation as a logical atom (optional) and its id.</p>
-<p>If metadata had been provided for the statement, it would be displayed in a separate tab on the page. Descriptions may be provided in multiple natural langauges, with a tab for selecting the description in each language.</p>
+<p>If metadata had been provided for the statement, it would be displayed in a separate tab on the page. Descriptions may be provided in multiple natural languages, with a tab for selecting the description in each language.</p>
 <h3 id="argument-pages"><span class="header-section-number">5.2.2</span> Argument Pages</h3>
 <div class="figure">
 <img src="figs/argument1.png" alt="An Argument Page" /><p class="caption">An Argument Page</p>
 </div>
 <p>Argument pages are quite similar to statement pages.</p>
 <p>At the top the page, the premises and conclusion of the argument are shown. If available, the role of each premise in the argumentation scheme applied is shown (e.g. &quot;major&quot; or &quot;minor&quot;).</p>
-<p>The bottom of the page displays the properties of the argument: its id, the argumentation scheme applied (if any), whether it is a strict or defeasible argument, its weight and value. The argumentation scheme contains a hyperlink (<em>Note: not yet implemented</em>). Click on the link to view a description of the scheme.</p>
+<p>The bottom of the page displays the properties of the argument: its id, the argumentation scheme applied (if any), whether it is a strict or defeasible argument, its weight and value. The argumentation scheme contains a hyperlink. Click on the link to view a description of the scheme.</p>
 <div class="figure">
 <img src="figs/argument1b.png" alt="Metadata Tab of an Argument Page" /><p class="caption">Metadata Tab of an Argument Page</p>
 </div>
@@ -310,7 +314,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <p>For statement nodes, the text of the statement is shown inside the box, possibly truncated if the text is too long. In argument nodes, the circle is filled with a plus sign, if the argument is a pro argument, or a minus sign, for con arguments. The edges (links) between argument nodes and statement nodes show the premises and conclusion of the argument. The conclusion of the argument is the statement node pointed to by the edge with the normal arrowhead. The other statement nodes linked to the argument, without arrowheads, are its premises. Negative premises are displayed with a circular (dot) arrowhead on the statement side of the edge.</p>
 <p>The statement and argument nodes in argument maps contain hyperlinks. Clicking on a statement or argument node displays the details of the node in a statement or argument page, respectively.</p>
-<p>In argument maps, argument nodes whose conclusion is another argument node, rather than a statement node, visualize &quot;undercutting&quot; arguments. These are arguments which question the applicability of another argument. This is the only case where two nodes of the same time are directly connected in the map.</p>
+<p>In argument maps, argument nodes whose conclusion is another argument node, rather than a statement node, visualize &quot;undercutting&quot; arguments. These are arguments which question the applicability of another argument. This is the only case where two nodes of the same type are directly connected in the map.</p>
 <p>Argument maps are represented using structured vector graphics (SVG) not bitmaps. You can zoom the map in or out, to any scale, without loss of resolution. How this zooming is done depends on your device and web browser.</p>
 <p>When argument graphs have been evaluated, the status of the argument and statement nodes is visualized in argument maps using both color and icons. Nodes which are &quot;in&quot; are filled with a green background and contain a checked box. Nodes which are &quot;out&quot; are shown with a red background and contain a crossed box (a box filled with an X). Nodes which are neither in nor out are filled with white background color and contain an empty checkbox. The colors are redundant to accommodate black and white printing and color-blind users.</p>
 <h2 id="evaluating-arguments"><span class="header-section-number">5.4</span> Evaluating Arguments</h2>
@@ -374,7 +378,7 @@ include "policy_analysis.md"
 <ol style="list-style-type: decimal">
 <li>Click on the &quot;New Argument&quot; button on the outline page of the argument graph.</li>
 <li>Copy the text of the argument from the source document and paste it into the description field of the &quot;Metadata&quot;tab of new argument form. You can quote the text of the argument, using <a href="http://daringfireball.net/projects/markdown/">Markdown</a>, by preceding each line with a &quot;&gt;&quot; symbol.</li>
-<li>Go the &quot;Model&quot; tab of argument editor and choose an argumentation scheme to apply, from the pull down list of schemes. The documentation of the selected scheme will be shown and the form will be customized, with fields intialized for each of the premises of the scheme. You can modify the argument however you want, unconstrained by the chosen scheme, for example by deleting or adding premises, or renaming premise roles. The schemes are there to help you, not constrain you. See the <a href="#argumentation-schemes">Argumentation Schemes</a> chapter for documentation of the initial set of schemes provided with Carneades. These schemes may be modified or extended, or replaced entirely, as described in the <a href="#modeling-policies-and-argumentation-schemes">Modeling Policies and Argumentation Schemes</a> chapter.</li>
+<li>Go the &quot;Model&quot; tab of argument editor and choose an argumentation scheme to apply, from the pull down list of schemes. The documentation of the selected scheme will be shown and the form will be customized, with fields intialized for each of the premises of the scheme. You can modify the argument however you want, unconstrained by the chosen scheme, for example by deleting or adding premises, or renaming premise roles. The schemes are there to help you, not constrain you. See the <a href="#argumentation-schemes">Argumentation Schemes</a> chapter for documentation of the initial set of schemes provided with Carneades. These schemes may be modified or extended, or replaced entirely, as described in the <a href="#argumentation-schemes">Argumentation Schemes</a> chapter.</li>
 <li>Enter the conclusion of the argument, by choosing a statement already in the graph with the same meaning as the conclusion of the argument in the source text. If the needed statement is not listed, create one first following the instructions for entering new statements below.</li>
 <li>Similarly, add the premises of the argument, by choosing existing statements in the argument graph from the pull-down lists below the role of each premise in the form. Negative premises can be entered by changing the &quot;Positive&quot; property of the premise to &quot;False&quot;. If the premise is implicit in the source text, you can note this by changing the &quot;Implicit&quot; property of the premise to &quot;True&quot;.</li>
 <li>At the bottom of the form, click the &quot;Save Argument&quot; or &quot;Cancel&quot; button. <strong>Warning:</strong> Any changes you make using the form will not be saved to the argument graph until you execute the &quot;Save Argument&quot; command by clicking on this button.</li>
@@ -467,7 +471,7 @@ include "policy_analysis.md"
 <p>Again, the argumentation schemes are meant to be helpful, not get in your way. They do not constrain you to enter arguments matching the schemes. You can, however, check whether arguments correctly instantiate the schemes they have been assigned. See the <a href="#validating-arguments">Validating Arguments</a> section for further information.</p>
 <h3 id="entering-and-deleting-premises"><span class="header-section-number">6.5.2</span> Entering and Deleting Premises</h3>
 <p>In the premise of the argument editor, you can choose an existing statement in the argument graph from the pull down list. You can filter the statements in the list by typing some text in the text field at the top of the list.</p>
-<p>You can additional premises by clicking on the &quot;Add Premise&quot; button. Premises can be deleted by clicking on the &quot;Remove this premise&quot; button immediately below each premise.</p>
+<p>You can insert additional premises by clicking on the &quot;Add Premise&quot; button. Premises can be deleted by clicking on the &quot;Remove this premise&quot; button immediately below each premise.</p>
 <h3 id="strict-or-defeasible-arguments"><span class="header-section-number">6.5.3</span> Strict or Defeasible Arguments</h3>
 <p>An argument may be <em>strict</em> or <em>defeasible</em> (not strict). An argument is strict if and only if its conclusion must be true, with no exceptions, if its premises are true, whether or not its premises are in fact true. For example the following arguments are strict:</p>
 <ul>
@@ -1148,7 +1152,7 @@ along with policy proposals submitted in comments on the European Green paper on
 databases/
 theories/
 documents/</code></pre>
-<p>The <code>properties.clj</code> file defines the attributes of the project. The properties are represented as a Clojure map in the file. Here is the contents of an example properties.clj file:</p>
+<p>The <code>properties.clj</code> file defines the attributes of the project. The properties are represented as a Clojure map in the file. Here are the contents of an example properties.clj file:</p>
 <pre class="sourceCode clojure"><code class="sourceCode clojure">{
 <span class="kw">:title</span> <span class="st">&quot;My First Carneades Project&quot;</span>
 <span class="kw">:creation-date</span> <span class="st">&quot;January 10, 2015&quot;</span>
@@ -1160,7 +1164,7 @@ documents/</code></pre>
 <p>The <code>:description</code> is a Clojure map, to allow multiple descriptions in different languages. In the example there are descriptions in English and German. Descriptions can formatted using <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a> syntax.</p>
 <p>The <code>:theory</code> property specifies which theory to use to construct and reconstruct arguments, using the rule-based inference engine, or interactively, using the argument editor.</p>
 <p>Theories are represented using Clojure data structures, in Clojure files with the usual &quot;.clj&quot; filename extension. In the property map, the values of the <code>:theory</code> property should be the file name of the Clojure file containing the theory, but without the &quot;.clj&quot; file name extension. The theory name is resolved relative to the &quot;theories&quot; directory of the given project, or the current project being configured if no project is named. In the example, the <code>:theory</code> property is &quot;default/walton_schemes&quot;. This refers to the theory in the &quot;default/theories/walton_schemes.clj&quot; file in the projects directory.</p>
-<p>The <code>databases/</code> directory stores all the database files of the project, including a database for each argument graph of they project. (A project may have than one argument graph. For example, when using the policy analysis tool, an argument graph is created for each case.) The database files are in the format used by the <a href="http://www.h2database.com/">H2</a> database engine for the Java Virtual Machine.</p>
+<p>The <code>databases/</code> directory stores all the database files of the project, including a database for each argument graph of they project. (A project may have more than one argument graph. For example, when using the policy analysis tool, an argument graph is created for each case.) The database files are in the format used by the <a href="http://www.h2database.com/">H2</a> database engine for the Java Virtual Machine.</p>
 <p>The <code>theories/</code> directory contains the Clojure source files of the theories of the project.</p>
 <p>Finally, the <code>documents/</code> directory can be used to store copies of source documents, documentary evidence, or any other project files.</p>
 <!--
@@ -1169,12 +1173,14 @@ of statements and nodes of argument graphs using relative URLs.  For
 example, the URL "file://src/foo.pdf" would be resolved to the file
 `documents/src/foo.pdf` of the project.
 -->
-<p>&lt;!-- include &quot;scenarios.md&quot; --!</p>
+<!--
+include "scenarios.md"
+-->
 <h1 id="builtin-argumentation-schemes"><span class="header-section-number">9</span> Builtin Argumentation Schemes</h1>
 <p>This chapter presents the argumentation schemes included with the distribution of the Carneades system. The system is pre-configured to use these schemes, but you can configure the system to use other schemes, or modify these schemes to meet your requirements.</p>
 <p>The argumentation schemes are shown here in pseudocode for readabililty. See the <a href="#modeling-argumentation-schemes">Modeling Argumentation Schemes</a> chapter for a description of the syntax used to formally define the schemes.</p>
 <p>The schemes can be viewed online, using Carneades, by clicking on the &quot;Theory&quot; link near the top of an argument outline page, if the project has not been configured to use some other schemes.</p>
-<p>Most of the schemes here are derived the book &quot;Argumentation Schemes&quot; <span class="citation">(Walton, Reed, and Macagno 2008)</span>. The schemes for arguments from credible source and practical reasoning are based on <span class="citation">(Wyner, Atkinson, and Bench-Capon 2012)</span> and <span class="citation">(Atkinson and Bench-Capon 2007)</span>, respectively.</p>
+<p>Most of the schemes here are derived from the book &quot;Argumentation Schemes&quot; <span class="citation">(Walton, Reed, and Macagno 2008)</span>. The schemes for arguments from credible source and practical reasoning are based on <span class="citation">(Wyner, Atkinson, and Bench-Capon 2012)</span> and <span class="citation">(Atkinson and Bench-Capon 2007)</span>, respectively.</p>
 <p>The schemes from these sources been modified to fit the Carneades computational model of argument. For example, generic critical questions which undermine premises, undercut the argument or rebut its conclusion, have been omitted, since these critical questions apply to all defeasible arguments in Carneades.</p>
 <p>All the argumentation schemes presented here are defeasible <em>unless</em> they have been explicitly declared to be strict.</p>
 <h2 id="argument-from-position-to-know"><span class="header-section-number">9.1</span> Argument from Position to Know</h2>
@@ -1207,36 +1213,39 @@ exceptions:
 <h2 id="argument-from-witness-testimony"><span class="header-section-number">9.3</span> Argument from Witness Testimony</h2>
 <pre><code>id: witness-testimony
 
-conclusion: A
+conclusion: S
 
 premises: 
     position to know: W is in a position to know about things in a 
-        certain subject domain A.
-    truth-telling: Witness W believes A to be true.
-    minor: W asserts that A is true.
+        certain subject domain D.
+  in-domain: Domain D contains the statement S.
+    truth-telling: Witness W believes S to be true.
+    minor: W asserts that S is true.
    
 assumptions:
-    CQ1: A is internally consistent.
+    CQ1: S is internally consistent.
     
 exceptions:
-    CQ2: A is inconsistent with the facts.
-    CQ3: A is inconsistent with the testimony of other witnesses.
+    CQ2: S is inconsistent with the facts.
+    CQ3: S is inconsistent with the testimony of other witnesses.
     CQ4: W is biased.
-    CQ5: A is implausible.</code></pre>
+    CQ5: S is implausible.</code></pre>
 <h2 id="argument-from-expert-opinion"><span class="header-section-number">9.4</span> Argument from Expert Opinion</h2>
 <pre><code>id: expert-opinion
 
-conclusion: A
+conclusion: S
 
 premises: 
-   major: Source E is an expert in subject domain S.
-   domain: A is in domain S.
-   minor: E asserts that A is true.
+   major: Source E is an expert in subject domain D.
+   domain: Domain D contains the statement S..
+   minor: E asserts that S is true.
    
 exceptions:
     CQ1: E is untrustworthy.
-    CQ2: A is inconsistent with the testimony of other witnesses.
-    CQ3: A is based on evidence.</code></pre>
+    CQ2: S is inconsistent with the testimony of other witnesses.
+
+assumptions:
+    CQ3: S is based on evidence.</code></pre>
 <h2 id="argument-from-analogy"><span class="header-section-number">9.5</span> Argument from Analogy</h2>
 <pre><code>id: analogy
 
@@ -1456,7 +1465,7 @@ premises:
 </ul></li>
 <li><p>Funding and Support</p>
 <ul>
-<li>Canadian Social Science and Humanities Research Council, 2007-09 and 2012-2017, with Douglas Walton</li>
+<li>Canadian Social Sciences and Humanities Research Council, 2007-09 and 2012-2017, with Douglas Walton</li>
 <li>Standardized Transparent Representations in order to Extend Legal Accessibility (Estrella, FP6-IST-027655), 2006-2008.</li>
 <li>Quality Platform for Open Source Software (Qualipso, FP6-IST-034763), 2006-2010.</li>
 <li>Google Summer of Code, 2008.</li>

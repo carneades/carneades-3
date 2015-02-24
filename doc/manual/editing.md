@@ -65,7 +65,7 @@ argument to also quote this as an additional source of the argument.
    [Argumentation Schemes](#argumentation-schemes) chapter for
    documentation of the initial set of schemes provided with Carneades. These
    schemes may be modified or extended, or replaced entirely, as
-   described in the [Modeling Policies and Argumentation Schemes](#modeling-policies-and-argumentation-schemes) chapter.
+   described in the [Argumentation Schemes](#argumentation-schemes) chapter.
 4. Enter the conclusion of the argument, by choosing a statement
    already in the graph with the same meaning as the conclusion of the
    argument in the source text. If the needed statement is not listed,
@@ -355,9 +355,9 @@ statement in the argument graph from the pull down list.  You can
 filter the statements in the list by typing some text in the text
 field at the top of the list. 
 
-You can additional premises by clicking on the "Add Premise" button.
-Premises can be deleted by clicking on the "Remove this premise"
-button immediately below each premise.
+You can insert additional premises by clicking on the "Add Premise"
+button.  Premises can be deleted by clicking on the "Remove this
+premise" button immediately below each premise.
 
 ### Strict or Defeasible Arguments
 

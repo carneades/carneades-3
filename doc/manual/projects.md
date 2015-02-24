@@ -13,10 +13,10 @@ the form and then click on the "Save" button.
 
 The "theory" field allows you to specify which argumentation schemes
 to use to construct and reconstruct arguments. It is initialized to
-use model of Walton's argumentation schemes distributed with the
+use the model of Walton's argumentation schemes distributed with the
 system, from the default project: "default/walton_schemes".
 
-Projects are store in files on your file system the directory
+Projects are stored in files on your file system in the directory
 specified in the "carneades.clj" file in your home directory. See the
 System Administration chapter for further configuration details.
 

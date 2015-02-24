@@ -10,7 +10,7 @@ This chapter of the Carneades user manual explains how to:
 - Use hypertext in web pages to
   [browse an argument graph](#using-hypertext-to-browse-an-argument-graph).
 
-- [Visualizing argument graphs](#visualizing-argument-graphs-in-argument-maps)
+- [Visualize argument graphs](#visualizing-argument-graphs-in-argument-maps)
   in diagrams, called "argument maps", and using these maps to
   navigate to more detailed views of statements and arguments.
 
@@ -90,7 +90,7 @@ doubt. See the section on
 about proof standards.
 
 The next section displays the content of the statement in natural
-langauge. This formulation of the statement is written by the analyst
+language. This formulation of the statement is written by the analyst
 or analysts who reconstructed the arguments to build the argument
 graph, or generated from a template in a theory, when arguments are
 constructed automatically using the Carneades inference engine.
@@ -108,7 +108,7 @@ representation as a logical atom (optional) and its id.
 
 If metadata had been provided for the statement, it would be displayed
 in a separate tab on the page. Descriptions may be provided in
-multiple natural langauges, with a tab for selecting the description
+multiple natural languages, with a tab for selecting the description
 in each language.
 
 ### Argument Pages
@@ -124,7 +124,7 @@ scheme applied is shown (e.g. "major" or "minor").
 The bottom of the page displays the properties of the argument: its
 id, the argumentation scheme applied (if any), whether it is a strict
 or defeasible argument, its weight and value. The argumentation scheme
-contains a hyperlink (*Note: not yet implemented*). Click on the link
+contains a hyperlink. Click on the link
 to view a description of the scheme.
 
 ![Metadata Tab of an Argument Page](figs/argument1b.png)
@@ -164,7 +164,7 @@ In argument maps, argument nodes whose conclusion is another argument
 node, rather than a statement node, visualize "undercutting"
 arguments. These are arguments which question the applicability of
 another argument. This is the only case where two nodes of the same
-time are directly connected in the map.
+type are directly connected in the map.
 
 Argument maps are represented using structured vector graphics (SVG)
 not bitmaps. You can zoom the map in or out, to any scale, without

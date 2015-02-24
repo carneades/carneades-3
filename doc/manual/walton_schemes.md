@@ -15,7 +15,7 @@ The schemes can be viewed online, using Carneades, by clicking on the
 "Theory" link near the top of an argument outline page, if the project
 has not been configured to use some other schemes.
 
-Most of the schemes here are derived the book "Argumentation Schemes"
+Most of the schemes here are derived from the book "Argumentation Schemes"
 [@Walton:2008]. The schemes for arguments from credible source and
 practical reasoning are based on [@Wyner:2012] and [@Atkinson:2007],
 respectively.
@@ -69,22 +69,23 @@ exceptions:
 ~~~
 id: witness-testimony
 
-conclusion: A
+conclusion: S
 
 premises: 
 	position to know: W is in a position to know about things in a 
-		certain subject domain A.
-	truth-telling: Witness W believes A to be true.
-	minor: W asserts that A is true.
+		certain subject domain D.
+  in-domain: Domain D contains the statement S.
+	truth-telling: Witness W believes S to be true.
+	minor: W asserts that S is true.
    
 assumptions:
-	CQ1: A is internally consistent.
+	CQ1: S is internally consistent.
 	
 exceptions:
-	CQ2: A is inconsistent with the facts.
-	CQ3: A is inconsistent with the testimony of other witnesses.
+	CQ2: S is inconsistent with the facts.
+	CQ3: S is inconsistent with the testimony of other witnesses.
 	CQ4: W is biased.
-	CQ5: A is implausible.
+	CQ5: S is implausible.
 ~~~
 
 ## Argument from Expert Opinion
@@ -92,17 +93,19 @@ exceptions:
 ~~~
 id: expert-opinion
 
-conclusion: A
+conclusion: S
 
 premises: 
-   major: Source E is an expert in subject domain S.
-   domain: A is in domain S.
-   minor: E asserts that A is true.
+   major: Source E is an expert in subject domain D.
+   domain: Domain D contains the statement S..
+   minor: E asserts that S is true.
    
 exceptions:
 	CQ1: E is untrustworthy.
-	CQ2: A is inconsistent with the testimony of other witnesses.
-	CQ3: A is based on evidence.
+	CQ2: S is inconsistent with the testimony of other witnesses.
+
+assumptions:
+	CQ3: S is based on evidence.
 ~~~
 
 ## Argument from Analogy

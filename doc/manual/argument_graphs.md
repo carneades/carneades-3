@@ -61,7 +61,7 @@ some arguments can be automatically found and entered into the graph.
 Carneades provides a knowledge representation language for
 argumentation schemes and an inference engine which can be used to
 find arguments in this way. Both methods can be used
-together. Carneades is an interactive argumentation assistent, not a
+together. Carneades is an interactive argumentation assistant, not a
 fully automatic problem-solver. Arguments which have been found
 automatically can be manually edited by users.
 
@@ -89,13 +89,14 @@ As can be seen in the entity-relationship diagram, arguments are
 linked to statements in two ways in argument graphs. Each argument has
 exactly one conclusion, which is a statement, and zero or more
 premises, where each premise has exactly one statement node.  A
-statement may the conclusion or premise of more than one argument.
+statement may be the conclusion or premise of more than one argument.
 
 A statement may be both a conclusion and a premise, resulting in
 complex argument graphs, representing chains or trees of
 reasoning. Argument graphs may contain cycles. A simple cycle would
-result if a statement and a premise of the same argument. There are
-methods for resolving these cycles when evaluating argument graphs.
+result if a statement is a premise and conlusion of the same
+argument. There are methods for resolving these cycles when evaluating
+argument graphs.
 
 A statement in an argument graph represents a propositional variable,
 whose value may be true (in), false (out) or unknown (undecided). To
@@ -111,7 +112,7 @@ negative. A positive premise holds if its statement is
 "in". Conversely, a negative premise holds only if its statement is
 "out".
 
-Prior models of argument graphs do not distinguish pro and con
+Prior models of argument graphs did not distinguish pro and con
 arguments or positive and negative premises. Rather, in these prior
 approaches all argument nodes are pro and all premises are
 positive. Our approach has the advantage of reducing the number of
@@ -170,7 +171,7 @@ users.)
 main
 : A Boolean value (true or false) used to indicate whether the
 statement is one of the main issues modeled by the argument
-graph. (Since argument graphs can contain cycles and not limited
+graph. (Since argument graphs can contain cycles and are not limited
 to trees, we cannot use the roots of trees for this purpose.)
 
 ## Argument Properties
