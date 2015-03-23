@@ -4,8 +4,7 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns carneades.web.routes
-  ^{:author "Sebastian Kaiser"
-    :doc "Definition of routing domains."}
+  ^{:doc "Definition of routing domains."}
   (:require [compojure.core :refer [defroutes context GET]]
             [ring.util.response :as resp]
             [ring.middleware.format-response
@@ -17,13 +16,9 @@
             [carneades.web.modules.lican.routes
              :refer [carneades-lican-api-routes]]))
 
-;; (def carneades-rest-routes
-;;   (-> #'service/carneades-web-service-routes wrap-restful-response))
-
 (defroutes carneades-web-routes
   (context "/carneades" []
            (GET "/" [] (resp/resource-response "index.html" {:root "public/carneades"}))
-           ;; (context "/carneadesws" [] carneades-rest-routes)
            (context "/api" []
                     (context "/session" [] carneades-session-api-routes)
                     (context "/projects" [] carneades-projects-api-routes)
@@ -31,15 +26,14 @@
 
 (defroutes tomcat-carneades-web-routes
   (GET "/" [] (resp/resource-response "index.html" {:root "public/carneades"}))
-  ;; (context "/carneadesws" [] carneades-rest-routes)
   (context "/api" []
            (context "/session" [] carneades-session-api-routes)
            (context "/projects" [] carneades-projects-api-routes)
            (context "/lican" [] carneades-lican-api-routes)))
 
 (defroutes jar-carneades-web-routes
-  (GET "/" [] (resp/resource-response "index.html" {:root "public/carneades"}))
-  ;; (context "/carneadesws" [] carneades-rest-routes)
+  (context "/carneades" []
+      (GET "/" [] (resp/resource-response "index.html" {:root "public/carneades"})))
   (context "/carneades/api" []
            (context "/session" [] carneades-session-api-routes)
            (context "/projects" [] carneades-projects-api-routes)

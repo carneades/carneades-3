@@ -19,6 +19,10 @@
 
 (def state (atom nil))
 
+(defn parse
+  [s]
+  (parse-string s true))
+
 (defn initial-state-value
   []
   {:project-name (str "testproject-" (make-uuid-str))})
@@ -490,3 +494,100 @@
              properties (parse (:body response2))]
          (:status response) => 201
          (:description properties) => (:en desc))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "Arguments' updates do not break the arguments metadata."
+        (let [project (:project-name @state)
+              married (s/make-statement :text {:en "Fred is married."} :atom '(married Fred))
+              ring (s/make-statement :atom '(wearsRing Fred) :text {:en "Fred wears a ring."})
+              short (s/make-statement :atom '(wearsShort Fred) :text {:en "Fred wears a short."})
+              arg (a/make-argument :id 'a1 :conclusion married :premises [(a/pm ring)]
+                                   :scheme "(reciprocity-rule a b c d e f g)"
+                                   :header {:description {:en "one description"}})
+              response (post-request
+                        (str "/projects/" project "/main/arguments/")
+                        arg)
+              id (:id (parse (:body response)))
+              response (post-request
+                        (str "/projects/" project "/main/statements/")
+                        short)
+              update {:premises [(a/pm short)]}
+              response (put-request
+                        (str "/projects/" project "/main/arguments/" id)
+                        update)
+              response (get-request
+                        (str "/projects/" project "/main/arguments/" id))
+              response2 (get-request
+                         (str "/projects/" project "/main/arguments/" id "?context=edit"))
+              arg' (parse (:body response))
+              argraw (parse (:body response2))]
+          (spy argraw)
+          (-> arg' :conclusion :text) => (-> arg :conclusion :text :en)
+          (:text (first (:premises arg'))) => (-> short :text :en)
+          (-> (:header argraw) :description :en) => (-> (:header arg) :description :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "Statement' updates do not break the arguments metadata."
+        (let [project (:project-name @state)
+              married (s/make-statement :text {:en "Fred is married."} :atom '(married Fred))
+              ring (s/make-statement :atom '(wearsRing Fred) :text {:en "Fred wears a ring."})
+              short (s/make-statement :atom '(wearsShort Fred) :text {:en "Fred wears a short."})
+              arg (a/make-argument :id 'a1 :conclusion married :premises [(a/pm ring)]
+                                   :scheme "(reciprocity-rule a b c d e f g)"
+                                   :header {:description {:en "one description"}})
+              response (post-request
+                        (str "/projects/" project "/main/arguments/")
+                        arg)
+              id (:id (parse (:body response)))
+              response (post-request
+                        (str "/projects/" project "/main/statements/")
+                        short)
+              sid (:id (parse (:body response)))
+              update {:weight 0.6}
+              response (put-request
+                        (str "/projects/" project "/main/statement/" sid)
+                        update)
+              response (get-request
+                        (str "/projects/" project "/main/arguments/" id))
+              response2 (get-request
+                         (str "/projects/" project "/main/arguments/" id "?context=edit"))
+              arg' (parse (:body response))
+              argraw (parse (:body response2))]
+          (spy argraw)
+          (-> arg' :conclusion :text) => (-> arg :conclusion :text :en)
+          (-> (:header argraw) :description :en) => (-> (:header arg) :description :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "It is possible to create a legal profile with a description."
+       (let [project (:project-name @state)
+             profile {:rules '[{:ruleid id1 :value 1.0}
+                               {:ruleid id2 :value 0.0}]
+                      :metadata {:title "Test profile"
+                                 :description {:en "A test profile"}}
+                      :default false}
+             baseu (str "/projects/" project "/legalprofiles/")
+             res (post-request baseu profile)
+             id (:id (parse (:body res)))
+             res (get-request (str baseu id))
+             profile' (parse (:body res))]
+         (-> profile' :metadata :title) => (-> profile :metadata :title)
+         (-> profile' :metadata :description :en) => (-> profile :metadata :description :en))))
+
+(with-state-changes [(before :facts (create-project))
+                     (after :facts (delete-project))]
+  (fact "It is possible to create a legal profile without a description."
+        (let [project (:project-name @state)
+              profile {:rules '[{:ruleid id1 :value 1.0}
+                                {:ruleid id2 :value 0.0}]
+                       :metadata {:title "Test profile"}
+                       :default false}
+              baseu (str "/projects/" project "/legalprofiles/")
+              res (post-request baseu profile)
+              id (:id (parse (:body res)))
+              res (get-request (str baseu id))
+              profile' (parse (:body res))]
+          (-> profile' :metadata :title) => (-> profile :metadata :title)
+          (-> profile' :metadata :description) => nil)))

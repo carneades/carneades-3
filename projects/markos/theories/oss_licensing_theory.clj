@@ -5,6 +5,7 @@
   (:require  [carneades.engine.dublin-core :as dc]
              [carneades.engine.theory :as t]
              [carneades.engine.argument :as a]
+             [carneades.engine.statement :as s]
              [carneades.owl.import :as owl]
              [carneades.project.fs :as project]
              [taoensso.timbre :as timbre :refer [debug error spy]]))
@@ -31,9 +32,9 @@
 project."})
 
    ;; :imports [copyright-theory]
-
+   
    :namespaces
-   { ""   "http://www.markosproject.eu/ontologies/oss-licenses#",
+   { "oss"   "http://www.markosproject.eu/ontologies/oss-licenses#",
      "copyright" "http://www.markosproject.eu/ontologies/copyright#",
      "owl" "http://www.w3.org/2002/07/owl#",
      "rdf" "http://www.w3.org/1999/02/22-rdr-syntax-ns#"
@@ -123,7 +124,7 @@ project."})
                                     :question "Does %s use %s?")})
 
           (t/make-role
-           :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#dynamicallyLinked
+           :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#dynamicallyLinkedSoftwareRelease
            :forms {:en (t/make-form :positive "%s is dynamically linked to %s."
                                     :negative "%s is not dynamically linked to %s."
                                     :question "Is %s dynamically linked to  %s?")})
@@ -135,7 +136,7 @@ project."})
                                     :question "Is %s dynamically linked to  %s?")})
 
           (t/make-role
-           :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#staticallyLinked
+           :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#staticallyLinkedSoftwareRelase
            :forms {:en (t/make-form :positive "%s is statically linked to %s."
                                     :negative "%s is not statically linked to %s."
                                     :question "Is %s statically linked to  %s?")})
@@ -153,7 +154,7 @@ project."})
                                     :question "Was %s compiled using %s?")})
 
          (t/make-role
-          :symbol 'http://www.markosproject.eu/ontologies/software#implementedAPI
+          :symbol 'http://www.markosproject.eu/ontologies/software#implementedAPIOfSoftwareRelease
           :forms {:en (t/make-form :positive "%s is an implementation of the %s API."
                                    :negative "%s is not an implementation of the %s API."
                                    :question "Is %s an implementation of the %s API?")})
@@ -180,9 +181,10 @@ project."})
     ;;  )
 
     (t/make-section
-     :id 'license-compatibility-rules
-     :header (dc/make-metadata :title "License Compatibility Rules"
-                               :description {:en ""})
+     :id 'oss-license-analysis-rules
+     :header (dc/make-metadata 
+              :title "Open Source Software License Analysis Rules"
+              :description {:en ""})
 
      :schemes
      [
@@ -206,7 +208,7 @@ project."})
        :premises [(a/pm '(copyright:derivedFrom ?W1 ?W2))])
 
       (t/make-scheme
-       :id 'software-release-license-template-rule
+       :id 'software-release-license-template
        :header (dc/make-metadata
                 :title "Software Release License Template"
                 :description {:en "Presumably, the license template
@@ -215,23 +217,9 @@ project."})
        :conclusion '(lic:licenseTemplate ?R ?T)
        :premises [(a/pm '(soft:releasedSoftware ?P ?R))
                   (a/pm '(lic:licenseTemplate ?P ?T))])
-
-      ;; 
-      ;; (t/make-scheme
-      ;;  :id 'entity-license-template-rule
-      ;;  :header (dc/make-metadata
-      ;;           :title "Entity License Template"
-      ;;           :description {:en "Presumably, the license template
-      ;;           applied to an entity is the same as the
-      ;;           project of its release."})
-      ;;  :conclusion '(lic:licenseTemplate ?E ?T)
-      ;;  :premises [(a/pm '(soft:SoftwareEntity ?E))
-      ;;             (a/pm '(soft:provenanceRelease ?E ?R))
-      ;;             (a/pm '(soft:releasedSoftware ?P ?R))
-      ;;             (a/pm '(lic:licenseTemplate ?P ?T))])
       
       (t/make-scheme
-       :id 'default-licensing-rule
+       :id 'default-licensing
        :weight 0.25
        :header (dc/make-metadata
                 :title "Default licensing"
@@ -241,9 +229,9 @@ project."})
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T))])
 
       (t/make-scheme
-       :id 'reciprocity-rule
+       :id 'strong-reciprocity
        :header (dc/make-metadata
-                :title "Reciprocity"
+                :title "Strong Reciprocity"
                 :description {:en "A work W1 may not use a license
                 template T1 if the work is derived from a work W2
                 licensed using a reciprocal license template T2,
@@ -253,100 +241,217 @@ project."})
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
                   (a/pm '(copyright:derivedFrom ?W1 ?W2))
                   (a/pm '(lic:licenseTemplate ?W2 ?T2))
-                  (a/pm '(ReciprocalLicenseTemplate ?T2))]
-       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
-       )
+                  (a/pm '(oss:StrongReciprocalLicenseTemplate ?T2))]
+       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
 
-      ;;
       (t/make-scheme
-       :id 'entity-reciprocity-rule
+       :id 'linking-exception-reciprocity
        :header (dc/make-metadata
-                :title "Reciprocity"
+                :title "LGPLv2.1 Reciprocity"
                 :description {:en "A work W1 may not use a license
                 template T1 if the work is derived from a work W2
-                licensed using a reciprocal license template T2,
-                unless T1 is compatible with T2."})
+                licensed using a weak recipricoal license template
+                with a linking exeption by any means other than
+                linking, unless T1 is compatible with T2."})
+       :pro false
+       :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
+       :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
+                  (a/pm '(oss:derivedFromOtherThanByLinking ?W1 ?W2))
+                  (a/pm '(lic:licenseTemplate ?W2 ?L2))
+                  (a/pm '(oss:LinkingExceptionReciprocalLicenseTemplate ?L2))]
+       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
+
+      (t/make-scheme
+       :id 'epl-reciprocity1
+       :header (dc/make-metadata
+                :title "EPL-1.0 Reciprocity 1"
+                :description {:en "A work W1 may not use a license
+                template T1 if the work is derived from a work W2
+                licensed using the EPL-1.0 license template by any
+                means other than linking, unless T1 is compatible with
+                the EPL-1.0 license template. This rule does not
+                apply if linking creates a derivative work, as a
+                matter of law."})
+       :pro false
+       :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
+       :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
+                  (a/pm '(oss:derivedFromOtherThanByLinking ?W1 ?W2))
+                  (a/pm '(lic:licenseTemplate ?W2 EPL-1.0))]
+       :exceptions [(a/pm '(copyright:compatibleWith ?T1 EPL-1.0))
+                    (a/pm '(valid derivation-by-linking))])
+
+      ;; To do: check how to properly namespace "valid"
+
+      (t/make-scheme
+       :id 'epl-reciprocity2
+       :header (dc/make-metadata
+                :title "EPL-1.0 Reciprocity 2"
+                :description {:en "A work W1 may not use a license
+                template T1 if the work is derived from a work W2
+                licensed using the EPL-1.0, by any means, unless T1 is
+                compatible with the EPL-1.0 license template. This
+                rule applies only if linking creates a derivative
+                work, as a matter of law."})
+       :pro false
+       :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
+       :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
+                  (a/pm '(copyright:derivedFrom ?W1 ?W2))
+                  (a/pm '(lic:licenseTemplate ?W2 EPL-1.0))]
+       :exceptions [(a/pm '(copyright:compatibleWith ?T1 EPL-1.0))
+                    (a/make-premise :positive false
+                                    :statement
+                                    (s/make-statement :atom '(valid derivation-by-linking)))])
+
+      ;; To do: check how to properly namespace "valid" 
+
+      (t/make-scheme
+       :id 'derived-from-other-than-by-linking1
+       :header (dc/make-metadata
+                :title "Relation between linking and implementing an API"
+                :description {:en "Implementing an API creates a
+                derivative work of an API, but need not involve linking to
+                the object code of interface definitions."})
+       :pro true
+       :conclusion '(oss:derivedFromOtherThanByLinking ?R1 ?R2)
+       :premises [(a/pm '(oss:implementedAPIOfSoftwareRelease ?R1 ?R2))])
+
+      
+      (t/make-scheme
+       :id 'derived-from-other-than-by-linking2
+       :header (dc/make-metadata
+                :title "Relationship between linking and modification"
+                :description {:en "Modifying source code creates a
+                derivative work of the source code, but does not
+                necessarily require linking to the binary code from
+                the original version."})
+       :pro true
+       :conclusion '(oss:derivedFromOtherThanByLinking ?R1 ?R2)
+       :premises [ (a/pm '(oss:modificationOf ?R1 ?R2))])
+
+      (t/make-scheme
+       :id 'entity-reciprocity
+       :header (dc/make-metadata
+                :title "Strong Reciprocity"
+                :description {:en "A software entity E1 may not use a
+                license template T1 if its provenance release W1 is
+                derived from a work W2 licensed using a strong
+                reciprocal license template T2, unless T1 is
+                compatible with T2."})
        :pro false
        :conclusion '(copyright:mayBeLicensedUsing ?E1 ?T1)
        :premises [(a/pm '(soft:SoftwareEntity ?E1))
                   (a/pm '(soft:provenanceRelease ?E1 ?W1))
                   (a/pm '(copyright:derivedFrom ?W1 ?W2))
                   (a/pm '(lic:licenseTemplate ?W2 ?T2))
-                  (a/pm '(ReciprocalLicenseTemplate ?T2))]
+                  (a/pm '(oss:ReciprocalLicenseTemplate ?T2))]
        :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
 
-      ;;
-      ;; (t/make-scheme
-      ;;  :id 'default-derivative-work-rule
-      ;;  :weight 0.25
-      ;;  :header (dc/make-metadata
-      ;;           :title "Derivative Works"
-      ;;           :description {:en "As a general rule, any use of a
-      ;;           work, R1, by another work, R2,
-      ;;           causes R2 to be a derivative work of R1."})
-      ;;  :conclusion '(copyright:derivedFrom ?R1 ?R2)
-      ;;  :premises [(a/pm '(soft:provenanceRelease ?E1 ?R1))
-      ;;             (a/pm '(top:usedEntity ?E1 ?E2))
-      ;;             (a/pm '(soft:provenanceRelease ?E2 ?R2))])
+      (t/make-scheme
+       :id 'modifications-only-reciprocity
+       :header (dc/make-metadata
+                :title "Modifications Only Reciprocity"
+                :description {:en "A work W1 may not use a license
+                template T1 if the work is derived via modifications
+                of one or more files from a work W2 and W2 is licensed
+                using a weak recipricoal license template, T2,
+                requiring reciprocity for file modifications, unless
+                T1 is compatible with T2."})
+       :pro false
+       :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
+       :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
+                  (a/pm '(oss:modificationOfSoftwareRelease ?W1 ?W2))
+                  (a/pm '(lic:licenseTemplate ?W2 ?T2))
+                  (a/pm '(oss:ModificationsOnlyReciprocalLicenseTemplate ?T2))]
+       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
 
       (t/make-scheme
-       :id 'compatible-reflexive-rule
+       :id 'compatible-reflexive
        :header (dc/make-metadata
                 :title "Reflexivity of compatible"
-                :description {:en "A license template is compatible with itself."})
+                :description 
+                {:en "A license template is compatible with itself."})
        :conclusion '(copyright:compatibleWith ?T1 ?T1)
        :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))])
 
       (t/make-scheme
-       :id 'dynamically-linked-library-rule
+       :id 'gpl3-compatibility-with-gpl2
        :header (dc/make-metadata
-                :title "Dynamic linking"
-                :description {:en "The Free Software Foundation claims
-                that dynamic linking creates a derivative work."})
-       :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [;; (a/pm '(soft:dynamicallyLinkedEntity ?R1 ?E1))
-                  (a/pm '(dynamicallyLinked ?R1 ?R2))
-                  ;; (a/pm '(soft:Library ?E1))
-                  ;; (a/pm '(soft:provenanceRelease ?E1 ?R2))
-                  ])
+                :title "Compatiblity of the GPLv3 and GPLv2 License Templates"
+                :description {:en "The GPL-3.0 license template is
+                presumably compatible with the earlier GPL-2.0
+                version. This presumption does not hold if the
+                copyright owner of the software published using the
+                GPL-2.0 license template did not include the option to
+                apply later versions of the GPL in the copyright
+                notice attached to the software. The copyright notice
+                recommended by the Free Software Foundation includes
+                this option.  Note: The presumption can be overridden
+                manually using an undercutting argument. It cannot be
+                formulated as an exception here, because the copyright
+                notice is a property of the instance of the license
+                template. To handle this exception automatically, the
+                compatibleWith relation would need to be modified to
+                compare license instances, rather than licence
+                templates. We have decided not to do this, since
+                reasoning about license compatibility issues at the
+                level of instances would increase the complexity of
+                the model and analysis by an amount that does not
+                seem justified by the amount this exception is
+                relevant in practice."})
+       :conclusion '(copyright:compatibleWith GPL-3.0 GPL-2.0)
+       :premises [])
 
       (t/make-scheme
-       :id 'statically-linked-library-rule
+       :id 'gpl3-compatibility-with-gpl-le-2
        :header (dc/make-metadata
-                :title "Static linking"
-                :description {:en "The Free Software Foundation claims
-                that static linking creates a derivative work."})
+                :title "Compatiblity of the GPL-3.0 and GPL-LE-2.0 License Templates"
+                :description {:en "The GPL-3.0 license template is
+                presumably compatible with the earlier GPL-LE-2.0
+                version. This presumption does not hold if the
+                copyright owner of the software published using the
+                GPL-LE-v2 license template did not include the option
+                to apply later versions of the GPL in the copyright
+                notice attached to the software. The copyright notice
+                recommended by the Free Software Foundation includes
+                this option. See the gpl3-compatibility-with-gpl2
+                rule for further information."})
+       :conclusion '(copyright:compatibleWith GPL-3.0 GPL-LE-2.0)
+       :premises [])
+
+
+      (t/make-scheme
+       :id 'derivation-by-linking
+       :header (dc/make-metadata
+                :title "Linking Creates a Derivative Work"
+                :description {:en "Linking creates a derivative work."})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [(a/pm '(staticallyLinked ?R1 ?R2))
-                  ;; (a/pm '(soft:Library ?E1))
-                  ;; (a/pm '(soft:provenanceRelease ?E1 ?R2))
-                  ])
+       :premises [ (a/pm '(oss:linkedSoftwareRelease ?R1 ?R2)) ])
+
+      (t/make-scheme
+       :id 'static-linking
+       :header (dc/make-metadata
+                :title "Static Linking"
+                :description {:en "Static linking is a form of linking."})
+       :conclusion '(copyright:linkedSoftwareRelease ?R1 ?R2)
+       :premises [(a/pm '(oss:staticallyLinkedSoftwareRelease ?R1 ?R2)) ])
+
+      (t/make-scheme
+       :id 'dynamic-linking
+       :header (dc/make-metadata
+                :title "Dynamic Linking"
+                :description {:en "Dynamic linking is a form of linking."})
+       :conclusion '(copyright:linkedSoftwareRelease ?R1 ?R2)
+       :premises [(a/pm '(oss:dynamicallyLinkedSoftwareRelease ?R1 ?R2)) ])
 
       (t/make-scheme
        :id 'oracle-v-google
        :header (dc/make-metadata
                 :title "Derivation by Implementing an API"
-                :description {:en "Oracle America, Inc. v. Google,
+                :description {:en "See Oracle America, Inc. v. Google,
                 Inc., United States Court of Appeals for the Federal
                 Circuit, 2013-1021, -1022, May 9, 2014"})
        :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [;; (a/pm '(soft:provenanceRelease ?E1 ?R1))
-                  ;; (a/pm '(soft:directImplementedInterface ?E1 ?I1))
-                  ;; (a/pm '(top:containedEntity ?A1 ?I1))
-                  ;; (a/pm '(soft:ownedAPI ?O1 ?A1))
-                  ;; (a/pm '(soft:provenanceRelease ?O1 ?R2))
-                  (a/pm '(implementedAPI ?R1 ?R2))
-                  ])
-
-    (t/make-scheme
-       :id 'derivation-by-forking
-       :header (dc/make-metadata
-                :title "Derivation by Forking"
-                :description {:en "A fork of a software release is a
-                work derived from the release."})
-       :conclusion '(copyright:derivedFrom ?R1 ?R2)
-       :premises [(a/pm '(soft:softwareFork ?R2 ?R1))])
-
+       :premises [(a/pm '(oss:implementedAPIOfSoftwareRelease ?R1 ?R2))])
 
     (t/make-scheme
      :id 'derivation-by-modification
@@ -355,10 +460,15 @@ project."})
               :description {:en "A work created by modifying a work is
               derived from it. "})
      :conclusion '(copyright:derivedFrom ?R1 ?R2)
-     :premises [;; (a/pm '(soft:provenanceRelease ?E1 ?R1))
-                ;; (a/pm '(top:previousVersion ?E1 ?E2))
-                ;; (a/pm '(soft:provenanceRelease ?E2 ?R2))
-                (a/pm '(modificationOf ?R1 ?R2))
-                ])
+     :premises [ (a/pm '(oss:modificationOfSoftwareRelease ?R1 ?R2)) ]) 
 
-      ])]))
+    (t/make-scheme
+       :id 'modification-by-forking
+       :header (dc/make-metadata
+                :title "Modification by Forking"
+                :description {:en "A fork of a software release presumably
+                includes modifications of the original version."})
+       :conclusion '(oss:modificationOfSoftwareRelease ?R1 ?R2)
+       :premises [(a/pm '(soft:softwareFork ?R2 ?R1))])
+
+    ])]))

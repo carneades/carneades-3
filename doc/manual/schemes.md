@@ -1,368 +1,243 @@
+
+
 # Argumentation Schemes
 
-This chapter presents the argumentation schemes included with the distribution of the Carneades system. The system is pre-configured to use these schemes, but you can configure the system to use other schemes, or modify these schemes to meet your requirements.
+Argumentation schemes are represented using a high-level scheme (rule)
+language embedded in the Clojure programming language.
 
-The argumentation schemes are shown here in pseudocode for readabililty. See the [Modeling Policies and Argumentation Schemes](#modeling-policies-and-argumentation-schemes) chapter for a description of the syntax used to formally define the schemes.
+Argumentation schemes generalize the notion of an inference rule to
+cover defeasible as well as strict reasoning patterns. We use the term
+"scheme" instead of "rule" to emphasize that the rules are usually
+defeasible. The scheme language is expressive enough to represent
+axiomatizations (i.e. axioms and inferences rules) of theories in many
+domains, including laws, regulations and policies, in addition to
+argumentation schemes per se.
 
-The schemes can be viewed online, using Carneades, by clicking on the "Schemes" button in the menu bar of the Carneades home page.
+Computational models of theories have been called many things in
+computer science, including "knowledge bases" and "deep conceptual" or
+"semantic" models. We prefer the term "theory" to "knowledge-base"
+because "knowledge" may suggest consensus or truth, while it is
+clearer that theories may be controversial or contested.
 
-Most of the schemes here are derived the book "Argumentation Schemes" [@Walton:2008]. The schemes for arguments from credible source and practical reasoning are based on [@Wyner:2012] and [@Atkinson:2007], respectively. 
+The scheme language is similar to logic programming languages such as
+Prolog. Any Prolog rule ("clause") can be represented in Carneades in
+a straight-forward way. The rule language has some additional features
+for representing argumentation schemes, such as scheme variables
+ranging over atoms and a means to represent premise roles
+(e.g. "major", "minor"). Moreover, schemes in this language can be
+annotated with meta-data and documentation, in multiple natural
+languages.
 
-The schemes from these sources been modified to fit the Carneades computational model of argument. For example, generic critical questions which undermine premises, undercut the argument or rebut its conclusion, have been omitted, since these critical questions apply to all defeasible arguments in Carneades.
+Carneades includes an inference engine which is able to automatically
+apply theories to construct arguments. Using a high-level declarative
+language for representing theories, and generating arguments from
+these theories, makes it easier for domain experts to read and
+validate the theories.
 
-All the argumentation schemes presented here are defeasible *unless* they have been explicitly declared to be strict. 
+Theories may organized in a hierarchical structure of sections and
+subsections, with schemes included at any level. Like schemes, the
+theory as a whole and each of its sections can be annotated with its
+own meta-data and natural language description. These features
+facilitate self-documenting and "isomorphic" modeling. The source text
+of the schemes, policies or legislation can be included within the
+model, in the same files, in such as way as to preserve the
+hierarchical structure of the sources. This makes it easier to
+maintain the model as the source documents are modified, since there
+can be a one-to-one correspondance between sections of the source text
+and sections of the model.
 
-## Argument from Position to Know
+Theories are represented in Clojure source code files.  Clojure
+packages can be used to modularize, combine and reuse theories.  
 
-~~~
-id: position-to-know  
+The theory language is an executable knowledge-representation
+language, with its own semantics and an inference engine implementing
+this semantics.  It is not intended to be used as an "interchange
+format" for exporting and importing theories among diverse formalisms
+with varied semantics.
 
-conclusion: S
+The semantics of theories are defined by mapping
+instantiations of argumentation schemes to argument graphs and, in
+turn, evaluating these graphs using the computational model of
+structured argument presented in [@GordonPrakkenWalton:2007a].
 
-premises:
-	major: W is in a position to know about things in a certain
-		subject domain D.
-	minor: W asserts that S is true.
-	domain: S is in domain D.
-	
-exceptions:
-	CQ1: W is dishonest.
-~~~
+## Modeling Argumentation Schemes 
 
-## Argument from Credible Source
+In this section we illustrate how to use the language to represent a
+version of the scheme for arguments from practical reasoning.
 
-~~~
-id:  credible-source
+A domain theory is represented by first defining a *language*
+(dictionary) of symbols, denoting predicates and terms, and then a set
+of inference rules, called *schemes*, using this language.
 
-conclusion: S
+The language is represented as a map from symbols to predicates and
+individuals, in the Clojure programming language. Each symbol of the
+language is mapped to a structure with fields for the symbol of the
+predicate (redundantly), the arity of the predicate (i.e. the number
+of columns in a tabular representation of the relation denoted by the
+predicate) and an optional number of forms for expressing statements
+and questions about this predicate in one or more natural languages.
 
-premises:
-	source: W is a credible source about domain D.
-	assertion: W asserts S.
-	domain: S is in domain D.
+To illustrate, below are the definition of some of the predicates of
+the language used a version of the schemes for practical reasoning.
 
-exceptions:
-	CQ1: W is biased.
-	CQ2: W is dishonest.
-	CQ3: Other credible sources disagree with S.
-~~~
+~~~{.clojure }
+<#include "code/language.clj">
+~~~	   
+ 
+An argumentation scheme is represented as a structure with six fields:
 
-## Argument from Witness Testimony
+1. id
+2. header
+3. conclusion
+4. premises
+5. exceptions, and
+6. assumptions.
 
-~~~
-id: witness-testimony
+The id is a term in the language used to reify argumentation schemes
+and represent statements about argumentation schemes in domain
+models. The header enables metadata about the scheme to be represented
+(e.g. title, description). Descriptions can be represented in multiple
+natural languages. The conclusion is a formula schema, which may
+contain schema variables. Schema variables are represented by symbols
+beginning with a question mark, e.g `?Ag`, `?A`, and `?G`, and range
+over both terms and propositions. Thus, the conclusion of an
+argumentation scheme can be a schema variable. This feature is needed
+for representing schemes, such as arguments from expert witness
+testimony, whose conclusion may be any proposition whatsoever.
 
-conclusion: A
+The premises, exceptions and assumptions fields of schemes are vectors
+of premise structures, where each premise has the following
+properties:
 
-premises: 
-	position to know: W is in a position to know about things in a 
-		certain subject domain A.
-	truth-telling: Witness W believes A to be true.
-	minor: W asserts that A is true.
-   
-assumptions:
-	CQ1: A is internally consistent.
-	
-exceptions:
-	CQ2: A is inconsistent with the facts.
-	CQ3: A is inconsistent with the testimony of other witnesses.
-	CQ4: W is biased.
-	CQ5: A is implausible.
-~~~
+role
+  : A string naming the role of the premise in the argumentation
+  scheme, e.g. "major", "minor", "circumstances", "goal".
 
-## Argument from Expert Opinion
+positive
+  : Boolean. False if the premise is negated. Default: true.
 
-~~~
-id: expert-opinion
+statement
+  : An atom formalizing the propositional content of the statement.
 
-conclusion: A
+Next, using this language we formally define positive and negative
+versions of a scheme for practical reasoning. Schemes may be organized
+in an hierarchy of *sections*, each section with its own metadata. But
+since there are only four schemes in this example, sections are not
+illustrated here.
 
-premises: 
-   major: Source E is an expert in subject domain S.
-   domain: A is in domain S.
-   minor: E asserts that A is true.
-   
-exceptions:
-	CQ1: E is untrustworthy.
-	CQ2: A is inconsistent with the testimony of other witnesses.
-	CQ3: A is based on evidence.
-~~~
-
-## Argument from Analogy
-
-~~~
-id: analogy
-
-conclusion: S
-
-premises:
-	major: Case C1 is similar to the current case.
-   case: S is true in case C1.
-   minor: E asserts that A is true.
-   
-exceptions:
-	CQ1: There are relevant differences between case C1 and the 
-		current case.
-	CQ2: S is false in case C1, which is more on point 
-		than case	C2.
-~~~
-    
-## Argument from Precedent
-
-~~~
-id: precedent
-
-conclusion: S
-
-premises:
-	major: Case C1 is similar to the current case.
-	ratio: Rule R is the ratio decidendi of case C1.
-	conclusion: Rule R has conclusion S.
-   
-exceptions:
-	CQ1: There are relevant differences between case C1 and the 
-		current case.
-	CQ2: Rule R is inapplicable in this case.
-~~~
-
-## Argument from Verbal Classification
-
-~~~
-id: definition-to-verbal-classification
-
-strict: true
-
-conclusion: O is an instance of class G.
-
-premises:
-	individual: O satisfies definition D.
-	classification: Objects which satisfy definition D are
-		classified as instances of class G.
-~~~
-    
-## Argument from Definition to Verbal Classification
-
-~~~
-id: definition-to-verbal-classification
-
-strict: true
-
-conclusion: O is an instance of class G.
-
-premises:
-   individual: O satisfies definition D.
-   classification: Objects which satisfy definition D are
-		classified as instances of class G.
-~~~
-    
-## Defeasible Modus Ponens
-
-~~~
-id: defeasible-modus-ponens
-
-conclusion: B
-
-premises:
-	major: If A is true then presumably B is also true.
-	minor: A
-~~~
-    
-## Argument from an Established Rule
-
-~~~
-id: established-rule
-
-conclusion: C
-
-premises:
-	major: Rule R has conclusion C.
-	minor: Rule R is applicable.
-
-assumptions:
-	CQ1: Rule R is valid.
+~~~{.clojure }
+<#include "code/schemes.clj">
 ~~~
 
-## Argument from Positive Consequences
+Now, let's us package the language and schemes together in a
+theory. Conceptually, a theory is a set of propositions. But since the
+set may be infinite, it is more convenient to represent theories
+intensionally, as a set of axioms and inference rules. We call the
+inference rules "argumentation schemes", because they may be defeasible,
+to distinguish them from the inference rules of classical logic, which
+are all non-defeasible (strict).
 
-~~~
-id: positive-consequences
+A theory is modelled as a structure having the following fields:
 
-conclusion: Action A should be performed.
+header
+  : metadata (e.g. title, description) about the
+  theory. Descriptions can be in multiple languages and can be
+  arbitrarily long, structured texts, represented using the Markdown
+  wiki language.
 
-premises:
-	major: Performing action A would have positive consequences.
-~~~
-    
-## Argument from Negative Consequences
+language
+  : The formal language of the theory; a dictionary mapping symbols to
+  terms and predicates.
 
-~~~
-id: negative-consequences
+schemes
+  : Strict and defeasible inference rules.
 
-conclusion: Action A should not be performed.
+sections
+  : A sequence of sections, which in turn consist of a header, schemes
+  and (sub)sections, enabling theories to be organized hierarchically,
+  similar to the hierarchical structure of books and articles.
 
-premises:
-	major: Performing action A would have negative consequences.
-~~~
+references
+  : A sequence of metadata structures, for providing bibliographic
+  information about source documents.
 
-## Argument from Practical Reasoning
+Next, we complete this illustration of how to implement argumentation
+schemes, by defining `theory1` to be the following theory:
 
-~~~
-id: practical-reasoning
-
-conclusion: A1 should be performed.
-
-premises:
-	circumstances: S1 is currently the case.
-	action: Performing A1 in S1 would bring about S2.
-	goal: G would be realized in S2.
-	value: Achieving G would promote V.
-
-assumptions:
-	CQ1: V is indeed a legitimate value.
-	CQ2: G is a worthy goal.
-	CQ3: Action A1 is possible.
-
-exceptions:
-	CQ4: There exists an action that, when performed in S1, would 
-		bring about S2 more effectively than A1.
-	CQ5: There exists an action that, when performed in S1,  would 
-		realize G more effectively than A1.
-	CQ6: There exists an action that, when performed in S1, would 
-		promote V more effectively than A1.
-	CQ7: Performing A1 in S1 would have side-effects 
-		which demote V or some other value.
-~~~	
-
-## Argument from Cause to Effect.
-
-~~~
-id: cause-to-effect
-
-conclusion: Event E2 will occur.
-
-premises:
-	minor: An event E1 has occurred.
-	major: Event E1 causes event E2.
-
-exceptions:
-	CQ1: An event E3 interferred with E1.
+~~~{.clojure }
+<#include "code/theory1.clj">
 ~~~
 
+<!--
+## Modeling Policies
 
-## Argument from Correlation to Cause
+Policies and argumentation schemes are modeled in the same way.  This
+section illustrates how to use the language to model policies, with a
+copyright example.
 
-~~~
-id: correlation-to-cause
+The policy issue in this example is whether so-called "orphaned" works
+may be published without a license for some purposes.
 
-conclusion: Event E1 causes event E2.
+We assume in this example that current copyright law in Germany
+requires a license, with no exceptions for orphaned works. This is the
+"status quo" policy.  An alternative policy is proposed by a German
+non-profit organization, the Aktionsbündnisses "Urheberrecht für
+Bildung und Wissenschaft", called the "Action Alliance" in the
+following. This policy would allow orphaned works to be published,
+with or without a license, under exceptional circumstances, for
+example when the work is published for non-commercial purposes and an
+effort has been made to search for the copyright owner.
 
-premises:
-	major: Events E1 and E2 are correlated.
+We begin by modeling the technical language ("ontology") of the
+policies:
 
-assumptions:
-	CQ1: There exists a theory explaining the correlation 
-		between E1 and E2.
-
-exceptions:
-	CQ2: E3 causes E1 and E2.
-~~~
-
-## Argument from Sunk Costs
-
-~~~
-id: sunk-costs
-
-conclusion: Action A should be performed.
-
-premises:
-	costs: The costs incurred performing A thus far are C.
-	waste: The sunk costs of C are too high to waste.
-
-assumptions:
-	CQ1: Action A is feasible.
-~~~
-    
-## Argument from Appearance
-
-
-~~~
-id: appearance
-
-conclusion: O is an instance of class C.
-
-premises:
-	minor: O looks like a C.
+~~~{.clojure }
+<#include "code/copyright_language.clj">
 ~~~
 
-## Argument from Ignorance
+This policy consists of a single scheme, modeling Section 31 of German
+copyright law. The symbol `UrhG-31` has been defined to refer to this
+scheme, so as to allow the scheme to be used in multiple policies,
+since it used both by the current German law and the policy proposed
+by the Action Alliance.
 
-~~~
-id: ignorance
-
-conclusion: S
-
-premises:
-	major: S would be known if it were true.
-	minor: S is known to be true.
-
-exceptions:
-	CQ1: The truth of S has not been investigated.
+~~~{.clojure }
+<#include "code/german_copyright_law.clj">
 ~~~
 
+Next, here is the model of the alternative, more liberal policy
+proposed by the Action Alliance:
 
-## Argument from Abduction
-
-~~~
-id: abduction
-
-conclusion: H
-
-premises:
-	observation: observed ?S
-	explanation: Theory T1 explains S.
-	hypothesis: T1 contains H as a member.
-
-exceptions:
-	CQ1: T2 is a more coherent explanation than T1 of S.
-~~~
-    
-## Ethotic Argument
-
-~~~
-id: ethotic
-
-conclusion: S
-
-premises:
-	assertion: P asserts that S is true.
-	trustworthiness: P is trustworthy.
+~~~{.clojure }
+<#include "code/action_alliance_policy.clj">
 ~~~
 
-## Slippery Slope Argument
+Notice how Section 31 of German copyright law is also a part of this
+policy proposal. The proposed policy extends German law with
+exceptions for orphaned works.
 
-This version of the slippery slope scheme is intended to be used together with the argument from negative consequences schema, to derive the conclusion that the action should not be performed.
+Now, let's put this altogether is a "theory" containing both policies:
 
-Notice that the scheme is represented by *two* Carneades schemes, one for the base case and one for the inductive step.
-
-### Base Case
-~~~
-id: slippery-slope-base-case
-
-conclusion: Performing action A would have negative consequences
-
-premises:
-	realization: Performing A would realize event E.
-	horrible costs: Event E would have horrible costs.
+~~~{.clojure }
+<#include "code/copyright_policies.clj">
 ~~~
 
-### Inductive Step
+## Installing Policy Models and Argumentation Schemes 
+-->
 
-~~~
-id: slippery-slope-inductive-step
 
-conclusion: Event E1 would have horrible consequences
 
-premises:
-	causation: Event E1 causes E2.
-	consequences: Event E2 would haves horrible consequences.
-~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+

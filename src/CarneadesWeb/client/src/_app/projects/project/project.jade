@@ -19,9 +19,9 @@
           ng-click='detail.getLink()')
           i.fa.fa-copy: span(translate='projects.copylink')
 
-        svg-download(
-          url="/carneades/api/projects/{{$stateParams.pid}}/main/map",
-          filename="{{$stateParams.pid}}.argument.map.svg")
+        // svg-download(
+        //   url="/carneades/api/projects/{{$stateParams.pid}}/main/map",
+        //   filename="{{$stateParams.pid}}.argument.map.svg")
           
       .section#description
         markdown(strip='true',ng-model='detail.project.description')

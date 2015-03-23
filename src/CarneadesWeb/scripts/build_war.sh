@@ -5,26 +5,7 @@ WAR_NAME="carneades"
 
 SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
 
-## Helpers
-
-prepare_local_deps () {
-
-    cd $SCRIPTPATH/../../CarneadesEngine
-    lein install
-}
-
-build_webclient () {
-    cd $SCRIPTPATH/../client
-    npm install
-    ./node_modules/bower/bin/bower install
-    ./node_modules/grunt-cli/bin/grunt build
-    cd -
-}
-
-show_usage () {
-    echo "`basename $0` [--deploy PATH]"
-    exit 0
-}
+source $SCRIPTPATH/helpers.sh
 
 ## Main
 cd $SCRIPTPATH/../server

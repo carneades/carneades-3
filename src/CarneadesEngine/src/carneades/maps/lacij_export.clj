@@ -86,8 +86,10 @@
 
 (defn add-undercutter-argument-node
   [svgmap arg ag]
-  (let [label (scheme->str (:scheme arg))]
-   (add-node-kv svgmap (gen-arg-id arg) (merge {:label label} undercutter-params))))
+  (let [label (scheme->str (:scheme arg))
+        arg-params (pick-arg-params ag arg)
+        params (assoc undercutter-params :style (:style arg-params))]
+    (add-node-kv svgmap (gen-arg-id arg) (merge {:label label} params))))
 
 (defn add-normal-argument-node
   [svgmap arg ag]

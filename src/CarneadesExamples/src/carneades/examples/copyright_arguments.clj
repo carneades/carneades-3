@@ -11,7 +11,6 @@
         carneades.engine.dublin-core
         carneades.database.import
         carneades.database.export 
-        carneades.xml.caf.export
         carneades.maps.lacij
         carneades.engine.argument-evaluation
         carneades.engine.aspic)

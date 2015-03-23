@@ -15,12 +15,21 @@
 
 (def db-name "legal-profiles")
 
+(defentity translation
+  (entity-fields :en
+                 :nl
+                 :fr
+                 :de
+                 :it
+                 :sp))
+
 (defentity metadata
   (entity-fields :key
                  :contributor
                  :coverage
                  :creator
                  :date
+                 :description
                  :format
                  :identifier
                  :language
@@ -30,8 +39,8 @@
                  :source
                  :subject
                  :title
-                 :type
-                 ))
+                 :type)
+  (has-one translation))
 
 (defentity profiles
   (entity-fields :id :default :metadatum)
@@ -47,6 +56,18 @@
   (let [conn (db/make-connection project db-name user password
                                  :create true)]
     (jdbc/with-db-transaction [conn conn]
+      (jdbc/execute!
+       conn
+       (s/sql (s/create-table
+               :translation
+               (s/column :id :serial :primary-key? true)
+               (s/column :en :varchar)
+               (s/column :nl :varchar)
+               (s/column :fr :varchar)
+               (s/column :de :varchar)
+               (s/column :it :varchar)
+               (s/column :sp :varchar))))
+
       (jdbc/execute!
        conn
        (s/sql (s/create-table
@@ -66,8 +87,9 @@
                (s/column :source :varchar)
                (s/column :subject :varchar)
                (s/column :title :varchar)
-               (s/column :type :varchar))))
-
+               (s/column :type :varchar)
+               (s/column :description :integer :not-null? false :references :translation/id))))
+      
       (jdbc/execute!
        conn
        (s/sql (s/create-table
@@ -132,17 +154,6 @@
              (set-fields {:default false})
              (where {:id [not= id]})))))
 
-(defn delete-profile
-  "Delete a profile in the database."
-  [id]
-  (transaction
-   (let [profile (read-profile id)]
-     (when (:default profile)
-       (throw (ex-info "Deleting the default profile is forbidden."
-                       {:profile profile}))))
-   (delete rules (where {:profile [= id]}))
-   (delete profiles (where {:id [= id]}))))
-
 (defn pack-rule
   [rule]
   (-> rule
@@ -195,6 +206,32 @@
   [id]
   (delete rules (where {:id [= id]})))
 
+(defn create-translation
+  "Create a translation in the database."
+  [tr]
+  (first (vals
+          (insert translation
+                  (values tr)))))
+
+(defn read-translation
+  "Read a translation in the database."
+  [id]
+  (first (select translation
+                 (where {:id [= id]}))))
+
+(defn update-translation
+  "Update a translation in the database."
+  [id change]
+  (update translation
+          (set-fields change)
+          (where {:id [= id]})))
+
+(defn delete-translation
+  "Delete a translation."
+  [id]
+  (delete translation
+          (where {:id [= id]})))
+
 (defn create-metadatum
   "Create a metadatum in the database."
   [metadatum]
@@ -221,6 +258,40 @@
   (delete metadata
           (where {:id [= id]})))
 
+(defn pack-metadatum+
+  [metadatum+ descriptionid]
+  (let [metadatum (dissoc metadatum+ :description)]
+    (if descriptionid
+      (assoc metadatum :description descriptionid)
+      metadatum)))
+
+(defn create-metadatum+
+  "Create a metadatum in the database with its associated description."
+  [metadatum]
+  (let [descriptionid (when (:description metadatum)
+                        (create-translation (:description metadatum)))
+        metadatum' (pack-metadatum+ metadatum descriptionid)]
+    (create-metadatum metadatum')))
+
+(defn read-metadatum+
+  "Read a metadatum in the database with its associated description."
+  [id]
+  (let [metadatum (read-metadatum id)
+        description (read-translation (:description metadatum))]
+    (if description
+      (assoc metadatum :description description)
+      metadatum)))
+
+(defn delete-metadatum+
+  "Delete a metadatum."
+  [id]
+  (transaction
+   (when-let [m (read-metadatum id)]
+     (when (:description m)
+       (delete-translation (:description m))))
+   (delete metadata
+           (where {:id [= id]}))))
+
 (defn pack-profile+
   [profile+ metadatumid]
   (let [profile (-> profile+
@@ -235,7 +306,7 @@
   [profile+]
   (spy profile+)
   (transaction
-   (let [metadatumid (create-metadatum (:metadata profile+))
+   (let [metadatumid (create-metadatum+ (:metadata profile+))
          profile' (pack-profile+ profile+ metadatumid)
          p (create-profile profile')]
      (doseq [rule (:rules profile+)]
@@ -252,7 +323,7 @@
              :rules (map unpack-rule
                          (select rules
                                  (where {:profile [= id]})))
-             :metadata (spy (read-metadatum (:metadatum profile))))
+             :metadata (read-metadatum+ (:metadatum profile)))
          (dissoc :metadatum)))))
 
 (defn read-profiles+
@@ -268,8 +339,8 @@
    (let [change' (if (seq (:metadata change))
                    (do
                      (when-let [oldmetadataid (:metadatum (read-profile id))]
-                       (delete-metadatum oldmetadataid))
-                     (let [metadataid (create-metadatum (:metadata change))]
+                       (delete-metadatum+ oldmetadataid))
+                     (let [metadataid (create-metadatum+ (:metadata change))]
                        (pack-profile+ change metadataid)))
                    (pack-profile+ change nil))]
      (when (seq (:rules change))
@@ -279,3 +350,18 @@
            (create-rule id r))))
      (when-not (empty? change')
        (update-profile id change')))))
+
+(defn delete-profile+
+  "Delete a profile in the database and its associated metadata."
+  [id]
+  (transaction
+   (let [profile (read-profile id)
+         m (:metadata profile)]
+     (when (:default profile)
+       (throw (ex-info "Deleting the default profile is forbidden."
+                       {:profile profile})))
+     (delete rules (where {:profile [= id]}))
+     (delete profiles (where {:id [= id]}))
+     (when m
+       (delete-metadatum+ m)))))
+

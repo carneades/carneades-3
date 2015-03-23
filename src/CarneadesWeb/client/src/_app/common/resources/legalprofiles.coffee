@@ -17,6 +17,10 @@ define [
     url = '/projects/:pid/legalprofiles/:lpid'
     params = pid: "@pid", lpid: "@lpid"
     methods =
+      'getRaw':
+        method: 'GET'
+        params:
+          context: 'edit'
       'update':
         method: 'PUT'
     return urlService.$resource url, params, methods

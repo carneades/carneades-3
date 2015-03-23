@@ -668,32 +668,35 @@
               :title "Argument from Witness Testimony"
               :source "Douglas Walton, Henry Prakken, Chris Reed, Argumentation Schemes and Generalisations in Reasoning about Evidence, Proceedings of the 9th International Conference on Artificial Intelligence and Law, Edinburgh, 2003. New York: ACM Press 2003, pp. 35.
 Douglas Walton, Witness Testimony Evidence, unpublished book manuscript, to appear.")
-     :conclusion '?A
+     :conclusion '?S
      :premises [(make-premise
                  :role "position to know"
-                 :statement '(position-to-know ?W ?A))
+                 :statement '(position-to-know ?W ?D))
+                (make-premise
+                 :role "domain"
+                 :statement '(in-domain ?D ?S))
                 (make-premise
                  :role "truth telling"
-                 :statement '(believes ?W ?A))
+                 :statement '(believes ?W ?S))
                 (make-premise
                  :role "minor"
-                 :statement '(asserts ?W ?A))]
+                 :statement '(asserts ?W ?S))]
      ;; Critical Questions
      :assumptions [(make-premise
                     :role "CQ1"
-                    :statement '(internally-consistent ?A))]
+                    :statement '(internally-consistent ?S))]
      :exceptions [(make-premise
                    :role "CQ2"
-                   :statement '(inconsistent-with-facts ?A))
+                   :statement '(inconsistent-with-facts ?S))
                   (make-premise
                    :role "CQ3"
-                   :statement '(inconsistent-with-other-witnesses ?A))
+                   :statement '(inconsistent-with-other-witnesses ?S))
                   (make-premise
                    :role "CQ4"
                    :statement '(biased ?W))
                   (make-premise
                    :role "CQ5"
-                   :statement '(implausible ?A))])
+                   :statement '(implausible ?S))])
 
     (make-scheme
      :id 'expert-opinion
@@ -701,26 +704,26 @@ Douglas Walton, Witness Testimony Evidence, unpublished book manuscript, to appe
               :title "Argument from Expert Opinion"
               :source "Douglas Walton, Legal Argumentation and Evidence, The Pennsylvania State University Press, University Park, 2002, pp.49-50.
 Douglas Walton, Appeal to Expert Opinion, The Pennsylvania University Press, University Park, Albany, 1997, p.211-225.")
-     :conclusion '?A
+     :conclusion '?S
      :premises [(make-premise
                  :role "major"
-                 :statement '(expert ?E ?S))
+                 :statement '(expert ?E ?D))
                 (make-premise
                  :role "domain"
-                 :statement '(in-domain ?A ?S))
+                 :statement '(in-domain ?D ?S))
                 (make-premise
                  :role "minor"
-                 :statement '(asserts ?E ?A))]
+                 :statement '(asserts ?E ?S))]
      ;; Critical Questions
      :exceptions [(make-premise
                    :role "CQ1"
                    :statement '(untrustworthy ?E))
                   (make-premise
                    :role "CQ2"
-                   :statement '(inconsistent-with-other-experts ?A))]
+                   :statement '(inconsistent-with-other-experts ?S))]
      :assumptions [(make-premise
                     :role "CQ3"
-                    :statement '(based-on-evidence ?A))])
+                    :statement '(based-on-evidence ?S))])
 
     (make-scheme
      :id 'analogy

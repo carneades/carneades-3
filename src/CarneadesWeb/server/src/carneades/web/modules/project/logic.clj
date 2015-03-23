@@ -399,10 +399,17 @@
   (lp/with-db pid legal-profiles-user legal-profiles-password
     (lp/read-profiles+)))
 
-(defn get-profile
+(defn get-edit-profile
   [pid id]
   (lp/with-db pid legal-profiles-user legal-profiles-password
-   (lp/read-profile+ id)))
+    (lp/read-profile+ id)))
+
+(defn get-profile
+  [pid id lang]
+  (lp/with-db pid legal-profiles-user legal-profiles-password
+    (let [p (lp/read-profile+ id)
+          p (update-in p [:metadata] trim-metadata lang)]
+      p)))
 
 (defn post-profile
   [pid profile]
@@ -423,4 +430,4 @@
 (defn delete-profile
   [pid id]
   (lp/with-db pid legal-profiles-user legal-profiles-password
-    (lp/delete-profile id)))
+    (lp/delete-profile+ id)))

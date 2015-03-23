@@ -269,13 +269,18 @@
   :handle-ok (fn [ctx] (get-profiles pid))
   :post! (fn [_] {::id (post-profile pid profile)}))
 
-(defresource legal-profiles-resource [pid id update]
+(defresource legal-profiles-resource [pid id context update]
   :available-media-types ["application/json"]
   :allowed-methods [:get :put :delete]
   :available-charsets ["utf-8"]
   :exists? (fn [ctx]
-             (when-let [p (get-profile pid id)]
-               {::entry p}))
+             (condp = context
+               "edit" (when-let [p (get-edit-profile pid id)]
+                        {::entry p})
+               
+               ;; else
+               (when-let [p (get-profile pid id (get-lang))]
+                 {::entry p})))
   :put! (fn [ctx] (put-profile pid id update))
   :delete! (fn [ctx] (delete-profile pid id))
   :handle-ok ::entry)
@@ -303,6 +308,7 @@
       (ANY "/" req (legal-profiles-resources pid (:body req)))
       (ANY "/:id" req (legal-profiles-resource pid
                                                (-> req :params :id)
+                                               (-> req :params :context)
                                                (:body req))))
 
     (context "/:db" [db]
