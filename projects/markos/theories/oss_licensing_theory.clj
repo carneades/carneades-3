@@ -328,23 +328,23 @@ project."})
        :conclusion '(oss:derivedFromOtherThanByLinking ?R1 ?R2)
        :premises [ (a/pm '(oss:modificationOf ?R1 ?R2))])
 
-      (t/make-scheme
-       :id 'entity-reciprocity
-       :header (dc/make-metadata
-                :title "Strong Reciprocity"
-                :description {:en "A software entity E1 may not use a
-                license template T1 if its provenance release W1 is
-                derived from a work W2 licensed using a strong
-                reciprocal license template T2, unless T1 is
-                compatible with T2."})
-       :pro false
-       :conclusion '(copyright:mayBeLicensedUsing ?E1 ?T1)
-       :premises [(a/pm '(soft:SoftwareEntity ?E1))
-                  (a/pm '(soft:provenanceRelease ?E1 ?W1))
-                  (a/pm '(copyright:derivedFrom ?W1 ?W2))
-                  (a/pm '(lic:licenseTemplate ?W2 ?T2))
-                  (a/pm '(oss:ReciprocalLicenseTemplate ?T2))]
-       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
+      ;; (t/make-scheme
+      ;;  :id 'entity-reciprocity
+      ;;  :header (dc/make-metadata
+      ;;           :title "Strong Reciprocity for Software Entities"
+      ;;           :description {:en "A software entity E1 may not use a
+      ;;           license template T1 if its provenance release W1 is
+      ;;           derived from a work W2 licensed using a strong
+      ;;           reciprocal license template T2, unless T1 is
+      ;;           compatible with T2."})
+      ;;  :pro false
+      ;;  :conclusion '(copyright:mayBeLicensedUsing ?E1 ?T1)
+      ;;  :premises [(a/pm '(soft:SoftwareEntity ?E1))
+      ;;             (a/pm '(soft:provenanceRelease ?E1 ?W1))
+      ;;             (a/pm '(copyright:derivedFrom ?W1 ?W2))
+      ;;             (a/pm '(lic:licenseTemplate ?W2 ?T2))
+      ;;             (a/pm '(oss:ReciprocalLicenseTemplate ?T2))]
+      ;;  :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
 
       (t/make-scheme
        :id 'modifications-only-reciprocity
