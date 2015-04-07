@@ -2,7 +2,7 @@
  :creation-date "June 2013",
  :theory "oss_licensing_theory",
  :triplestore "http://markos-n1.man.poznan.pl/openrdf-sesame"
- :repo-name "markos_test_14_11_2014"
+ :repo-name "markos_test_27_11_2014"
  :triplestore-api-url "http://markos-n1.man.poznan.pl/repository-store"
  :in-production true
 
