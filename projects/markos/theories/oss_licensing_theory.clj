@@ -305,46 +305,45 @@ project."})
       ;; To do: check how to properly namespace "valid" 
 
       (t/make-scheme
-       :id 'derived-from-other-than-by-linking1
+       :id 'derivation-other-than-by-linking1
        :header (dc/make-metadata
-                :title "Relation between linking and implementing an API"
-                :description {:en "Implementing an API creates a
-                derivative work of an API, but need not involve linking to
-                the object code of interface definitions."})
+                :title "Derivation Other than by Linking 1"
+                :description {:en "Deriving a work by implementing an
+                API is one way to derive a work other than by linking
+                to a library."})
        :pro true
        :conclusion '(oss:derivedFromOtherThanByLinking ?R1 ?R2)
        :premises [(a/pm '(oss:implementedAPIOfSoftwareRelease ?R1 ?R2))])
 
       
       (t/make-scheme
-       :id 'derived-from-other-than-by-linking2
+       :id 'derivation-other-than-by-linking2
        :header (dc/make-metadata
-                :title "Relationship between linking and modification"
-                :description {:en "Modifying source code creates a
-                derivative work of the source code, but does not
-                necessarily require linking to the binary code from
-                the original version."})
+                :title "Derivation Other than by Linking 2"
+                :description {:en "Deriving a work by modifying source
+                code is another way to derive a work other than by
+                linking to a library."})
        :pro true
        :conclusion '(oss:derivedFromOtherThanByLinking ?R1 ?R2)
-       :premises [ (a/pm '(oss:modificationOf ?R1 ?R2))])
+       :premises [ (a/pm '(oss:modificationOf1SoftwareRelease ?R1 ?R2))])
 
-      (t/make-scheme
-       :id 'entity-reciprocity
-       :header (dc/make-metadata
-                :title "Strong Reciprocity"
-                :description {:en "A software entity E1 may not use a
-                license template T1 if its provenance release W1 is
-                derived from a work W2 licensed using a strong
-                reciprocal license template T2, unless T1 is
-                compatible with T2."})
-       :pro false
-       :conclusion '(copyright:mayBeLicensedUsing ?E1 ?T1)
-       :premises [(a/pm '(soft:SoftwareEntity ?E1))
-                  (a/pm '(soft:provenanceRelease ?E1 ?W1))
-                  (a/pm '(copyright:derivedFrom ?W1 ?W2))
-                  (a/pm '(lic:licenseTemplate ?W2 ?T2))
-                  (a/pm '(oss:ReciprocalLicenseTemplate ?T2))]
-       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
+      ;; (t/make-scheme
+      ;;  :id 'entity-reciprocity
+      ;;  :header (dc/make-metadata
+      ;;           :title "Strong Reciprocity for Software Entities"
+      ;;           :description {:en "A software entity E1 may not use a
+      ;;           license template T1 if its provenance release W1 is
+      ;;           derived from a work W2 licensed using a strong
+      ;;           reciprocal license template T2, unless T1 is
+      ;;           compatible with T2."})
+      ;;  :pro false
+      ;;  :conclusion '(copyright:mayBeLicensedUsing ?E1 ?T1)
+      ;;  :premises [(a/pm '(soft:SoftwareEntity ?E1))
+      ;;             (a/pm '(soft:provenanceRelease ?E1 ?W1))
+      ;;             (a/pm '(copyright:derivedFrom ?W1 ?W2))
+      ;;             (a/pm '(lic:licenseTemplate ?W2 ?T2))
+      ;;             (a/pm '(oss:ReciprocalLicenseTemplate ?T2))]
+      ;;  :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))])
 
       (t/make-scheme
        :id 'modifications-only-reciprocity
