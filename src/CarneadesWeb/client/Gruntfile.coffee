@@ -152,7 +152,7 @@ module.exports = (grunt) ->
           'angular-bootstrap.js': 'angular-bootstrap/ui-bootstrap-tpls.js'
           'requirejs-domready.js': 'requirejs-domready/domReady.js'
           'perfect-scrollbar': 'perfect-scrollbar/min',
-          'angular-perfect-scrollbar': 'angular-perfect-scrollbar-allfix53/src/angular-perfect-scrollbar.js'
+          'angular-perfect-scrollbar': 'angular-perfect-scrollbar-4.1.1fixed/src/angular-perfect-scrollbar.js'
           'showdown': 'showdown/src'
           'spin.js': 'spin.js/spin.js'
           'hallo.js': '../libs/hallo.js'

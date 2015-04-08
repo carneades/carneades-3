@@ -38,7 +38,7 @@
 
                  [midje "1.5.1"]]
 
-  :plugins [[lein-ring "0.8.10"]
+  :plugins [[lein-ring "0.9.3"]
             [lein-midje "3.0.0"]
             [lein-exec "0.3.4"]]
 
@@ -49,7 +49,7 @@
          :web-xml "web.xml"}
 
   :resource-paths ["../client/dist"]
-
+                             
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
                                   [org.clojure/java.classpath "0.2.0"]]}

@@ -8,7 +8,7 @@ WAR_NAME="carneades-webapp"
 
 SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
 
-PROJECTS_DIR=`grep projects-directory ~/.carneades.clj | cut -d " " -f 3 | sed 's/"//g;' `
+PROJECTS_DIR=`grep :projects-directory ~/.carneades.clj | sed -n 's/^.*"\(.*\)"$/\1/p'`
 
 source $SCRIPTPATH/helpers.sh
 
